@@ -34,6 +34,7 @@ docs/adr/          architecture decision records
 
 ## Decisions
 
+- [Discovery brief](docs/discovery-brief.md) — positioning, audience, sitemap, content plan
 - [ADR 001 — Astro as the site framework](docs/adr/001-stack.md)
 
 > Status: foundation / spike. Design and real content land after the discovery brief is approved.
