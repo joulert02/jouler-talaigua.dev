@@ -32,4 +32,10 @@ const articles = defineCollection({
   }),
 });
 
-export const collections = { projects, articles };
+// Standalone pages whose copy lives in Markdown (e.g. "More about me").
+const pages = defineCollection({
+  loader: glob({ base: "./src/content/pages", pattern: "**/*.{md,mdx}" }),
+  schema: z.object({ title: z.string(), description: z.string(), lang }),
+});
+
+export const collections = { projects, articles, pages };

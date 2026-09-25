@@ -1,6 +1,6 @@
 # ADR 001 — Astro as the site framework
 
-- **Status:** Proposed (pending Jouler's review)
+- **Status:** Accepted (2026-09-25)
 - **Date:** 2026-09-25
 - **Deciders:** Jouler Talaigua (owner), Claude (project lead)
 
