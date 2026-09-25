@@ -1,0 +1,68 @@
+---
+import "@/styles/global.css";
+import ThemeToggle from "@/components/ThemeToggle.astro";
+import { languages, localePath, useTranslations, type Lang } from "@/i18n/ui";
+
+interface Props {
+  title: string;
+  description: string;
+  lang: Lang;
+  ogSlug?: string;
+  altPath?: string; // same page in the other language, without locale prefix
+}
+const { title, description, lang, ogSlug = "home", altPath = "/" } = Astro.props;
+const t = useTranslations(lang);
+const other: Lang = lang === "en" ? "es" : "en";
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang={other} href={new URL(localePath(other, altPath), Astro.site)} />
+    <link rel="alternate" hreflang="x-default" href={new URL(localePath("en", altPath), Astro.site)} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content={lang === "en" ? "en_US" : "es_ES"} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <script is:inline>
+      try {
+        const s = localStorage.getItem("theme");
+        const t = s ?? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.dataset.theme = t;
+      } catch {
+        /* no storage */
+      }
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">
+      Skip to content
+    </a>
+    <div class="wrap">
+      <header>
+        <nav aria-label="Main">
+          <a href={localePath(lang, "/")}>{t("nav.home")}</a>
+          <a href={localePath(lang, "/projects/")}>{t("nav.projects")}</a>
+          <span style="flex:1"></span>
+          <a href={localePath(other, altPath)} hreflang={other} lang={other}>
+            {languages[other]}
+          </a>
+          <ThemeToggle label={t("theme.toggle")} />
+        </nav>
+      </header>
+      <main id="main">
+        <slot />
+      </main>
+    </div>
+  </body>
+</html>

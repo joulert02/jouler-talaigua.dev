@@ -1,0 +1,64 @@
+/* Spike-only styles. Real design tokens arrive with Épica 4 after visual direction is approved. */
+:root {
+  color-scheme: light dark;
+  --bg: #fafaf9;
+  --fg: #1c1917;
+  --muted: #57534e;
+  --line: #e7e5e4;
+}
+:root[data-theme="dark"] {
+  --bg: #0c0a09;
+  --fg: #fafaf9;
+  --muted: #a8a29e;
+  --line: #292524;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font:
+    16px/1.6 system-ui,
+    sans-serif;
+}
+.wrap {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+header nav {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 1rem;
+}
+a {
+  color: inherit;
+}
+.muted {
+  color: var(--muted);
+}
+.skip {
+  position: absolute;
+  left: -999px;
+}
+.skip:focus {
+  left: 1rem;
+  top: 1rem;
+  background: var(--fg);
+  color: var(--bg);
+  padding: 0.5rem;
+}
+button {
+  font: inherit;
+  background: none;
+  color: inherit;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.25rem 0.6rem;
+  cursor: pointer;
+}

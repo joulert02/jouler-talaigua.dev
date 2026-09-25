@@ -1,0 +1,27 @@
+---
+import { render, type CollectionEntry } from "astro:content";
+import Base from "@/layouts/Base.astro";
+import { slugOf } from "@/lib/content";
+import type { Lang } from "@/i18n/ui";
+interface Props {
+  entry: CollectionEntry<"projects">;
+  lang: Lang;
+}
+const { entry, lang } = Astro.props;
+const { Content } = await render(entry);
+const slug = slugOf(entry.id);
+---
+
+<Base
+  title={entry.data.title}
+  description={entry.data.summary}
+  lang={lang}
+  ogSlug={slug}
+  altPath={`/projects/${slug}/`}
+>
+  <article>
+    <h1>{entry.data.title}</h1>
+    <p class="muted">{entry.data.summary}</p>
+    <Content />
+  </article>
+</Base>

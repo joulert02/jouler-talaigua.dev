@@ -1,0 +1,33 @@
+---
+import Base from "@/layouts/Base.astro";
+import { localePath, useTranslations, type Lang } from "@/i18n/ui";
+import { getProjects, slugOf } from "@/lib/content";
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const projects = await getProjects(lang);
+const groups = (["published", "in-progress", "idea"] as const).map((s) => ({
+  status: s,
+  items: projects.filter((p) => p.data.status === s),
+}));
+---
+
+<Base title={t("nav.projects")} description={t("nav.projects")} lang={lang} altPath="/projects/">
+  <h1>{t("nav.projects")}</h1>
+  {groups
+    .filter((g) => g.items.length)
+    .map((g) => (
+      <section>
+        <h2>{t(`projects.status.${g.status}`)}</h2>
+        <ul>
+          {g.items.map((p) => (
+            <li>
+              <a href={localePath(lang, `/projects/${slugOf(p.id)}/`)}>{p.data.title}</a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+</Base>

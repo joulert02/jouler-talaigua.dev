@@ -1,0 +1,27 @@
+---
+// Vanilla on purpose: the spike measured ~64 KB gzip of React runtime for a React version of this button.
+interface Props {
+  label: string;
+}
+const { label } = Astro.props;
+---
+
+<button type="button" class="theme-toggle" aria-label={label} aria-pressed="false">
+  <span aria-hidden="true">◐</span>
+</button>
+<script>
+  const btn = document.querySelector<HTMLButtonElement>(".theme-toggle");
+  const root = document.documentElement;
+  const sync = () => btn?.setAttribute("aria-pressed", String(root.dataset["theme"] === "dark"));
+  sync();
+  btn?.addEventListener("click", () => {
+    const next = root.dataset["theme"] === "dark" ? "light" : "dark";
+    root.dataset["theme"] = next;
+    try {
+      localStorage.setItem("theme", next);
+    } catch {
+      /* storage unavailable */
+    }
+    sync();
+  });
+</script>
