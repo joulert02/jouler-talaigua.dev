@@ -38,3 +38,11 @@ docs/adr/          architecture decision records
 - [ADR 001 — Astro as the site framework](docs/adr/001-stack.md)
 
 > Status: foundation / spike. Design and real content land after the discovery brief is approved.
+
+---------- [Codex] ---------
+
+## Design review
+
+The consolidated design proposal is **v7**, with the original v5 and the v6 proposal preserved as local HTML history. See [design review and history](docs/design/README.md) for the files, local/network preview instructions and validation boundaries. The final design and real case/note content remain under owner review.
+
+-------------

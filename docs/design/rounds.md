@@ -65,3 +65,38 @@ Every round is kept, never overwritten. Each entry records what was proposed, th
   - **Selected work:** 7/5 columns with a sticky preview; the detail view now uses the full width (fixes the empty box); thumbnails replace hover on touch.
   - **Notes:** example cards with "Share on LinkedIn" and "Copy link".
 - **Open for the owner:** the comments strategy for Notes, the letter text, the Staff-level goals, music, anime and LoL details, and whether pole sport is the right label (the brief said aerial silks).
+
+---------- [Codex] ---------
+
+## Round 5 · supplied Home v5 · 2026-10-22 baseline
+
+- **Source:** Jouler supplied `JOTA Home v4.html` for [the v5 artifact](https://claude.ai/artifact/AGs2uSGhxJbFN1NN1cfZrr). The filename/title says v4; the page's internal label says Home v5. The exact export is now [local v5](../../public/design/v5/index.html).
+- **Owner clarification:** visitors should infer user-focused engineering and professional fit from the projects and the portfolio itself. Do not add a stack, availability or time-zone checklist to the hero; the COL→MAD ticket and downloadable CV provide the location context he wants.
+- **Curiosity:** movement and overlap are intentional parts of discovery. The roadmap is primarily an object for interested visitors, not a main navigation priority.
+- **Narrative:** care for users and teams, the QA-to-engineering trajectory, architecture, leadership and teaching should form a coherent professional thread. Hobbies need no engineering metaphor. Project claims and note/letter examples are provisional; Jouler will supply original content.
+
+## Round 6 · 2026-10-23 · isolated Codex proposal
+
+- **Proposed:** [local v6](../../public/design/v6/index.html), derived from v5 on a separate branch. Removed the prototype toolbar and separate JOTA header; retained JOTA inside the identity card. Added a visible Explore my desk action, kept the card in expanded exploration, removed Roadmap from the dock, and gave five cases dedicated URLs with native View Transitions. See [v6 proposal](v6-proposal.md).
+- **Hero proposal:** “I build products with care for the people using them—and the teams behind them.” It remains draft copy, not a final approved headline.
+- **Owner feedback:** the framed board and glimpse of Work beneath it diluted immersion and created competing focal points. The owner's full-screen adjustment restored the hierarchy: card first, objects second, menu third. Work/Projects should be immediately accessible from the dock; either label is understood.
+- **Work feedback:** the list, preview and Notes felt flat at the same visual weight. Use Clara's scale, spacing and section separation to make projects stand out. Smooth wheel input and a pannable board should feel more considered.
+- **Learned:** recruiter access does not require exposing Work in the first viewport. Preserve a calm arrival, then give professional content a clear editorial hierarchy when reached.
+
+## Round 7 · 2026-10-23 · immersive Home and mobile exploration
+
+- **Current proposal:** [local v7](../../public/design/v7/index.html), preserving v6 unchanged. Full-screen desktop introduction; Work below the initial viewport and reachable from the dock. Work has a large heading, company labels, larger project titles, shorter metadata and a substantial preview; Notes has a separate, quieter entrance.
+- **Mobile direction from the owner:** show the identity card first. More about me opens the immersive desk rather than the letter. Curious visitors can pan, move objects, and discover the letter, roadmap and personal interests there.
+- **Desk:** background drag pans the camera; object drag moves the object; wheel/trackpad pan, with zoom, overview and recenter controls. The identity card remains present. Mobile exploration omits its repeated career list; Home retains the full list.
+- **Reading:** letter and roadmap appear over the desk. Back to desk keeps the camera position. Closing exploration restores focus to its launcher.
+- **Motion:** short easing on coarse wheel input; direct fine trackpad input and immediate dragging. Reduced motion disables easing and transitions. Object drops still protect the card.
+- **Content:** no final case studies or original notes were authored in this iteration. Inherited claims remain provisional. See [v7 proposal](v7-proposal.md) for scope and the October 23 browser evidence; a real-phone review remains with the owner.
+- **Status on 2026-10-25:** v7 is running locally for Jouler's review. Design approval, final copy and production Astro integration are still pending.
+
+## Consolidation · 2026-10-25
+
+- Claude's existing design documents and Codex's v5/v6/v7 prototype bundle now live in the main repository checkout. v7 is the single current review proposal; v5 and v6 are retained comparisons, not parallel current designs.
+- [History guide](README.md) records attribution, local preview instructions and preservation checks. HTML is the source for subsequent review iterations; old artifact links remain historical provenance. HTML for rounds 1–4 has not been supplied.
+- Imported only the portfolio design files, assets, proposal records and history checker. GoodRx output, unrelated dependency changes and agent configuration were excluded. No commit, push or deployment performed.
+
+-------------

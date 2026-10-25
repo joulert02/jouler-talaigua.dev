@@ -59,3 +59,15 @@
 - **Slow smooth scroll on lists, bouncy scroll, one page per section that loads slowly** (Olivier Larose, Thibault Guignand, Lynn Fisher).
 - **Sites a recruiter would not understand** (Lochie Axon), and **template looks** (Matt Farley, Tamal Sen, Sam Selikoff).
 - **Heavy 3D/WebGL, OS and terminal metaphors:** well built, but not his style.
+
+---------- [Codex] ---------
+
+## Application in v7 · owner feedback, 2026-10-23
+
+- **Andre:** keep the first screen immersive and calm. The identity card is primary, personal objects secondary, and the dock tertiary. Work remains one click away without showing multiple sections on arrival.
+- **Clara:** strengthen Work with a larger heading, clearer differences between company labels, project names and metadata, generous spacing and a substantial preview. Give Notes its own quieter entrance instead of presenting every section at the same weight.
+- **Movement:** short wheel easing and direct canvas panning should make exploration feel deliberate. Dragging remains immediate; fine trackpad input stays direct and reduced motion is respected. This is the owner's requested direction, not a claim that these reference sites use the same implementation.
+
+These applications are recorded from the owner's feedback and supplied screenshots. v7 is still under review; no new independent review of the reference sites was performed for the October 25 consolidation.
+
+-------------

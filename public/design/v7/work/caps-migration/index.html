@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow"><meta name="description" content="An isolated design proposal for Jouler Talaigua’s personal portfolio.">
+<title>Jouler Talaigua — Design proposal v7</title>
+<link rel="icon" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Caveat:wght@500;600&display=swap">
+<link rel="stylesheet" href="/design/v7/styles.css"></head><body data-case="3">
+<a class="skip" href="#app">Skip to content</a>
+<div id="app">
+
+<main id="v-home">
+  <section class="board" id="board" aria-label="Introduction and personal desk">
+    <article class="card" id="card">
+<a class="mark" href="#home" aria-label="Jouler Talaigua, home"><i aria-hidden="true">J</i>JOTA</a>
+      <div class="who">
+        <h1>Jouler Talaigua</h1>
+        <p>Senior Full-Stack Software Engineer</p>
+      </div>
+      <p class="thesis">I build products with care for the people using them—and the teams behind them.</p>
+      <div class="cta">
+        <a class="btn primary" href="#contact" data-contact>Get in touch</a>
+        <a class="btn ghost" href="#contact" data-todo="CV file to be added">Download CV</a>
+      </div>
+      <div class="links">
+        <a class="ulink" href="https://www.linkedin.com/in/jouler-talaigua" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="ulink" href="https://github.com/joulert02" target="_blank" rel="noopener">GitHub</a>
+        <a class="ulink" href="#letter" data-mobile-explore>More about me</a>
+      </div>
+      <ol class="path" aria-label="Career">
+        <li><span class="co">Cast &amp; Crew</span><span class="ro">Senior Software Engineer · via Remoti</span><time>2026 —</time></li>
+        <li><span class="co">EPAM Systems</span><span class="ro">Senior Software Engineer</span><time>2025 – 26</time></li>
+        <li><span class="co">Mercado Libre</span><span class="ro">Senior Software Engineer</span><time>2023 – 25</time></li>
+        <li><span class="co">PRAGMA</span><span class="ro">QA Tester → Tech Lead</span><time>2019 – 23</time></li>
+      </ol>
+    </article>
+
+    <div class="objects" id="objects" aria-label="Personal objects. Press Enter to flip one, M to move it with the arrow keys."></div>
+
+    <div class="board-tools"><p class="hint"><span class="h-d">Drag the objects · click to flip</span><span class="h-m">Swipe · tap to flip</span></p></div>
+    <button class="btn ghost explore-btn" type="button" id="exploreBtn" aria-label="Explore my desk" style="background:var(--surface)"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7.5V3h4.5M12.5 3H17v4.5M17 12.5V17h-4.5M7.5 17H3v-4.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Explore my desk</span></button>
+  </section>
+
+  <section class="work-sec" id="work" aria-labelledby="h-work" data-mode="list">
+    <header class="section-intro"><span class="label">01 / Work</span><h2 id="h-work">Selected projects</h2></header>
+    <div>
+      <div id="workArea"><ul class="work" id="workList"></ul></div><p class="sample-caption">Design preview · project copy is provisional.</p>
+    </div>
+    <div class="preview-col"><div class="preview" id="preview" aria-hidden="true"></div><p class="preview-caption" id="previewCaption"></p></div>
+  </section>
+
+  <section class="notes-sec" aria-labelledby="h-notes" id="notesHome">
+    <header class="notes-intro"><span class="label">02 / Notes</span><h2 id="h-notes">Written <br>along the way.</h2></header><div class="notes-content">
+    <ol class="nlist" id="notesHomeList"></ol><p class="sample-caption">Sample notes for layout. Jouler’s writing will replace these.</p>
+    <a class="more-link" href="#notes">All notes →</a></div>
+  </section>
+</main>
+
+<main id="v-case" class="case-page" hidden></main>
+<main id="v-roadmap" class="view" hidden></main>
+<main id="v-letter" class="view" hidden></main>
+<main id="v-notes" class="view" hidden></main>
+<main id="v-note" class="view" hidden></main>
+
+<footer class="site" id="contact" tabindex="-1">
+  <div class="f-cols">
+    <div><h3>Site</h3><ul><li><a href="#work">Work</a></li><li><a href="#notes">Notes</a></li><li><a href="#roadmap">Roadmap</a></li><li><a href="#letter">A letter for you</a></li></ul></div>
+    <div><h3>Social</h3><ul><li><a href="#contact" data-todo="Instagram URL">Instagram</a></li><li><a href="#contact" data-todo="TikTok URL">TikTok</a></li><li><a href="https://www.linkedin.com/in/jouler-talaigua" target="_blank" rel="noopener">LinkedIn</a></li></ul></div>
+    <div><h3>Contact</h3><ul><li class="mailrow">joulert02@gmail.com <button class="copy" type="button" data-copy="joulert02@gmail.com">Copy</button></li><li><a href="#contact" data-todo="CV file to be added">Download CV (PDF)</a></li><li style="color:var(--muted)">Madrid · CET · remote across EU</li></ul></div>
+  </div>
+  <p class="wordmark" aria-hidden="true">Jouler Talaigua</p>
+  <div class="f-bottom"><span class="es" lang="es">Hecho en Madrid, con raíces colombianas <span class="flag" aria-hidden="true"><i></i><i></i><i></i></span></span><span>© 2026</span></div>
+</footer>
+</div>
+
+<dialog class="explore" id="explore" aria-labelledby="ex-title">
+  <div class="ex-head"><div class="ex-title-group"><h2 id="ex-title">A little more of my world</h2><p><span class="desktop-help">Drag the canvas · move any object</span><span class="mobile-help">Swipe to explore · tap an object</span></p></div><button class="btn ghost sm" type="button" id="exClose">Close</button></div>
+  <div class="desk-viewport" id="deskViewport" tabindex="0" role="region" aria-label="Personal desk. Drag the background or use arrow keys to explore. Use plus and minus to zoom. Press M on an object to move it."><div class="desk" id="desk"></div></div>
+  <div class="camera-controls" aria-label="Desk controls"><button type="button" id="zoomOut" aria-label="Zoom out">−</button><output id="zoomLevel" aria-label="Zoom level">100%</output><button type="button" id="zoomIn" aria-label="Zoom in">+</button><span aria-hidden="true">·</span><button type="button" id="centerDesk">Recenter</button><button type="button" id="fitDesk">See all</button></div>
+  <aside class="desk-panel" id="deskPanel" hidden tabindex="-1" aria-labelledby="deskPanelTitle"></aside>
+</dialog>
+
+<div class="sr" aria-live="polite" id="live"></div>
+<div class="toast" id="toast" aria-hidden="true"></div>
+
+<nav class="dock" id="dock" aria-label="Main">
+  <a href="#home" data-v="home" aria-label="Home" data-tip="Home"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 9 10 3.5 16.5 9v7a1 1 0 0 1-1 1h-3.5v-4.5h-4V17H4.5a1 1 0 0 1-1-1Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span class="dl">Home</span></a>
+  <a href="#work" data-v="work" aria-label="Work" data-tip="Work"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="6" width="15" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7 6V4.5A1.5 1.5 0 0 1 8.5 3h3A1.5 1.5 0 0 1 13 4.5V6M2.5 10.5h15" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span class="dl">Work</span></a>
+  <a href="#notes" data-v="notes" aria-label="Notes" data-tip="Notes"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 2.5h7.5L16 6v11.5H5Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 9.5h5M8 12.5h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span class="dl">Notes</span></a>
+  <span class="sep" aria-hidden="true"></span>
+  <button type="button" data-copy="joulert02@gmail.com" aria-label="Copy my email address" data-tip="Copy email"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="4.5" width="15" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m3 5.5 7 5.5 7-5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+  <button type="button" id="themeBtn" aria-label="Dark theme" aria-pressed="false" data-tip="Theme"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16 12.5A6.5 6.5 0 0 1 7.5 4a6.5 6.5 0 1 0 8.5 8.5Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+</nav>
+
+<script type="module" src="/design/v7/app.js"></script></body></html>

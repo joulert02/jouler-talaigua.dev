@@ -2,3 +2,8 @@ dist
 .astro
 node_modules
 package-lock.json
+
+# ---------- [Codex] ---------
+# Preserve exact historical exports and prototype snapshots.
+public/design/
+# -------------

@@ -4,6 +4,10 @@ import astro from "eslint-plugin-astro";
 import globals from "globals";
 
 export default [
+  // ---------- [Codex] ---------
+  // Historical standalone prototypes are preserved as imported review assets.
+  { ignores: ["public/design/**"] },
+  // -------------
   { ignores: ["dist/", ".astro/", "node_modules/", ".vercel/"] },
   js.configs.recommended,
   ...tseslint.configs.strict,
