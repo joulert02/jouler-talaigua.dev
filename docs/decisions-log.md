@@ -1,6 +1,8 @@
 # Decisions log
 
 One line per decision, newest first. Details live in the linked document.
+
+- **2026-10-25 · interaction accepted:** Jouler tested v8, accepted the interaction changes and requested a commit. Desktop Home captures scroll/pan, with Work restoring normal page scrolling. Mobile exploration uses an animated compact card and floating Close. The earlier v7 behavior remains available for comparison; final copy and production integration remain pending. See [v8 proposal](design/v8-proposal.md).
 - **2026-10-25:** Consolidate Claude's design documents and Codex's HTML prototypes in this repository. v7 is the current review proposal; v5/v6 remain intact comparisons. Use local HTML for future review iterations; retain old artifact links as provenance. See [history guide](design/README.md).
 - **2026-10-23 · owner direction:** Home arrival prioritizes the identity card, then personal objects, then the dock; Work need not appear in the first viewport if it is one click away. Work and Projects are both understood; v7 retains Work.
 - **2026-10-23 · owner direction:** Mobile More about me opens an immersive, navigable desk. Keep the identity card in exploration; letter and roadmap are discoveries inside it. See [round 7](design/rounds.md#round-7--2026-10-23--immersive-home-and-mobile-exploration).

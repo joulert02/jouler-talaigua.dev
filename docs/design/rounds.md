@@ -96,3 +96,10 @@ Every round is kept, never overwritten. Each entry records what was proposed, th
 - Claude's existing design documents and Codex's v5/v6/v7 prototype bundle now live in the main repository checkout. v7 is the single current review proposal; v5 and v6 are retained comparisons, not parallel current designs.
 - [History guide](README.md) records attribution, local preview instructions and preservation checks. HTML is the source for subsequent review iterations; old artifact links remain historical provenance. HTML for rounds 1–4 has not been supplied.
 - Imported only the portfolio design files, assets, proposal records and history checker. GoodRx output, unrelated dependency changes and agent configuration were excluded. No commit, push or deployment performed.
+
+## Round 8 · 2026-10-25 · direct desktop exploration and compact mobile
+
+- **Owner direction:** remove the extra desktop fullscreen step. Test wheel/trackpad and pointer panning directly in Home, with Work always available to release page scrolling and reach projects. The owner prefers testing this option despite the risk that some visitors expect scrolling to reveal the next section.
+- **Mobile direction:** More about me transitions to a compact name/role card; allow camera dragging from that card, remove the internal header strip and use the area above/below it for nearby personal objects.
+- **Implementation:** [local v8](../../public/design/v8/index.html) uses one shared world inline on desktop and inside a mobile-only dialog. v7 sources remain unchanged. Letter/roadmap stay in reading panels; dedicated case URLs remain available.
+- **Review status:** Jouler tested the prototype, accepted these interaction changes and requested a commit on 2026-10-25. Final copy and production integration remain pending. [Scope and verification](v8-proposal.md). The nine project-content drafts remain separate and pending owner review.

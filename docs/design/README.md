@@ -1,6 +1,6 @@
 # Design review and history
 
-Consolidated on 2026-10-25 from Claude's design-direction documents and Codex's isolated v6/v7 prototypes. **v7 is the current proposal under Jouler's review**, not a final approved design. The production Astro pages remain the foundation/spike.
+Consolidated on 2026-10-25 from the design-direction documents and local prototypes. **v8 is the current interaction prototype, reviewed and accepted by Jouler on 2026-10-25**; v7 remains the preceding comparison. Final copy and production integration remain pending. The production Astro pages remain the foundation/spike.
 
 ## Sources
 
@@ -9,6 +9,7 @@ Consolidated on 2026-10-25 from Claude's design-direction documents and Codex's 
 - [Decisions](../decisions-log.md): agreed direction, distinguished from proposed copy and pending validation.
 - [References](references.md): the design references and what we take from them.
 - [v6 proposal](v6-proposal.md) and [v7 proposal](v7-proposal.md): implementation scope and historical verification evidence.
+- [v8 proposal](v8-proposal.md): direct desktop exploration and compact mobile exploration, including the explicit desktop scroll-capture trade-off.
 
 The repository's HTML is now the review source. Existing Claude artifact links remain as provenance for earlier rounds; do not use an artifact as a competing current version. Exports for rounds 1–4 have not been supplied, so those rounds retain their recorded links rather than reconstructed HTML.
 
@@ -18,7 +19,8 @@ The repository's HTML is now the review source. Existing Claude artifact links r
 | --- | --- | --- | --- |
 | v5 | [Original HTML](../../public/design/v5/index.html) | Owner-supplied baseline; exact export, filename said v4 but page labels itself v5 | Claude / owner |
 | v6 | [HTML](../../public/design/v6/index.html) | First proposal: integrated JOTA signature, retained identity card in exploration, dedicated case URLs | Codex, derived from v5 and owner feedback |
-| v7 | [HTML](../../public/design/v7/index.html) | Current: immersive Home, card-first mobile, pannable desk and stronger Work hierarchy | Codex, derived from v6 and owner feedback |
+| v7 | [HTML](../../public/design/v7/index.html) | Previous: immersive Home, card-first mobile, pannable desk and stronger Work hierarchy | Codex, derived from v6 and owner feedback |
+| v8 | [HTML](../../public/design/v8/index.html) | Current experiment: scroll/pan directly in desktop Home; Work releases page scrolling; compact mobile exploration | Derived from v7 and owner feedback |
 
 The complete HTML, CSS, JavaScript and required local assets are included. Shared source photographs live in `public/design/assets/`; v7 also owns its Bancolombia preview asset.
 
@@ -33,14 +35,15 @@ python3 -m http.server 4326 --bind 0.0.0.0 --directory public
 Use another port if 4326 is already occupied by the existing review server.
 
 - History: [http://127.0.0.1:4326/design/](http://127.0.0.1:4326/design/)
-- Current proposal: [http://127.0.0.1:4326/design/v7/](http://127.0.0.1:4326/design/v7/)
+- Previous proposal: [http://127.0.0.1:4326/design/v7/](http://127.0.0.1:4326/design/v7/)
+- Current experiment uses a second server on 4327: [http://127.0.0.1:4327/design/v8/](http://127.0.0.1:4327/design/v8/). If serving all files on 4326 instead, use /design/v8/ on that server.
 - On a phone on the same Wi-Fi, replace `127.0.0.1` with the Mac's current LAN address. On this Mac, `ipconfig getifaddr en0` reports the Wi-Fi address. Keep the terminal open and the Mac awake; Ctrl+C stops the server.
 
 These prototypes can also be served from Astro's `public/` directory, but do not implement the final bilingual Astro views. Sample cases, notes, dates and roadmap milestones remain provisional; preserve `TODO(verify)` and obtain owner-authored content before publication.
 
 ## Preservation and scope
 
-Run `node scripts/verify-design-history.mjs` to check the original/v6 hashes and the imported v7 snapshot. Compare versions by opening their separate URLs; keep earlier versions intact when making a new design iteration.
+Run `node scripts/verify-design-history.mjs` to check the original/v6 hashes, the imported v7 snapshot and the reviewed v8 snapshot. Compare versions by opening their separate URLs; keep earlier versions intact when making a new design iteration.
 
 Only the design prototypes, their assets, proposal records, history checker and necessary documentation were imported. GoodRx output, unrelated dependency/lockfile changes and agent configuration were excluded. No commit, push or deployment is part of this integration.
 

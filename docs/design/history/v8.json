@@ -1,0 +1,18 @@
+{
+  "version": "v8",
+  "recorded": "2026-10-25",
+  "status": "Interaction snapshot tested and accepted by Jouler on 2026-10-25; final copy and production integration pending.",
+  "files": {
+    "public/design/v8/app.js": "f3132d469c20404050b31ab82d7a9193c2d0e62598fedacd9a44f33e3a1025e4",
+    "public/design/v8/assets/bancolombia-devices.png": "819aa5610d5fb6f698bec7341b528751a96fa868bc25e197cfe295ee21e151ed",
+    "public/design/v8/canvas.js": "60354c190b6971f2ecde5f40be7edbf9709aad69ab7b2664f0fb4042aaeac32a",
+    "public/design/v8/experience.js": "606fa1bf19597edaa00a04f641b4dade13aa5d93992d045e671fcdbf35001e79",
+    "public/design/v8/index.html": "d2b6194c9cb0a60c5e90945638d72b2adb20b0fd3e112caf912667bd1e0ac1c8",
+    "public/design/v8/styles.css": "2893a86fb8a0501c74b59f8e7d50d3ef535790153240533d118330ad5e11327a",
+    "public/design/v8/work/bancolombia-micro-frontends/index.html": "0bdaf9f13803675e3b38ed1df641e94a7256922799a475ed5a21ccd9623515de",
+    "public/design/v8/work/caps-migration/index.html": "f4e9608b10fbc7c2cc4203bf39e0601d0bd8b24411b3270a9694faf98d5228f2",
+    "public/design/v8/work/favorites-gift-lists/index.html": "afbf04b15586effd43685e860f34f553a17411fddbb30e459f45156deda1d767",
+    "public/design/v8/work/personal-nexus/index.html": "c397ebfd3292f81a0776515b740feb48ca689ef076d1b48af2f417bcc7f6a117",
+    "public/design/v8/work/prize-roulette/index.html": "f1d77c1829c3c00a78d3d446a52443f15240b20224b3e4c346e4979d2285339e"
+  }
+}

@@ -7,7 +7,7 @@ import { resolve } from 'node:path';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const failures = [];
 let checked = 0;
-for (const name of ['v6', 'v7']) {
+for (const name of ['v6', 'v7', 'v8']) {
   const manifest = JSON.parse(await readFile(resolve(root, `docs/design/history/${name}.json`), 'utf8'));
   for (const [path, expected] of Object.entries(manifest.files)) {
     checked += 1;
@@ -23,5 +23,5 @@ if (failures.length) {
   console.error(`History verification failed:\n${failures.join('\n')}`);
   process.exitCode = 1;
 } else {
-  console.log(`Original, v6 and imported v7 preserved: ${checked} hashes match.`);
+  console.log(`Preserved design history: ${checked} hashes match.`);
 }

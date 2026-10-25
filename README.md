@@ -41,4 +41,4 @@ docs/adr/          architecture decision records
 
 ## Design review
 
-The consolidated design proposal is **v7**, with the original v5 and the v6 proposal preserved as local HTML history. See [design review and history](docs/design/README.md) for the files, local/network preview instructions and validation boundaries. The final design and real case/note content remain under owner review.
+The current reviewed interaction prototype is **v8**, with v5–v7 preserved as local HTML history. See [design review and history](docs/design/README.md) for the files, local/network preview instructions and validation boundaries. The final design and real case/note content remain under owner review.

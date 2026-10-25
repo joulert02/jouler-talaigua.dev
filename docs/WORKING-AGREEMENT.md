@@ -30,7 +30,7 @@ Tasks and status live in Notion. Definitions live in this repository.
 ## Design continuity · 2026-10-25
 
 - Review design iterations as local HTML in this repository, starting with [the version history](design/README.md). Claude artifact links remain historical references; new iterations no longer depend on artifacts.
-- v7 is the current proposal under owner review. Retain older version directories for comparison; do not overwrite them when producing a new iteration.
+- The current proposal is identified in the version history. Retain older version directories for comparison; do not overwrite them when producing a new iteration.
 - Record authorship in Git commits and `Co-authored-by` trailers; keep attribution markers out of documentation and visitor-facing content.
 - This consolidation includes Codex's portfolio work and Claude's existing design documentation. Unrelated local changes, including GoodRx and dependency experiments, are outside its scope.
 
