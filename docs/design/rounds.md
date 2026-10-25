@@ -66,8 +66,6 @@ Every round is kept, never overwritten. Each entry records what was proposed, th
   - **Notes:** example cards with "Share on LinkedIn" and "Copy link".
 - **Open for the owner:** the comments strategy for Notes, the letter text, the Staff-level goals, music, anime and LoL details, and whether pole sport is the right label (the brief said aerial silks).
 
----------- [Codex] ---------
-
 ## Round 5 · supplied Home v5 · 2026-10-22 baseline
 
 - **Source:** Jouler supplied `JOTA Home v4.html` for [the v5 artifact](https://claude.ai/artifact/AGs2uSGhxJbFN1NN1cfZrr). The filename/title says v4; the page's internal label says Home v5. The exact export is now [local v5](../../public/design/v5/index.html).
@@ -98,5 +96,3 @@ Every round is kept, never overwritten. Each entry records what was proposed, th
 - Claude's existing design documents and Codex's v5/v6/v7 prototype bundle now live in the main repository checkout. v7 is the single current review proposal; v5 and v6 are retained comparisons, not parallel current designs.
 - [History guide](README.md) records attribution, local preview instructions and preservation checks. HTML is the source for subsequent review iterations; old artifact links remain historical provenance. HTML for rounds 1–4 has not been supplied.
 - Imported only the portfolio design files, assets, proposal records and history checker. GoodRx output, unrelated dependency changes and agent configuration were excluded. No commit, push or deployment performed.
-
--------------

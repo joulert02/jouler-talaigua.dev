@@ -60,8 +60,6 @@
 - **Sites a recruiter would not understand** (Lochie Axon), and **template looks** (Matt Farley, Tamal Sen, Sam Selikoff).
 - **Heavy 3D/WebGL, OS and terminal metaphors:** well built, but not his style.
 
----------- [Codex] ---------
-
 ## Application in v7 · owner feedback, 2026-10-23
 
 - **Andre:** keep the first screen immersive and calm. The identity card is primary, personal objects secondary, and the dock tertiary. Work remains one click away without showing multiple sections on arrival.
@@ -69,5 +67,3 @@
 - **Movement:** short wheel easing and direct canvas panning should make exploration feel deliberate. Dragging remains immediate; fine trackpad input stays direct and reduced motion is respected. This is the owner's requested direction, not a claim that these reference sites use the same implementation.
 
 These applications are recorded from the owner's feedback and supplied screenshots. v7 is still under review; no new independent review of the reference sites was performed for the October 25 consolidation.
-
--------------

@@ -1,7 +1,5 @@
 # Design review and history
 
----------- [Codex] ---------
-
 Consolidated on 2026-10-25 from Claude's design-direction documents and Codex's isolated v6/v7 prototypes. **v7 is the current proposal under Jouler's review**, not a final approved design. The production Astro pages remain the foundation/spike.
 
 ## Sources
@@ -22,7 +20,7 @@ The repository's HTML is now the review source. Existing Claude artifact links r
 | v6 | [HTML](../../public/design/v6/index.html) | First proposal: integrated JOTA signature, retained identity card in exploration, dedicated case URLs | Codex, derived from v5 and owner feedback |
 | v7 | [HTML](../../public/design/v7/index.html) | Current: immersive Home, card-first mobile, pannable desk and stronger Work hierarchy | Codex, derived from v6 and owner feedback |
 
-The complete HTML, CSS, JavaScript and required local assets are included. No attribution labels were added to the visitor-facing design or the frozen HTML. This document marks the imported bundle as a whole. Shared source photographs live in `public/design/assets/`; v7 also owns its Bancolombia preview asset.
+The complete HTML, CSS, JavaScript and required local assets are included. Shared source photographs live in `public/design/assets/`; v7 also owns its Bancolombia preview asset.
 
 ## Review locally
 
@@ -58,5 +56,3 @@ Formatting and linting exclude `public/design/` so repository-wide maintenance d
 - `npm run lint` could not execute because the local ESLint executable is absent. No packages were installed; full lint/build/CI validation is not claimed.
 
 The October 23 browser checks in the proposal records are historical evidence. The integration checks above do not replace Jouler's physical-phone review.
-
--------------

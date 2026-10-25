@@ -1,7 +1,5 @@
 # Design principles
 
----------- [Codex] ---------
-
 - **Status:** Draft v0.4, consolidated on 2026-10-25. v7 is under owner review; approval of the sober-board concept does not mean approval of the final design or copy.
 - **Inputs:** [references.md](references.md), [rounds.md](rounds.md), [discovery brief](../discovery-brief.md), and the owner's October 23 feedback.
 - This revision reconciles Claude's v0.3 principles with the owner's direction incorporated in Codex v6/v7. Earlier decisions and feedback remain in [rounds](rounds.md) and the [decisions log](../decisions-log.md).
@@ -56,5 +54,3 @@ The sober-board concept (option B) was approved on 2026-10-22. The following ref
 - Comments on notes: cross-post and Discuss on LinkedIn remain proposed, pending the owner's decision.
 - Production bilingual Astro implementation, performance and accessibility checks after design approval. Static prototype behavior is not proof of those production requirements.
 - Final placement of the JOTA mark in favicon, loader and OG images; any future sound or scale setting.
-
--------------

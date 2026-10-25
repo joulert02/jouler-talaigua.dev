@@ -1,11 +1,6 @@
 # Portfolio v6 · design proposal
 
----------- [Codex] ---------
-
 Integration note · 2026-10-25: this proposal and its HTML, styles, scripts and assets are now included in the main repository checkout alongside Claude’s design documents. The isolation statements below describe the original October 23 implementation session. v7 is the current proposal under owner review; v5 and v6 remain historical comparisons. This import does not approve the design, verify sample content, or integrate it into the production Astro pages.
-
--------------
-
 Status: isolated local proposal for owner review. Not an approved replacement for v5.
 
 ## Baseline and isolation
@@ -55,7 +50,6 @@ Care for users, shaped by QA experience; building products and frontend architec
 - No roadmap link in the main dock; roadmap object still opens its content.
 - Existing sample content is not represented as newly verified publication.
 - Local preview only; no commit, push, deployment or publication.
-
 
 ## Local review
 

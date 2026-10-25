@@ -1,11 +1,6 @@
 # Portfolio v7 · immersive exploration
 
----------- [Codex] ---------
-
 Integration note · 2026-10-25: this proposal and its HTML, styles, scripts and assets are now included in the main repository checkout alongside Claude’s design documents. The isolation statements below describe the original October 23 implementation session. v7 is the current proposal under owner review; v5 and v6 remain historical comparisons. This import does not approve the design, verify sample content, or integrate it into the production Astro pages.
-
--------------
-
 Date: 2026-10-23. Status: local design proposal for owner review.
 
 ## Isolation and history
@@ -47,7 +42,6 @@ python3 -m http.server 4326 --bind 127.0.0.1 --directory public
 See the completion evidence added after the browser review. Physical mobile touch hardware is not available in this session; mobile layouts and pointer paths are verified in browser viewport emulation.
 
 DOM interaction references checked on 2026-10-23: [MDN wheel event](https://developer.mozilla.org/en-US/docs/Web/API/Element/wheel_event) and [MDN Pointer events](https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events). The implementation scopes gesture capture to the canvas; normal document navigation and keyboard access remain available.
-
 
 ## Completion evidence · 2026-10-23
 

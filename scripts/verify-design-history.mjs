@@ -1,4 +1,3 @@
-// ---------- [Codex] ---------
 // Check preserved prototypes without changing their sources or recorded hashes.
 import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
@@ -26,4 +25,3 @@ if (failures.length) {
 } else {
   console.log(`Original, v6 and imported v7 preserved: ${checked} hashes match.`);
 }
-// -------------
