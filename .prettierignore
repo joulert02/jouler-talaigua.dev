@@ -3,4 +3,5 @@ dist
 node_modules
 package-lock.json
 # Preserve exact historical exports and prototype snapshots.
-public/design/
+docs/design/v*/
+docs/design/index.html

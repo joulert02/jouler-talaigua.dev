@@ -3,15 +3,15 @@
   "recorded": "2026-10-25",
   "status": "Imported review snapshot; not final design approval.",
   "files": {
-    "public/design/v7/app.js": "da9b79821b8d17ed33b4e8e22dbed9837ea10a79395a22babc5e00fb288dd277",
-    "public/design/v7/assets/bancolombia-devices.png": "819aa5610d5fb6f698bec7341b528751a96fa868bc25e197cfe295ee21e151ed",
-    "public/design/v7/canvas.js": "c516a870620ff3e475de3eb838686b1fdebc32af07a5667697a4bc4d2bb577bd",
-    "public/design/v7/index.html": "0f6aa3f321d4a4561c3967601adda1385764fb93306f2cf106bb42163f8d67e4",
-    "public/design/v7/styles.css": "67c2f1feb70a2ece7740f282b1191502127e2f1277f90a8a0308959b1de4f74a",
-    "public/design/v7/work/bancolombia-micro-frontends/index.html": "6285e0a40d05257c3d8c28c999ed2ccb54fb2743d0e56bc455e3310c559ddab5",
-    "public/design/v7/work/caps-migration/index.html": "eec1e52c1b6d48154a19ca4982f965091be2d978de23c0ab4165d39479a04cf9",
-    "public/design/v7/work/favorites-gift-lists/index.html": "33f60384ae4665d9fcb1b040ccf38c6a2b1c98ee2be526c7bd7c42434703c1d6",
-    "public/design/v7/work/personal-nexus/index.html": "eaeb59d1b05b6f9b1c5e7e84966620bf3d2f5c68ed13baaa057f6e44f8bff41a",
-    "public/design/v7/work/prize-roulette/index.html": "2a9c26c6df6d916f0f727d079527a5d36fe9a43409682db43fd3fecbeee8e41f"
+    "docs/design/v7/app.js": "da9b79821b8d17ed33b4e8e22dbed9837ea10a79395a22babc5e00fb288dd277",
+    "docs/design/v7/assets/bancolombia-devices.png": "819aa5610d5fb6f698bec7341b528751a96fa868bc25e197cfe295ee21e151ed",
+    "docs/design/v7/canvas.js": "c516a870620ff3e475de3eb838686b1fdebc32af07a5667697a4bc4d2bb577bd",
+    "docs/design/v7/index.html": "0f6aa3f321d4a4561c3967601adda1385764fb93306f2cf106bb42163f8d67e4",
+    "docs/design/v7/styles.css": "67c2f1feb70a2ece7740f282b1191502127e2f1277f90a8a0308959b1de4f74a",
+    "docs/design/v7/work/bancolombia-micro-frontends/index.html": "6285e0a40d05257c3d8c28c999ed2ccb54fb2743d0e56bc455e3310c559ddab5",
+    "docs/design/v7/work/caps-migration/index.html": "eec1e52c1b6d48154a19ca4982f965091be2d978de23c0ab4165d39479a04cf9",
+    "docs/design/v7/work/favorites-gift-lists/index.html": "33f60384ae4665d9fcb1b040ccf38c6a2b1c98ee2be526c7bd7c42434703c1d6",
+    "docs/design/v7/work/personal-nexus/index.html": "eaeb59d1b05b6f9b1c5e7e84966620bf3d2f5c68ed13baaa057f6e44f8bff41a",
+    "docs/design/v7/work/prize-roulette/index.html": "2a9c26c6df6d916f0f727d079527a5d36fe9a43409682db43fd3fecbeee8e41f"
   }
 }

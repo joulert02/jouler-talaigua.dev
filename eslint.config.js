@@ -5,7 +5,7 @@ import globals from "globals";
 
 export default [
   // Historical standalone prototypes are preserved as imported review assets.
-  { ignores: ["public/design/**"] },
+  { ignores: ["docs/design/**"] },
   { ignores: ["dist/", ".astro/", "node_modules/", ".vercel/"] },
   js.configs.recommended,
   ...tseslint.configs.strict,

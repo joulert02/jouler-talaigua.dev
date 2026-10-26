@@ -1,5 +1,7 @@
 # Portfolio v7 · immersive exploration
 
+> **Location update · 2026-10-26:** the prototypes moved from `public/design/` to `docs/design/` so they never ship with the production site. Paths and commands below use the new location.
+
 Integration note · 2026-10-25: this proposal and its HTML, styles, scripts and assets are now included in the main repository checkout alongside Claude’s design documents. The isolation statements below describe the original October 23 implementation session. v7 is the current proposal under owner review; v5 and v6 remain historical comparisons. This import does not approve the design, verify sample content, or integrate it into the production Astro pages.
 Date: 2026-10-23. Status: local design proposal for owner review.
 
@@ -7,7 +9,7 @@ Date: 2026-10-23. Status: local design proposal for owner review.
 
 - The original checkout remains on `claude/design-direction`; no files there were changed.
 - Work remains in the separate managed checkout on `codex/portfolio-v6-proposal`.
-- v7 is additive under `public/design/v7/`. v6 is preserved unchanged under `public/design/v6/`; v5 retains the original supplied export.
+- v7 is additive under `docs/design/v7/`. v6 is preserved unchanged under `docs/design/v6/`; v5 retains the original supplied export.
 - Review history at `/design/`, v7 at `/design/v7/`, and v6 at `/design/v6/` on local port 4326.
 - `docs/design/history/v6.json` records SHA-256 hashes of the eight v6 source files, original export, and shared source images. Run `node scripts/verify-design-history.mjs` from this checkout to detect changes.
 - Reverting the design for review requires opening the earlier URL; it does not require resetting Git or overwriting files. No commit, push, deployment or publication is authorized or performed.
@@ -34,7 +36,7 @@ Camera translation and object movement are independent. Object drag deltas accou
 Local server:
 
 ```sh
-python3 -m http.server 4326 --bind 127.0.0.1 --directory public
+python3 -m http.server 4326 --bind 127.0.0.1 --directory docs
 ```
 
 ## Verification

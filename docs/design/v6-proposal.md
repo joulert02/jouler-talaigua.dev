@@ -1,5 +1,7 @@
 # Portfolio v6 · design proposal
 
+> **Location update · 2026-10-26:** the prototypes moved from `public/design/` to `docs/design/` so they never ship with the production site. Paths and commands below use the new location.
+
 Integration note · 2026-10-25: this proposal and its HTML, styles, scripts and assets are now included in the main repository checkout alongside Claude’s design documents. The isolation statements below describe the original October 23 implementation session. v7 is the current proposal under owner review; v5 and v6 remain historical comparisons. This import does not approve the design, verify sample content, or integrate it into the production Astro pages.
 Status: isolated local proposal for owner review. Not an approved replacement for v5.
 
@@ -9,7 +11,7 @@ Status: isolated local proposal for owner review. Not an approved replacement fo
 - Design baseline: Home v5, artifact `AGs2uSGhxJbFN1NN1cfZrr`.
 - Proposal branch: `codex/portfolio-v6-proposal`, in a separate managed checkout.
 - The current checkout and its untracked design documents must remain unchanged.
-- Source supplied by the owner: `JOTA Home v4.html`; its internal prototype label is Home v5. A byte-for-byte copy is retained under `public/design/v5/index.html`.
+- Source supplied by the owner: `JOTA Home v4.html`; its internal prototype label is Home v5. A byte-for-byte copy is retained under `docs/design/v5/index.html`.
 
 ## Intent
 
@@ -58,13 +60,13 @@ This is a static design prototype derived from the supplied HTML, kept under Ast
 Run from this checkout:
 
 ```sh
-python3 -m http.server 4326 --bind 127.0.0.1 --directory public
+python3 -m http.server 4326 --bind 127.0.0.1 --directory docs
 ```
 
 - Proposal: `http://127.0.0.1:4326/design/v6/`
 - Original: `http://127.0.0.1:4326/design/v5/`
-- Implementation: `public/design/v6/index.html`, `app.js`, `styles.css`, and the five `work/` route directories.
-- Shared photographs were extracted losslessly from the supplied HTML into `public/design/assets/`.
+- Implementation: `docs/design/v6/index.html`, `app.js`, `styles.css`, and the five `work/` route directories.
+- Shared photographs were extracted losslessly from the supplied HTML into `docs/design/assets/`.
 
 ## Verification · 2026-10-23
 

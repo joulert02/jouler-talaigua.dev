@@ -68,14 +68,14 @@ Every round is kept, never overwritten. Each entry records what was proposed, th
 
 ## Round 5 · supplied Home v5 · 2026-10-22 baseline
 
-- **Source:** Jouler supplied `JOTA Home v4.html` for [the v5 artifact](https://claude.ai/artifact/AGs2uSGhxJbFN1NN1cfZrr). The filename/title says v4; the page's internal label says Home v5. The exact export is now [local v5](../../public/design/v5/index.html).
+- **Source:** Jouler supplied `JOTA Home v4.html` for [the v5 artifact](https://claude.ai/artifact/AGs2uSGhxJbFN1NN1cfZrr). The filename/title says v4; the page's internal label says Home v5. The exact export is now [local v5](v5/index.html).
 - **Owner clarification:** visitors should infer user-focused engineering and professional fit from the projects and the portfolio itself. Do not add a stack, availability or time-zone checklist to the hero; the COL→MAD ticket and downloadable CV provide the location context he wants.
 - **Curiosity:** movement and overlap are intentional parts of discovery. The roadmap is primarily an object for interested visitors, not a main navigation priority.
 - **Narrative:** care for users and teams, the QA-to-engineering trajectory, architecture, leadership and teaching should form a coherent professional thread. Hobbies need no engineering metaphor. Project claims and note/letter examples are provisional; Jouler will supply original content.
 
 ## Round 6 · 2026-10-23 · isolated Codex proposal
 
-- **Proposed:** [local v6](../../public/design/v6/index.html), derived from v5 on a separate branch. Removed the prototype toolbar and separate JOTA header; retained JOTA inside the identity card. Added a visible Explore my desk action, kept the card in expanded exploration, removed Roadmap from the dock, and gave five cases dedicated URLs with native View Transitions. See [v6 proposal](v6-proposal.md).
+- **Proposed:** [local v6](v6/index.html), derived from v5 on a separate branch. Removed the prototype toolbar and separate JOTA header; retained JOTA inside the identity card. Added a visible Explore my desk action, kept the card in expanded exploration, removed Roadmap from the dock, and gave five cases dedicated URLs with native View Transitions. See [v6 proposal](v6-proposal.md).
 - **Hero proposal:** “I build products with care for the people using them—and the teams behind them.” It remains draft copy, not a final approved headline.
 - **Owner feedback:** the framed board and glimpse of Work beneath it diluted immersion and created competing focal points. The owner's full-screen adjustment restored the hierarchy: card first, objects second, menu third. Work/Projects should be immediately accessible from the dock; either label is understood.
 - **Work feedback:** the list, preview and Notes felt flat at the same visual weight. Use Clara's scale, spacing and section separation to make projects stand out. Smooth wheel input and a pannable board should feel more considered.
@@ -83,7 +83,7 @@ Every round is kept, never overwritten. Each entry records what was proposed, th
 
 ## Round 7 · 2026-10-23 · immersive Home and mobile exploration
 
-- **Current proposal:** [local v7](../../public/design/v7/index.html), preserving v6 unchanged. Full-screen desktop introduction; Work below the initial viewport and reachable from the dock. Work has a large heading, company labels, larger project titles, shorter metadata and a substantial preview; Notes has a separate, quieter entrance.
+- **Current proposal:** [local v7](v7/index.html), preserving v6 unchanged. Full-screen desktop introduction; Work below the initial viewport and reachable from the dock. Work has a large heading, company labels, larger project titles, shorter metadata and a substantial preview; Notes has a separate, quieter entrance.
 - **Mobile direction from the owner:** show the identity card first. More about me opens the immersive desk rather than the letter. Curious visitors can pan, move objects, and discover the letter, roadmap and personal interests there.
 - **Desk:** background drag pans the camera; object drag moves the object; wheel/trackpad pan, with zoom, overview and recenter controls. The identity card remains present. Mobile exploration omits its repeated career list; Home retains the full list.
 - **Reading:** letter and roadmap appear over the desk. Back to desk keeps the camera position. Closing exploration restores focus to its launcher.
@@ -101,5 +101,5 @@ Every round is kept, never overwritten. Each entry records what was proposed, th
 
 - **Owner direction:** remove the extra desktop fullscreen step. Test wheel/trackpad and pointer panning directly in Home, with Work always available to release page scrolling and reach projects. The owner prefers testing this option despite the risk that some visitors expect scrolling to reveal the next section.
 - **Mobile direction:** More about me transitions to a compact name/role card; allow camera dragging from that card, remove the internal header strip and use the area above/below it for nearby personal objects.
-- **Implementation:** [local v8](../../public/design/v8/index.html) uses one shared world inline on desktop and inside a mobile-only dialog. v7 sources remain unchanged. Letter/roadmap stay in reading panels; dedicated case URLs remain available.
+- **Implementation:** [local v8](v8/index.html) uses one shared world inline on desktop and inside a mobile-only dialog. v7 sources remain unchanged. Letter/roadmap stay in reading panels; dedicated case URLs remain available.
 - **Review status:** Jouler tested the prototype, accepted these interaction changes and requested a commit on 2026-10-25. Final copy and production integration remain pending. [Scope and verification](v8-proposal.md). The nine project-content drafts remain separate and pending owner review.

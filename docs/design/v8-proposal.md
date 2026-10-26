@@ -1,5 +1,7 @@
 # Portfolio v8 — direct board exploration
 
+> **Location update · 2026-10-26:** the prototypes moved from `public/design/` to `docs/design/` so they never ship with the production site. Paths and commands below use the new location.
+
 **Date:** 2026-10-25. **Status:** interaction changes tested and accepted by Jouler; final copy and production integration pending. **Branch:** claude/design-direction.
 
 ## Scope
@@ -30,7 +32,7 @@ Jouler chose to test direct exploration from Home with scroll captured inside th
 
 ## Implementation
 
-Static HTML/CSS/JavaScript under public/design/v8; no package installation or production Astro-route changes.
+Static HTML/CSS/JavaScript under docs/design/v8; no package installation or production Astro-route changes.
 
 - experience.js owns one shared world/camera, responsive mounting, object interaction, reading panels and the desktop page-scroll boundary.
 - canvas.js retains camera and page-wheel behavior. Input gating prevents the camera and the scrolling page from consuming the same wheel action.

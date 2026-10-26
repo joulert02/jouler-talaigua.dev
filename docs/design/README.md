@@ -16,21 +16,21 @@ The repository's HTML is now the review source. Existing Claude artifact links r
 
 ## Local versions
 
-| Version | Repository source                                  | Role                                                                                                              | Attribution                               |
-| ------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| v5      | [Original HTML](../../public/design/v5/index.html) | Owner-supplied baseline; exact export, filename said v4 but page labels itself v5                                 | Claude / owner                            |
-| v6      | [HTML](../../public/design/v6/index.html)          | First proposal: integrated JOTA signature, retained identity card in exploration, dedicated case URLs             | Codex, derived from v5 and owner feedback |
-| v7      | [HTML](../../public/design/v7/index.html)          | Previous: immersive Home, card-first mobile, pannable desk and stronger Work hierarchy                            | Codex, derived from v6 and owner feedback |
-| v8      | [HTML](../../public/design/v8/index.html)          | Current experiment: scroll/pan directly in desktop Home; Work releases page scrolling; compact mobile exploration | Derived from v7 and owner feedback        |
+| Version | Repository source              | Role                                                                                                              | Attribution                               |
+| ------- | ------------------------------ | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| v5      | [Original HTML](v5/index.html) | Owner-supplied baseline; exact export, filename said v4 but page labels itself v5                                 | Claude / owner                            |
+| v6      | [HTML](v6/index.html)          | First proposal: integrated JOTA signature, retained identity card in exploration, dedicated case URLs             | Codex, derived from v5 and owner feedback |
+| v7      | [HTML](v7/index.html)          | Previous: immersive Home, card-first mobile, pannable desk and stronger Work hierarchy                            | Codex, derived from v6 and owner feedback |
+| v8      | [HTML](v8/index.html)          | Current experiment: scroll/pan directly in desktop Home; Work releases page scrolling; compact mobile exploration | Derived from v7 and owner feedback        |
 
-The complete HTML, CSS, JavaScript and required local assets are included. Shared source photographs live in `public/design/assets/`; v7 also owns its Bancolombia preview asset.
+The complete HTML, CSS, JavaScript and required local assets are included. Shared source photographs live in `docs/design/assets/`; v7 also owns its Bancolombia preview asset.
 
 ## Review locally
 
 From the repository root:
 
 ```sh
-python3 -m http.server 4326 --bind 0.0.0.0 --directory public
+python3 -m http.server 4326 --bind 0.0.0.0 --directory docs
 ```
 
 Use another port if 4326 is already occupied by the existing review server.
@@ -40,7 +40,7 @@ Use another port if 4326 is already occupied by the existing review server.
 - Current experiment uses a second server on 4327: [http://127.0.0.1:4327/design/v8/](http://127.0.0.1:4327/design/v8/). If serving all files on 4326 instead, use /design/v8/ on that server.
 - On a phone on the same Wi-Fi, replace `127.0.0.1` with the Mac's current LAN address. On this Mac, `ipconfig getifaddr en0` reports the Wi-Fi address. Keep the terminal open and the Mac awake; Ctrl+C stops the server.
 
-These prototypes can also be served from Astro's `public/` directory, but do not implement the final bilingual Astro views. Sample cases, notes, dates and roadmap milestones remain provisional; preserve `TODO(verify)` and obtain owner-authored content before publication.
+The prototypes live in `docs/design/`, outside Astro's `public/`, so they are never deployed. They do not implement the final bilingual Astro views. Sample cases, notes, dates and roadmap milestones remain provisional; preserve `TODO(verify)` and obtain owner-authored content before publication.
 
 ## Preservation and scope
 
@@ -48,7 +48,7 @@ Run `node scripts/verify-design-history.mjs` to check the original/v6 hashes, th
 
 Only the design prototypes, their assets, proposal records, history checker and necessary documentation were imported. GoodRx output, unrelated dependency/lockfile changes and agent configuration were excluded. No commit, push or deployment is part of this integration.
 
-Formatting and linting exclude `public/design/` so repository-wide maintenance does not rewrite frozen prototypes or treat imported browser scripts as production source. The history checker remains outside that exclusion.
+Formatting and linting exclude `docs/design/` so repository-wide maintenance does not rewrite frozen prototypes or treat imported browser scripts as production source. The history checker remains outside that exclusion.
 
 ## Integration verification · 2026-10-25
 

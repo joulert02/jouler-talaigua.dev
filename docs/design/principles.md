@@ -38,14 +38,14 @@ The sober-board concept (option B) was approved on 2026-10-22. The following ref
 
 ## Tokens decided so far
 
-| Token | Value |
-| --- | --- |
-| Accent | Vivid violet. Fill `#6E44F0`, text `#5A31D9`, dark mode `#A58BFF`, text on fill `#FFFFFF` |
-| Typeface | Onest (400/500/600); labels in Geist Mono |
-| Neutral | Cool: bg `#F6F7F9`, surface `#FFFFFF`, ink `#141517`, muted `#5F656E`, line `#E1E4E8`. Dark: bg `#131417`, surface `#1C1E22`, ink `#EEF0F3` |
+| Token                   | Value                                                                                                                                                                                                                                                                                 |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Accent                  | Vivid violet. Fill `#6E44F0`, text `#5A31D9`, dark mode `#A58BFF`, text on fill `#FFFFFF`                                                                                                                                                                                             |
+| Typeface                | Onest (400/500/600); labels in Geist Mono                                                                                                                                                                                                                                             |
+| Neutral                 | Cool: bg `#F6F7F9`, surface `#FFFFFF`, ink `#141517`, muted `#5F656E`, line `#E1E4E8`. Dark: bg `#131417`, surface `#1C1E22`, ink `#EEF0F3`                                                                                                                                           |
 | Original scale baseline | Compact (display 36, title 26, lead 20, body 17, small 14.5, label 11.5). v7 tests a larger editorial Work heading; section-specific hierarchy and physical-device legibility remain under review. The prototype scale toolbar is removed; a visitor scale setting is not part of v7. |
-| Selection | Accent text on a soft accent background (Clara style) |
-| Proposed hero | “I build products with care for the people using them—and the teams behind them.” Draft for owner review; replaces the earlier unverified project claim in this proposal only. |
+| Selection               | Accent text on a soft accent background (Clara style)                                                                                                                                                                                                                                 |
+| Proposed hero           | “I build products with care for the people using them—and the teams behind them.” Draft for owner review; replaces the earlier unverified project claim in this proposal only.                                                                                                        |
 
 ## Still pending
 
