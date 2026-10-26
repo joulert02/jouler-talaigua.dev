@@ -18,27 +18,30 @@ Choose only the images that explain the approved story. Create clean, clearly na
 
 ## Bancolombia
 
-| Local file                   | Dimensions  | Candidate use / review note                                                                                                    |
-| ---------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `Bancolombia/IMG_4339.jpeg`  | 4032 × 3024 | Outdoor team photo. Optional human context; confirm selection and permission before publication.                               |
-| `Bancolombia/IMG_9476.jpeg`  | 4032 × 3024 | Indoor team photo. Optional context; does not establish exact project dates or roles.                                          |
-| `Bancolombia/equipo.jpeg`    | 3066 × 1627 | Team meeting photo with remote participants on screen. Optional; confirm whether it should be used.                            |
-| `Bancolombia/login-svp.jpeg` | 1280 × 776  | Public login reference. Strong opening-image candidate; confirm that it represents the relevant product phase.                 |
-| `Bancolombia/svp-loged.png`  | 3356 × 1984 | Authenticated product overview. Contains personal/account context; use a clean derivative, not the original, on the portfolio. |
+| Local file                                       | Dimensions  | Candidate use / review note                                                                                                                 |
+| ------------------------------------------------ | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Bancolombia/IMG_4339.jpeg`                      | 4032 × 3024 | Outdoor team photo. Optional human context; confirm selection and permission before publication.                                            |
+| `Bancolombia/IMG_9476.jpeg`                      | 4032 × 3024 | Indoor team photo. Optional context; does not establish exact project dates or roles.                                                       |
+| `Bancolombia/equipo.jpeg`                        | 3066 × 1627 | Team meeting photo with remote participants on screen. Optional; confirm whether it should be used.                                         |
+| `Bancolombia/login-svp.jpeg`                     | 1280 × 776  | Public login reference. Strong opening-image candidate; confirm that it represents the relevant product phase.                              |
+| `Bancolombia/svp-loged.png`                      | 3356 × 1984 | Authenticated product overview. Contains personal/account context; use a clean derivative, not the original, on the portfolio.              |
+| `Bancolombia/clean/bancolombia-svp-home-top.png` | 3356 × 645  | Clean derivative (2026-10-26): header, greeting and most-used transactions; full name removed. Overdue-credit banner and accounts excluded. |
+| `Bancolombia/clean/bancolombia-svp-products.png` | 2724 × 774  | Clean derivative (2026-10-26): products list with account and card numbers blurred; balances were already masked.                           |
 
 ## Mercado Libre
 
-| Local file                                    | Dimensions  | Candidate use / review note                                                                                                                      |
-| --------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `Mercado Libre/equipo.jpeg`                   | 4032 × 3024 | Team/event photo strip. Optional closing image after owner selection and permission review.                                                      |
-| `Mercado Libre/equipo2.jpeg`                  | 4032 × 3024 | Team photo at an office. Optional context; not evidence of a product decision or result.                                                         |
-| `Mercado Libre/listas-home.png`               | 3360 × 1982 | Desktop Favorites view. Candidate to introduce saved products; clean personal/delivery context before use.                                       |
-| `Mercado Libre/lsitas-home.png`               | 790 × 1710  | Mobile Favorites reference. Preserve the supplied filename; avoid treating capture time as project date.                                         |
-| `Mercado Libre/lsitas-listas.png`             | 3364 × 1978 | Desktop list collections with an open menu. Strong gallery candidate; clean personal/delivery context first.                                     |
-| `Mercado Libre/producto-lista-mobile.png`     | 796 × 1706  | Mobile add-to-list interaction. Good counterpart to the desktop flow; review background/account details before use.                              |
-| `Mercado Libre/producto-lista.png`            | 3352 × 1976 | Desktop add-to-list interaction. Good flow image; clean personal/delivery context before use.                                                    |
-| `Mercado Libre/favoritos-legacy.png`          | 1512 × 982  | Legacy Favorites page (before). Sample user and address; usable as the "before" state. Added 2026-10-25.                                         |
-| `Mercado Libre/producto-favorito-corazon.png` | 3074 × 2140 | Heart on the product page (before). Shows Jouler's real name and delivery address: crop to the heart area or clean before use. Added 2026-10-25. |
+| Local file                                            | Dimensions  | Candidate use / review note                                                                                                                      |
+| ----------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Mercado Libre/equipo.jpeg`                           | 4032 × 3024 | Team/event photo strip. Optional closing image after owner selection and permission review.                                                      |
+| `Mercado Libre/equipo2.jpeg`                          | 4032 × 3024 | Team photo at an office. Optional context; not evidence of a product decision or result.                                                         |
+| `Mercado Libre/listas-home.png`                       | 3360 × 1982 | Desktop Favorites view. Candidate to introduce saved products; clean personal/delivery context before use.                                       |
+| `Mercado Libre/lsitas-home.png`                       | 790 × 1710  | Mobile Favorites reference. Preserve the supplied filename; avoid treating capture time as project date.                                         |
+| `Mercado Libre/lsitas-listas.png`                     | 3364 × 1978 | Desktop list collections with an open menu. Strong gallery candidate; clean personal/delivery context first.                                     |
+| `Mercado Libre/producto-lista-mobile.png`             | 796 × 1706  | Mobile add-to-list interaction. Good counterpart to the desktop flow; review background/account details before use.                              |
+| `Mercado Libre/producto-lista.png`                    | 3352 × 1976 | Desktop add-to-list interaction. Good flow image; clean personal/delivery context before use.                                                    |
+| `Mercado Libre/favoritos-legacy.png`                  | 1512 × 982  | Legacy Favorites page (before). Sample user and address; usable as the "before" state. Added 2026-10-25.                                         |
+| `Mercado Libre/producto-favorito-corazon.png`         | 3074 × 2140 | Heart on the product page (before). Shows Jouler's real name and delivery address: crop to the heart area or clean before use. Added 2026-10-25. |
+| `Mercado Libre/clean/meli-product-favorite-heart.png` | 2370 × 1470 | Clean derivative (2026-10-26): product card with the heart; header with name and address cropped out.                                            |
 
 ## Nosotras
 
