@@ -1,6 +1,6 @@
 # GoodRx — Datadog to groundcover
 
-**Content status:** complete from the owner interview, pending one confirmation and Jouler's final read · 2026-10-25. **Page format:** tier 1 engineering case, led by the observability migration, with a short cards note. **Proposed route:** /work/goodrx-observability/ (not implemented here). Earlier drafts are in Git history (see [README](README.md#history)).
+**Content status:** approved for design · 2026-10-26. **Page format:** tier 1 engineering case, led by the observability migration, with a short cards note. **Proposed route:** /work/goodrx-observability/ (not implemented here). Earlier drafts are in Git history (see [README](README.md#history)).
 
 ## Evidence and boundaries
 
@@ -76,13 +76,13 @@ The home page showed health content through three different card components that
 
 ## Assets
 
-New supplied images in `Porfolio resources/GoodRx/`: Cards-redesign.png (the cards), goodRx-home.png and GoodRx-home-mobile.png (public product context). TODO(verify) add them to the asset ledger with dimensions and review notes. Observability dashboards are internal: illustrate them instead of using captures.
+New supplied images in `Porfolio resources/GoodRx/`: Cards-redesign.png (the cards), goodRx-home.png and GoodRx-home-mobile.png (public product context). See the [GoodRx asset group](assets.md#goodrx). Observability dashboards are internal: illustrate them instead of using captures.
 
 ## Owner review
 
 - 2026-10-25: interview complete. Privacy wording confirmed: company policy, not a legal claim.
 - Confirmed: the team described in the learning is GoodRx's engineering team; the visual testing tool was Chromatic.
-- Final read of the copy pending.
+- 2026-10-26 final read: no changes. **Approved for design.**
 
 ## Sources
 

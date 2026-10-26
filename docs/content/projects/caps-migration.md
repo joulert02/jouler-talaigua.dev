@@ -1,6 +1,6 @@
 # Cast & Crew — CAPS+
 
-**Content status:** complete from the owner interview, pending Jouler's final read · 2026-10-25. **Page format:** tier 3 short status page with an interactive "under construction" piece. **Proposed route:** /work/caps-plus/ (not implemented here). Earlier drafts are in Git history (see [README](README.md#history)).
+**Content status:** approved for design · 2026-10-26. **Page format:** tier 3 short status page with an interactive "under construction" piece. **Proposed route:** /work/caps-plus/ (not implemented here). Earlier drafts are in Git history (see [README](README.md#history)).
 
 ## Evidence and boundaries
 
@@ -45,7 +45,7 @@ None needed. No Cast & Crew screens are used.
 
 ## Owner review
 
-- Read the copy.
+- 2026-10-26 final read: no changes. **Approved for design.**
 
 ## Sources
 

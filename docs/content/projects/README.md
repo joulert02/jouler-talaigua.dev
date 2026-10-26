@@ -6,14 +6,14 @@
 
 Agreed with Jouler on 2026-10-25. Deep cases show three different facets (product, architecture and teams, platform/observability); the brand work is one showcase; current work gets short status pages.
 
-| Tier          | Page                                                                                | Format                                    | Status                                    |
-| ------------- | ----------------------------------------------------------------------------------- | ----------------------------------------- | ----------------------------------------- |
-| 1 · Full case | [Mercado Libre — Lists & Gift Registry](mercado-libre-favorites-gift-lists.md)      | Product and engineering case              | Approved; clean image derivatives pending |
-| 1 · Full case | [Bancolombia — Sucursal Virtual Personas](bancolombia-sucursal-virtual-personas.md) | Architecture and team enablement          | Pending Jouler's final read               |
-| 1 · Full case | [GoodRx — Datadog to groundcover](goodrx-groundcover-migration-redesign.md)         | Observability migration; short cards note | Pending Jouler's final read               |
-| 2 · Showcase  | [Brand platforms at PRAGMA](pragma-brand-platforms.md)                              | One page, four live previews              | Pending XD exports and final read         |
-| 3 · Status    | [Cast & Crew — CAPS+ migration](caps-migration.md)                                  | Short "Under construction" page           | Pending Jouler's final read               |
-| 3 · Status    | [EKOU Personal Nexus](ekou-personal-nexus.md)                                       | Short "In progress" page                  | Deferred to a later iteration             |
+| Tier          | Page                                                                                | Format                                    | Status                                       |
+| ------------- | ----------------------------------------------------------------------------------- | ----------------------------------------- | -------------------------------------------- |
+| 1 · Full case | [Mercado Libre — Lists & Gift Registry](mercado-libre-favorites-gift-lists.md)      | Product and engineering case              | Approved for design                          |
+| 1 · Full case | [Bancolombia — Sucursal Virtual Personas](bancolombia-sucursal-virtual-personas.md) | Architecture and team enablement          | Approved; team photo permission pending      |
+| 1 · Full case | [GoodRx — Datadog to groundcover](goodrx-groundcover-migration-redesign.md)         | Observability migration; short cards note | Approved for design                          |
+| 2 · Showcase  | [Brand platforms at PRAGMA](pragma-brand-platforms.md)                              | One page, four live previews              | Copy approved; Personajes XD exports pending |
+| 3 · Status    | [Cast & Crew — CAPS+ migration](caps-migration.md)                                  | Short "Under construction" page           | Approved for design                          |
+| 3 · Status    | [EKOU Personal Nexus](ekou-personal-nexus.md)                                       | Short "In progress" page                  | Deferred to a later iteration                |
 
 ## Decisions on 2026-10-25
 
@@ -62,7 +62,7 @@ Original images stay in the owner's local assets folder, outside the repository;
 
 ## Next step
 
-After Jouler's final read, the project screens are designed as a new prototype version in `docs/design/`, preserving earlier ones. Translation to Spanish and the Astro content collections come after that.
+With the copy approved (2026-10-26), the project screens are designed as a new prototype version in `docs/design/`, preserving earlier ones. Translation to Spanish and the Astro content collections come after that.
 
 ## History
 

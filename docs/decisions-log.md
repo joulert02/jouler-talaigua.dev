@@ -2,6 +2,7 @@
 
 One line per decision, newest first. Details live in the linked document.
 
+- **2026-10-26:** Project copy approved for design: Mercado Libre, Bancolombia, GoodRx, CAPS+ and the PRAGMA brand platforms (Personajes assets pending). The Bancolombia team photo is designed in now; permission is requested before publication by showing the built page. v9 (project screens) is built by Claude and reviewed by Codex. See [project content](content/projects/README.md).
 - **2026-10-25 · interaction accepted:** Jouler tested v8, accepted the interaction changes and requested a commit. Desktop Home captures scroll/pan, with Work restoring normal page scrolling. Mobile exploration uses an animated compact card and floating Close. The earlier v7 behavior remains available for comparison; final copy and production integration remain pending. See [v8 proposal](design/v8-proposal.md).
 
 - **2026-10-25:** Project content: six pages in three tiers. Full cases for Mercado Libre (Favorites & Gift Lists), Bancolombia and GoodRx; one brand-platforms showcase (Nosotras Online, Personajes NOL, TENA, Petys); short status pages for CAPS+ and Personal Nexus. The prize roulette is dropped. See [project content](content/projects/README.md).

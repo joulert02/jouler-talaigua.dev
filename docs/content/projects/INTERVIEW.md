@@ -15,10 +15,10 @@ Rules: no invented metrics, decisions or results. If something can't be shared (
 ## Order
 
 1. Mercado Libre — Lists & Gift Registry · **approved 2026-10-25**
-2. Bancolombia — Sucursal Virtual Personas · **complete 2026-10-25, pending final read**
-3. GoodRx — Datadog to groundcover · **complete 2026-10-25, pending final read**
-4. Brand platforms at PRAGMA · **complete 2026-10-25, pending exported assets and final read**
-5. CAPS+ (short status page) · **complete 2026-10-25**
+2. Bancolombia — Sucursal Virtual Personas · **approved 2026-10-26**
+3. GoodRx — Datadog to groundcover · **approved 2026-10-26**
+4. Brand platforms at PRAGMA · **copy approved 2026-10-26; XD exports pending**
+5. CAPS+ (short status page) · **approved 2026-10-26**
 6. EKOU Personal Nexus · **deferred by Jouler to a later iteration (2026-10-25)**
 
 Answers live in each case file; the question sets for completed cases were removed with the drafts (see [README](README.md#history)).

@@ -1,6 +1,6 @@
 # Brand platforms at PRAGMA — Nosotras, TENA, Petys
 
-**Content status:** written from the owner interview, ready for Jouler's review · 2026-10-25. **Page format:** tier 2 showcase with live previews, and the start of Jouler's QA-to-engineer story. **Proposed route:** /work/brand-platforms/ (not implemented here). Earlier drafts are in Git history (see [README](README.md#history)).
+**Content status:** copy approved; Personajes XD exports pending · 2026-10-26. **Page format:** tier 2 showcase with live previews, and the start of Jouler's QA-to-engineer story. **Proposed route:** /work/brand-platforms/ (not implemented here). Earlier drafts are in Git history (see [README](README.md#history)).
 
 ## Evidence and boundaries
 
@@ -57,7 +57,7 @@ I also built the brand's campaign games, usually one a month. Each lived on its 
 2. **Three project blocks**, each with a live preview tile (cached capture → View Transition → live site when embeddable, plus "Open site ↗"):
    - Petys: an architecture diagram (Contentful → GraphQL → Gatsby → S3 + CloudFront, Jenkins).
    - TENA: Academy and registration captures.
-   - Nosotras: the rebrand as a before/after palette (pink → pink + deep blue), and the games.
+   - Nosotras: the current site and the games. No pre-rebrand captures exist, so the rebrand is told in text only.
 3. **The games: an interactive replica, not screenshots.** Rebuild the Personajes home interaction as a live demo: clicking a character rotates the cast while the background and colors change. Built from the designer's Adobe XD files (motion and layout reference) and, if available and permitted, the original exported character art. If the original art cannot be used, the same motion with neutral placeholder shapes still shows the work. Below the demo, all credit goes to the brand, with a link to Nosotras Online (see Owner review).
 4. **Close:** learning and next project.
 
@@ -68,11 +68,11 @@ See the [Nosotras](assets.md#nosotras), [TENA](assets.md#tena) and [Petys](asset
 - https://xd.adobe.com/view/72a53d98-cc03-44e1-8478-28797f23f6f4-27f6/
 - https://xd.adobe.com/view/d9025fb7-e17a-4840-b627-9a23ffb3cabe-8c51/
 
-TODO(verify) captures of TENA's Academy and the new registration, and of Nosotras before the rebrand, if available.
+TENA Academy and registration captures supplied 2026-10-26 (see the [TENA asset group](assets.md#tena)). No captures of Nosotras before the rebrand exist.
 
 ## Owner review
 
-- Read the copy and correct anything inaccurate.
+- 2026-10-26 final read: copy approved. Nosotras is shown with the current site and the game only; TENA captures supplied.
 - Petys URL confirmed: petys.com.
 - Personajes replica, decided 2026-10-25: Jouler exports the original assets from Adobe XD; we rebuild the home interaction as a demo. Below it, all credit goes to the brand: "Characters and artwork belong to Nosotras. I took part in building this experience." with a link to nosotrasonline.com.co. No ownership claim. TODO(verify) the exported assets.
 

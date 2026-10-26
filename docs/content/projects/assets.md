@@ -7,10 +7,10 @@ Original files stay in the owner's local assets folder, outside the repository. 
 ## Missing material
 
 - **CAPS+:** no supplied images. The construction page can be typographic and concise.
-- **GoodRx:** no supplied images. Add one cards-redesign reference after Jouler selects it; explain the migration with confirmed scope rather than a generic product-home capture.
 - **Personal Nexus:** no supplied images. Add an actual wireframe/prototype/product flow using demo data once the current state is confirmed.
 - **Personajes NOL:** entry screens are present; gameplay evidence is missing.
-- **Nosotras Online:** desktop portal home is present; no matching mobile portal home was supplied.
+- **Nosotras Online:** desktop portal home is present; no mobile home and no pre-rebrand captures (none exist).
+- **Personajes NOL:** Adobe XD exports pending (`Nosotras/personajes-nol/desk` and `mobile` are empty).
 
 ## Preparation for a later design iteration
 
@@ -57,6 +57,23 @@ Choose only the images that explain the approved story. Create clean, clearly na
 | ---------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------- |
 | `Tena/home-mobile.png` | 786 × 1704  | Mobile home reference. Different campaign banner from desktop; use as viewport context, not a redesign comparison.                 |
 | `Tena/home.png`        | 3344 × 1976 | Desktop care/product home reference. Strong opening candidate; confirm which modules and product phase relate to the contribution. |
+
+| `Tena/registro-01.png` | 3344 × 1976 | New registration, step 1: choose user type (user, buyer, caregiver, institution). Public page, no personal data. |
+| `Tena/registro-02.png` | 3344 × 1976 | New registration, step 2: empty form with consent. Public page, no personal data. |
+| `Tena/academia-01.png` | 3344 × 1976 | Academy landing with filters by category, format and audience. |
+| `Tena/academia-02.png` | 3344 × 1976 | Academy listing. |
+| `Tena/academia-article.png` | 3344 × 1976 | Academy article format. |
+| `Tena/academia-live.png` | 3344 × 1976 | Academy "live" video format; shows how each content type gets its own layout. |
+
+## GoodRx
+
+| Local file                      | Dimensions  | Candidate use / review note                                                                     |
+| ------------------------------- | ----------- | ----------------------------------------------------------------------------------------------- |
+| `GoodRx/Cards-redesign.png`     | 3354 × 1676 | The redesigned content cards (one component replacing three). Caption image for the cards note. |
+| `GoodRx/goodRx-home.png`        | 3344 × 1976 | Public product context.                                                                         |
+| `GoodRx/GoodRx-home-mobile.png` | 786 × 1704  | Public product context, mobile.                                                                 |
+
+Observability dashboards are internal; illustrate them instead.
 
 ## Petys
 

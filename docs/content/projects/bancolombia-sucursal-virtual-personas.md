@@ -1,6 +1,6 @@
 # Bancolombia — Sucursal Virtual Personas
 
-**Content status:** complete from the owner interview, pending Jouler's final read · 2026-10-25. **Page format:** tier 1 architecture and team case. **Proposed route:** /work/bancolombia-svp/ (not implemented here). Earlier drafts are in Git history (see [README](README.md#history)).
+**Content status:** approved for design; team photo permission pending · 2026-10-26. **Page format:** tier 1 architecture and team case. **Proposed route:** /work/bancolombia-svp/ (not implemented here). Earlier drafts are in Git history (see [README](README.md#history)).
 
 ## Evidence and boundaries
 
@@ -69,8 +69,8 @@ Sucursal Virtual Personas later launched with the wider team, many of whom conti
 
 1. **Opening:** headline, two paragraphs, role and stack beside the public login screen.
 2. **Starting from zero → architecture:** a short timeline from "one engineer, no repository" to "20 people, five squads".
-3. **The decision:** the strongest visual. A two-state diagram: the usual shell that knows every micro frontend vs. the shell that reads a runtime configuration and loads micro frontends on demand. Possibly interactive: "deploy" a micro frontend and watch the shell stay untouched.
-4. **Team:** five squads around a cross-cutting lead, as a simple diagram. Optional team photo with permission.
+3. **The decision:** the strongest visual. A two-state diagram: the usual shell that knows every micro frontend vs. the shell that reads a runtime configuration and loads micro frontends on demand. Interactive (approved 2026-10-26): "deploy" a micro frontend and watch the shell stay untouched.
+4. **Team:** five squads around a cross-cutting lead, as a simple diagram. Team photo included in the design (decided 2026-10-26). Permission is requested before publication, showing the team the actual page, not just a description.
 5. **Close:** the product today (approved capture and link to the launch post), the learning, next project.
 
 ## Assets
@@ -80,7 +80,9 @@ See [the Bancolombia asset group](assets.md#bancolombia). login-svp.jpeg is the 
 ## Owner review
 
 - 2026-10-25: Jouler answered all interview questions. No dates are shown on the page by his decision; the role is Master Frontend Developer (May–October 2023 on LinkedIn, when he left PRAGMA).
-- Final read of the copy pending.
+- 2026-10-26 final read: copy approved. Interactive deploy diagram approved (plan item 3); team photo goes into the design now; Jouler requests permission before publication by showing the people in it the built page (item 4); closing approved (item 5).
+- TODO(verify) written permission from everyone in the team photo before publication; the design uses a candidate photo until then.
+- **Approved for design.**
 
 ## Sources
 

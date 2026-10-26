@@ -1,6 +1,6 @@
 # Mercado Libre — Lists & Gift Registry
 
-**Content status:** approved by Jouler on 2026-10-25, pending clean image derivatives · 2026-10-25. **Page format:** tier 1 product and engineering case. **Proposed route:** /work/mercado-libre-lists/ (not implemented here). Earlier drafts are in Git history (see [README](README.md#history)).
+**Content status:** approved for design · 2026-10-26. **Page format:** tier 1 product and engineering case. **Proposed route:** /work/mercado-libre-lists/ (not implemented here). Earlier drafts are in Git history (see [README](README.md#history)).
 
 ## Evidence and boundaries
 
@@ -22,13 +22,13 @@
 
 **Headline:** Lists people come back to, on the web and in the app.
 
-For a year and eight months I was one of two senior engineers on Mercado Libre's Home & Search team, which owns search, the home page, product pages and lists.
+For a year and eight months I worked on Mercado Libre's Home & Search team, which owns search, the home page, product pages and lists. In the squad that built lists, eight to ten people, I was one of two senior engineers.
 
 My main project was replacing the old favorites with a new lists experience: personal lists for things you want to buy later, and gift lists people can name however they like, from a wedding to a birthday. Along the way I took on two problems the team had lived with for a while: tests nobody trusted and navigation that lost people inside the app.
 
 **Role:** Senior Software Engineer · Full-stack · Home & Search  
 **Period:** October 2023 – May 2025  
-**Technology:** React · Express SSR · Backend for Frontend · WebDriverIO · BDD with Gherkin
+**Technology:** React · Node.js (BFF and SSR) · E2E testing with WebDriverIO and BDD · Observability with Datadog and New Relic
 
 ### From a heart icon to lists people organize
 
@@ -76,6 +76,8 @@ See [the Mercado Libre asset group](assets.md#mercado-libre). Candidates: lsitas
 - Read the copy and correct anything that doesn't sound like you or isn't accurate.
 - Confirmed on 2026-10-25: the copy is accurate; "one of two senior engineers" and "millions of users" can be published; gift lists are free-named, with default occasions.
 - Legacy captures supplied on 2026-10-25.
+- 2026-10-26 final read: the "two senior engineers" line now refers to the lists squad (8–10 people), not the whole Home & Search team, which had other seniors in other squads. Observability (Datadog, New Relic) added to the stack line only; no observability story is claimed in the copy. Jouler confirmed (2026-10-26): the team ran observability rotations with OpsGenie alerts, but the GoodRx case already carries the observability story, so this case does not repeat it.
+- **Approved for design.** Clean derivative of the heart capture: `Mercado Libre/clean/meli-product-favorite-heart.png`.
 
 ## Sources
 
