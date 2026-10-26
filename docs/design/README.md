@@ -10,17 +10,18 @@ Consolidated on 2026-10-25 from the design-direction documents and local prototy
 - [References](references.md): the design references and what we take from them.
 - [v6 proposal](v6-proposal.md) and [v7 proposal](v7-proposal.md): implementation scope and historical verification evidence.
 - [v8 proposal](v8-proposal.md): direct desktop exploration and compact mobile exploration, including the explicit desktop scroll-capture trade-off.
+- [Project content review](../content/projects/README.md): tentative copy and screen content plans for the six project pages, with sources and an image inventory. Owner review comes before the next project-screen design iteration.
 
 The repository's HTML is now the review source. Existing Claude artifact links remain as provenance for earlier rounds; do not use an artifact as a competing current version. Exports for rounds 1–4 have not been supplied, so those rounds retain their recorded links rather than reconstructed HTML.
 
 ## Local versions
 
-| Version | Repository source | Role | Attribution |
-| --- | --- | --- | --- |
-| v5 | [Original HTML](../../public/design/v5/index.html) | Owner-supplied baseline; exact export, filename said v4 but page labels itself v5 | Claude / owner |
-| v6 | [HTML](../../public/design/v6/index.html) | First proposal: integrated JOTA signature, retained identity card in exploration, dedicated case URLs | Codex, derived from v5 and owner feedback |
-| v7 | [HTML](../../public/design/v7/index.html) | Previous: immersive Home, card-first mobile, pannable desk and stronger Work hierarchy | Codex, derived from v6 and owner feedback |
-| v8 | [HTML](../../public/design/v8/index.html) | Current experiment: scroll/pan directly in desktop Home; Work releases page scrolling; compact mobile exploration | Derived from v7 and owner feedback |
+| Version | Repository source                                  | Role                                                                                                              | Attribution                               |
+| ------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| v5      | [Original HTML](../../public/design/v5/index.html) | Owner-supplied baseline; exact export, filename said v4 but page labels itself v5                                 | Claude / owner                            |
+| v6      | [HTML](../../public/design/v6/index.html)          | First proposal: integrated JOTA signature, retained identity card in exploration, dedicated case URLs             | Codex, derived from v5 and owner feedback |
+| v7      | [HTML](../../public/design/v7/index.html)          | Previous: immersive Home, card-first mobile, pannable desk and stronger Work hierarchy                            | Codex, derived from v6 and owner feedback |
+| v8      | [HTML](../../public/design/v8/index.html)          | Current experiment: scroll/pan directly in desktop Home; Work releases page scrolling; compact mobile exploration | Derived from v7 and owner feedback        |
 
 The complete HTML, CSS, JavaScript and required local assets are included. Shared source photographs live in `public/design/assets/`; v7 also owns its Bancolombia preview asset.
 
