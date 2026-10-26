@@ -7,3 +7,6 @@ dist/
 !.env.example
 .DS_Store
 *.log
+
+# Local tool output (e.g. Playwright captures)
+output/

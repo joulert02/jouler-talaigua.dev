@@ -1,6 +1,6 @@
 # GoodRx — Datadog to groundcover
 
-**Content status:** complete from the owner interview, pending one confirmation and Jouler's final read · 2026-10-25. **Page format:** tier 1 engineering case, led by the observability migration, with a short cards note. **Proposed route:** /work/goodrx-observability/ (not implemented here). The pre-interview draft is in [archive/](archive/goodrx-groundcover-migration-redesign.pre-interview.md).
+**Content status:** complete from the owner interview, pending one confirmation and Jouler's final read · 2026-10-25. **Page format:** tier 1 engineering case, led by the observability migration, with a short cards note. **Proposed route:** /work/goodrx-observability/ (not implemented here). Earlier drafts are in Git history (see [README](README.md#history)).
 
 ## Evidence and boundaries
 

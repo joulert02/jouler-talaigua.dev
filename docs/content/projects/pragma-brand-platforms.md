@@ -1,6 +1,6 @@
 # Brand platforms at PRAGMA — Nosotras, TENA, Petys
 
-**Content status:** written from the owner interview, ready for Jouler's review · 2026-10-25. **Page format:** tier 2 showcase with live previews, and the start of Jouler's QA-to-engineer story. **Proposed route:** /work/brand-platforms/ (not implemented here). The pre-interview draft and the four original brand drafts are in [archive/](archive/).
+**Content status:** written from the owner interview, ready for Jouler's review · 2026-10-25. **Page format:** tier 2 showcase with live previews, and the start of Jouler's QA-to-engineer story. **Proposed route:** /work/brand-platforms/ (not implemented here). Earlier drafts are in Git history (see [README](README.md#history)).
 
 ## Evidence and boundaries
 

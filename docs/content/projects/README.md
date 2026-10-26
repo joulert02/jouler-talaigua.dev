@@ -6,16 +6,14 @@
 
 Agreed with Jouler on 2026-10-25. Deep cases show three different facets (product, architecture and teams, platform/observability); the brand work is one showcase; current work gets short status pages.
 
-| Tier          | Page                                                                                | Format                                    | Strongest material                                     | Main gap                                             |
-| ------------- | ----------------------------------------------------------------------------------- | ----------------------------------------- | ------------------------------------------------------ | ---------------------------------------------------- |
-| 1 · Full case | [Mercado Libre — Favorites & Gift Lists](mercado-libre-favorites-gift-lists.md)     | Product and engineering case              | LinkedIn project description; desktop and mobile flows | Personal ownership, one decision, defensible results |
-| 1 · Full case | [Bancolombia — Sucursal Virtual Personas](bancolombia-sucursal-virtual-personas.md) | Architecture and team enablement          | Public launch post, role description, product screens  | Dates, an attributable decision                      |
-| 1 · Full case | [GoodRx — Datadog to groundcover](goodrx-groundcover-migration-redesign.md)         | Observability migration; short cards note | EPAM role description; GoodRx confirmed as nameable    | Migration scope, decisions, handover                 |
-| 2 · Showcase  | [Brand platforms at PRAGMA](pragma-brand-platforms.md)                              | One page, four live previews              | LinkedIn project group, public sites, captures         | Per-site contribution, the common thread             |
-| 3 · Status    | [Cast & Crew — CAPS+ migration](caps-migration.md)                                  | Short "Under Construction" page           | Public role description                                | What can be shared                                   |
-| 3 · Status    | [EKOU Personal Nexus](ekou-personal-nexus.md)                                       | Short "In progress" page                  | CV description                                         | Current state                                        |
-
-The four separate brand drafts (Nosotras Online, Personajes NOL, TENA, Petys) are preserved in [archive/](archive/).
+| Tier          | Page                                                                                | Format                                    | Status                                    |
+| ------------- | ----------------------------------------------------------------------------------- | ----------------------------------------- | ----------------------------------------- |
+| 1 · Full case | [Mercado Libre — Lists & Gift Registry](mercado-libre-favorites-gift-lists.md)      | Product and engineering case              | Approved; clean image derivatives pending |
+| 1 · Full case | [Bancolombia — Sucursal Virtual Personas](bancolombia-sucursal-virtual-personas.md) | Architecture and team enablement          | Pending Jouler's final read               |
+| 1 · Full case | [GoodRx — Datadog to groundcover](goodrx-groundcover-migration-redesign.md)         | Observability migration; short cards note | Pending Jouler's final read               |
+| 2 · Showcase  | [Brand platforms at PRAGMA](pragma-brand-platforms.md)                              | One page, four live previews              | Pending XD exports and final read         |
+| 3 · Status    | [Cast & Crew — CAPS+ migration](caps-migration.md)                                  | Short "Under construction" page           | Pending Jouler's final read               |
+| 3 · Status    | [EKOU Personal Nexus](ekou-personal-nexus.md)                                       | Short "In progress" page                  | Deferred to a later iteration             |
 
 ## Decisions on 2026-10-25
 
@@ -64,4 +62,8 @@ Original images stay in the owner's local assets folder, outside the repository;
 
 ## Next step
 
-Interview case by case, starting with Mercado Libre. After Jouler approves the content, the project screens are iterated in a new design version, preserving earlier ones.
+After Jouler's final read, the project screens are designed as a new prototype version in `docs/design/`, preserving earlier ones. Translation to Spanish and the Astro content collections come after that.
+
+## History
+
+Superseded drafts (the pre-interview versions and the four separate brand drafts) were removed on 2026-10-26 to keep this folder readable. Recover any of them with `git show 4317597:docs/content/projects/archive/<file>.md`.

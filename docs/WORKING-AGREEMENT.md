@@ -21,6 +21,8 @@ Work follows one of three paths, and the lead says which before starting:
 | `docs/design/references.md`         | Which sites inspire us and what we take from each  |
 | `docs/design/principles.md`         | The rules every screen follows, plus design tokens |
 | `docs/design/rounds.md`             | Every design round, the feedback and the lessons   |
+| `docs/design/README.md`             | The prototype versions and how to review them      |
+| `docs/content/projects/`            | The copy and screen plan for each project page     |
 | `docs/adr/`                         | Technical decisions and the alternatives rejected  |
 | `docs/superpowers/specs/`, `plans/` | What we build in each initiative, and how          |
 | `docs/decisions-log.md`             | What was decided and when, one line each           |

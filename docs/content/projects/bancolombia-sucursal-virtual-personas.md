@@ -1,6 +1,6 @@
 # Bancolombia — Sucursal Virtual Personas
 
-**Content status:** complete from the owner interview, pending Jouler's final read · 2026-10-25. **Page format:** tier 1 architecture and team case. **Proposed route:** /work/bancolombia-svp/ (not implemented here). The pre-interview draft is in [archive/](archive/bancolombia-sucursal-virtual-personas.pre-interview.md).
+**Content status:** complete from the owner interview, pending Jouler's final read · 2026-10-25. **Page format:** tier 1 architecture and team case. **Proposed route:** /work/bancolombia-svp/ (not implemented here). Earlier drafts are in Git history (see [README](README.md#history)).
 
 ## Evidence and boundaries
 

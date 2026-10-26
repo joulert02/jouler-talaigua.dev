@@ -1,6 +1,6 @@
 # Mercado Libre — Lists & Gift Registry
 
-**Content status:** approved by Jouler on 2026-10-25, pending clean image derivatives · 2026-10-25. **Page format:** tier 1 product and engineering case. **Proposed route:** /work/mercado-libre-lists/ (not implemented here). The pre-interview draft is in [archive/](archive/mercado-libre-favorites-gift-lists.pre-interview.md).
+**Content status:** approved by Jouler on 2026-10-25, pending clean image derivatives · 2026-10-25. **Page format:** tier 1 product and engineering case. **Proposed route:** /work/mercado-libre-lists/ (not implemented here). Earlier drafts are in Git history (see [README](README.md#history)).
 
 ## Evidence and boundaries
 

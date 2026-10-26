@@ -1,6 +1,6 @@
 # Cast & Crew — CAPS+
 
-**Content status:** complete from the owner interview, pending Jouler's final read · 2026-10-25. **Page format:** tier 3 short status page with an interactive "under construction" piece. **Proposed route:** /work/caps-plus/ (not implemented here). The pre-interview draft is in [archive/](archive/caps-migration.pre-interview.md).
+**Content status:** complete from the owner interview, pending Jouler's final read · 2026-10-25. **Page format:** tier 3 short status page with an interactive "under construction" piece. **Proposed route:** /work/caps-plus/ (not implemented here). Earlier drafts are in Git history (see [README](README.md#history)).
 
 ## Evidence and boundaries
 
