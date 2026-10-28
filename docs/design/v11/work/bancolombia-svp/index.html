@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow"><meta name="description" content="Laying the micro-frontend foundations of Bancolombia&#x27;s online banking for individuals, and growing the team that built on them.">
+<title>Sucursal Virtual Personas · Bancolombia · Jouler Talaigua</title>
+<link rel="icon" href="/favicon.svg">
+<link rel="alternate" hreflang="es" href="/design/v11/es/work/bancolombia-svp/">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Caveat:wght@500;600&display=swap">
+<link rel="stylesheet" href="/design/v11/styles.css"><link rel="stylesheet" href="/design/v11/case.css"></head>
+<body class="case-body">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-out" viewBox="0 0 16 16"><path d="M6 3h7v7M13 3 4 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+<a class="skip" href="#case-main">Skip to content</a>
+<header class="case-top">
+  <a class="back-pill" href="/design/v11/#work-bancolombia-svp"><span class="chev" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>All work<small>Selected projects</small></span></a>
+  <nav class="lang" aria-label="Language"><span aria-current="page" lang="en">EN</span><a href="/design/v11/es/work/bancolombia-svp/" lang="es" hreflang="es" aria-label="Leer en español">ES</a></nav>
+</header>
+<main id="case-main" class="case" tabindex="-1">
+  <header class="case-head">
+    <div>
+      <p class="label">Bancolombia · via PRAGMA</p>
+      <h1 style="view-transition-name:case-title-bancolombia-svp">Sucursal Virtual Personas</h1>
+    </div>
+    <a class="btn ghost live-link" href="https://www.bancolombia.com/personas/canales/sucursal-virtual" target="_blank" rel="noopener">See it live<svg aria-hidden="true"><use href="#i-out"/></svg><span class="sr"> on Bancolombia (opens in a new tab)</span></a>
+  </header>
+
+  <dl class="facts">
+    <div><dt>Role</dt><dd>Master Frontend Developer · PRAGMA</dd></div>
+    <div><dt>Scope</dt><dd>First engineer on the project</dd></div>
+    <div><dt>Stack</dt><dd>Angular · Module Federation · Clean Architecture · Bancolombia Design System · Azure DevOps · AWS S3 and CloudFront</dd></div>
+  </dl>
+  <p class="summary">I was the first engineer on the project. Through PRAGMA, I joined Bancolombia's renewal of Sucursal Virtual Personas, the online bank that millions of people use every day, before there was a team, a repository or a pipeline.</p>
+
+  <section class="chapter" id="foundations" aria-labelledby="h-zero">
+    <div class="chapter-head">
+      <span class="label">01</span><h2 id="h-zero">Starting from zero</h2>
+      <p class="lead">Bancolombia wanted micro frontends but had little in place. I laid the foundation one step at a time, until a first login page proved it worked end to end.</p>
+    </div>
+    <div class="lab svp-build" role="group" aria-labelledby="h-zero sb-title">
+      <div class="lab-head">
+        <p class="label" id="sb-title">Five steps · illustration, not Bancolombia code</p>
+        <div class="step-ctl"><button class="btn ghost sm" type="button">‹ Back</button><span class="n" aria-hidden="true">1 / 5</span><button class="btn primary sm" type="button">Next ›</button></div>
+      </div>
+      <div class="sb-grid">
+        <ol class="sb-steps">
+          <li><button type="button"><b>Learn how the bank builds</b><span>Its cross-cutting teams, its design system, and a Google Developer Expert on the standards already in use: Clean Architecture, Angular, and why.</span></button></li>
+          <li><button type="button"><b>Proofs of concept and guidelines</b><span>I had built micro frontends before. I ran proofs of concept and wrote the guidelines the project would follow.</span></button></li>
+          <li><button type="button"><b>Repositories and archetypes</b><span>Every micro-frontend repository, plus archetype templates that gave each new one the right structure from day one.</span></button></li>
+          <li><button type="button"><b>The delivery pipeline</b><span>Azure DevOps: builds and secrets management, deploying to AWS S3 behind the CloudFront CDN.</span></button></li>
+          <li><button type="button"><b>A first login page</b><span>The Bancolombia Design System integrated, and a login page as the proof that everything worked end to end.</span></button></li>
+        </ol>
+        <div class="sb-board" aria-hidden="true">
+          <div data-step="1"><span class="label">Standards</span><div class="sb-chips"><span>Clean Architecture</span><span>Angular</span><span>Bancolombia Design System</span></div></div>
+          <div data-step="2"><span class="label">Guidelines</span><div class="sb-chips"><span>Proofs of concept</span><span>Micro-frontend guidelines</span></div></div>
+          <div data-step="3"><span class="label">Repositories</span><div class="sb-chips"><span>Shell</span><span>Micro frontends</span><span>Archetypes</span></div></div>
+          <div data-step="4"><span class="label">Pipeline</span><div class="sb-pipe"><span>Azure DevOps</span><i>→</i><span>AWS S3</span><i>→</i><span>CloudFront</span></div></div>
+          <div data-step="5" class="sb-login"><span class="label">Login</span><img src="/design/v11/assets/cases/svp-login.jpg" alt="" loading="lazy"></div>
+        </div>
+      </div>
+      <p class="lab-note">The login shown is today's public page, launched later by the wider team.</p>
+    </div>
+    <details class="more">
+      <summary>The full story</summary>
+      <div class="prose">
+        <p>The designs for registration and login were ready. My job was to turn Bancolombia's vision of micro frontends into an architecture, and then into a team that could work with it.</p>
+        <p>The first weeks were about understanding what we were building and how Bancolombia builds. I worked with the bank's cross-cutting teams, learned its design system, and met with a Google Developer Expert to understand the standards already used across other projects: Clean Architecture, Angular, and why.</p>
+        <p>Bancolombia wanted micro frontends but had little in place. That was why I was brought in: I had built them before. I ran proofs of concept and wrote the guidelines the project would follow.</p>
+        <p>I set up every micro-frontend repository and a set of archetype repositories, templates that gave each new micro frontend the right structure from day one. The stack was Angular with Module Federation.</p>
+        <p>I configured the delivery pipeline in Azure DevOps: builds, secrets management and deployment to AWS S3 behind the CloudFront CDN. I integrated the Bancolombia Design System and built the first login page as the proof that everything worked end to end.</p>
+      </div>
+    </details>
+  </section>
+
+  <section class="chapter" id="shell" aria-labelledby="h-shell">
+    <div class="chapter-head">
+      <span class="label">02</span><h2 id="h-shell">One decision: never redeploy the shell</h2>
+      <p class="lead">Usually the shell knows where every micro frontend lives, so each new one means rebuilding it. I moved that registry into a configuration the browser reads.</p>
+    </div>
+    <div class="lab shell-lab" data-mode="typical" role="group" aria-labelledby="h-shell sh-title">
+      <div class="lab-head">
+        <p class="label" id="sh-title">Illustration · not Bancolombia code</p>
+        <fieldset class="seg-switch"><legend>Setup</legend>
+          <label><input type="radio" name="sh-mode" value="typical" checked><span>Typical setup</span></label>
+          <label><input type="radio" name="sh-mode" value="proposal"><span>My proposal</span></label>
+        </fieldset>
+        <p class="lab-hint">Deploy a micro frontend in each setup and watch the shell. <button class="btn primary sm" type="button" data-act="sh-deploy">Deploy a micro frontend</button></p>
+      </div>
+      <div class="sh-stage">
+        <div class="sh-node sh-users"><b>Millions of people using the bank</b><span class="dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+        <span class="sh-arrow" aria-hidden="true"></span>
+        <div class="sh-row">
+          <div class="sh-node sh-shell"><b>Shell</b><span class="sh-state">Running</span>
+            <ul class="sh-reg" aria-label="Registry inside the shell"><li>login</li><li>registration</li></ul>
+            <small class="sh-note" data-m="proposal">Opens the login first; loads the rest on demand.</small>
+          </div>
+          <div class="sh-config"><small>Configuration · fetched in the browser</small><code>{
+  "login": "…",
+  "registration": "…"
+}</code></div>
+        </div>
+        <span class="sh-arrow" aria-hidden="true"></span>
+        <ul class="sh-mfs" aria-label="Micro frontends"><li>Login</li><li>Registration</li></ul>
+      </div>
+      <dl class="sh-stats"><div><dt>Shell redeploys</dt><dd class="sh-count">0</dd></div></dl>
+      <p class="out">Pick a setup, then deploy.</p>
+    </div>
+    <details class="more">
+      <summary>The full story</summary>
+      <div class="prose">
+        <p>In a typical Module Federation setup, the shell knows where every micro frontend lives. Registering a new one, or updating one, means rebuilding and redeploying the shell. For a bank used by millions of people at the same time, that is slow, costs money on every rebuild, and turns the shell into a single point of failure for every team.</p>
+        <p>I proposed two changes. First, load micro frontends asynchronously, so the shell opens the login immediately instead of loading everything up front. Second, move the registry out of the shell: a configuration file acts as the contract with every micro frontend, and the app fetches it in the browser to find out where each one lives.</p>
+        <p>With that, teams could deploy a micro frontend on its own and update its routes by changing the configuration, without touching or redeploying the shell.</p>
+      </div>
+    </details>
+  </section>
+
+  <section class="chapter" id="team" aria-labelledby="h-team">
+    <div class="chapter-head">
+      <span class="label">03</span><h2 id="h-team">From one engineer to twenty</h2>
+      <p class="lead">When the team grew, I helped choose it. We reached 20 people in five squads, each with a lead, and I was the cross-cutting lead between them.</p>
+    </div>
+    <div class="lab team-lab" role="group" aria-labelledby="h-team tm-title">
+      <div class="lab-head">
+        <p class="label" id="tm-title">Diagram · dots are illustrative</p>
+        <fieldset class="seg-switch"><legend>Moment</legend>
+          <label><input type="radio" name="team-stage" value="1" checked><span>Day one</span></label>
+          <label><input type="radio" name="team-stage" value="2"><span>Growing</span></label>
+          <label><input type="radio" name="team-stage" value="3"><span>Five squads</span></label>
+        </fieldset>
+      </div>
+      <svg class="team-svg" viewBox="0 0 640 400" role="img" aria-label="Diagram of the team: one engineer at first, then five squads with a lead each around a cross-cutting lead."></svg>
+      <p class="out" aria-hidden="true" data-s1="The first engineer on the project, before there was a team." data-s2="I interviewed PRAGMA's candidates and helped balance seniority, from juniors to masters." data-s3="20 people in five squads, each with a lead. Architecture and security decisions went through that group."></p>
+    </div>
+    <figure class="figure">
+      <img src="/design/v11/assets/cases/svp-team-candidate.jpg" alt="Team photo: a group of colleagues in an office." loading="lazy" width="1400" height="1050">
+      <figcaption><span class="pending">Permission pending</span>Candidate photo for review. It will only be published after everyone in it has seen this page and agreed.</figcaption>
+    </figure>
+    <details class="more">
+      <summary>The full story</summary>
+      <div class="prose">
+        <p>When the team started to grow, I helped choose it. I interviewed PRAGMA's candidates and helped balance the mix of seniority, from juniors to masters, for a team planned to reach 20 people. We reached 20, organized in five squads, each with a lead.</p>
+        <p>I was the cross-cutting lead between them. I met with the squad leads to agree on how we would work, how the new standards would be adopted and what each person needed to learn. Not everyone knew Clean Architecture, so I gave talks and ran sessions until the whole team was on the same page. Decisions about architecture and security went through that group.</p>
+      </div>
+    </details>
+  </section>
+
+  <section class="chapter" id="today" aria-labelledby="h-today">
+    <div class="chapter-head">
+      <span class="label">04</span><h2 id="h-today">The product today</h2>
+      <p class="lead">Sucursal Virtual Personas later launched with the wider team, many of whom continued after my phase. Seeing it live, built on the foundations we started, was one of the most rewarding moments of my career.</p>
+    </div>
+    <figure class="figure">
+      <img src="/design/v11/assets/cases/svp-home-top.jpg" alt="Sucursal Virtual Personas home: side menu, greeting and the most-used transactions." loading="lazy" width="1600" height="307">
+      <figcaption>The renewed Sucursal Virtual Personas, launched by the wider team.</figcaption>
+    </figure>
+    <div class="cta-row">
+      <a class="btn primary live-link" href="https://www.bancolombia.com/personas/canales/sucursal-virtual" target="_blank" rel="noopener">See it live on Bancolombia<svg aria-hidden="true"><use href="#i-out"/></svg><span class="sr"> (opens in a new tab)</span></a>
+      <a class="btn ghost live-link" href="https://www.linkedin.com/feed/update/urn:li:activity:7338328797470945280/" target="_blank" rel="noopener">My launch post<svg aria-hidden="true"><use href="#i-out"/></svg><span class="sr"> on LinkedIn (opens in a new tab)</span></a>
+    </div>
+  </section>
+
+  <section class="chapter" id="learned" aria-labelledby="h-learned">
+    <div class="chapter-head"><span class="label">05</span><h2 id="h-learned">What I learned</h2></div>
+    <blockquote class="pull"><p>Before Bancolombia, I worked mostly with React, Gatsby and static marketing sites. This project made me learn Angular from scratch, Azure and Azure DevOps, and new tools and ways of working. But the biggest challenge, and what I value most, was helping build the team: it sharpened my leadership, ownership and mentoring. I worked with excellent people who helped me grow as a person and as a professional.</p></blockquote>
+  </section>
+
+  <nav class="case-next" aria-label="More work">
+    <a href="/design/v11/work/mercado-libre-lists/"><span class="label">Previous case · Mercado Libre</span><b>← Lists &amp; Gift Registry</b></a>
+    <a href="/design/v11/work/goodrx-observability/"><span class="label">Next case · GoodRx</span><b>Datadog to groundcover →</b></a>
+  </nav>
+</main>
+<footer class="site" id="contact" tabindex="-1">
+  <h2 class="sr">Site footer</h2>
+  <div class="f-cols">
+    <div><h3>Site</h3><ul><li><a href="/design/v11/#work">Work</a></li><li><a href="/design/v11/#notes">Notes</a></li><li><a href="/design/v11/#roadmap">Roadmap</a></li><li><a href="/design/v11/#letter">A letter for you</a></li></ul></div>
+    <div><h3>Social</h3><ul><li><a href="#contact" data-todo="Instagram URL">Instagram</a></li><li><a href="#contact" data-todo="TikTok URL">TikTok</a></li><li><a href="https://www.linkedin.com/in/jouler-talaigua" target="_blank" rel="noopener">LinkedIn</a></li></ul></div>
+    <div><h3>Contact</h3><ul><li class="mailrow">joulert02@gmail.com <button class="copy" type="button" data-copy="joulert02@gmail.com">Copy</button></li><li><a href="#contact" data-todo="CV file to be added">Download CV (PDF)</a></li><li style="color:var(--muted)">Madrid · CET · remote across EU</li></ul></div>
+  </div>
+  <p class="wordmark" aria-hidden="true">Jouler Talaigua</p>
+  <div class="f-bottom"><span class="es" lang="es">Hecho en Madrid, con raíces colombianas <span class="flag" aria-hidden="true"><i></i><i></i><i></i></span></span><span>© 2026</span></div>
+</footer>
+<div class="sr" aria-live="polite" id="live"></div>
+<div class="toast" id="toast" aria-hidden="true"></div>
+<dialog class="lightbox" id="lightbox" aria-label="Enlarged image"><button class="btn ghost sm lb-close" type="button">Close</button><img alt=""></dialog>
+<script type="module" src="/design/v11/case.js"></script></body></html>

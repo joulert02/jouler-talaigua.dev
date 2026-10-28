@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow"><meta name="description" content="Moving the frontend&#x27;s observability to groundcover, running on GoodRx&#x27;s own cloud, to cut costs without losing sight of real users.">
+<title>Datadog to groundcover · GoodRx · Jouler Talaigua</title>
+<link rel="icon" href="/favicon.svg">
+<link rel="alternate" hreflang="es" href="/design/v11/es/work/goodrx-observability/">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Caveat:wght@500;600&display=swap">
+<link rel="stylesheet" href="/design/v11/styles.css"><link rel="stylesheet" href="/design/v11/case.css"></head>
+<body class="case-body">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-out" viewBox="0 0 16 16"><path d="M6 3h7v7M13 3 4 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+<a class="skip" href="#case-main">Skip to content</a>
+<header class="case-top">
+  <a class="back-pill" href="/design/v11/#work-goodrx-observability"><span class="chev" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>All work<small>Selected projects</small></span></a>
+  <nav class="lang" aria-label="Language"><span aria-current="page" lang="en">EN</span><a href="/design/v11/es/work/goodrx-observability/" lang="es" hreflang="es" aria-label="Leer en español">ES</a></nav>
+</header>
+<main id="case-main" class="case" tabindex="-1">
+  <header class="case-head">
+    <div>
+      <p class="label">GoodRx · via EPAM</p>
+      <h1 style="view-transition-name:case-title-goodrx-observability">Datadog to groundcover</h1>
+    </div>
+    <a class="btn ghost live-link" href="https://www.goodrx.com/" target="_blank" rel="noopener">See it live<svg aria-hidden="true"><use href="#i-out"/></svg><span class="sr"> on GoodRx (opens in a new tab)</span></a>
+  </header>
+
+  <dl class="facts">
+    <div><dt>Role</dt><dd>Senior Software Engineer · EPAM</dd></div>
+    <div><dt>Team</dt><dd>Three engineers</dd></div>
+    <div><dt>Focus</dt><dd>Observability migration · Frontend · CI/CD</dd></div>
+  </dl>
+  <p class="summary">GoodRx handles so many logs and transactions that Datadog's storage-based pricing had become expensive. The company decided to move to groundcover, and I was one of three engineers who migrated the frontend application's observability.</p>
+
+  <section class="chapter" id="plan" aria-labelledby="h-plan">
+    <div class="chapter-head">
+      <span class="label">01</span><h2 id="h-plan">Defining the migration</h2>
+      <p class="lead">We treated it as a proof of concept with a clear finish line. The plan was our first deliverable, presented before any code.</p>
+    </div>
+    <div class="lab dod-lab" role="group" aria-labelledby="h-plan dod-title">
+      <div class="lab-head"><p class="label" id="dod-title">Our plan · tick each question</p></div>
+      <ul class="dod">
+        <li><label><input type="checkbox"><span><b>What to measure</b><small>Which metrics to migrate first.</small></span></label></li>
+        <li><label><input type="checkbox"><span><b>How it runs</b><small>How the migration would run.</small></span></label></li>
+        <li><label><input type="checkbox"><span><b>How to prove it</b><small>Both tools capture the same thing, the same way.</small></span></label></li>
+        <li><label><input type="checkbox"><span><b>When it is done</b><small>A definition of done, ending in production.</small></span></label></li>
+      </ul>
+      <p class="out" aria-live="polite"><span class="wait">Four questions to answer before writing code.</span><span class="done"><b>Plan ready.</b> Presented to our leads and to product, before any code.</span></p>
+    </div>
+    <details class="more">
+      <summary>The full story</summary>
+      <div class="prose">
+        <p>We treated it as a proof of concept with a clear finish line: decide what to measure, prove both tools captured it the same way, and ship it to production.</p>
+        <p>We started by reviewing what Datadog was measuring for the frontend. From there, working closely with product, we defined the scope ourselves: which metrics to migrate first, how the migration would run, how we would prove it worked, and a definition of done.</p>
+        <p>That plan was our first deliverable. We presented it to our leads and to product before writing any code.</p>
+      </div>
+    </details>
+  </section>
+
+  <section class="chapter" id="cloud" aria-labelledby="h-cloud">
+    <div class="chapter-head">
+      <span class="label">02</span><h2 id="h-cloud">Running on our own cloud</h2>
+      <p class="lead">groundcover's Bring Your Own Cloud model: their interface and SDK, on servers GoodRx already had.</p>
+    </div>
+    <div class="byoc">
+      <div class="card"><span class="label">Before · Datadog</span><ul><li>Pricing based on storage</li><li>Data in the vendor's storage</li></ul></div>
+      <span class="to" aria-hidden="true">→</span>
+      <div class="card cloud"><span class="label">After · groundcover, BYOC</span><ul><li>Their interface and SDK</li><li>Running on GoodRx's own infrastructure</li></ul></div>
+    </div>
+    <details class="more">
+      <summary>The full story</summary>
+      <div class="prose">
+        <p>We used groundcover's Bring Your Own Cloud model: their interface and SDK, running on GoodRx's own infrastructure. That way the company used servers it already had instead of paying for another vendor's storage.</p>
+      </div>
+    </details>
+  </section>
+
+  <section class="chapter" id="sdks" aria-labelledby="h-sdks">
+    <div class="chapter-head">
+      <span class="label">03</span><h2 id="h-sdks">Two SDKs, side by side</h2>
+      <p class="lead">I ran groundcover's SDK next to Datadog's, compared what each captured, then took it through every environment up to production.</p>
+    </div>
+    <div class="lab streams-lab" role="group" aria-labelledby="h-sdks st-title">
+      <div class="lab-head">
+        <p class="label" id="st-title">Illustration · not GoodRx data</p>
+        <ol class="envs" aria-label="Environments"><li>Local</li><li>Test environments</li><li>Production</li></ol>
+        <p class="lab-hint">Send a few events, then promote the release.</p>
+      </div>
+      <div class="ev-btns">
+        <button class="btn ghost sm" type="button" data-ev data-k="view" data-kind="view" data-d="home page">Open the home page</button>
+        <button class="btn ghost sm" type="button" data-ev data-k="action" data-kind="action" data-d="search">Search</button>
+        <button class="btn ghost sm" type="button" data-ev data-k="error" data-kind="error" data-d="console error">Trigger a console error</button>
+        <button class="btn primary sm" type="button" data-act="promote">Promote ›</button>
+      </div>
+      <div class="streams">
+        <div class="stream"><p><span>Datadog SDK</span><span>existing</span></p><ol aria-label="Datadog events"></ol><p class="streams-empty">No events yet.</p></div>
+        <ol class="match" aria-hidden="true"></ol>
+        <div class="stream"><p><span>groundcover SDK</span><span>new</span></p><ol aria-label="groundcover events"></ol><p class="streams-empty">No events yet.</p></div>
+      </div>
+      <p class="out" aria-hidden="true"></p>
+    </div>
+    <details class="more">
+      <summary>The full story</summary>
+      <div class="prose">
+        <p>I installed the groundcover SDK in specific modules of the frontend and ran it next to Datadog's, first locally, so we could compare what each one captured. Then I deployed it through every environment up to production, certified that the data arrived correctly and checked each point of the definition of done.</p>
+        <p>It was practically my first deliverable at GoodRx, so the real challenge was learning the system fast: how the architecture was organized, how environments were separated and how keys were registered. I provisioned what groundcover's Real User Monitoring and dashboards needed on our servers, and changed the CI pipelines to deploy the new artifact.</p>
+      </div>
+    </details>
+  </section>
+
+  <section class="chapter" id="privacy" aria-labelledby="h-privacy">
+    <div class="chapter-head">
+      <span class="label">04</span><h2 id="h-privacy">Real users, without recording them</h2>
+      <p class="lead">Real User Monitoring in production: events and grouped console errors, without tying them to specific people.</p>
+    </div>
+    <div class="lab privacy-lab" role="group" aria-labelledby="h-privacy pv-title">
+      <div class="lab-head">
+        <p class="label" id="pv-title">Illustration · SDK settings</p>
+        <p class="lab-hint">groundcover records sessions out of the box. Switch it off, the way we configured it.</p>
+      </div>
+      <div class="pv-grid">
+        <ul class="pv-toggles">
+          <li><label class="switch"><input type="checkbox" role="switch" name="pv-rec" checked><span><b>Session recording</b><small>On by default</small></span></label></li>
+          <li><label class="switch"><input type="checkbox" role="switch" name="pv-ev" checked><span><b>User events</b><small>Page views, searches</small></span></label></li>
+          <li><label class="switch"><input type="checkbox" role="switch" name="pv-err" checked><span><b>Console errors</b><small>Captured and grouped</small></span></label></li>
+        </ul>
+        <div class="pv-preview" aria-live="polite">
+          <div class="pv-rec"><b>Recording a session</b><small>a replay of one person's visit</small><span class="bar" aria-hidden="true"></span></div>
+          <div class="pv-ev"><b>Events</b><small>view · home page, action · search · no user attached</small></div>
+          <div class="pv-err"><b>TypeError · 12 occurrences</b><small>grouped · no user attached</small></div>
+          <p class="pv-policy bad">Not allowed by GoodRx's policies</p>
+          <p class="pv-policy good">Within GoodRx's policies</p>
+        </div>
+      </div>
+    </div>
+    <details class="more">
+      <summary>The full story</summary>
+      <div class="prose">
+        <p>We delivered Real User Monitoring working in production: user events, plus console errors captured and grouped so the team could act on them.</p>
+        <p>One default had to go. groundcover records user sessions out of the box, and GoodRx's policies don't allow recording that kind of user data. We configured the SDK to capture errors and events without tying them to specific people.</p>
+        <p>The backend teams handled their own metrics. Our scope was the frontend, and it stayed there until I left EPAM.</p>
+      </div>
+    </details>
+  </section>
+
+  <section class="chapter" id="cards" aria-labelledby="h-cards">
+    <div class="chapter-head">
+      <span class="label">05</span><h2 id="h-cards">A smaller piece: one card instead of three</h2>
+      <p class="lead">The home page showed health content through three card components that had drifted apart. I built one card that covers what all three needed.</p>
+    </div>
+    <div class="lab grx-lab" role="group" aria-labelledby="h-cards gc-title">
+      <div class="lab-head">
+        <p class="label" id="gc-title">Recreation of the shipped cards · not GoodRx code</p>
+        <label class="switch"><input type="checkbox" role="switch" name="gc-show"><span>Show the component</span></label>
+      </div>
+      <div class="grx">
+        <p class="grx-h">Learn more about your health</p>
+        <div class="grx-grid">
+          <article class="gc" data-variant="featured"><img src="/design/v11/assets/cases/grx-featured.jpg" alt="" loading="lazy"><div class="gc-body"><span class="gc-tag">Collection</span><p class="gc-title">Thinking About a GLP-1 for Weight Loss? Start Here With Our Guide</p></div><span class="gc-prop" aria-hidden="true">Card · featured</span></article>
+          <article class="gc" data-variant="horizontal"><img src="/design/v11/assets/cases/grx-peptides.jpg" alt="" loading="lazy"><div class="gc-body"><span class="gc-tag">Peptides</span><p class="gc-title">FDA-Approved Peptides vs. Unapproved Wellness Peptides</p><p class="gc-by">By Stacia Woodcock, PharmD · Published on Sep 24, 2026</p></div><span class="gc-prop" aria-hidden="true">Card · horizontal</span></article>
+          <article class="gc" data-variant="vertical"><img src="/design/v11/assets/cases/grx-prostate.jpg" alt="" loading="lazy"><div class="gc-body"><span class="gc-tag">Prostate cancer</span><p class="gc-title">These Foods May Help Prevent Prostate Cancer</p><p class="gc-by">By Shane McCarthy, DO<small>Updated on Sep 23, 2026</small></p></div><span class="gc-prop" aria-hidden="true">Card · article</span></article>
+          <article class="gc alt" data-variant="vertical"><img src="/design/v11/assets/cases/grx-fiber.jpg" alt="" loading="lazy"><div class="gc-body"><span class="gc-tag">Diet and nutrition</span><p class="gc-title">What Is Fiber, and Why Is It Good for You? Here Are 6 Health Benefits</p><p class="gc-by">By Sarah Gupta, MD<small>Updated on Sep 23, 2026</small></p></div><span class="gc-prop" aria-hidden="true">Card · article</span></article>
+        </div>
+      </div>
+      <p class="lab-note">“Learn more about your health”: featured, horizontal and article cards, all from one component. Photos and titles from goodrx.com.</p>
+    </div>
+    <div class="cta-row">
+      <a class="btn primary live-link" href="https://www.goodrx.com/" target="_blank" rel="noopener">See it live on GoodRx<svg aria-hidden="true"><use href="#i-out"/></svg><span class="sr"> (opens in a new tab)</span></a>
+    </div>
+    <details class="more">
+      <summary>The full story</summary>
+      <div class="prose">
+        <p>The home page showed health content through three different card components that had drifted apart. I built a single card component that covered what all three needed, so every card on the page now comes from one place. A small change, but the kind that keeps a design system consistent.</p>
+      </div>
+    </details>
+  </section>
+
+  <section class="chapter" id="learned" aria-labelledby="h-learned">
+    <div class="chapter-head"><span class="label">06</span><h2 id="h-learned">What I learned</h2></div>
+    <blockquote class="pull">
+      <p>I expected a simple product and found one of the most mature teams I have worked with. AI was a partner, not the one doing everything: agents reviewed pull requests as part of the flow. Visual regression tests with Chromatic stopped a pull request until someone confirmed a change to a component was intentional, and every component and guideline lived in Storybook.</p>
+      <p>It also changed what ownership means to me. We defined our own product and technical roadmap, owned features from definition to delivery, proposed our own improvements and helped other teams. I still work that way today.</p>
+    </blockquote>
+  </section>
+
+  <nav class="case-next" aria-label="More work">
+    <a href="/design/v11/work/bancolombia-svp/"><span class="label">Previous case · Bancolombia</span><b>← Sucursal Virtual Personas</b></a>
+    <a href="/design/v11/work/brand-platforms/"><span class="label">Next case · Grupo Familia brands</span><b>Brand platforms →</b></a>
+  </nav>
+</main>
+<footer class="site" id="contact" tabindex="-1">
+  <h2 class="sr">Site footer</h2>
+  <div class="f-cols">
+    <div><h3>Site</h3><ul><li><a href="/design/v11/#work">Work</a></li><li><a href="/design/v11/#notes">Notes</a></li><li><a href="/design/v11/#roadmap">Roadmap</a></li><li><a href="/design/v11/#letter">A letter for you</a></li></ul></div>
+    <div><h3>Social</h3><ul><li><a href="#contact" data-todo="Instagram URL">Instagram</a></li><li><a href="#contact" data-todo="TikTok URL">TikTok</a></li><li><a href="https://www.linkedin.com/in/jouler-talaigua" target="_blank" rel="noopener">LinkedIn</a></li></ul></div>
+    <div><h3>Contact</h3><ul><li class="mailrow">joulert02@gmail.com <button class="copy" type="button" data-copy="joulert02@gmail.com">Copy</button></li><li><a href="#contact" data-todo="CV file to be added">Download CV (PDF)</a></li><li style="color:var(--muted)">Madrid · CET · remote across EU</li></ul></div>
+  </div>
+  <p class="wordmark" aria-hidden="true">Jouler Talaigua</p>
+  <div class="f-bottom"><span class="es" lang="es">Hecho en Madrid, con raíces colombianas <span class="flag" aria-hidden="true"><i></i><i></i><i></i></span></span><span>© 2026</span></div>
+</footer>
+<div class="sr" aria-live="polite" id="live"></div>
+<div class="toast" id="toast" aria-hidden="true"></div>
+<dialog class="lightbox" id="lightbox" aria-label="Enlarged image"><button class="btn ghost sm lb-close" type="button">Close</button><img alt=""></dialog>
+<script type="module" src="/design/v11/case.js"></script></body></html>
