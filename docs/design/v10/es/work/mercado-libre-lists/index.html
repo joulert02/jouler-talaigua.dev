@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow"><meta name="description" content="Rehacer cómo la gente guarda productos y planea regalos, más la estrategia de pruebas y la navegación en la app que lo sostienen.">
+<title>Listas de favoritos y regalos · Mercado Libre · Jouler Talaigua</title>
+<link rel="icon" href="/favicon.svg">
+<link rel="alternate" hreflang="en" href="/design/v10/work/mercado-libre-lists/">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Caveat:wght@500;600&display=swap">
+<link rel="stylesheet" href="/design/v10/styles.css"><link rel="stylesheet" href="/design/v10/case.css"><link rel="stylesheet" href="/design/v10/intro-c.css"></head>
+<body class="case-body">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-out" viewBox="0 0 16 16"><path d="M6 3h7v7M13 3 4 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+<a class="skip" href="#case-main">Ir al contenido</a>
+<header class="case-top">
+  <a class="back-pill" href="/design/v10/#work-mercado-libre-lists"><span class="chev" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Todo el trabajo<small>Proyectos</small></span></a>
+  <nav class="lang" aria-label="Idioma"><a href="/design/v10/work/mercado-libre-lists/" lang="en" hreflang="en" aria-label="Read in English">EN</a><span aria-current="page" lang="es">ES</span></nav>
+</header>
+<main id="case-main" class="case" tabindex="-1">
+  <header class="case-head">
+    <div>
+      <p class="label">Mercado Libre</p>
+      <h1 style="view-transition-name:case-title-mercado-libre-lists">Listas de favoritos y regalos</h1>
+    </div>
+    <div class="live"><span class="note" id="live-note">Requiere iniciar sesión</span><a class="btn ghost live-link" href="https://myaccount.mercadolibre.com.co/bookmarks/list" target="_blank" rel="noopener" aria-describedby="live-note">Ver en vivo<svg aria-hidden="true"><use href="#i-out"/></svg><span class="sr"> en Mercado Libre (abre una pestaña nueva)</span></a></div>
+  </header>
+
+  <dl class="facts">
+    <div><dt>Rol</dt><dd>Senior Software Engineer · Full-stack</dd></div>
+    <div><dt>Periodo</dt><dd>Oct 2023 – may 2025</dd></div>
+    <div><dt>Tecnología</dt><dd>React · Node.js (BFF, SSR) · WebDriverIO + BDD · Datadog, New Relic</dd></div>
+  </dl>
+
+  <section class="intro-c" data-v="1" aria-labelledby="h-intro">
+    <h2 class="intro-c-title" id="h-intro">Lo que aprendí</h2>
+    <div class="intro-c-text">
+      <p>Mi proyecto principal fue reemplazar los favoritos antiguos por una nueva experiencia de listas: listas personales para lo que quieres comprar después y listas de regalo que la gente puede nombrar como quiera, desde una boda hasta un cumpleaños. En el camino asumí dos problemas con los que el equipo convivía desde hacía tiempo: pruebas en las que nadie confiaba y una navegación que hacía perderse a la gente dentro de la app.</p>
+      <blockquote class="pull"><p>Trabajar en un producto que usan millones de personas te abre la mente: la trazabilidad y la observabilidad dejan de ser opcionales. Mantener web, web móvil y una app nativa desde el mismo código te obliga a entender cómo funciona todo de verdad.</p></blockquote>
+    </div>
+    <figure class="intro-c-photo"><img src="/design/v10/assets/meli-team.jpg" alt="El equipo de Mercado Libre en un evento de la empresa, frente al fondo del evento." width="1050" height="1400" loading="eager"></figure>
+  </section>
+  <script>document.addEventListener("DOMContentLoaded",function(){var c=document.getElementById("seeBuilt");if(!c)return;var reduce=matchMedia("(prefers-reduced-motion: reduce)");var onScroll=function(){var gone=window.scrollY>48;c.classList.toggle("gone",gone);if(gone){c.setAttribute("tabindex","-1");c.setAttribute("aria-hidden","true");}else{c.removeAttribute("tabindex");c.removeAttribute("aria-hidden");}};addEventListener("scroll",onScroll,{passive:true});onScroll();c.addEventListener("click",function(e){var t=document.getElementById("lists");if(!t)return;e.preventDefault();t.scrollIntoView({behavior:reduce.matches?"auto":"smooth",block:"start"});history.replaceState(null,"","#lists");});});</script>
+
+  <section class="chapter" id="lists" aria-labelledby="h-lists">
+    <div class="chapter-head">
+      <span class="label">01</span><h2 id="h-lists">De un corazón a listas que la gente organiza</h2>
+      <p class="lead">Los favoritos eran un corazón y una sola lista plana. Ahora la gente guarda productos en listas a las que les pone nombre: para sí misma o como regalo para alguien más.</p>
+    </div>
+
+    <div class="lab" role="group" aria-labelledby="h-lists ml-title">
+      <div class="lab-head">
+        <p class="label" id="ml-title">Recreación interactiva · cuenta de ejemplo · no es código de Mercado Libre</p>
+        <div class="switches">
+          <fieldset class="seg-switch"><legend>Versión</legend>
+            <label><input type="radio" name="ml-mode" value="before"><span>Antes</span></label>
+            <label><input type="radio" name="ml-mode" value="after" checked><span>Después</span></label>
+          </fieldset>
+          <fieldset class="seg-switch device"><legend>Dispositivo</legend>
+            <label><input type="radio" name="ml-device" value="desktop" checked><span>Escritorio</span></label>
+            <label><input type="radio" name="ml-device" value="mobile"><span>Móvil</span></label>
+          </fieldset>
+          <button class="btn ghost sm" type="button" data-act="ml-reset">Reiniciar</button>
+        </div>
+      </div>
+      <div class="meli" data-mode="after" data-device="desktop">
+        <div class="meli-win" role="region" aria-label="Recreación de Favoritos y Listas de Mercado Libre"><noscript><p style="padding:24px">La recreación necesita JavaScript. Usa el enlace en vivo de abajo para ver la página real.</p></noscript></div>
+        <p class="m-toast" aria-hidden="true"></p>
+      </div>
+      <div class="lab-foot">
+        <p class="lab-hint">Prueba “Agregar a lista” y luego renombra una lista.</p>
+        <button class="btn primary sm" type="button" data-act="ml-play">Reproducir</button>
+      </div>
+    </div>
+
+    <details class="more">
+      <summary>La historia completa</summary>
+      <div class="prose">
+        <p>Los favoritos eran un solo corazón: todo lo que te gustaba, en un mismo lugar, con una interfaz que había envejecido mal. La nueva experiencia permite crear dos tipos de listas. Las listas de favoritos son para uno mismo. Las listas de regalos son para alguien más: la gente elige una de las ocasiones predeterminadas o le pone el nombre que quiera.</p>
+        <p>Fui uno de los dos ingenieros senior del squad que construyó las listas en el equipo de Home &amp; Search. El diseño estaba listo y el equipo ya había empezado. Llegué para construir la experiencia y aportar una mirada senior a la arquitectura frontend: cómo se estructuraban las pantallas, qué componentes necesitábamos y cómo se comportarían en escritorio, en la web móvil y dentro de la app nativa, que renderizan las mismas pantallas.</p>
+      </div>
+    </details>
+      </section>
+
+  <section class="chapter" id="tests" aria-labelledby="h-tests">
+    <div class="chapter-head">
+      <span class="label">02</span><h2 id="h-tests">Pruebas que protegen el negocio</h2>
+      <p class="lead">La cobertura unitaria pasó de cerca del 60% a más del 80%, y se detuvo ahí a propósito. Después llegaron las pruebas end-to-end para los flujos que más importan.</p>
+    </div>
+    <div class="tests">
+      <div class="card coverage">
+        <span class="label">Cobertura de pruebas unitarias</span>
+        <p class="cov-num" aria-hidden="true"><span class="cov-val">~60%</span><small class="cov-sub">cuando llegué (estimado)</small></p>
+        <div class="cov-bar" role="img" aria-label="Cobertura de pruebas unitarias: cerca del 60 por ciento cuando llegué, con los siguientes 20 puntos planificados; más del 80 por ciento después, con el 80 por ciento como umbral deliberado.">
+          <span class="cov-plan"></span><span class="cov-fill"></span><span class="cov-80"><span>80% · umbral deliberado</span></span>
+        </div>
+        <div class="cov-scale" aria-hidden="true"><span>0%</span><span>50%</span><span>100%</span></div>
+        <ul class="cov-key" aria-hidden="true"><li data-t="done">Cubierto por pruebas</li><li data-t="plan">Planificado</li><li data-t="left">Pendiente</li></ul>
+        <p class="small">Perseguir el 100% convierte cada cambio en una pelea con un número, y la gente empieza a escribir pruebas que no protegen nada.</p>
+        <span class="label" style="margin-top:8px">Prueba de concepto end-to-end</span>
+        <ul class="choice">
+          <li><b>Playwright</b><small>Funcionó</small></li>
+          <li class="pick"><b>WebDriverIO</b><small>Funcionó · estándar de la empresa</small></li>
+        </ul>
+      </div>
+      <figure class="gherkin" aria-labelledby="g-cap">
+        <span class="label" id="g-cap" style="display:block;padding:0 16px 10px;font-family:var(--mono)">Escenario ilustrativo · no es código de Mercado Libre</span>
+        <ol>
+          <li><span><span class="kw">Característica:</span> Listas de regalos</span><span class="st"></span></li>
+          <li class="blank" aria-hidden="true"></li>
+          <li><span><span class="kw">Escenario:</span> Una persona agrega un producto a una lista de regalos</span><span class="st"></span></li>
+          <li class="step"><span><span class="kw">Dado</span> que inicié sesión</span><span class="st" aria-hidden="true">·</span></li>
+          <li class="step"><span><span class="kw">Y</span> tengo una lista de regalos llamada "Cumpleaños de Ana"</span><span class="st" aria-hidden="true">·</span></li>
+          <li class="step"><span><span class="kw">Cuando</span> agrego el producto a "Cumpleaños de Ana"</span><span class="st" aria-hidden="true">·</span></li>
+          <li class="step"><span><span class="kw">Entonces</span> la lista "Cumpleaños de Ana" muestra el producto</span><span class="st" aria-hidden="true">·</span></li>
+        </ol>
+        <div class="run-bar"><span class="out" aria-live="polite">Lenguaje sencillo que todo el equipo puede leer.</span><button class="btn primary sm" type="button" data-act="run">Ejecutar escenario</button></div>
+      </figure>
+    </div>
+    <details class="more">
+      <summary>La historia completa</summary>
+      <div class="prose">
+        <p>Cuando llegué, la cobertura de pruebas unitarias rondaba el 60% y seguía bajando. Cambié la forma en que el equipo abordaba las pruebas, escribí guías y trabajé en pareja con mis compañeros hasta que escribirlas se volvió rutina. Llegamos a más del 80% y nos detuvimos ahí a propósito. Perseguir el 100% convierte cada cambio en una pelea con un número, y la gente empieza a escribir pruebas que no protegen nada.</p>
+        <p>No teníamos ninguna prueba end-to-end. Mientras crecía la cobertura unitaria, propuse cubrir lo que más le importaba al negocio: los flujos críticos y sus reglas. Construí una prueba de concepto con Playwright y otra con WebDriverIO, ambas con escenarios en lenguaje natural con Gherkin (BDD) y sesiones de usuario simuladas. Las dos funcionaron. Elegimos WebDriverIO porque era el estándar de la empresa, y las funciones más nuevas de Playwright no justificaban romperlo.</p>
+        <p>Definí el stack y las guías, revisé la propuesta con otro ingeniero senior y capacité al equipo para escribir y mantener las pruebas.</p>
+      </div>
+    </details>
+  </section>
+
+  <section class="chapter" id="navigation" aria-labelledby="h-nav">
+    <div class="chapter-head">
+      <span class="label">03</span><h2 id="h-nav">Una navegación que recuerda dónde estabas</h2>
+      <p class="lead">Dentro de la app, volver atrás te mandaba al inicio de la lista y el scroll infinito dejaba de cargar. Rehice la navegación como una pila, como funcionan las apps nativas.</p>
+    </div>
+
+    <div class="lab demo" role="group" aria-labelledby="h-nav demo-title">
+      <div class="lab-head">
+        <p class="label" id="demo-title">Simulación · no es código de Mercado Libre</p>
+        <div class="switches">
+          <fieldset class="seg-switch mode-switch">
+          <legend>Mostrar</legend>
+          <label><input type="radio" name="demo-mode" value="before"><span>Antes</span></label>
+          <label><input type="radio" name="demo-mode" value="after" checked><span>Después</span></label>
+        </fieldset>
+          <button class="btn ghost sm" type="button" data-act="reset">Reiniciar</button>
+        </div>
+      </div>
+      <div class="phones" data-show="after">
+        <div class="phone-col" data-mode="before">
+          <span class="label">Antes · navegación por páginas</span>
+          <div class="phone" data-screen="list" role="region" aria-label="Antes: una lista que se recarga al volver"></div>
+          <p class="stack" aria-hidden="true"></p>
+          <p class="result"></p>
+        </div>
+        <div class="phone-col" data-mode="after">
+          <span class="label">Después · navegación en pila</span>
+          <div class="phone" data-screen="list" role="region" aria-label="Después: una lista que conserva su lugar"></div>
+          <p class="stack" aria-hidden="true"></p>
+          <p class="result"></p>
+        </div>
+      </div>
+      <div class="lab-foot">
+        <p class="lab-hint"><span class="hint-wide">Baja, abre el ítem 14 y vuelve.</span><span class="hint-narrow">Luego cambia entre Antes y Después.</span></p>
+        <button class="btn primary sm" type="button" data-act="play">Reproducir</button>
+      </div>
+    </div>
+    <details class="more">
+      <summary>La historia completa</summary>
+      <div class="prose">
+        <p>La app de Mercado Libre muestra muchas de las mismas pantallas web dentro de vistas nativas, conectadas por un puente interno que no estaba bien documentado. La navegación era inconsistente. Las listas no se actualizaban cuando cambiaban sus datos. El scroll infinito dejaba de cargar después del primer bloque de ítems, o se rompía al abrir un producto y volver. Al presionar atrás te mandaba al inicio de la página, y la gente se perdía.</p>
+        <p>Leí la implementación del puente hasta entender cómo manejaba las pantallas, y reestructuré la navegación según cómo funcionan de verdad las apps nativas: una pila. Las pantallas anteriores conservan su estado y su posición de scroll, y sus scripts retoman donde iban cuando vuelves. Las pantallas intermedias se sacan de la pila, así que atrás te lleva adonde el flujo dice que debe.</p>
+      </div>
+    </details>
+  </section>
+
+  
+  <nav class="case-next" aria-label="Más trabajo">
+    <a href="/design/v10/#work-mercado-libre-lists"><span class="label">Todo el trabajo</span><b>← Proyectos</b></a>
+    <a href="/design/v10/es/work/bancolombia-svp/"><span class="label">Siguiente caso · Bancolombia</span><b>Sucursal Virtual Personas →</b></a>
+  </nav>
+</main>
+<footer class="site" id="contact" tabindex="-1">
+  <h2 class="sr">Pie del sitio</h2>
+  <div class="f-cols">
+    <div><h3>Sitio</h3><ul><li><a href="/design/v10/#work">Trabajo</a></li><li><a href="/design/v10/#notes">Notas</a></li><li><a href="/design/v10/#roadmap">Roadmap</a></li><li><a href="/design/v10/#letter">Una carta para ti</a></li></ul></div>
+    <div><h3>Redes</h3><ul><li><a href="#contact" data-todo="Instagram URL">Instagram</a></li><li><a href="#contact" data-todo="TikTok URL">TikTok</a></li><li><a href="https://www.linkedin.com/in/jouler-talaigua" target="_blank" rel="noopener">LinkedIn</a></li></ul></div>
+    <div><h3>Contacto</h3><ul><li class="mailrow">joulert02@gmail.com <button class="copy" type="button" data-copy="joulert02@gmail.com">Copiar</button></li><li><a href="#contact" data-todo="CV pendiente">Descargar CV (PDF)</a></li><li style="color:var(--muted)">Madrid · CET · remoto en la UE</li></ul></div>
+  </div>
+  <p class="wordmark" aria-hidden="true">Jouler Talaigua</p>
+  <div class="f-bottom"><span class="es" lang="es">Hecho en Madrid, con raíces colombianas <span class="flag" aria-hidden="true"><i></i><i></i><i></i></span></span><span>© 2026</span></div>
+</footer>
+<div class="sr" aria-live="polite" id="live"></div>
+<div class="toast" id="toast" aria-hidden="true"></div>
+<a class="intro-c-cta" id="seeBuilt" href="#lists"><span>Ver lo que construimos</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4v11m0 0-4.500-4.500M10 15l4.500-4.500" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+<script type="module" src="/design/v10/case.js"></script></body></html>

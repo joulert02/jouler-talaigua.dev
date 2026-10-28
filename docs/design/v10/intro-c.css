@@ -1,0 +1,48 @@
+/* Intro proposal C: refines B. Owner's text beside the team photo, quieter frame.
+   ?v=1 (default) neutral mat · ?v=2 brand-yellow plate behind the photo. */
+.intro-c { margin-top: clamp(48px, 6vw, 72px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 380px); gap: 28px clamp(32px, 6vw, 96px); align-items: center; }
+.intro-c-title { grid-column: 1 / -1; margin: 0 0 -8px; font-size: clamp(26px, 3vw, 36px); line-height: 1.15; letter-spacing: -.025em; font-weight: 600; text-wrap: balance; }
+.intro-c-text { padding-top: 0; }
+.intro-c-text .pull { margin: 28px 0 24px; padding-left: 20px; border-left-width: 2px; }
+.intro-c-text .pull p { font-size: clamp(18px, 1.5vw, 20px); line-height: 1.55; margin: 0; }
+.intro-c-text .intro-c-next { margin: 0; color: var(--ink-2); }
+.intro-c-text .intro-c-next a { color: var(--text-accent); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, var(--text-accent) 40%, transparent); white-space: nowrap; }
+@media (hover: hover) { .intro-c-text .intro-c-next a:hover { text-decoration-color: currentColor; } }
+.intro-c-text .intro-c-next a:focus-visible { outline: 2px solid var(--text-accent); outline-offset: 3px; border-radius: 4px; }
+.intro-c-text p { margin: 0 0 1.15em; max-width: 56ch; font-size: clamp(18px, 1.5vw, 20px); line-height: 1.65; color: var(--ink); text-wrap: pretty; }
+.intro-c-text p:last-child { margin-bottom: 0; }
+.intro-c-photo { margin: 0; position: relative; }
+/* Crop the empty ceiling: a square keeps all five people, head to shoes, and some backdrop. */
+.intro-c-photo img { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; object-position: 50% 100%; }
+.intro-c + .chapter { margin-top: clamp(80px, 10vw, 128px); }
+
+/* v1: neutral mat. Surface, hairline and the site shadow; no color competing with the backdrop. */
+.intro-c[data-v="1"] .intro-c-photo { padding: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); }
+.intro-c[data-v="1"] .intro-c-photo img { border-radius: 9px; }
+
+/* v2: the photo sits on a Mercado Libre yellow plate, offset down and right. */
+.intro-c[data-v="2"] .intro-c-photo { padding: 0 18px 18px 0; isolation: isolate; }
+.intro-c[data-v="2"] .intro-c-photo::before { content: ""; position: absolute; inset: 34% 0 0 18px; z-index: -1; border-radius: 14px; background: #FFE600; }
+.intro-c[data-v="2"] .intro-c-photo img { border-radius: 12px; box-shadow: 0 0 0 1px rgb(20 21 23 / .06), var(--shadow); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .intro-c[data-v="2"] .intro-c-photo::before { opacity: .88; } }
+:root[data-theme="dark"] .intro-c[data-v="2"] .intro-c-photo::before { opacity: .88; }
+
+@media (max-width: 719px) {
+  .intro-c { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .intro-c-photo { width: min(100%, 380px); }
+}
+
+
+/* Floating invitation: bounces gently, fades out smoothly once the reader scrolls down. */
+.intro-c-cta { position: fixed; z-index: 30; left: 50%; bottom: 28px; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 20px 0 22px; border-radius: 999px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); box-shadow: var(--shadow); font-size: 15.5px; font-weight: 500; text-decoration: none; transition: opacity .45s var(--ease), transform .55s var(--ease), visibility 0s linear 0s; }
+.intro-c-cta svg { width: 18px; height: 18px; color: var(--text-accent); }
+.intro-c-cta:focus-visible { outline: 2px solid var(--text-accent); outline-offset: 3px; }
+@media (hover: hover) { .intro-c-cta:hover { border-color: color-mix(in srgb, var(--text-accent) 45%, var(--line)); } }
+.intro-c-cta.gone { opacity: 0; visibility: hidden; pointer-events: none; transform: translate(-50%, 18px); transition: opacity .45s var(--ease), transform .55s var(--ease), visibility 0s linear .55s; }
+@keyframes cta-bounce { 0%, 100% { translate: 0 0; } 50% { translate: 0 -6px; } }
+@keyframes cta-arrow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
+@media (prefers-reduced-motion: no-preference) {
+  .intro-c-cta:not(.gone) { animation: cta-bounce 2.2s ease-in-out 1.2s infinite; }
+  .intro-c-cta:not(.gone) svg { animation: cta-arrow 2.2s ease-in-out 1.2s infinite; }
+}
+@media (max-width: 719px) { .intro-c-cta { bottom: 20px; } }
