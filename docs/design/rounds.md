@@ -119,3 +119,10 @@ Every round is kept, never overwritten. Each entry records what was proposed, th
 - **Learned:** back belongs where the reader enters, not where the layout has room; a recreation explains more than a capture and needs no translated captions; approved copy can stay whole behind a disclosure while the page leads with fewer words.
 - **Second owner pass (same day):** the headline under the title read as filler, so role, period and stack now sit directly under it. The first recreation "looked nice but was not what I built": it was replaced by a faithful recreation of the shipped Favorites, Lists, list detail and Add to list screens, rebuilt from new captures (product photos cropped without personal data; logo left out). No gift-list UI is invented because no capture shows it.
 - **Status:** new summary, leads and the Spanish translation await Jouler's approval; product photos are for review only; Codex code review pending.
+
+## Round 11 · 2026-10-28 · Home board adjustments
+
+- **Owner feedback on v10:** doubled dot grid; zoom and Recenter take away the sense of walking a board; the hint should be a bouncing pill above the dock; the hand-off to Work must show at once that Work is below and take a few seconds of resistance; since browsers cannot detect fingers lifting from a trackpad, only a held drag fills it.
+- **Proposed:** [local v11](v11/index.html). See [v11-proposal.md](v11-proposal.md).
+- **Also:** the Home no longer shows the Notes section; Notes and note pages use the same back pill as the case pages.
+- **Status:** sealed by Jouler on 2026-10-28.
