@@ -1,0 +1,17 @@
+/* Pragma intro B: the Mercado Libre intro-c structure (title, text and quote left, media right, floating invitation)
+   with the PRAGMA portrait video in place of the photo. Layout and floating button come from intro-c.css.
+   The 9:16 video sits in a 3:4 plate over a blurred copy of its own poster, so the column reads as square as the photo does. */
+.intro-c[data-v] .intro-c-photo { padding: 0; background: none; border: 0; box-shadow: none; border-radius: 0; }
+.intro-c { align-items: start; grid-template-rows: auto 1fr; }
+.intro-c .intro-c-title { grid-column: 1; grid-row: 1; }
+.intro-c .intro-c-text { grid-column: 1; grid-row: 2; margin-top: 20px; } /* title-to-text gap 40px, as in Mercado Libre's intro-c (there the text is centred beside the photo) */
+.intro-c .intro-c-photo { grid-column: 2; grid-row: 1 / span 2; }
+.intro-c[data-v] .intro-c-video { justify-self: end; width: 100%; padding: 9px; }
+.intro-c .reel-frame { aspect-ratio: 3 / 4; border: 0; border-radius: 9px; background: #0E0F11; isolation: isolate;
+  box-shadow: 0 0 0 8px var(--surface), 0 0 0 9px var(--line), var(--shadow); }
+.intro-c .reel-frame::before { content: ""; position: absolute; inset: -24px; z-index: -1; background: var(--poster, none) center / cover; filter: blur(22px) saturate(1.1); opacity: .9; }
+.intro-c .reel-frame video { position: relative; object-fit: contain; background: transparent; }
+.intro-c .reel figcaption { padding-top: 18px; }
+.reel-frame video:fullscreen { object-fit: contain; background: #000; }
+.reel-frame video:-webkit-full-screen { object-fit: contain; background: #000; }
+@media (max-width: 719px) { .intro-c .intro-c-title, .intro-c .intro-c-text, .intro-c .intro-c-photo { grid-column: 1; grid-row: auto; } .intro-c .intro-c-text { margin-top: 0; } .intro-c .intro-c-video { justify-self: start; width: min(100%, 380px); } }
