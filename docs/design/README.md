@@ -23,7 +23,8 @@ Rounds 1–4 were built as Claude artifacts; their links in [rounds.md](rounds.m
 | v7      | [v7/](v7/index.html)                          | Immersive Home, card-first mobile, pannable desk                                         | Codex                  |
 | v8      | [v8/](v8/index.html)                          | Direct scroll/pan on desktop Home, compact mobile exploration                            | Codex                  |
 | v9      | [v9/](v9/work/mercado-libre-lists/index.html) | Approved project content; Mercado Libre case as the template for every case | Claude (review: Codex) |
-| v10     | [v10/](v10/work/mercado-libre-lists/index.html) | **Current:** case page from the owner's review; recreated components; [Spanish](v10/es/work/mercado-libre-lists/index.html) | Claude (review: Codex) |
+| v11     | [v11/](v11/index.html) | **Current, sealed 2026-10-28:** v10 plus Home board adjustments (one grid, no zoom, hint pill, drag-only hand-off), no Home notes, shared back pill | Claude |
+| v10     | [v10/](v10/work/mercado-libre-lists/index.html) | Sealed: case page from the owner's review; recreated components; [Spanish](v10/es/work/mercado-libre-lists/index.html) | Claude (review: Codex) |
 
 Shared photos live in [assets/](assets/). The prototypes sit outside Astro's `public/`, so they are never deployed.
 
