@@ -1,0 +1,29 @@
+{
+  "version": "v9",
+  "recorded": "2026-10-26",
+  "status": "Project case template built by Claude (Mercado Libre case in full); owner review and Codex code review pending.",
+  "files": {
+    "docs/design/v9/app.js": "2aba40bd7cd57deb892fbf3f86fbbed963cef10c01a85d10e0f792828b9bd6cf",
+    "docs/design/v9/assets/bancolombia-devices.png": "819aa5610d5fb6f698bec7341b528751a96fa868bc25e197cfe295ee21e151ed",
+    "docs/design/v9/assets/goodrx-cards.webp": "4a915a2476f5ceef650a221810cfd312358226fa8e5b830d809180b59db9e28e",
+    "docs/design/v9/assets/meli-add-to-list-mobile.webp": "9e00edb5dd255d1f4d709ee5c3470981a8f3a3b8ac44e912d7ea07ed639a86ac",
+    "docs/design/v9/assets/meli-add-to-list.webp": "24da4260bcd42b8619ce75729a6ef8e3d5ff31e07cc1a6964223815912c69610",
+    "docs/design/v9/assets/meli-legacy-favorites-detail.webp": "52805ded2fb139265286cb27cf6120b8eb0d57f0bcf85873aa80c86495632cf3",
+    "docs/design/v9/assets/meli-legacy-favorites.webp": "11edcd4e99a48188c7e4f20152a572bc6f5f13eaa40834ac2066f8212cae16e4",
+    "docs/design/v9/assets/meli-legacy-heart.webp": "47c9f0dcb9dc7a2a0a3fb10aad75b75240dee94d30975803b1576405ff55c29d",
+    "docs/design/v9/assets/meli-lists-grid-detail.webp": "7bc599e9aeeb4ecc9c3280b7423756510af7a009151fb6926029766ee3e19a85",
+    "docs/design/v9/assets/meli-lists-grid.webp": "a8e097122e4949e3f93567da75e4e02548ffaa53ae5ccd3571e5a6a0123ddbbb",
+    "docs/design/v9/assets/petys-home.webp": "aafe2364ba1e1de2576abe8f3f8ac1789ada177a534c2af3128c1ebdaeefde98",
+    "docs/design/v9/canvas.js": "60354c190b6971f2ecde5f40be7edbf9709aad69ab7b2664f0fb4042aaeac32a",
+    "docs/design/v9/case.css": "90d6900b7b4073b2fdac241fd10542f181aa165c50a02cbd4eea2baba5685a84",
+    "docs/design/v9/case.js": "7d23ff2fdb7a28b1e39143e1b967ddee3bc507f83a5547d868a67a5926ce724f",
+    "docs/design/v9/experience.js": "fac7b62e082f8ea01e42be75b595710d2a050af070aad2a4dbf8fe09692fc5d4",
+    "docs/design/v9/index.html": "99c4c86945f2283a4477e5ffbb6edf6080fc1d4c2da02e5465f4ca383d63210a",
+    "docs/design/v9/styles.css": "9d6bbe61b50b4d6b7b96dd3fb94498c0cd01a55bd30a06c66eee1acc0626c8dc",
+    "docs/design/v9/work/bancolombia-svp/index.html": "7721776ecfc642bc4f8d4c0ea8e2b1ada9ec4ac79baab2b5d573900b911794a8",
+    "docs/design/v9/work/brand-platforms/index.html": "d77028b0c96d3232b9b3c589a9e4ad72257ef995688c64ec6f9f97ae177d505f",
+    "docs/design/v9/work/caps-plus/index.html": "194c27af00a386f2d00c47b2de5c2607ba6a442146b5135f874f73c83fe2f747",
+    "docs/design/v9/work/goodrx-observability/index.html": "8a034c24c980f930e355ad5ec86c3b86fb804a13acfedbf926a9212e551c05a9",
+    "docs/design/v9/work/mercado-libre-lists/index.html": "6b34daedaab8508379fd4048a5316b9df4078980db1a192623597960c5c2277c"
+  }
+}
