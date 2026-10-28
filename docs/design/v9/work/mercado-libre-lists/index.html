@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow"><meta name="description" content="Rebuilding how shoppers save products and plan gifts, plus the test strategy and app navigation behind it.">
+<title>Lists &amp; Gift Registry · Mercado Libre · Jouler Talaigua</title>
+<link rel="icon" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Caveat:wght@500;600&display=swap">
+<link rel="stylesheet" href="/design/v9/styles.css"><link rel="stylesheet" href="/design/v9/case.css"></head>
+<body class="case-body">
+<a class="skip" href="#case-main">Skip to content</a>
+<header class="case-top">
+  <a class="mark" href="/design/v9/" aria-label="Jouler Talaigua, home"><i aria-hidden="true">J</i>JOTA</a>
+  <a class="back-link" href="/design/v9/#work-mercado-libre-lists">← All work</a>
+</header>
+<main id="case-main" class="case" tabindex="-1">
+  <header class="case-head">
+    <p class="label">Mercado Libre</p>
+    <h1 style="view-transition-name:case-title-mercado-libre-lists">Lists &amp; Gift Registry</h1>
+    <p class="deck">Lists people come back to, on the web and in the app.</p>
+    <p class="focus">Product engineering · Test strategy · Web views in native apps</p>
+  </header>
+
+  <div class="case-intro">
+    <div class="prose">
+      <p>For a year and eight months I worked on Mercado Libre's Home &amp; Search team, which owns search, the home page, product pages and lists. In the squad that built lists, eight to ten people, I was one of two senior engineers.</p>
+      <p>My main project was replacing the old favorites with a new lists experience: personal lists for things you want to buy later, and gift lists people can name however they like, from a wedding to a birthday. Along the way I took on two problems the team had lived with for a while: tests nobody trusted and navigation that lost people inside the app.</p>
+      <nav class="toc" aria-label="On this page">
+        <ol>
+          <li><a href="#lists">From a heart icon to lists people organize</a></li>
+          <li><a href="#tests">Tests that protect the business</a></li>
+          <li><a href="#navigation">Navigation that remembers where you were</a></li>
+          <li><a href="#learned">What I learned</a></li>
+        </ol>
+      </nav>
+    </div>
+    <dl class="facts">
+      <div><dt>Role</dt><dd>Senior Software Engineer · Full-stack · Home &amp; Search</dd></div>
+      <div><dt>Period</dt><dd>October 2023 – May 2025</dd></div>
+      <div><dt>Technology</dt><dd>React · Node.js (BFF and SSR) · E2E testing with WebDriverIO and BDD · Observability with Datadog and New Relic</dd></div>
+    </dl>
+  </div>
+
+  <section class="chapter" id="lists" aria-labelledby="h-lists">
+    <div class="chapter-head"><span class="label">01</span><h2 id="h-lists">From a heart icon to lists people organize</h2></div>
+    <div class="prose">
+      <p>Favorites used to be a single heart: everything you liked, in one place, with an interface that had aged badly. The new experience lets people create two kinds of lists. Favorites lists are for themselves. Gift lists are for someone else: people pick one of the default occasions or give it any name they want.</p>
+      <p>The design was ready and the team had already started. I joined to build the experience and bring a senior perspective to the frontend architecture: how screens were structured, which components we needed and how they would behave on desktop, mobile web and inside the native app, which all render the same screens.</p>
+    </div>
+
+    <div class="figure-row">
+      <p class="pair-title">Where saved products live <span class="zoom-hint">· select an image to enlarge it</span></p>
+      <figure>
+        <div class="shot fixed"><button class="zoom" type="button" data-full="/design/v9/assets/meli-legacy-favorites.webp" aria-label="Enlarge: the old Favorites page"><img src="/design/v9/assets/meli-legacy-favorites-detail.webp" width="900" height="560" loading="lazy" alt="The old Favorites page: one long list of saved products with checkboxes and a Delete link on each."></button></div>
+        <figcaption><span class="tag">Before</span>One flat list of everything you liked. Sample data.</figcaption>
+      </figure>
+      <figure>
+        <div class="shot fixed"><button class="zoom" type="button" data-full="/design/v9/assets/meli-lists-grid.webp" aria-label="Enlarge: the new lists page"><img src="/design/v9/assets/meli-lists-grid-detail.webp" width="1000" height="720" loading="lazy" alt="The new Favorites page with a Lists tab showing six named lists, a Create list button and an open menu to rename or delete a list."></button></div>
+        <figcaption><span class="tag after">After</span>Lists people name and organize. “Listas” is Lists, “Crear lista” is Create list; the open menu renames or deletes a list.</figcaption>
+      </figure>
+    </div>
+
+    <div class="figure-row pair-save">
+      <p class="pair-title">Saving a product</p>
+      <figure>
+        <div class="shot compact"><button class="zoom" type="button" data-full="/design/v9/assets/meli-legacy-heart.webp" aria-label="Enlarge: the heart on the product page"><img src="/design/v9/assets/meli-legacy-heart.webp" width="530" height="340" loading="lazy" alt="A product page with a single heart icon next to the product title."></button></div>
+        <figcaption><span class="tag">Before</span>A single heart on the product page.</figcaption>
+      </figure>
+      <figure>
+        <div class="after-stack">
+          <div class="shot"><button class="zoom" type="button" data-full="/design/v9/assets/meli-add-to-list.webp" aria-label="Enlarge: Add to list on desktop"><img src="/design/v9/assets/meli-add-to-list.webp" width="976" height="1337" loading="lazy" alt="Desktop dialog titled Add to list, with Create new list, the default favorites list and six named lists to tick."></button></div>
+          <div class="shot mobile"><button class="zoom" type="button" data-full="/design/v9/assets/meli-add-to-list-mobile.webp" aria-label="Enlarge: Add to list on mobile"><img src="/design/v9/assets/meli-add-to-list-mobile.webp" width="720" height="1018" loading="lazy" alt="The same choice on mobile as a bottom sheet, with Confirm and Go to my lists buttons."></button></div>
+        </div>
+        <figcaption><span class="tag after">After</span>“Agregar a lista” (Add to list) on desktop and as a bottom sheet on mobile: the same screens, rendered for each device.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="chapter" id="tests" aria-labelledby="h-tests">
+    <div class="chapter-head"><span class="label">02</span><h2 id="h-tests">Tests that protect the business</h2></div>
+    <div class="prose">
+      <p>When I arrived, unit test coverage was around 60% and slipping. I changed how the team approached tests, wrote guidelines and paired with teammates until writing them became routine. We reached more than 80% and stopped there on purpose. Chasing 100% makes every change a fight with a number, and people start writing tests that protect nothing.</p>
+    </div>
+
+    <figure class="coverage" aria-labelledby="cov-cap">
+      <div class="bar" role="img" aria-label="Unit test coverage: around 60 percent when I joined, more than 80 percent afterwards, with 80 percent as a deliberate bar.">
+        <span class="seg-after"></span><span class="seg-before"></span>
+        <span class="mark80"><span>80% · deliberate bar</span></span>
+      </div>
+      <div class="scale" aria-hidden="true"><span>0%</span><span>50%</span><span>100%</span></div>
+      <ul class="legend" aria-hidden="true">
+        <li class="k-before"><i></i>~60% when I joined (estimate)</li>
+        <li class="k-after"><i></i>80%+ afterwards</li>
+      </ul>
+      <figcaption id="cov-cap">Unit test coverage. The bar stops at 80% on purpose.</figcaption>
+    </figure>
+
+    <div class="prose">
+      <p>We had no end-to-end tests at all. While unit coverage grew, I proposed covering what mattered most to the business: the critical flows and their rules. I built a proof of concept with Playwright and with WebDriverIO, both writing scenarios in plain language with Gherkin (BDD) and mocking user sessions. Both worked. We chose WebDriverIO because it was the company's standard, and Playwright's newer features weren't worth breaking that.</p>
+    </div>
+
+    <figure class="gherkin">
+      <span class="label">Illustrative scenario · not Mercado Libre code</span>
+<pre><code><span class="kw">Feature:</span> Gift lists
+
+  <span class="kw">Scenario:</span> A shopper adds a product to a gift list
+    <span class="kw">Given</span> I am signed in
+    <span class="kw">And</span> I have a gift list named "Ana's birthday"
+    <span class="kw">When</span> I add the product to "Ana's birthday"
+    <span class="kw">Then</span> the list "Ana's birthday" shows the product</code></pre>
+    </figure>
+
+    <div class="prose">
+      <p>I defined the stack and the guidelines, reviewed the proposal with another senior engineer, and trained the team to write and maintain the tests.</p>
+    </div>
+  </section>
+
+  <section class="chapter" id="navigation" aria-labelledby="h-nav">
+    <div class="chapter-head"><span class="label">03</span><h2 id="h-nav">Navigation that remembers where you were</h2></div>
+    <div class="prose">
+      <p>Mercado Libre's app shows many of the same web screens inside native views, connected through an in-house bridge that wasn't well documented. Navigation was inconsistent. Lists didn't refresh when their data changed. Infinite scroll stopped loading after the first batch of items, or broke after you opened a product and came back. Pressing back sent you to the top of the page, and people got lost.</p>
+      <p>I read the bridge's implementation until I understood how it managed screens, then restructured the navigation around how native apps actually work: a stack. Previous screens keep their state and scroll position, and their scripts pick up where they left off when you return. Intermediate screens are removed from the stack, so back takes you where the flow says it should.</p>
+    </div>
+
+    <div class="demo" role="group" aria-labelledby="h-nav demo-title">
+      <div class="demo-head">
+        <p class="label" id="demo-title">Simulation · not Mercado Libre code</p>
+        <fieldset class="mode-switch">
+          <legend>Show</legend>
+          <label><input type="radio" name="demo-mode" value="before"><span>Before</span></label>
+          <label><input type="radio" name="demo-mode" value="after" checked><span>After</span></label>
+        </fieldset>
+        <p class="hint-line"><span class="hint-wide">Play runs the same steps on both phones: scroll down, open item 14, go back. You can also scroll, open and go back inside each phone.</span><span class="hint-narrow">Play scrolls down, opens item 14 and goes back. Switch between Before and After to compare.</span></p>
+      </div>
+      <div class="demo-controls">
+        <button class="btn primary sm" type="button" data-act="play">Play</button>
+        <button class="btn ghost sm" type="button" data-act="reset">Reset</button>
+      </div>
+      <div class="phones" data-show="after">
+        <div class="phone-col" data-mode="before">
+          <span class="label">Before · page navigation</span>
+          <div class="phone" data-screen="list" role="region" aria-label="Before: a list that reloads when you come back">
+            <div class="screen list-screen"><div class="bar-top">Saved <span class="count"></span></div><div class="scroller"><ul></ul><p class="loader">Loading more…</p></div></div>
+            <div class="screen detail"><div class="bar-top"><button class="btn ghost sm in-back" type="button" aria-label="Back (in demo)">‹ Back</button></div><div class="body"><div class="hero-ph" aria-hidden="true"></div><h3></h3><p>Product screen.</p></div></div>
+          </div>
+          <p class="stack" aria-hidden="true"></p>
+          <p class="result"></p>
+        </div>
+        <div class="phone-col" data-mode="after">
+          <span class="label">After · stack navigation</span>
+          <div class="phone" data-screen="list" role="region" aria-label="After: a list that keeps its place">
+            <div class="screen list-screen"><div class="bar-top">Saved <span class="count"></span></div><div class="scroller"><ul></ul><p class="loader">Loading more…</p></div></div>
+            <div class="screen detail"><div class="bar-top"><button class="btn ghost sm in-back" type="button" aria-label="Back (in demo)">‹ Back</button></div><div class="body"><div class="hero-ph" aria-hidden="true"></div><h3></h3><p>Product screen.</p></div></div>
+          </div>
+          <p class="stack" aria-hidden="true"></p>
+          <p class="result"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter" id="learned" aria-labelledby="h-learned">
+    <div class="chapter-head"><span class="label">04</span><h2 id="h-learned">What I learned</h2></div>
+    <blockquote class="pull"><p>Working on a product used by millions opens your mind: traceability and observability stop being optional. Maintaining web, mobile web and a native app from the same codebase forces you to understand how everything really works.</p></blockquote>
+    <div class="prose">
+      <p>That meant learning when a Backend for Frontend earns its place. Product APIs own the business; the BFF translates it into exactly what each screen needs; server rendering asks only for the data that matters, so every device renders fast. And it meant learning the lifecycle of a screen inside an app, which behaves nothing like a page on the web.</p>
+    </div>
+    <ol class="flow" aria-label="From product APIs to every device">
+      <li><b>Product APIs</b><span>Own the business.</span></li>
+      <li><b>Backend for Frontend</b><span>Translates it into exactly what each screen needs.</span></li>
+      <li><b>Server rendering</b><span>Asks only for the data that matters.</span></li>
+      <li><b>Every device renders fast</b><ul class="targets"><li>Web</li><li>Mobile web</li><li>Native app web view</li></ul></li>
+    </ol>
+    <div class="prose">
+      <p>Mercado Libre took me from marketing and banking sites to products with millions of users, a mature stack and teams across Argentina, Uruguay, Brazil and Colombia.</p>
+    </div>
+  </section>
+
+  <nav class="case-next" aria-label="More work">
+    <a href="/design/v9/#work-mercado-libre-lists"><span class="label">All work</span><b>← Selected projects</b></a>
+    <a href="/design/v9/work/bancolombia-svp/"><span class="label">Next case · Bancolombia</span><b>Sucursal Virtual Personas →</b></a>
+  </nav>
+</main>
+<footer class="site" id="contact" tabindex="-1">
+  <h2 class="sr">Site footer</h2>
+  <div class="f-cols">
+    <div><h3>Site</h3><ul><li><a href="/design/v9/#work">Work</a></li><li><a href="/design/v9/#notes">Notes</a></li><li><a href="/design/v9/#roadmap">Roadmap</a></li><li><a href="/design/v9/#letter">A letter for you</a></li></ul></div>
+    <div><h3>Social</h3><ul><li><a href="#contact" data-todo="Instagram URL">Instagram</a></li><li><a href="#contact" data-todo="TikTok URL">TikTok</a></li><li><a href="https://www.linkedin.com/in/jouler-talaigua" target="_blank" rel="noopener">LinkedIn</a></li></ul></div>
+    <div><h3>Contact</h3><ul><li class="mailrow">joulert02@gmail.com <button class="copy" type="button" data-copy="joulert02@gmail.com">Copy</button></li><li><a href="#contact" data-todo="CV file to be added">Download CV (PDF)</a></li><li style="color:var(--muted)">Madrid · CET · remote across EU</li></ul></div>
+  </div>
+  <p class="wordmark" aria-hidden="true">Jouler Talaigua</p>
+  <div class="f-bottom"><span class="es" lang="es">Hecho en Madrid, con raíces colombianas <span class="flag" aria-hidden="true"><i></i><i></i><i></i></span></span><span>© 2026</span></div>
+</footer>
+<div class="sr" aria-live="polite" id="live"></div>
+<div class="toast" id="toast" aria-hidden="true"></div>
+<dialog class="lightbox" id="lightbox" aria-label="Enlarged image"><button class="btn ghost sm lb-close" type="button">Close</button><img alt=""></dialog>
+<nav class="dock" id="dock" aria-label="Main">
+  <a href="/design/v9/" aria-label="Home" data-tip="Home"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 9 10 3.5 16.5 9v7a1 1 0 0 1-1 1h-3.5v-4.5h-4V17H4.5a1 1 0 0 1-1-1Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span class="dl">Home</span></a>
+  <a href="/design/v9/#work" aria-current="true" aria-label="Work" data-tip="Work"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="6" width="15" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7 6V4.5A1.5 1.5 0 0 1 8.5 3h3A1.5 1.5 0 0 1 13 4.5V6M2.5 10.5h15" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span class="dl">Work</span></a>
+  <a href="/design/v9/#notes" aria-label="Notes" data-tip="Notes"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 2.5h7.5L16 6v11.5H5Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 9.5h5M8 12.5h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span class="dl">Notes</span></a>
+  <span class="sep" aria-hidden="true"></span>
+  <button type="button" data-copy="joulert02@gmail.com" aria-label="Copy my email address" data-tip="Copy email"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="4.5" width="15" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m3 5.5 7 5.5 7-5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+  <button type="button" id="themeBtn" aria-label="Dark theme" aria-pressed="false" data-tip="Theme"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16 12.5A6.5 6.5 0 0 1 7.5 4a6.5 6.5 0 1 0 8.5 8.5Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+</nav>
+<script type="module" src="/design/v9/case.js"></script></body></html>

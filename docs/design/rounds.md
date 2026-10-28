@@ -103,3 +103,11 @@ Every round is kept, never overwritten. Each entry records what was proposed, th
 - **Mobile direction:** More about me transitions to a compact name/role card; allow camera dragging from that card, remove the internal header strip and use the area above/below it for nearby personal objects.
 - **Implementation:** [local v8](v8/index.html) uses one shared world inline on desktop and inside a mobile-only dialog. v7 sources remain unchanged. Letter/roadmap stay in reading panels; dedicated case URLs remain available.
 - **Review status:** Jouler tested the prototype, accepted these interaction changes and requested a commit on 2026-10-25. Final copy and production integration remain pending. [Scope and verification](v8-proposal.md). The nine project-content drafts remain separate and pending owner review.
+
+## Round 9 · 2026-10-26 · project case template
+
+- **Owner direction:** with the copy approved, design the project screens; Claude builds, Codex reviews. Follow the guidelines and references and run exhaustive UX reviews.
+- **Proposed:** [local v9](v9/work/mercado-libre-lists/index.html). Work list with the five approved cases (prize roulette removed, Personal Nexus deferred). The Mercado Libre case is built in full as the template: header with title, headline and focus line; approved facts; inline contents; Before/After captures; test coverage and an illustrative Gherkin scenario; an interactive simulation comparing page and stack navigation; an architecture diagram. Other cases get light pages until v10.
+- **Independent UX reviews:** before building (cut the chapter rail, the device-mockup hero and two segmented controls; Before/After side by side; demo as a labeled simulation with Play) and after building (three blockers and seven important issues fixed: focus on Play, legible screenshots with enlargement, no internal note on stub pages, demo robustness, dock covering focus, touch targets). See [v9 proposal](v9-proposal.md).
+- **Learned:** a visual that points at text must render that text legibly; a demo about losing your place must not lose the reader's place (the back link returns to the same row); on a reading page, interactive pieces need a scripted path so skimmers see the point without trying it.
+- **Status:** awaiting Jouler's review and Codex's code review (`.orca-handoff/2026-10-26-v9-case-review/`).
