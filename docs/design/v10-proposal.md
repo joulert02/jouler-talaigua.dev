@@ -113,3 +113,7 @@ In the Claude browser pane (Chromium) on the local static server:
 - **Secondary, kept tentative**: the plain "What I learned" chapter (quote and flow, no media) lives at `learned/` beside each case. The owner picks between them while building the real pages.
 - ML Spanish intro paragraph is a provisional translation.
 - **Video, pending for development (not for this design)**: optimize (H.264, target 8 MB or less, faststart); the video is spoken in Spanish, so provide subtitles per page language (ES and EN, `<track>` VTT) and a transcript; if visual subtitles must be burned into the English version, decide when building the intro. PRAGMA's OK to self-host is the owner's call.
+
+## Status · sealed 2026-10-28
+
+v10 is closed. `history/v10.json` is final and `node scripts/verify-design-history.mjs` must keep passing; changes go into v11, not into this folder. No pre-commit hook is added (owner's decision).

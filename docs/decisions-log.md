@@ -2,6 +2,8 @@
 
 One line per decision, newest first. Details live in the linked document.
 
+- **2026-10-28 · owner sealed v10:** the prototype is closed with the Mercado Libre and Pragma cases; its file hashes in `history/v10.json` are now final and any further change is a new version (v11). Primary intro: media beside "What I learned" (photo for Mercado Libre, the PRAGMA video for Pragma), with the plain version kept as a secondary variant in `learned/`. Video optimization and ES/EN subtitles are for development. No pre-commit hook for the hash check (owner: not needed). Details: [v10-proposal.md](design/v10-proposal.md).
+
 - **2026-10-27 · owner closed the Mercado Libre case design (v10):** the main page keeps the "What I learned" intro; the alternative intro (`intro-c`: role text, quote, team photo, floating "See what we built" button) stays as a variant to decide in testing; proposal B (violet frame) is discarded. Visual fidelity of each example is refined when the production components are built. Team-photo publication permission and replacement of the third-party product photos are pending. See [v10 proposal](design/v10-proposal.md).
 
 - **2026-10-26:** Project copy approved for design: Mercado Libre, Bancolombia, GoodRx, CAPS+ and the PRAGMA brand platforms (Personajes assets pending). The Bancolombia team photo is designed in now; permission is requested before publication by showing the built page. v9 (project screens) is built by Claude and reviewed by Codex. See [project content](content/projects/README.md).
