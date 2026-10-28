@@ -1,0 +1,125 @@
+/* Brand platforms · Nosotras: a recreation of the "Estoy creciendo" game page, built from the exported design layers.
+   Every piece sits on the original artboard grid: 1 --u is one artboard unit (desktop 1366 wide, mobile 418 wide).
+   Three worlds (útero, periodo, flujo) follow the designer's XD home screens: the character in front sets the world colours. */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@500;800&display=swap");
+
+/* World tokens. The art is drawn once, in the útero colours; the other worlds recolour it with filters fitted to the XD screens. */
+.nos-lab .petys { --t: .8s; --bg: #C7A0ED; --next: #FFF081; --copy: #fff; --b1: #FFF080; --b2: #FF4DC1; --say: #B45EE6; --say-b: #8A1FD8; --play: #07CCCC;
+  --g1: #A77CD7; --g2: #B48AE0; --g3: #BC96E6;
+  --f-island: hue-rotate(0deg) saturate(1) brightness(1); --f-puddle: hue-rotate(0deg) saturate(1) brightness(1); --f-ring: hue-rotate(0deg) saturate(1) brightness(1); --f-blob: hue-rotate(0deg) saturate(1) brightness(1); --f-planet-r: hue-rotate(0deg) saturate(1) brightness(1); --f-planet-b: hue-rotate(0deg) saturate(1) brightness(1); --f-worm: hue-rotate(0deg) saturate(1) brightness(1); --f-dots: hue-rotate(0deg) saturate(1) brightness(1); --f-stripes: hue-rotate(0deg) saturate(1) brightness(1); --f-bubble: hue-rotate(0deg) saturate(1) brightness(1); --f-circle: hue-rotate(0deg) saturate(1) brightness(1); }
+.nos-lab .petys[data-world="periodo"] { --bg: #FFF081; --next: #FF89BF; --copy: #B47DE6; --b1: #FF4DC1; --b2: #8A3FD1; --say: #fff; --say-b: #FF1FA6; --play: #B36BF2;
+  --g1: #FFC766; --g2: #FFD96F; --g3: #FFE877;
+  --f-island: hue-rotate(64deg) saturate(9) brightness(.85); --f-puddle: hue-rotate(76deg) saturate(4.5) brightness(.75); --f-ring: hue-rotate(-68deg) saturate(9) brightness(1); --f-blob: hue-rotate(-68deg) saturate(9) brightness(1.15);
+  --f-planet-r: hue-rotate(64deg) saturate(9) brightness(.8); --f-planet-b: hue-rotate(-108deg) saturate(.4) brightness(1.55); --f-worm: hue-rotate(44deg) saturate(.6) brightness(1.55); --f-dots: hue-rotate(44deg) saturate(.6) brightness(1.55);
+  --f-stripes: hue-rotate(76deg) saturate(8.5) brightness(.8); --f-bubble: hue-rotate(-68deg) saturate(3.5) brightness(1); --f-circle: hue-rotate(140deg) saturate(1.5) brightness(1.22); }
+.nos-lab .petys[data-world="flujo"] { --bg: #FF89BF; --next: #C7A0ED; --copy: #fff; --b1: #FFF080; --b2: #8A3FD1; --say: #fff; --say-b: #FFF080; --play: #FF3A96;
+  --g1: #FF4D95; --g2: #FF6AA8; --g3: #FF7AB6;
+  --f-island: hue-rotate(-128deg) saturate(1.2) brightness(1.1); --f-puddle: hue-rotate(-116deg) saturate(.6) brightness(1.1); --f-ring: hue-rotate(108deg) saturate(.6) brightness(1); --f-blob: hue-rotate(116deg) saturate(.6) brightness(1);
+  --f-planet-r: hue-rotate(-128deg) saturate(1.2) brightness(1.1); --f-planet-b: hue-rotate(-24deg) saturate(1) brightness(.95); --f-worm: hue-rotate(-36deg) saturate(1.4) brightness(.95); --f-dots: hue-rotate(-128deg) saturate(.4) brightness(1.6);
+  --f-stripes: hue-rotate(-128deg) saturate(1.6) brightness(1); --f-bubble: hue-rotate(-156deg) saturate(9) brightness(.8); --f-circle: hue-rotate(76deg) saturate(7.5) brightness(1.2); }
+.ns-tint { transition: filter var(--t) ease; }
+[data-tint="island"] { filter: var(--f-island); } [data-tint="puddle"] { filter: var(--f-puddle); } [data-tint="ring"] { filter: var(--f-ring); } [data-tint="blob"] { filter: var(--f-blob); }
+[data-tint="planet-r"] { filter: var(--f-planet-r); } [data-tint="planet-b"] { filter: var(--f-planet-b); } [data-tint="worm"] { filter: var(--f-worm); } [data-tint="dots"] { filter: var(--f-dots); }
+[data-tint="stripes"] { filter: var(--f-stripes); } [data-tint="bubble"] { filter: var(--f-bubble); } [data-tint="circle"] { filter: var(--f-circle); }
+
+.nos-lab .pt-desk { container-type: inline-size; }
+.ns-stage { --u: calc(100cqw / 1366); position: relative; overflow: hidden; color-scheme: light; font-family: Montserrat, "Gotham Rounded", "Avenir Next", system-ui, sans-serif; line-height: 1; text-align: left; -webkit-user-select: none; user-select: none; }
+.ns-stage p { margin: 0; }
+.ns-stage .ns-a { position: absolute; left: calc(var(--x) * var(--u)); top: calc(var(--y) * var(--u)); width: calc(var(--w) * var(--u)); height: auto; max-width: none; }
+.ns-stage img.ns-a, .ns-stage .ns-a img { display: block; }
+
+/* Site chrome (desktop) */
+.ns-top { position: relative; height: calc(115 * var(--u)); background: #fff; color: #4A4A4A; font-family: "Avenir Next", "Nunito Sans", system-ui, sans-serif; font-size: calc(12.5 * var(--u)); }
+.ns-top::after { content: ""; position: absolute; left: 0; right: 0; top: calc(72 * var(--u)); border-top: calc(1 * var(--u)) dashed #E3E3E3; }
+.ns-tools { position: absolute; right: calc(78 * var(--u)); top: calc(23 * var(--u)); display: flex; align-items: center; height: calc(29 * var(--u)); }
+.ns-tools > * { display: flex; align-items: center; padding: 0 calc(10 * var(--u)); height: calc(20 * var(--u)); border-right: calc(1 * var(--u)) solid #E3E3E3; }
+.ns-tools > :nth-last-child(-n + 2) { border: 0; }
+.ns-tools svg { width: calc(17 * var(--u)); height: calc(17 * var(--u)); fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.ns-tools .pink { color: #FF3D9A; }
+.ns-auth { margin-left: calc(14 * var(--u)); padding: 0 !important; height: calc(29 * var(--u)) !important; border-radius: calc(6 * var(--u)); overflow: hidden; color: #fff; font-weight: 600; }
+.ns-auth span { display: flex; align-items: center; height: 100%; padding: 0 calc(11 * var(--u)); background: #FF3D9A; }
+.ns-auth span + span { background: #F2398E; }
+.ns-nav { position: absolute; top: calc(73 * var(--u)); left: 0; right: 0; height: calc(42 * var(--u)); }
+.ns-nav span { position: absolute; top: 50%; transform: translate(-50%, -50%); white-space: nowrap; }
+.ns-nav i { display: inline-block; width: calc(5 * var(--u)); height: calc(5 * var(--u)); margin-left: calc(6 * var(--u)); border: solid currentColor; border-width: 0 calc(1.2 * var(--u)) calc(1.2 * var(--u)) 0; transform: translateY(-30%) rotate(45deg); }
+.ns-nav .on { color: #FF3D9A; }
+.ns-nav .on::before { content: ""; position: absolute; left: calc(-6 * var(--u)); top: calc(-7 * var(--u)); width: calc(7 * var(--u)); height: calc(7 * var(--u)); background: #FF3D9A; border-radius: 50% 50% 0 50%; transform: rotate(45deg); }
+
+/* Hero world */
+.ns-hero { position: relative; height: calc(653 * var(--u)); overflow: hidden; background: var(--bg); transition: background-color var(--t) ease; }
+.ns-copy { position: absolute; color: var(--copy); font-weight: 500; text-align: center; letter-spacing: -.01em; white-space: nowrap; transition: color var(--t) ease; }
+.ns-copy b { font-weight: 800; transition: color var(--t) ease; }
+.ns-copy.c1 b { color: var(--b1); }
+.ns-copy.c2 b { color: var(--b2); }
+.ns-hero .ns-copy { line-height: calc(20 * var(--u)); }
+.ns-hero .c1 { left: calc(135 * var(--u)); top: calc(233 * var(--u)); width: calc(446 * var(--u)); font-size: calc(20 * var(--u)); }
+.ns-hero .c2 { left: calc(129 * var(--u)); top: calc(295 * var(--u)); width: calc(458 * var(--u)); font-size: calc(19 * var(--u)); }
+.ns-say { position: absolute; display: grid; place-content: center; gap: calc(6 * var(--u)); text-align: center; font-weight: 500; color: var(--say); transition: color var(--t) ease; }
+.ns-say b { font-weight: 800; color: var(--say-b); transition: color var(--t) ease; }
+.ns-hero .ns-say { left: calc(392 * var(--u)); top: calc(393 * var(--u)); width: calc(190 * var(--u)); height: calc(80 * var(--u)); font-size: calc(14 * var(--u)); line-height: calc(15 * var(--u)); transform: rotate(-1deg); }
+.ns-hero .ns-say b { font-size: calc(15 * var(--u)); }
+
+/* Characters and the island float together. */
+.ns-isle { position: absolute; inset: 0; pointer-events: none; animation: ns-float 5.5s ease-in-out infinite; }
+.ns-drift { animation: ns-drift 9s ease-in-out infinite; }
+.ns-drift.slow { animation-duration: 12s; animation-direction: reverse; }
+@keyframes ns-float { 50% { transform: translateY(calc(-9 * var(--u))); } }
+@keyframes ns-drift { 50% { transform: translate(calc(4 * var(--u)), calc(-6 * var(--u))) rotate(2deg); } }
+
+.ns-char { pointer-events: auto; padding: 0; border: 0; background: none; cursor: pointer; border-radius: calc(10 * var(--u)); -webkit-tap-highlight-color: transparent; }
+.ns-char img { width: 100%; height: auto; transform-origin: 50% 100%; transition: transform .2s var(--ease, ease); }
+@media (hover: hover) { .ns-char:hover img { transform: translateY(calc(-4 * var(--u))) scale(1.03); } }
+.ns-char:focus-visible, .ns-play:focus-visible, .ns-next:focus-visible { outline: 3px solid var(--text-accent); outline-offset: 3px; }
+.ns-char.hop img { animation: ns-hop .55s cubic-bezier(.3, .7, .4, 1); }
+@keyframes ns-hop { 35% { transform: translateY(calc(-26 * var(--u))) scale(.97, 1.04); } 70% { transform: translateY(0) scale(1.05, .95); } }
+
+/* The cast rotates: each character glides to its new place; the one leaving the front arcs over the others. */
+.ns-hero .ns-char { transition: left var(--t) cubic-bezier(.6, 0, .3, 1), top var(--t) cubic-bezier(.6, 0, .3, 1), width var(--t) cubic-bezier(.6, 0, .3, 1); }
+.ns-hero .ns-char.arc { animation: ns-arc var(--t) cubic-bezier(.5, 0, .5, 1); }
+@keyframes ns-arc { 50% { transform: translateY(calc(-70 * var(--u))) rotate(6deg); } }
+
+/* "Jugar": a filled pill with an offset outline, as drawn in the source file. */
+.ns-play { position: absolute; left: calc(415 * var(--u)); top: calc(539 * var(--u)); width: calc(162 * var(--u)); height: calc(40 * var(--u)); margin-top: calc(5 * var(--u)); padding: 0; border: 0; border-radius: 999px; background: var(--play); color: #fff; font: 500 calc(20 * var(--u)) / 1 Montserrat, "Gotham Rounded", system-ui, sans-serif; letter-spacing: -.01em; cursor: pointer; transition: background-color var(--t) ease; }
+.ns-play::before { content: ""; position: absolute; inset: calc(-5 * var(--u)) calc(-6 * var(--u)) calc(5 * var(--u)) calc(6 * var(--u)); border: calc(1.5 * var(--u)) solid #1A1A1A; border-radius: 999px; transition: transform .2s var(--ease, ease); }
+.ns-play::after { content: ""; position: absolute; left: 50%; top: 50%; width: max(100%, var(--hit, 44px)); height: max(100%, var(--hit, 44px)); transform: translate(-50%, -50%); }
+.ns-play span { position: relative; top: calc(-2 * var(--u)); left: calc(4 * var(--u)); }
+@media (hover: hover) { .ns-play:hover { filter: brightness(1.06); } .ns-play:hover::before { transform: translate(calc(-3 * var(--u)), calc(3 * var(--u))); } }
+.ns-play:active::before { transform: translate(calc(-6 * var(--u)), calc(5 * var(--u))); }
+
+/* Mobile: the shared iPhone frame (.phone, as in the Mercado Libre labs), with the site below the status bar.
+   Inside the frame the stage is 402 x 816 points; the extra height over the 418 x 738 artboard goes above "Jugar" and the app bar. */
+.nos-lab .ns-phone { display: none; height: 892px; container-type: inline-size; flex-direction: column; --hit: 72px; }
+.nos-lab .petys[data-device="mobile"] .ns-phone { display: flex; }
+.ns-phone .n-top { background: var(--bg); transition: background-color var(--t) ease; }
+.ns-stage.m { --u: calc(100cqw / 418); flex: 1; background: var(--bg); transition: background-color var(--t) ease; }
+.m .ns-glow { position: absolute; left: calc(-75 * var(--u)); top: calc(250 * var(--u)); width: calc(570 * var(--u)); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 57% 50%, var(--g1) 0 26%, var(--g2) 26% 37%, var(--g3) 37% 50%, transparent 50%); transition: background var(--t) ease; }
+.m .ns-round { position: absolute; width: calc(44 * var(--u)); height: calc(44 * var(--u)); left: calc(336 * var(--u)); border-radius: 50%; display: grid; place-items: center; }
+.m .ns-round svg { width: 50%; height: 50%; fill: none; stroke: #fff; stroke-width: 2.4; stroke-linecap: round; }
+.m .ns-copy { left: calc(20 * var(--u)); width: calc(378 * var(--u)); font-size: calc(16 * var(--u)); line-height: calc(20 * var(--u)); }
+.m .c1 { top: calc(247 * var(--u)); }
+.m .c2 { top: calc(299 * var(--u)); }
+.m .ns-say { left: calc(57 * var(--u)); top: calc(450 * var(--u)); width: calc(190 * var(--u)); height: calc(80 * var(--u)); font-size: calc(11.5 * var(--u)); line-height: calc(14 * var(--u)); }
+.m .ns-say b { font-size: calc(12.5 * var(--u)); }
+.m .ns-edge { position: absolute; right: 0; top: 0; width: calc(40 * var(--u)); height: calc(754 * var(--u)); }
+.m .ns-edge path { fill: var(--next); transition: fill var(--t) ease; }
+.m .ns-chars { position: absolute; left: calc(214 * var(--u)); width: calc(156 * var(--u)); top: calc(420 * var(--u)); height: calc(168 * var(--u)); display: grid; justify-items: center; align-items: end; }
+.m .ns-chars .ns-char { grid-area: 1 / 1; display: block; }
+.m .ns-chars .ns-char[hidden] { display: none; }
+.m .ns-chars .ns-char.in img { animation: ns-in .45s cubic-bezier(.3, .7, .4, 1) both; }
+@keyframes ns-in { from { opacity: 0; transform: translateX(calc(60 * var(--u))) rotate(8deg); } }
+.m .ns-next { position: absolute; right: 0; top: calc(482 * var(--u)); width: calc(72 * var(--u)); height: calc(72 * var(--u)); padding: 0 0 0 calc(16 * var(--u)); border: 0; border-radius: calc(10 * var(--u)); background: none; color: #1A1A1A; cursor: pointer; display: grid; place-items: center; }
+.m .ns-next svg { width: calc(26 * var(--u)); height: calc(26 * var(--u)); fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s var(--ease, ease); }
+.m .ns-next:focus-visible { outline-offset: -3px; }
+@media (hover: hover) { .m .ns-next:hover svg { transform: translateX(calc(-3 * var(--u))); } }
+.m .ns-play { left: calc(125 * var(--u)); top: calc(668 * var(--u)); width: calc(160 * var(--u)); }
+.m .ns-planet { position: absolute; left: calc(-70 * var(--u)); top: calc(670 * var(--u)); width: calc(200 * var(--u)); }
+.m .ns-bar { position: absolute; left: 0; right: 0; top: calc(754 * var(--u)); bottom: 0; background: #FF3E9A; }
+.m .ns-bar img { display: block; width: 100%; height: auto; }
+
+/* In the phone frame the toast sits above "Jugar", clear of the title. */
+.nos-lab .petys[data-device="mobile"] .pt-chip { top: auto; bottom: 150px; left: 50%; right: auto; margin: 0; translate: -50% 0; width: max-content; max-width: 250px; text-align: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ns-isle, .ns-drift, .ns-char.hop img, .ns-hero .ns-char.arc, .m .ns-chars .ns-char.in img { animation: none; }
+  .ns-char img, .ns-play::before, .m .ns-next svg, .ns-hero .ns-char { transition: none; }
+}
