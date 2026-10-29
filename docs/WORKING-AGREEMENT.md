@@ -27,7 +27,7 @@ Work follows one of three paths, and the lead says which before starting:
 | `docs/superpowers/specs/`, `plans/` | What we build in each initiative, and how          |
 | `docs/decisions-log.md`             | What was decided and when, one line each           |
 
-Tasks and status live in Notion. Definitions live in this repository.
+Tasks and status live in the GitHub Project of this repository ([joulert02/projects/2](https://github.com/users/joulert02/projects/2)); the plan is in [the backlog](backlog.md). Definitions live in this repository. The earlier Notion Sprint Board is kept as history and is not a second backlog.
 
 ## Design continuity · 2026-10-25
 
@@ -38,5 +38,7 @@ Tasks and status live in Notion. Definitions live in this repository.
 
 ## Git
 
-- The lead works on `claude/*` branches. The owner reviews and merges into `main`.
+- Trunk-based development: `main` is the trunk. Work happens on short-lived branches named by type, `feature/<slug>` for new work and `fix/<slug>` for corrections, kept small and integrated into `main` often. Branches are never named after an agent.
+- Commits are semantic (Conventional Commits). Each commit made by an agent ends with a `Co-Authored-By` trailer naming that agent.
+- The owner reviews and integrates into `main`; feature branches are integrated with a squash commit and left alive.
 - No commit, push, deploy, purchase or publication without the owner's authorization (see `AGENTS.md`).
