@@ -11,15 +11,15 @@ npm ci
 npm run dev        # http://localhost:4321
 ```
 
-| Script          | What it does                                   |
-| --------------- | ---------------------------------------------- |
-| `npm run dev`   | Dev server                                     |
-| `npm run storybook` | Storybook for Astro components and design documentation |
-| `npm run build-storybook` | Build the static Storybook site |
-| `npm run build` | Static build to `dist/` (pages + OG images)    |
-| `npm run check` | Astro + TypeScript diagnostics                 |
-| `npm run lint`  | ESLint                                         |
-| `npm run ci`    | Everything CI runs: format, lint, check, build |
+| Script                    | What it does                                            |
+| ------------------------- | ------------------------------------------------------- |
+| `npm run dev`             | Dev server                                              |
+| `npm run storybook`       | Storybook for Astro components and design documentation |
+| `npm run build-storybook` | Build the static Storybook site                         |
+| `npm run build`           | Static build to `dist/` (pages + OG images)             |
+| `npm run check`           | Astro + TypeScript diagnostics                          |
+| `npm run lint`            | ESLint                                                  |
+| `npm run ci`              | Everything CI runs: format, lint, check, build          |
 
 ## Structure
 
@@ -48,3 +48,5 @@ The current reviewed interaction prototype is **v8**, with v5–v7 preserved as 
 ## Component workshop
 
 Storybook 10.6.5 is configured for Astro components, CSF Next stories, and standalone MDX documentation under `.storybook/docs/`. Use `definePreview` from `@storybook-astro/framework` and `preview.meta(...).story(...)` in `*.stories.ts` files; MDX pages can embed those stories with Storybook doc blocks. Existing CSF 3 stories remain supported. See the [Design Guidelines](.storybook/docs/DesignGuidelines.mdx) example; approved tokens and patterns will be added after the visual direction is approved.
+
+`npm run build` also builds Storybook into `dist/storybook`, served at `/storybook/` in the deployed environment.

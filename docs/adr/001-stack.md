@@ -18,7 +18,7 @@ Requirements that drive the choice:
 3. i18n routing (en default, `/es/` prefix) with `hreflang` alternates.
 4. Dynamic OpenGraph images per page.
 5. React available for the occasional interactive piece, since React is Jouler's main stack.
-6. Cheap to host on Vercel, previews per PR.
+6. Cheap static hosting with previews per pull request.
 
 ## Options
 
@@ -51,7 +51,7 @@ genuinely needs state and rich interaction.**
 
 Use **Astro 7** with TypeScript `strictest`, content collections for projects and articles, built-in
 i18n, MDX, sitemap, and build-time OG images. Keep `@astrojs/react` for opt-in islands only.
-Deploy as static output on Vercel.
+Deploy as a static site on Cloudflare Pages. Connect the repository through Cloudflare's Git integration, use `npm run build` as the build command and `dist` as the output directory, and set `main` as the production branch. Other branches and pull requests use preview deployments.
 
 ## Consequences
 

@@ -27,17 +27,15 @@ function skipAstroMdxForStorybookDocs(plugins = []) {
 }
 
 export default defineMain({
-  stories: [
-    "../.storybook/docs/**/*.mdx",
-    "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)",
-  ],
+  stories: ["../.storybook/docs/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
   addons: ["@storybook/addon-docs"],
   framework: {
     name: "@storybook-astro/framework",
     options: {},
   },
-  viteFinal(config) {
+  viteFinal(config, { configType }) {
     skipAstroMdxForStorybookDocs(config.plugins);
+    if (configType === "PRODUCTION") config.base = "./";
     return config;
   },
 });

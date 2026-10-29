@@ -115,11 +115,11 @@ Photo; list of talks (university, year, topic) with links; public screenshots fo
 
 ## Review gates
 
-| Gate                | What Jouler reviews                                  | Where              |
-| ------------------- | ---------------------------------------------------- | ------------------ |
-| 1. Discovery brief  | Positioning, message, sitemap, content — **closed**  | This document      |
-| 2. Visual direction | 2–3 directions with Home and one case study          | Claude Design      |
-| 3. Copy             | Home, Career and first cases, in English and Spanish | One doc per page   |
-| 4. Pre-launch       | The site on a Vercel preview, on a real phone        | Preview URL per PR |
+| Gate                | What Jouler reviews                                     | Where              |
+| ------------------- | ------------------------------------------------------- | ------------------ |
+| 1. Discovery brief  | Positioning, message, sitemap, content — **closed**     | This document      |
+| 2. Visual direction | 2–3 directions with Home and one case study             | Claude Design      |
+| 3. Copy             | Home, Career and first cases, in English and Spanish    | One doc per page   |
+| 4. Pre-launch       | The site on a Cloudflare Pages preview, on a real phone | Preview URL per PR |
 
-Repository rules: Claude works on `claude/*` branches; Jouler merges to `master`. Domain, accounts and social posts are Jouler's.
+Repository rules: Claude works on `claude/*` branches; Jouler merges to `main`. Domain, accounts and social posts are Jouler's.
