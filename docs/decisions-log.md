@@ -2,6 +2,8 @@
 
 One line per decision, newest first. Details live in the linked document.
 
+- **2026-10-29 · workflow and backlog:** this project's tasks live in the GitHub Project (the Notion Sprint Board stays as history). Work follows trunk-based development with `feature/*` and `fix/*` branches, semantic commits and a `Co-Authored-By` trailer per agent; `claude/*` branches are retired. The plan is in [the backlog](backlog.md): a spike and 14 vertical user stories, taken one at a time.
+
 - **2026-10-28 · owner sealed v10:** the prototype is closed with the Mercado Libre and Pragma cases; its file hashes in `history/v10.json` are now final and any further change is a new version (v11). Primary intro: media beside "What I learned" (photo for Mercado Libre, the PRAGMA video for Pragma), with the plain version kept as a secondary variant in `learned/`. Video optimization and ES/EN subtitles are for development. No pre-commit hook for the hash check (owner: not needed). Details: [v10-proposal.md](design/v10-proposal.md).
 
 - **2026-10-27 · owner closed the Mercado Libre case design (v10):** the main page keeps the "What I learned" intro; the alternative intro (`intro-c`: role text, quote, team photo, floating "See what we built" button) stays as a variant to decide in testing; proposal B (violet frame) is discarded. Visual fidelity of each example is refined when the production components are built. Team-photo publication permission and replacement of the third-party product photos are pending. See [v10 proposal](design/v10-proposal.md).

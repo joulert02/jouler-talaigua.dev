@@ -1,12 +1,12 @@
-# jouler-talaigua.dev · instrucciones del repositorio
+# jouler-talaigua.dev · repository instructions
 
-Base técnica compartida, ampliable por el propietario. Lee `README.md`, `docs/discovery-brief.md` y `docs/adr/001-stack.md` antes de trabajar.
+Shared technical base, extendable by the owner. Read `README.md`, `docs/discovery-brief.md` and `docs/adr/001-stack.md` before working.
 
-- El stack aceptado es Astro con TypeScript estricto, MDX y content collections. Consulta `package.json` para versiones y comandos actuales. No reemplazarlo por una propuesta antigua del roadmap.
-- Inglés en raíz y español bajo `/es/`. Respeta ambas versiones y la separación entre vistas, rutas, contenido y traducciones.
-- Chrome del sitio en vanilla; React solo cuando la interacción lo justifique, según el ADR. Revisa la configuración y las instrucciones más específicas del directorio que vayas a modificar.
-- El producto actual es una base/spike con contenido pendiente. No presentar un sitemap previsto, un borrador o los resultados históricos del spike como publicación o validación actual.
-- No inventar hechos, métricas, permisos ni datos personales. Conservar `TODO(verify)` hasta confirmar el contenido. La comprobación estricta del script de placeholders bloquea publicaciones con esos marcadores; revisar también placeholders sin marcador.
-- Usa los scripts de `package.json` apropiados al cambio. No ejecutar `format` sobre todo el repo durante una revisión de memoria ni instalar dependencias o alterar producto por una tarea pendiente no solicitada.
-- Revisa y conserva los cambios locales. Ejecuta comandos de código, pruebas y Git desde este repo. El brief documenta ramas `claude/*` y merge del propietario a `main`; no hacer merge, commit, push, despliegues, compras ni publicaciones sin autorización.
-- Mantener el contexto personal fuera de documentación compartida. Las reglas técnicas adicionales se completan progresivamente.
+- The accepted stack is Astro with strict TypeScript, MDX and content collections. Check `package.json` for current versions and commands. Do not replace it with an old roadmap proposal.
+- English at the root and Spanish under `/es/`. Respect both versions and the separation between views, routes, content and translations.
+- Site chrome in vanilla; React only when the interaction justifies it, per the ADR. Check the configuration and the more specific instructions of the directory you are about to change.
+- The current product is a foundation/spike with pending content. Do not present a planned sitemap, a draft or the historical spike results as current publication or validation.
+- Do not invent facts, metrics, permissions or personal data. Keep `TODO(verify)` until the content is confirmed. The strict placeholder script check blocks publications that contain those markers; also review placeholders without a marker.
+- Use the `package.json` scripts that fit the change. Do not run `format` over the whole repo during a memory review, and do not install dependencies or alter the product for a pending task that was not requested.
+- Review and keep local changes. Run code, test and Git commands from this repo. Trunk-based workflow: `main` is the trunk and work happens on short-lived `feature/*` and `fix/*` branches (never named after an agent), with semantic commits and a `Co-Authored-By` trailer for the agent that executes. Tasks for this project live in the GitHub Project. Do not merge, commit, push, deploy, purchase or publish without authorization.
+- Keep personal context out of shared documentation. Additional technical rules are completed progressively.
