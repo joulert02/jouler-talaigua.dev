@@ -10,3 +10,6 @@ dist/
 
 # Local tool output (e.g. Playwright captures)
 output/
+
+# Local Claude Code settings (shared settings.json is tracked)
+.claude/settings.local.json
