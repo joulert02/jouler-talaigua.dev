@@ -38,5 +38,5 @@ Tasks and status live in Notion. Definitions live in this repository.
 
 ## Git
 
-- The lead works on `claude/*` branches. The owner reviews and merges into `master`.
+- The lead works on `claude/*` branches. The owner reviews and merges into `main`.
 - No commit, push, deploy, purchase or publication without the owner's authorization (see `AGENTS.md`).

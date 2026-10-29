@@ -51,7 +51,7 @@ genuinely needs state and rich interaction.**
 
 Use **Astro 7** with TypeScript `strictest`, content collections for projects and articles, built-in
 i18n, MDX, sitemap, and build-time OG images. Keep `@astrojs/react` for opt-in islands only.
-Deploy as a static site on Cloudflare Pages. Connect the repository through Cloudflare's Git integration, use `npm run build` as the build command and `dist` as the output directory, and set `master` as the production branch. Other branches and pull requests use preview deployments.
+Deploy as a static site on Cloudflare Pages. Connect the repository through Cloudflare's Git integration, use `npm run build` as the build command and `dist` as the output directory, and set `main` as the production branch. Other branches and pull requests use preview deployments.
 
 ## Consequences
 
