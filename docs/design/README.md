@@ -6,6 +6,7 @@ Everything about how the site looks and behaves: the direction, every iteration,
 
 | Document                                                                                                                 | Answers                                                               |
 | ------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------- |
+| [workflow.md](workflow.md)                                                                                               | How the design was made with AI: steps, artifacts and rules           |
 | [principles.md](principles.md)                                                                                           | The rules every screen follows, plus design tokens                    |
 | [references.md](references.md)                                                                                           | Which sites inspire us and what we take from each                     |
 | [rounds.md](rounds.md)                                                                                                   | Every round: what was proposed, the owner's feedback, what we learned |

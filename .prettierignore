@@ -4,6 +4,7 @@ node_modules
 package-lock.json
 .orca-handoff
 .playwright-mcp
+.claude
 AGENTS.override.md
 # Preserve exact historical exports and prototype snapshots.
 docs/design/v*/
