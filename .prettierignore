@@ -2,6 +2,9 @@ dist
 .astro
 node_modules
 package-lock.json
+.orca-handoff
+.playwright-mcp
+AGENTS.override.md
 # Preserve exact historical exports and prototype snapshots.
 docs/design/v*/
 docs/design/index.html
