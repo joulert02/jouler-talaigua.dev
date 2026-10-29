@@ -4,12 +4,14 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=22.12"
+    "node": ">=22.19"
   },
   "scripts": {
     "prepare": "husky",
     "dev": "astro dev",
-    "build": "node scripts/check-placeholders.mjs && astro build",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build --output-dir dist/storybook",
+    "build": "node scripts/check-placeholders.mjs && astro build && npm run build-storybook",
     "preview": "astro preview",
     "check": "astro check",
     "lint": "eslint .",
@@ -35,6 +37,9 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@eslint/js": "^10.0.1",
+    "@storybook-astro/framework": "^1.14.0",
+    "@storybook/addon-docs": "^10.6.5",
+    "@storybook/builder-vite": "^10.6.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "eslint": "^10.11.0",
@@ -44,6 +49,7 @@
     "lint-staged": "^17.6.0",
     "prettier": "^3.9.9",
     "prettier-plugin-astro": "^1.1.0",
+    "storybook": "^10.6.5",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.70.1",
     "wrangler": "^4.155.0"
