@@ -1,0 +1,113 @@
+/*
+ * Design tokens: the only place values live. Source: the sealed v11 prototype (docs/design/v11/styles.css).
+ * Naming: --{category}-{role}-{variant}. One semantic layer; component-local variables use --_name.
+ * Themes also apply to any [data-theme] container, so docs can show light and dark side by side.
+ *
+ * Breakpoints (custom properties cannot be read inside @media, so these are constants):
+ *   phone ≤ 719px · tablet ≥ 720px · board (desktop desk) ≥ 901px · wide ≥ 1200px
+ *   v11 also uses 560px and 640px; the Home build decides whether they stay.
+ */
+
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+
+  --color-bg: #f6f7f9;
+  --color-bg-subtle: #eef0f3;
+  --color-surface: #ffffff;
+  --color-surface-hover: #eef0f3;
+  --color-text: #141517;
+  --color-text-secondary: #3d4148;
+  --color-text-muted: #5b616a;
+  --color-border: #e1e4e8;
+  --color-accent: #6e44f0;
+  --color-on-accent: #ffffff;
+  --color-text-accent: #5a31d9;
+  --color-flag-yellow: #fcd116;
+  --color-flag-blue: #003893;
+  --color-flag-red: #ce1126;
+
+  --shadow-rest: 0 1px 2px rgb(20 21 23 / 0.06), 0 8px 24px -12px rgb(20 21 23 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(20 21 23 / 0.08), 0 18px 40px -16px rgb(20 21 23 / 0.28);
+
+  --font-sans: "Onest", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-hand: "Caveat", "Segoe Print", "Bradley Hand", cursive;
+  --font-size-display: 36px;
+  --font-size-title: 26px;
+  --font-size-lead: 20px;
+  --font-size-body: 17px;
+  --font-size-small: 14.5px;
+  --font-size-label: 11.5px;
+  --line-height-body: 1.7;
+  --measure-prose: 62ch;
+
+  /* Draft scales: reviewed by the owner in Storybook before they are approved. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 48px;
+  --space-10: 64px;
+
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-pill: 999px;
+  --radius-round: 50%;
+
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-spring: cubic-bezier(0.3, 1.35, 0.5, 1);
+  --duration-fast: 200ms;
+  --duration-medium: 300ms;
+  --duration-slow: 500ms;
+
+  --layout-container: 1240px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --color-bg: #131417;
+    --color-bg-subtle: #17191c;
+    --color-surface: #1c1e22;
+    --color-surface-hover: #23262b;
+    --color-text: #eef0f3;
+    --color-text-secondary: #c9cdd3;
+    --color-text-muted: #9aa0a9;
+    --color-border: #2b2e34;
+    --color-accent: #a58bff;
+    --color-on-accent: #141418;
+    --color-text-accent: #a58bff;
+
+    --shadow-rest: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -12px rgb(0 0 0 / 0.6);
+    --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.4), 0 18px 40px -16px rgb(0 0 0 / 0.7);
+  }
+}
+
+:root[data-theme="dark"],
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-bg: #131417;
+  --color-bg-subtle: #17191c;
+  --color-surface: #1c1e22;
+  --color-surface-hover: #23262b;
+  --color-text: #eef0f3;
+  --color-text-secondary: #c9cdd3;
+  --color-text-muted: #9aa0a9;
+  --color-border: #2b2e34;
+  --color-accent: #a58bff;
+  --color-on-accent: #141418;
+  --color-text-accent: #a58bff;
+
+  --shadow-rest: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -12px rgb(0 0 0 / 0.6);
+  --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.4), 0 18px 40px -16px rgb(0 0 0 / 0.7);
+}
