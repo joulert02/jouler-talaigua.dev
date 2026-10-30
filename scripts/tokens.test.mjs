@@ -1,7 +1,7 @@
 // Guards src/styles/tokens.css: theme blocks stay complete and text pairs keep WCAG AA contrast.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { contrastRatio } from "../.storybook/blocks/contrast.js";
 
 const css = readFileSync(new URL("../src/styles/tokens.css", import.meta.url), "utf8");
@@ -77,4 +77,20 @@ test("text pairs pass AA and match the 2026-10-29 measurements", () => {
     assert.ok(dr >= 4.5, `${fg}/${bg} dark ${dr}`);
     assert.equal(dr, darkRatio, `${fg}/${bg} dark`);
   }
+});
+
+test("no legacy token names in src/ or .storybook/", () => {
+  const hits = [];
+  for (const dir of ["../src/", "../.storybook/"]) {
+    const root = new URL(dir, import.meta.url);
+    for (const file of readdirSync(root, { recursive: true })) {
+      if (!/\.(css|astro|ts|tsx|js|jsx|mdx)$/.test(file)) continue;
+      readFileSync(new URL(file, root), "utf8")
+        .split("\n")
+        .forEach(
+          (line, i) => /var\(--(fg|bg|muted|line)\)/.test(line) && hits.push(`${dir}${file}:${i + 1}`),
+        );
+    }
+  }
+  assert.deepEqual(hits, []);
 });
