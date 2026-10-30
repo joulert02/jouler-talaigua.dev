@@ -1,10 +1,13 @@
 import "../src/styles/global.css";
 import "../src/styles/fonts.css";
 import { definePreview } from "@storybook-astro/framework";
+import { getPreferredColorScheme, themes } from "storybook/theming";
 
 const addonDocs = () => ({
   parameters: {
     docs: {
+      // The docs page follows the OS theme, like the tokens; ThemePair shows both themes explicitly.
+      theme: getPreferredColorScheme() === "dark" ? themes.dark : themes.light,
       renderer: async () => {
         const { DocsRenderer } = await import("@storybook/addon-docs");
         return new DocsRenderer();

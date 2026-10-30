@@ -94,3 +94,56 @@ test("no legacy token names in src/ or .storybook/", () => {
   }
   assert.deepEqual(hits, []);
 });
+
+// v11: selection is accent text on 14% of the accent mixed over the surface (sRGB).
+function mix(a, b, weight) {
+  const hex = (c) => [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16));
+  const [x, y] = [hex(a), hex(b)];
+  return (
+    "#" +
+    x
+      .map((v, i) =>
+        Math.round(v * weight + y[i] * (1 - weight))
+          .toString(16)
+          .padStart(2, "0"),
+      )
+      .join("")
+  );
+}
+
+test("selection uses the v11 mix and passes AA in every theme", () => {
+  const global = readFileSync(new URL("../src/styles/global.css", import.meta.url), "utf8");
+  assert.match(
+    global,
+    /::selection\s*\{[^}]*background:\s*color-mix\(in srgb, var\(--color-accent\) 14%, var\(--color-surface\)\);[^}]*color:\s*var\(--color-text-accent\);/,
+  );
+  for (const theme of [light(), mediaDark()]) {
+    const bg = mix(theme["--color-accent"], theme["--color-surface"], 0.14);
+    assert.ok(contrastRatio(theme["--color-text-accent"], bg) >= 4.5, `selection ${bg}`);
+  }
+});
+
+test("docs blocks opt out of the Storybook docs typography", () => {
+  for (const file of [
+    "ThemePair",
+    "Swatches",
+    "ContrastTable",
+    "TypeScale",
+    "SpaceScale",
+    "RadiusShadow",
+    "MotionDemo",
+  ]) {
+    const source = readFileSync(new URL(`../.storybook/blocks/${file}.jsx`, import.meta.url), "utf8");
+    const root = source.match(/return \(\s*<\w+[^>]*className="([^"]+)"/);
+    assert.ok(root?.[1].split(" ").includes("sb-unstyled"), `${file} root lacks sb-unstyled`);
+  }
+});
+
+test("Storybook docs follow the OS theme and never restyle Storybook's own .sb-unstyled nodes", () => {
+  // Only ThemePair forces a theme. Storybook also puts .sb-unstyled on heading anchors.
+  const preview = readFileSync(new URL("../.storybook/preview.js", import.meta.url), "utf8");
+  assert.match(preview, /getPreferredColorScheme\(\) === "dark" \? themes\.dark : themes\.light/);
+  assert.doesNotMatch(preview, /dataset\.theme/);
+  const blocks = readFileSync(new URL("../.storybook/blocks/blocks.css", import.meta.url), "utf8");
+  assert.doesNotMatch(blocks, /(^|[,}]\s*)\.sb-unstyled\s*[,{]/m);
+});

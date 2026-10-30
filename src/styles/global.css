@@ -24,6 +24,10 @@ header nav {
   border-bottom: 1px solid var(--color-border);
   padding-bottom: 1rem;
 }
+::selection {
+  background: color-mix(in srgb, var(--color-accent) 14%, var(--color-surface));
+  color: var(--color-text-accent);
+}
 a {
   color: inherit;
 }

@@ -1,4 +1,13 @@
-/* Docs-only styles for the Storybook blocks. Built from the design tokens. */
+/* Docs-only styles for the Storybook blocks. Built from the design tokens. Block roots carry
+   .sb-unstyled so the Storybook docs typography does not override the token colors. */
+
+.sb-theme-pair,
+.sb-swatches,
+.sb-stack,
+.sb-table {
+  color: var(--color-text);
+  font-family: var(--font-sans);
+}
 
 .sb-theme-pair {
   display: grid;
@@ -34,6 +43,8 @@
 }
 
 .sb-theme code,
+.sb-swatch code,
+.sb-row code,
 .sb-table code {
   font-family: var(--font-mono);
   font-size: 13px;
@@ -41,6 +52,7 @@
 
 .sb-swatches {
   display: grid;
+  margin-block: var(--space-4) var(--space-6);
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: var(--space-3);
 }

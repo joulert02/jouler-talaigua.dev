@@ -4,7 +4,7 @@ import { useTokens } from "./useTokens.js";
 export function TypeScale({ tokens, family, sample = "Calm surface, curious depth" }) {
   const [ref, values] = useTokens(tokens);
   return (
-    <div ref={ref} className="sb-stack">
+    <div ref={ref} className="sb-stack sb-unstyled">
       {tokens.map((token) => (
         <div key={token} className="sb-row">
           <div className="sb-row__meta">

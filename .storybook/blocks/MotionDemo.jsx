@@ -21,7 +21,7 @@ export function MotionDemo({ durations, easings }) {
     ...easings.map((e) => ({ token: e, duration: middle, easing: e })),
   ];
   return (
-    <div ref={ref} className="sb-stack">
+    <div ref={ref} className="sb-stack sb-unstyled">
       {reduced ? (
         <p className="sb-muted">Reduced motion is on, so the demo shows the values without animating.</p>
       ) : (

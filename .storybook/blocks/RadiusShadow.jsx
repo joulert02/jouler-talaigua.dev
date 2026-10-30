@@ -13,7 +13,7 @@ export function RadiusShadow({ radii, shadows }) {
     </figure>
   );
   return (
-    <div ref={ref} className="sb-stack">
+    <div ref={ref} className="sb-stack sb-unstyled">
       <div className="sb-tiles">{radii.map((t) => tile(t, { borderRadius: `var(${t})` }))}</div>
       <div className="sb-tiles">
         {shadows.map((t) => tile(t, { boxShadow: `var(${t})`, borderRadius: "var(--radius-lg)" }))}

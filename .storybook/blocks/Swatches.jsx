@@ -4,7 +4,7 @@ import { useTokens } from "./useTokens.js";
 export function Swatches({ tokens }) {
   const [ref, values] = useTokens(tokens);
   return (
-    <div ref={ref} className="sb-swatches">
+    <div ref={ref} className="sb-swatches sb-unstyled">
       {tokens.map((token) => (
         <div key={token} className="sb-swatch">
           <span className="sb-swatch__chip" style={{ background: `var(${token})` }} />

@@ -5,14 +5,14 @@ import { useTokens } from "./useTokens.js";
 export function ContrastTable({ pairs }) {
   const [ref, values] = useTokens([...new Set(pairs.flat())]);
   return (
-    <div ref={ref}>
+    <div ref={ref} className="sb-unstyled">
       <table className="sb-table">
         <thead>
           <tr>
             <th scope="col">Sample</th>
             <th scope="col">Text on background</th>
             <th scope="col">Ratio</th>
-            <th scope="col">WCAG AA (4.5:1)</th>
+            <th scope="col">AA (4.5:1)</th>
           </tr>
         </thead>
         <tbody>
