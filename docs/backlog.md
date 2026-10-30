@@ -22,11 +22,12 @@ S = one sitting. M = a few sittings. L = more than that.
 
 ## Order at a glance
 
-`SP-01` is a spike and goes first; the rest are HUs.
+`SP-01` is a spike and goes first; `SP-02` is a spike that runs in parallel with HU-01; the rest are HUs.
 
 | #   | Item                     | Slice delivered                                         | Size |
 | --- | ------------------------ | ------------------------------------------------------- | ---- |
 | SP  | `SP-01-design-handoff`   | Design docs ready to plan from (spike, no code)         | S    |
+| SP  | `SP-02-testing-setup`    | Story-based interaction, a11y and visual tests (spike)  | S    |
 | 01  | `HU-01-home-foundation`  | Real Home, plus the cross-page components and Storybook | L    |
 | 02  | `HU-02-home-board`       | The explorable board on desktop, compact card on mobile | L    |
 | 03  | `HU-03-work-hub`         | Work: the project list with preview                     | M    |
@@ -277,6 +278,36 @@ _Scope extended 2026-10-30 (issue #4 comment):_ SP-01 also delivers the CSS toke
 **Done when.** The owner agrees HU-01 can be planned from these documents. The recommendation (ready, or what is still missing) is recorded in the decision log.
 
 **Blocks.** HU-01.
+
+---
+
+## SP-02-testing-setup
+
+**Type.** Spike. The answer is a recommendation, plus the setup if the probe works.
+
+**Context.** The site's testing value is visual consistency, interaction and accessibility, not logic. Storybook 10 runs render, interaction (`play`) and accessibility (a11y addon) tests through `@storybook/addon-vitest`, and visual tests through Chromatic. The project uses the community framework `@storybook-astro/framework` 1.14. It ships its own Vitest config and portable stories, but its support for `addon-vitest` in browser mode and for Astro components' vanilla `<script>` inside a test is unverified.
+
+**Question.** Can every story be a render, interaction, accessibility and visual test, in light and dark, with this Astro framework, run in CI?
+
+**Probe.** The `Button` story plus one Astro component with a vanilla script (`ThemeToggle`):
+
+1. `addon-vitest` with a `play` function: click, keyboard and focus asserted.
+2. The a11y addon failing the test on a WCAG 2.2 AA violation.
+3. A Chromatic build (free plan) in light and dark modes, with an accepted baseline.
+4. `npm test` and CI running the story tests next to the existing node tests.
+
+**Output.**
+
+1. The recommendation in the decision log: adopt, or fall back to Playwright against the built Storybook. It includes the snapshot budget against the free plan (5,000 a month, checked 2026-10-30) and whether TurboSnap is on the free plan.
+2. If adopted: the setup merged, and a short testing guide in Storybook (which test each story gets, how to accept a visual change).
+
+**Testing policy (proposed by the owner 2026-10-30).** Stories carry the tests: interaction, visual and accessibility. Node unit tests stay only for global guards (token values and contrast, placeholders, theme logic). Page-level behavior and performance belong to Playwright and Lighthouse on the built site (HU-13 and later), not here.
+
+**Done when.** The owner accepts the recommendation, and if adopted, the Button and ThemeToggle stories pass all four checks in CI.
+
+**Parallel with.** HU-01 (HU-01 writes its stories in the format this spike settles; the stories it creates before the merge get their tests added here or in HU-01).
+
+**Out of scope.** Page-level e2e tests, performance budgets and paid plans.
 
 ---
 
