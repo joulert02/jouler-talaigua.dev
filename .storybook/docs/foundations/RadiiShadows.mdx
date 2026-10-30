@@ -1,0 +1,35 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { StatusBadge, ThemePair, RadiusShadow } from "../../blocks/index.js";
+
+<Meta title="Foundations/Radii & shadows" />
+
+# Radii & shadows
+
+<StatusBadge status="draft" />
+
+Soft shapes and two elevation levels. The radius scale is derived from the prototype; the owner reviews it before it is approved.
+
+<ThemePair>
+  <RadiusShadow
+    radii={[
+      "--radius-xs",
+      "--radius-sm",
+      "--radius-md",
+      "--radius-lg",
+      "--radius-xl",
+      "--radius-pill",
+      "--radius-round",
+    ]}
+    shadows={["--shadow-rest", "--shadow-lift"]}
+  />
+</ThemePair>
+
+## Rules
+
+- `--radius-pill`: pills, buttons, the dock items and the back control.
+- `--radius-round`: discs, such as the back control's chevron.
+- `--radius-xs` to `--radius-md`: small surfaces and focus outlines.
+- `--radius-lg` and `--radius-xl`: cards and dialogs.
+- `--shadow-rest` for resting surfaces; `--shadow-lift` for the dock and objects being dragged.
+
+**Source:** `docs/design/v11/styles.css`.
