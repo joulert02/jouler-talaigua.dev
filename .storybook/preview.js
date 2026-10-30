@@ -1,4 +1,5 @@
 import "../src/styles/global.css";
+import "../src/styles/fonts.css";
 import { definePreview } from "@storybook-astro/framework";
 
 const addonDocs = () => ({
