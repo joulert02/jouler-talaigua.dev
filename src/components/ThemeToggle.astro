@@ -10,12 +10,19 @@ const { label } = Astro.props;
   <span aria-hidden="true">◐</span>
 </button>
 <script>
+  import { effectiveTheme, nextTheme } from "@/lib/theme.js";
+
   const btn = document.querySelector<HTMLButtonElement>(".theme-toggle");
   const root = document.documentElement;
-  const sync = () => btn?.setAttribute("aria-pressed", String(root.dataset["theme"] === "dark"));
+  const prefersDark = () => matchMedia("(prefers-color-scheme: dark)").matches;
+  const sync = () =>
+    btn?.setAttribute(
+      "aria-pressed",
+      String(effectiveTheme(root.dataset["theme"], prefersDark()) === "dark"),
+    );
   sync();
   btn?.addEventListener("click", () => {
-    const next = root.dataset["theme"] === "dark" ? "light" : "dark";
+    const next = nextTheme(root.dataset["theme"], prefersDark());
     root.dataset["theme"] = next;
     try {
       localStorage.setItem("theme", next);
