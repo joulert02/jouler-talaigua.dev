@@ -49,7 +49,7 @@ S = one sitting. M = a few sittings. L = more than that.
 
 **Context.** The site has a spike (`src/views/Home.astro`) and a sealed Home design (v11). This is the walking skeleton: the smallest real Home that goes all the way to a Cloudflare preview. As the first HU it carries the cross-page components, which later HUs reuse; if it grows too much it is split into sub-tasks.
 
-**Vertical scope.** Uses the SP-01 tokens and freezes their Draft scales (space, radius, motion) · self-hosted fonts on the site (Storybook already loads them) · base layout and JOTA mark · dock (Home, Work, Notes, Roadmap, copy email, theme) · identity card · footer with contact · theme toggle (vanilla) · English at the root and Spanish under `/es/` with a language switch · reduced-motion rules · preview deploy · the first Storybook Patterns pages, written once Home is built, and the stories of every component created here · decision-log lines for what is decided here.
+**Vertical scope.** Uses the SP-01 tokens and freezes their Draft scales (space, radius, motion) · self-hosted fonts on the site (Storybook already loads them) · base layout and JOTA mark · dock (Home, Work, Notes, copy email, theme; a variant with Roadmap is kept until the layout is implemented, then the owner chooses) · identity card · footer with contact · theme toggle (vanilla) · English at the root and Spanish under `/es/` with a language switch, its place on Home designed first in `v12/` · reduced-motion rules · preview deploy · the first Storybook Patterns pages, written once Home is built, and the stories of every component created here · decision-log lines for what is decided here.
 
 **Acceptance.**
 

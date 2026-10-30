@@ -43,9 +43,9 @@ The rules from the prototype that each HU must respect. When the HU closes, its 
 - **Hierarchy:** identity card, then personal objects, then dock. On desktop the board fills the first screen; Work is one click away, not visible on arrival.
 - **Identity card:** JOTA mark, name (H1), role, one sentence, Get in touch (primary) and Download CV (ghost), LinkedIn · GitHub · More about me, career path (company, role, years).
 - **Buttons:** primary (`--color-accent`, `--color-on-accent`) for the single most important action in its area; ghost (border, text color) for secondary actions and every link that leaves the site. Labels 15px/500 (14px for `sm`). Targets ≥ 44px tall; pills and the back control 48px.
-- **Dock** (floating, bottom center, `--color-surface` at 92% with blur): Home, Work, Notes · separator · Copy email, Theme. No Roadmap entry (the rocket object reaches it). Dock radius 18px (local value). Not shown on case pages.
+- **Dock** (floating, bottom center, `--color-surface` at 92% with blur): Home, Work, Notes · separator · Copy email, Theme. No Roadmap entry (the rocket object reaches it); a variant with Roadmap is kept, and the owner chooses when the layout is implemented in HU-01. Dock radius 18px (local value). Not shown on case pages.
 - **Footer:** Site, Social and Contact columns, copy-email button, CV link, large wordmark, "Hecho en Madrid, con raíces colombianas" with the flag detail.
-- **Language switch:** EN · ES, 44px target. English at `/`, Spanish under `/es/`.
+- **Language switch:** EN · ES, 44px target. English at `/`, Spanish under `/es/`. Its place on Home is designed first in `v12/` inside HU-01, starting from the case-page switch.
 - **Skip link** to projects as the first focusable element.
 - **No Notes section on Home** (v11).
 
@@ -103,12 +103,12 @@ What must exist before an HU can **close**. None of these block **planning** HU-
 | HU-11 | Not a blocker: OG images move to Onest and `@fontsource/inter` is removed (kept until then, owner 2026-10-30)                                | Build          |
 | HU-14 | Domain, Cloudflare Pages production project                                                                                                  | Owner          |
 
-## Open decisions for HU-01
+## Decided for HU-01 (owner, 2026-10-30)
 
-1. **Dock contents.** The backlog's HU-01 scope lists "Home, Work, Notes, Roadmap, copy email, theme". v11 and the 2026-10-23 decision have no Roadmap in the dock. **Recommendation:** follow v11 and correct the backlog and issue #3.
-2. **Language switch on Home.** v11 translated only the cases; the EN · ES switch exists on case pages (top right) but was never placed on Home. **Recommendation:** treat it as a small v12 design item inside HU-01 (backlog rule: anything not designed is designed first in `v12/`), with the case-page switch as the starting point.
-3. **Draft scales.** Done in SP-01: tokens are in `src/styles/tokens.css`. The spacing, radius and motion scales are Draft; the owner reviews them in Storybook, and HU-01 freezes them.
+1. **Dock contents.** Both variants stay: v11 (Home, Work, Notes, copy email, theme) and one with Roadmap. The owner chooses when the layout is implemented.
+2. **Language switch on Home.** A small v12 design item inside HU-01, starting from the case-page switch (backlog rule: anything not designed is designed first in `v12/`).
+3. **Draft scales.** They stay Draft; HU-01 freezes them by comparing the built Home against v11 in the browser. v11 uses values off the Draft grid: spacing 6, 10, 14, 18, 22, 28 and 36px (10px is the most used); radii 10px (tooltip), 14px (desk objects) and 18px (main card, dock, preview); durations 180ms (the most used), 220ms and 350ms against the Draft's 200/300/500ms. Each is either snapped to the scale or added to it.
 
 ## Recommendation
 
-**Ready, with two decisions.** HU-01 can be planned from Storybook, this file and `v11/` without reading the rounds, once the owner settles open decisions 1 and 2. The remaining blockers are owner inputs needed to close HU-01, not to plan it. The recommendation goes into the decisions log when the owner agrees.
+**Ready** (owner, 2026-10-30). HU-01 can be planned from Storybook, this file and `v11/` without reading the rounds. The decisions above are settled inside HU-01; the remaining blockers are owner inputs needed to close HU-01, not to plan it.
