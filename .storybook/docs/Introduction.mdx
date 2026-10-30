@@ -1,0 +1,44 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { StatusBadge } from "../blocks/index.js";
+
+<Meta title="Introduction" />
+
+# Jouler Talaigua · design system
+
+<StatusBadge status="approved" />
+
+The visual language of the portfolio site: the tokens, rules and components every page is built from. The token examples on these pages are read live from `src/styles/tokens.css`, the same file the site uses. The design fonts load here first; the site adopts them with the Home build.
+
+## Concept
+
+**Calm surface, curious depth.** The surface gives a recruiter what they need in seconds; beneath it, a quiet personal layer rewards curious visitors. One accent, focus and transitions hold both together. The projects and the quality of the site carry the professional message.
+
+## How to read it
+
+1. **Foundations**: color, typography, space, shape and motion. The raw material.
+2. **Content**: what the copy may and may not say, in English and Spanish.
+3. **Accessibility**: the checks every page and component must pass.
+4. **Components**: each built component with its states and props.
+
+**Patterns** (how components combine on a page) are added once the Home page is built and refined with each page after it. Until then, the rules each page must follow live in `docs/design/handoff.md`, and the sealed prototype in `docs/design/v11/` is the visual source.
+
+## Status labels
+
+<p>
+  <StatusBadge status="approved" /> agreed with the owner and safe to build on.
+</p>
+<p>
+  <StatusBadge status="draft" /> proposed from the prototype; may change after review.
+</p>
+<p>
+  <StatusBadge status="pending" /> waiting for a decision from the owner.
+</p>
+
+## Token names
+
+- Tokens follow `--{category}-{role}-{variant}`, for example `--color-text-muted` or `--font-size-body`.
+- There is one semantic layer: components use these names directly. There is no brand prefix.
+- Variables private to one component start with `--_`, for example `--_size`, and are never used outside it.
+- Light is the default theme. Dark follows the system setting or the theme toggle, and also applies inside any `[data-theme]` container.
+
+Decisions and their history are in `docs/decisions-log.md`.

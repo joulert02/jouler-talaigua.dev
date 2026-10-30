@@ -1,0 +1,65 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { StatusBadge, ThemePair, Swatches, ContrastTable } from "../../blocks/index.js";
+
+<Meta title="Foundations/Color" />
+
+# Color
+
+<StatusBadge status="approved" />
+
+A quiet neutral palette with one violet accent. Use these tokens for every color on the site; never write a color value in a component.
+
+## Palette
+
+<ThemePair>
+  <Swatches
+    tokens={[
+      "--color-bg",
+      "--color-bg-subtle",
+      "--color-surface",
+      "--color-surface-hover",
+      "--color-text",
+      "--color-text-secondary",
+      "--color-text-muted",
+      "--color-border",
+      "--color-accent",
+      "--color-on-accent",
+      "--color-text-accent",
+    ]}
+  />
+</ThemePair>
+
+### Flag colors
+
+The same in both themes. Reserved for the Colombian flag detail in the footer and the ticket object; never for interface states.
+
+<Swatches tokens={["--color-flag-yellow", "--color-flag-blue", "--color-flag-red"]} />
+
+## Rules
+
+- **Do** use the accent only to mark interaction: links, focus, the primary action, selection.
+- **Don't** use color to build hierarchy; size, weight and space do that.
+- **Do** keep dark surfaces off pure black; `--color-bg` is the darkest value.
+- **Don't** let `--color-border` carry meaning alone. It is decorative; a control that needs a visible edge uses `--color-text-muted` or a shadow.
+- **Do** keep the flag colors for the Colombian flag detail in the footer and the ticket object.
+- Selection is accent text on a light mix of the accent over the surface, never white on the accent.
+
+## Contrast
+
+Computed live from the tokens with the WCAG 2.x formula. Every text pair must pass WCAG 2.2 AA (4.5:1).
+
+<ThemePair>
+  <ContrastTable
+    pairs={[
+      ["--color-text", "--color-bg"],
+      ["--color-text-secondary", "--color-bg"],
+      ["--color-text-muted", "--color-bg"],
+      ["--color-text-muted", "--color-bg-subtle"],
+      ["--color-text-accent", "--color-bg"],
+      ["--color-text-accent", "--color-surface"],
+      ["--color-on-accent", "--color-accent"],
+    ]}
+  />
+</ThemePair>
+
+**Source:** `docs/design/v11/styles.css` · `docs/decisions-log.md`.

@@ -1,0 +1,48 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { StatusBadge, ThemePair, TypeScale } from "../../blocks/index.js";
+
+<Meta title="Foundations/Typography" />
+
+# Typography
+
+<StatusBadge status="approved" />
+
+Three families with separate jobs. Use the size tokens for every text; legibility wins every trade-off.
+
+## Families
+
+<ThemePair>
+  <p style={{ fontFamily: "var(--font-sans)", fontSize: "var(--font-size-lead)", margin: 0 }}>
+    Onest · text, headings and buttons
+  </p>
+  <p className="sb-label" style={{ marginTop: "var(--space-3)" }}>
+    Geist Mono · labels and captions
+  </p>
+  <p style={{ fontFamily: "var(--font-hand)", fontSize: "var(--font-size-title)", margin: 0 }}>
+    Caveat · the letter greeting
+  </p>
+</ThemePair>
+
+## Scale
+
+<TypeScale
+  family="--font-sans"
+  tokens={[
+    "--font-size-display",
+    "--font-size-title",
+    "--font-size-lead",
+    "--font-size-body",
+    "--font-size-small",
+    "--font-size-label",
+  ]}
+/>
+
+## Rules
+
+- `--font-size-body` is the floor for reading text. Smaller sizes are for metadata, captions and labels only.
+- Reading text uses `--line-height-body` and a measure of `--measure-prose`; chapter leads may be wider and use `text-wrap: balance`.
+- Labels are Geist Mono, uppercase, with letter spacing.
+- **Don't** use Caveat outside the letter greeting and the notes on desk objects.
+- Weights: Onest 400, 500 and 600; Geist Mono 400 and 500; Caveat 500 and 600. The fonts are self-hosted.
+
+**Source:** `docs/design/v11/styles.css` · rounds 5–7 in `docs/design/rounds.md`.

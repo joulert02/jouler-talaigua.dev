@@ -1,0 +1,26 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { StatusBadge, MotionDemo } from "../../blocks/index.js";
+
+<Meta title="Foundations/Motion" />
+
+# Motion
+
+<StatusBadge status="draft" />
+
+Motion explains a change and gets out of the way: fast, interruptible, never a long imposed scroll. The durations are rounded from the prototype; the owner reviews them before they are approved.
+
+<MotionDemo
+  durations={["--duration-fast", "--duration-medium", "--duration-slow"]}
+  easings={["--ease-out", "--ease-spring"]}
+/>
+
+## Rules
+
+- `--duration-fast` for state changes, `--duration-medium` and `--duration-slow` for entrances and panels.
+- `--ease-out` by default; `--ease-spring` only for small playful details.
+- Direct manipulation (dragging the desk) follows the pointer with no lag; only coarse wheel input gets a short ease.
+- Longer timings are functional only, such as the held drag that opens Work.
+- Page transitions use cross-document View Transitions as progressive enhancement: browsers without support navigate normally.
+- With `prefers-reduced-motion: reduce`, bounces, easing and View Transitions are removed; functional steps stay, shortened.
+
+**Source:** `docs/design/v11/styles.css` · `docs/design/v11-proposal.md`.

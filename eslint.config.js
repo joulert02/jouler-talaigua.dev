@@ -11,4 +11,9 @@ export default [
   ...tseslint.configs.strict,
   ...astro.configs.recommended,
   { files: ["scripts/**", "*.config.{js,mjs}"], languageOptions: { globals: globals.node } },
+  // Storybook docs blocks run in the browser.
+  {
+    files: [".storybook/blocks/**/*.{js,jsx}"],
+    languageOptions: { globals: globals.browser, parserOptions: { ecmaFeatures: { jsx: true } } },
+  },
 ];

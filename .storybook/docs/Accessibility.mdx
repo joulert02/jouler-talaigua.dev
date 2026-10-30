@@ -1,0 +1,35 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { StatusBadge, ThemePair } from "../blocks/index.js";
+
+<Meta title="Accessibility" />
+
+# Accessibility
+
+<StatusBadge status="approved" />
+
+The checks every page and component must pass. The target is WCAG 2.2 AA; when legibility and style disagree, legibility wins.
+
+## Focus
+
+Every interactive element shows a 2px `--color-text-accent` outline with a 2–4px offset. Tab to the button to see it.
+
+<ThemePair>
+  <button type="button" className="sb-button sb-focus-demo">
+    Focus me
+  </button>
+</ThemePair>
+
+## Checklist
+
+- Reading text is at least `--font-size-body` with `--line-height-body`.
+- Every text pair passes AA contrast (see Foundations · Color); borders never carry meaning alone.
+- Every interactive element has a visible focus ring; `scroll-padding-bottom` keeps focus clear of the dock.
+- Targets are at least 44px tall; pills and the back control are 48px.
+- Everything works by keyboard. A list is one tab stop with arrow keys (roving tabindex). The desk supports Tab, Enter, M plus arrows, and `0` or Home.
+- Dialogs move focus in, close with Escape, make the background inert and return focus to their launcher.
+- A demo announces each run once through `aria-live` and marks running controls with `aria-disabled`, not `disabled`, so focus is not lost.
+- Hover styles live under `@media (hover: hover)`.
+- `prefers-reduced-motion: reduce` removes decorative motion (see Foundations · Motion).
+- The first focusable element is a skip link to the main content.
+
+**Source:** `docs/design/principles.md` · rounds in `docs/design/rounds.md`.
