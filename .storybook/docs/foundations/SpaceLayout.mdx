@@ -1,0 +1,81 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { StatusBadge, SpaceScale } from "../../blocks/index.js";
+
+<Meta title="Foundations/Space & layout" />
+
+# Space & layout
+
+<StatusBadge status="draft" />
+
+A spacing scale and the page container. The scale is derived from the values the prototype uses most; the owner reviews it before it is approved.
+
+## Spacing scale
+
+<SpaceScale
+  tokens={[
+    "--space-1",
+    "--space-2",
+    "--space-3",
+    "--space-4",
+    "--space-5",
+    "--space-6",
+    "--space-7",
+    "--space-8",
+    "--space-9",
+    "--space-10",
+  ]}
+/>
+
+## Rules
+
+- Use the scale for gaps, padding and margins between elements.
+- The prototype also uses 6, 10 and 14px often. They stay as local values (`--_name`) until the Home build decides whether they join the scale.
+- `--layout-container` is the maximum width shared by Home, Work and case pages. Prose inside it keeps `--measure-prose`.
+
+## Breakpoints
+
+CSS cannot read custom properties inside `@media`, so breakpoints are named constants, written as literal values in media queries.
+
+<table className="sb-table">
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Query</th>
+      <th scope="col">What changes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>phone</td>
+      <td>
+        <code>max-width: 719px</code>
+      </td>
+      <td>Single column layouts</td>
+    </tr>
+    <tr>
+      <td>tablet</td>
+      <td>
+        <code>min-width: 720px</code>
+      </td>
+      <td>Two columns where useful</td>
+    </tr>
+    <tr>
+      <td>board</td>
+      <td>
+        <code>min-width: 901px</code>
+      </td>
+      <td>Home shows the explorable desk instead of the compact card</td>
+    </tr>
+    <tr>
+      <td>wide</td>
+      <td>
+        <code>min-width: 1200px</code>
+      </td>
+      <td>Wide layouts</td>
+    </tr>
+  </tbody>
+</table>
+
+The prototype also uses 560 and 640px; the Home build decides whether they stay.
+
+**Source:** `docs/design/v11/styles.css`.

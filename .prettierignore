@@ -1,11 +1,23 @@
-dist
-.astro
-node_modules
-package-lock.json
-.orca-handoff
-.playwright-mcp
-.claude
-AGENTS.override.md
+# Allowlist: Prettier formats only the project's own sources and docs. Anything else at the root
+# (lockfiles of any package manager, agent workspaces, local logs, build output) is ignored by default.
+/*
+!/src/
+!/.storybook/
+!/scripts/
+!/docs/
+!/public/
+!/.github/
+!/.husky/
+!/AGENTS.md
+!/CLAUDE.md
+!/README.md
+!/astro.config.mjs
+!/eslint.config.js
+!/package.json
+!/tsconfig.json
+!/wrangler.jsonc
+!/.prettierrc.json
+
 # Preserve exact historical exports and prototype snapshots.
 docs/design/v*/
 docs/design/index.html

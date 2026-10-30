@@ -1,0 +1,33 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { StatusBadge } from "../blocks/index.js";
+
+<Meta title="Content" />
+
+# Content
+
+<StatusBadge status="approved" />
+
+What the copy may say, how it is translated and what blocks a release. Every page follows these rules before it ships.
+
+## Rules
+
+- **Real content only.** No stock images, no invented facts, roles or metrics.
+- **Mark what is unconfirmed.** A fact waiting for the owner carries `TODO(verify)`; the production build (Cloudflare Pages, branch `main`) fails while any marker remains in `src/content/` or in these design docs; previews and local builds only list them. Mentioning the marker in inline code, as here, does not count.
+- **Confident and honest.** The copy says clearly what Jouler did and leaves out what he did not. Limits are agreed in review, never written as disclaimers on the page.
+- **Growth, not titles.** Staff and Frontend Platform are a direction, never presented as a title already held.
+- **No hero checklist.** The projects and the quality of the site carry the professional message, not a list of stack, availability or time zone.
+- **A visual that points at text renders that text legibly.**
+
+## Languages
+
+- English lives at `/` and Spanish under `/es/`. Every page ships in both, and a story closes only with both versions approved.
+- Translations live in their own files; views and routes never hard-code copy.
+
+## Third parties
+
+- Third-party brands appear as text unless they are credited.
+- Personal data in captures is cropped or blurred.
+- Recreated third-party screens make no accessibility claims about the third party.
+- Photos of people need their permission before they are published.
+
+**Source:** `docs/design/principles.md` · `docs/content/projects/README.md`.
