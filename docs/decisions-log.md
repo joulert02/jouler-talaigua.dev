@@ -2,6 +2,8 @@
 
 One line per decision, newest first. Details live in the linked document.
 
+- **2026-10-30 · design documentation and tokens (SP-01):** design rules live in Storybook (Introduction, Foundations, Content, Accessibility, then Patterns and component docs), read live from `src/styles/tokens.css`; markdown keeps planning ([handoff](design/handoff.md)) and history. Tokens are one semantic layer named `--{category}-{role}-{variant}`, with no brand prefix and `--_name` for component-local variables; the spacing, radius and motion scales are Draft until the owner reviews them. Patterns pages are written once Home is built and iterated with each page. Onest, Geist Mono and Caveat are self-hosted; Inter stays for the OG images until HU-11. `guidelines.md` was folded into Storybook and the handoff (superseded statements below).
+
 - **2026-10-29 · workflow and backlog:** this project's tasks live in the GitHub Project (the Notion Sprint Board stays as history). Work follows trunk-based development with `feature/*` and `fix/*` branches, semantic commits and a `Co-Authored-By` trailer per agent; `claude/*` branches are retired. The plan is in [the backlog](backlog.md): a spike and 14 vertical user stories, taken one at a time.
 
 - **2026-10-28 · owner sealed v10:** the prototype is closed with the Mercado Libre and Pragma cases; its file hashes in `history/v10.json` are now final and any further change is a new version (v11). Primary intro: media beside "What I learned" (photo for Mercado Libre, the PRAGMA video for Pragma), with the plain version kept as a secondary variant in `learned/`. Video optimization and ES/EN subtitles are for development. No pre-commit hook for the hash check (owner: not needed). Details: [v10-proposal.md](design/v10-proposal.md).
@@ -31,3 +33,17 @@ One line per decision, newest first. Details live in the linked document.
 - **2026-09-28:** Rounds 1 and 2 rejected. Switched to a references-first process with the owner as art director. See [rounds](design/rounds.md).
 - **2026-09-25:** Stack: Astro. See [ADR 001](adr/001-stack.md).
 - **2026-09-25:** Discovery closed. See [brief](discovery-brief.md).
+
+## Superseded statements
+
+| Earlier statement                                           | Now                                          | Since      |
+| ----------------------------------------------------------- | -------------------------------------------- | ---------- |
+| Dock includes Roadmap (decisions 2026-10-22)                | Rocket object only                           | 2026-10-23 |
+| Zoom, overview and recenter on the desk (principles, v7–v8) | Removed; walk the board, `0`/Home recenters  | v11        |
+| Notes list of 3 on Home once 3 real notes exist             | No notes on Home; dock and footer reach them | v11        |
+| Wheel push at the bottom opens Work (v10)                   | Held drag only                               | v11        |
+| "← All work" text link; JOTA mark on case pages (v9)        | Back pill; no mark, no dock on cases         | v10        |
+| Screenshots as case visuals (v9)                            | Recreated, working components                | v10        |
+| Muted `#5F656E` (principles.md)                             | `#5B616A` (`--color-text-muted`)             | v11        |
+| Scale toolbar, wide scale configurable                      | Compact only; no visitor scale setting       | v7         |
+| Design tokens listed in `principles.md`                     | `src/styles/tokens.css`, shown in Storybook  | 2026-10-30 |

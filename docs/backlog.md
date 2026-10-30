@@ -48,14 +48,14 @@ S = one sitting. M = a few sittings. L = more than that.
 
 **Context.** The site has a spike (`src/views/Home.astro`) and a sealed Home design (v11). This is the walking skeleton: the smallest real Home that goes all the way to a Cloudflare preview. As the first HU it carries the cross-page components, which later HUs reuse; if it grows too much it is split into sub-tasks.
 
-**Vertical scope.** Design tokens from v11 (violet accent, Onest, cool neutral, compact scale) · self-hosted fonts · base layout and JOTA mark · dock (Home, Work, Notes, Roadmap, copy email, theme) · identity card · footer with contact · theme toggle (vanilla) · English at the root and Spanish under `/es/` with a language switch · reduced-motion rules · preview deploy · Storybook with the design system documentation (guidelines, principles, visual line) and the stories of every component created here · decision-log lines for what is decided here.
+**Vertical scope.** Uses the SP-01 tokens and freezes their Draft scales (space, radius, motion) · self-hosted fonts on the site (Storybook already loads them) · base layout and JOTA mark · dock (Home, Work, Notes, Roadmap, copy email, theme) · identity card · footer with contact · theme toggle (vanilla) · English at the root and Spanish under `/es/` with a language switch · reduced-motion rules · preview deploy · the first Storybook Patterns pages, written once Home is built, and the stories of every component created here · decision-log lines for what is decided here.
 
 **Acceptance.**
 
 - The Home on a preview URL shows the identity card, the dock and the contact footer, in light and dark, with finished copy in English and Spanish.
 - Body text is 17px or more; contrast and focus states pass on the real components (`principles.md`).
 - No client JavaScript beyond the theme toggle and the dock (site chrome is vanilla, per the ADR).
-- Every component has a story; the guidelines and principles are readable in Storybook.
+- Every component has a story; the Patterns of the Home and its navigation are in Storybook.
 - `npm run ci` passes. Lighthouse mobile shows no regression from the spike's 100/100/100/100.
 
 **Depends on.** SP-01-design-handoff.
@@ -206,7 +206,7 @@ S = one sitting. M = a few sittings. L = more than that.
 
 **Context.** The spike already generates OG images with Satori. This applies them to the real pages.
 
-**Vertical scope.** Metadata and canonical per page · hreflang and `x-default` · sitemap (only published pages) · OG images per page type · `robots`.
+**Vertical scope.** Metadata and canonical per page · hreflang and `x-default` · sitemap (only published pages) · OG images per page type, drawn with Onest (then remove `@fontsource/inter`) · `robots`.
 
 **Acceptance.** Every published page has metadata and an OG image; the sitemap lists only what is public.
 
@@ -271,6 +271,8 @@ S = one sitting. M = a few sittings. L = more than that.
 2. **Handoff map.** A table: each v11 page (Home, Work, case, notes, roadmap, letter) to its HU, component list and content file.
 3. **Blockers made explicit.** Which `TODO(verify)` and external permissions block which HU (photo permissions, PRAGMA video OK, Personajes exports, CAPS+ clearance, CV file, domain).
 4. **Repository docs aligned with the owner's decisions.** _Done 2026-10-29:_ `AGENTS.md`, `docs/WORKING-AGREEMENT.md`, `docs/discovery-brief.md`, `docs/decisions-log.md` and the project card now say that tasks live in the GitHub Project and that work is trunk-based (`feature/*`, `fix/*`, semantic commits, `Co-Authored-By` per agent).
+
+_Scope extended 2026-10-30 (issue #4 comment):_ SP-01 also delivers the CSS tokens and the Storybook Introduction, Foundations, Content and Accessibility pages.
 
 **Done when.** The owner agrees HU-01 can be planned from these documents. The recommendation (ready, or what is still missing) is recorded in the decision log.
 
