@@ -1,0 +1,196 @@
+---
+import DockItem from "./DockItem/DockItem.astro";
+import { getLang, useTranslations } from "../../../i18n/ui";
+import type { NavigationItem } from "../../../config/navigation";
+interface Props {
+  items: readonly NavigationItem[];
+  current?: NavigationItem["id"];
+  /** How items are drawn: `labels` shows every label; `active-label` only the current page's; `icons` none. */
+  variant?: "labels" | "active-label" | "icons";
+}
+const { items, current, variant = "labels" } = Astro.props;
+const lang = getLang(Astro);
+const t = useTranslations(lang);
+---
+
+<dock-nav>
+  <nav class="dock" aria-label={t("dock.main")} data-variant={variant}>
+    <span class="dock__indicator" aria-hidden="true"></span>
+    {items.map((item) => (
+      <DockItem item={item} current={item.id === current} />
+    ))}
+    <slot name="actions" />
+  </nav>
+</dock-nav>
+<script>
+  class DockNav extends HTMLElement {
+    private mutation?: MutationObserver;
+    private resize?: ResizeObserver;
+    connectedCallback() {
+      const nav = this.querySelector<HTMLElement>(".dock");
+      const indicator = this.querySelector<HTMLElement>(".dock__indicator");
+      if (!nav || !indicator) return;
+      const items = [...nav.querySelectorAll<HTMLAnchorElement>("a.dock__item")];
+      const place = () => {
+        const current = items.find((item) => item.getAttribute("aria-current") === "page");
+        if (!current) {
+          indicator.hidden = true;
+          return;
+        }
+        indicator.hidden = false;
+        indicator.style.setProperty("--_x", `${current.offsetLeft}px`);
+        indicator.style.setProperty("--_width", `${current.offsetWidth}px`);
+        indicator.style.setProperty("--_height", `${current.offsetHeight}px`);
+        nav.dataset["ready"] = "true";
+      };
+      this.mutation = new MutationObserver(place);
+      items.forEach((item) => {
+        this.mutation?.observe(item, { attributes: true, attributeFilter: ["aria-current"] });
+      });
+      this.resize = new ResizeObserver(place);
+      this.resize.observe(nav);
+      items.forEach((item) => this.resize?.observe(item));
+      place();
+    }
+    disconnectedCallback() {
+      this.mutation?.disconnect();
+      this.resize?.disconnect();
+    }
+  }
+  if (!customElements.get("dock-nav")) customElements.define("dock-nav", DockNav);
+</script>
+<style>
+  dock-nav {
+    display: block;
+    container: dock / inline-size;
+  }
+  .dock {
+    --_surface-opacity: 92%;
+    --_border-width: 1px;
+
+    --_radius: 18px;
+    --_blur: 10px;
+    --_padding: 6px;
+    position: fixed;
+    left: 50%;
+    bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--_padding);
+    background: color-mix(in srgb, var(--color-surface) var(--_surface-opacity), transparent);
+    backdrop-filter: blur(var(--_blur));
+    border: var(--_border-width) solid var(--color-border);
+    border-radius: var(--_radius);
+    box-shadow: var(--shadow-lift);
+  }
+  .dock__indicator {
+    display: none;
+  }
+  /* Compact variants: icons, a pill that slides to the current page and labels as tooltips. */
+  .dock:not([data-variant="labels"]) {
+    --_indicator-height: 44px;
+    --_indicator-duration: var(--duration-medium);
+    --_press-scale: 0.96;
+    width: max-content;
+    max-width: calc(100vw - 16px);
+  }
+  .dock:not([data-variant="labels"]) .dock__indicator {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: var(--_padding);
+    width: var(--_width, 0px);
+    height: var(--_height, var(--_indicator-height));
+    transform: translateX(var(--_x, 0px));
+    background: var(--color-surface-hover);
+    border-radius: var(--radius-lg);
+    pointer-events: none;
+    transition:
+      transform var(--_indicator-duration) var(--ease-out),
+      width var(--_indicator-duration) var(--ease-out),
+      height var(--_indicator-duration) var(--ease-out);
+  }
+  .dock:not([data-ready]) .dock__indicator,
+  .dock__indicator[hidden] {
+    display: none;
+  }
+  .dock[data-ready]:not([data-variant="labels"]) :global(.dock__item[aria-current="page"]) {
+    background: transparent;
+  }
+  .dock:not([data-variant="labels"]) :global(.dock__item),
+  .dock:not([data-variant="labels"]) :global(copy-email),
+  .dock:not([data-variant="labels"]) :global(dock-theme) {
+    position: relative;
+    z-index: 1;
+  }
+  .dock:not([data-variant="labels"]) :global(button) {
+    transition:
+      transform var(--duration-fast) var(--ease-out),
+      background-color var(--duration-fast) var(--ease-out),
+      color var(--duration-fast) var(--ease-out);
+  }
+  .dock:not([data-variant="labels"]) :global(.dock__item) {
+    transition:
+      transform var(--duration-fast) var(--ease-out),
+      color var(--duration-fast) var(--ease-out),
+      background-color var(--duration-fast) var(--ease-out);
+  }
+  .dock:not([data-variant="labels"]) :global(.dock__item:active),
+  .dock:not([data-variant="labels"]) :global(button:active) {
+    transform: scale(var(--_press-scale));
+  }
+  .dock:not([data-variant="labels"]) :global(.dock__item:hover::after),
+  .dock:not([data-variant="labels"]) :global(.dock__item:focus-visible::after) {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  /* icons: labels stay for screen readers only. */
+  .dock[data-variant="icons"] :global(.dock__item > .dock__label) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  /* active-label: every label collapses to 0 width; the current one expands. */
+  .dock[data-variant="active-label"] :global(.dock__item > .dock__label) {
+    display: grid;
+    grid-template-columns: 0fr;
+    opacity: 0;
+    transition:
+      grid-template-columns var(--duration-medium) var(--ease-out),
+      opacity var(--duration-fast) var(--ease-out);
+  }
+  .dock[data-variant="active-label"] :global(.dock__item > .dock__label > span) {
+    min-width: 0;
+    overflow: hidden;
+  }
+  .dock[data-variant="active-label"] :global(.dock__item[aria-current="page"] > .dock__label) {
+    grid-template-columns: 1fr;
+    opacity: 1;
+  }
+  .dock[data-variant="active-label"] :global(.dock__item[aria-current="page"]::after) {
+    display: none;
+  }
+  @media (max-width: 380px) {
+    .dock {
+      gap: var(--_border-width);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .dock__indicator,
+    .dock :global(.dock__item),
+    .dock :global(.dock__item > .dock__label),
+    .dock :global(button) {
+      transition: none !important;
+    }
+    .dock :global(.dock__item:active),
+    .dock :global(button:active) {
+      transform: none;
+    }
+  }
+</style>

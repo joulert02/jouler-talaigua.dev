@@ -1,0 +1,64 @@
+---
+import { storyLinks } from "../../../../../.storybook/links";
+import Dock from "../Dock.astro";
+import DockSeparator from "../DockSeparator/DockSeparator.astro";
+import CopyEmail from "../../CopyEmail/CopyEmail.astro";
+import ThemeToggle from "../../ThemeToggle/ThemeToggle.astro";
+import PhoneFrame from "../../../ui/PhoneFrame/PhoneFrame.astro";
+import { navigation, type NavigationItem } from "../../../../config/navigation";
+interface Props {
+  items?: readonly NavigationItem[];
+  current?: NavigationItem["id"];
+  /** How items are drawn: `labels` shows every label; `active-label` only the current page's; `icons` none. */
+  variant?: "labels" | "active-label" | "icons";
+  /** Story only (the Phone story): render the dock inside an iPhone. */
+  phone?: boolean;
+}
+const { items = storyLinks(navigation), current = "home", variant = "labels", phone = false } = Astro.props;
+const Frame = phone ? PhoneFrame : Fragment;
+const frameProps = phone ? { label: "Dock on a phone" } : {};
+---
+
+<story-dock class:list={["story-dock", { "story-dock--phone": phone }]}>
+  <Frame {...frameProps}>
+    <Dock {items} {current} {variant}>
+      <div slot="actions" class="story-dock__actions">
+        <DockSeparator />
+        <CopyEmail />
+        <ThemeToggle />
+      </div>
+    </Dock>
+  </Frame>
+</story-dock>
+<script>
+  // Clicking an item moves `aria-current` (and the pill) instead of navigating.
+  class StoryDock extends HTMLElement {
+    connectedCallback() {
+      this.addEventListener("click", (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+        const link = target.closest<HTMLAnchorElement>("a.dock__item");
+        if (!link || !this.contains(link)) return;
+        event.preventDefault();
+        this.querySelectorAll("a.dock__item").forEach((item) => item.removeAttribute("aria-current"));
+        link.setAttribute("aria-current", "page");
+      });
+    }
+  }
+  if (!customElements.get("story-dock")) customElements.define("story-dock", StoryDock);
+</script>
+<style>
+  .story-dock {
+    display: block;
+  }
+  .story-dock--phone {
+    display: grid;
+    place-items: center;
+    padding: var(--space-6);
+  }
+  .story-dock__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+</style>

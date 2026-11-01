@@ -1,0 +1,19 @@
+---
+import Component from "../Footer.astro";
+import CopyEmail from "../../CopyEmail/CopyEmail.astro";
+import type { FooterData } from "../../../../config/profile";
+interface Props {
+  data?: FooterData;
+}
+---
+
+<div class="footer-story">
+  <Component {...Astro.props}>
+    <CopyEmail slot="copy-email" />
+  </Component>
+</div>
+<style>
+  .footer-story {
+    padding: var(--space-6);
+  }
+</style>

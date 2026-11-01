@@ -1,0 +1,17 @@
+<span class="dock__separator" aria-hidden="true"></span>
+<style>
+  .dock__separator {
+    --_divider-width: 1px;
+
+    width: var(--_divider-width);
+    height: var(--space-6);
+    flex: none;
+    background: var(--color-border);
+    margin: 0 var(--space-1);
+  }
+  @media (max-width: 560px) {
+    .dock__separator {
+      margin: 0;
+    }
+  }
+</style>

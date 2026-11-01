@@ -34,17 +34,6 @@ a {
 .muted {
   color: var(--color-text-muted);
 }
-.skip {
-  position: absolute;
-  left: -999px;
-}
-.skip:focus {
-  left: 1rem;
-  top: 1rem;
-  background: var(--color-text);
-  color: var(--color-bg);
-  padding: 0.5rem;
-}
 button {
   font: inherit;
   background: none;
@@ -53,4 +42,8 @@ button {
   border-radius: 6px;
   padding: 0.25rem 0.6rem;
   cursor: pointer;
+}
+/* Skip-link targets take focus programmatically; the jump itself is the feedback, not a ring around the region. */
+main[tabindex="-1"]:focus {
+  outline: none;
 }

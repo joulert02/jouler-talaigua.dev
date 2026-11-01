@@ -1,0 +1,23 @@
+---
+import Component from "../SkipLink.astro";
+import { getLang, useTranslations } from "../../../../i18n/ui";
+interface Props {
+  href?: string;
+}
+const t = useTranslations(getLang(Astro));
+---
+
+<div class="skip-link-story">
+  <Component {...Astro.props} />
+  <main id="main" tabindex="-1">
+    <p>{t("layout.mainContent")}</p>
+  </main>
+</div>
+<style>
+  .skip-link-story {
+    position: relative;
+    padding: var(--space-6);
+    font: var(--font-size-body)/var(--line-height-body) var(--font-sans);
+    color: var(--color-text);
+  }
+</style>

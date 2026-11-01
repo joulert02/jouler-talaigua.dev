@@ -1,6 +1,7 @@
 ---
 import "@/styles/global.css";
 import ThemeToggle from "@/components/ThemeToggle.astro";
+import SkipLink from "@/components/layout/SkipLink/SkipLink.astro";
 import { languages, localePath, useTranslations, type Lang } from "@/i18n/ui";
 
 interface Props {
@@ -45,9 +46,7 @@ const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
     </script>
   </head>
   <body>
-    <a class="skip" href="#main">
-      Skip to content
-    </a>
+    <SkipLink />
     <div class="wrap">
       <header>
         <nav aria-label="Main">
@@ -60,7 +59,7 @@ const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
           <ThemeToggle label={t("theme.toggle")} />
         </nav>
       </header>
-      <main id="main">
+      <main id="main" tabindex="-1">
         <slot />
       </main>
     </div>
