@@ -2,20 +2,30 @@
 import Icon from "../../ui/Icon/Icon.astro";
 import { getLang, useTranslations } from "../../../i18n/ui";
 import { contactEmail } from "../../../config/profile";
-
+interface Props {
+  /** `icon`: envelope with a tooltip (the Dock). `text`: a small "Copy" button next to the address (v11 footer). */
+  variant?: "icon" | "text";
+}
+const { variant = "icon" } = Astro.props;
 const lang = getLang(Astro);
 const t = useTranslations(lang);
 ---
 
 <copy-email data-email={contactEmail} data-copied={t("dock.copied")} data-failed={t("dock.failed")}>
-  <button
-    class="copy-email__button"
-    type="button"
-    aria-label={t("dock.copyLabel")}
-    data-tip={t("dock.copyTooltip")}
-  >
-    <Icon name="email" />
-  </button>
+  {variant === "text" ? (
+    <button class="copy-email__text" type="button" aria-label={t("dock.copyLabel")}>
+      {t("dock.copyText")}
+    </button>
+  ) : (
+    <button
+      class="copy-email__button"
+      type="button"
+      aria-label={t("dock.copyLabel")}
+      data-tip={t("dock.copyTooltip")}
+    >
+      <Icon name="email" />
+    </button>
+  )}
   <span class="copy-email__feedback" role="status" aria-live="polite"></span>
 </copy-email>
 <script>
@@ -99,6 +109,28 @@ const t = useTranslations(lang);
     opacity: 1;
     transform: translate(-50%, 0);
   }
+  /* v11 footer `.copy` (docs/design/v11/styles.css). */
+  .copy-email__text {
+    --_duration: 180ms;
+    padding: 5px 8px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--color-text-muted);
+    font: 500 12.5px/1 var(--font-mono);
+    cursor: pointer;
+    transition:
+      color var(--_duration) var(--ease-out),
+      border-color var(--_duration) var(--ease-out);
+  }
+  .copy-email__text:hover {
+    border-color: var(--color-text-muted);
+    color: var(--color-text);
+  }
+  .copy-email__text:focus-visible {
+    outline: var(--_focus-width) solid var(--color-text-accent);
+    outline-offset: var(--_focus-width);
+  }
   .copy-email__feedback:not(:empty) {
     --_feedback-max: calc(100vw - 32px);
     max-width: var(--_feedback-max);
@@ -121,7 +153,8 @@ const t = useTranslations(lang);
   }
   @media (prefers-reduced-motion: reduce) {
     .copy-email__button,
-    .copy-email__button::after {
+    .copy-email__button::after,
+    .copy-email__text {
       transition: none;
     }
   }

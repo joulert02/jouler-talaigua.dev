@@ -1,8 +1,14 @@
 ---
 import "@/styles/global.css";
-import ThemeToggle from "@/components/ThemeToggle.astro";
+import "@/styles/fonts.css";
 import SkipLink from "@/components/layout/SkipLink/SkipLink.astro";
-import { languages, localePath, useTranslations, type Lang } from "@/i18n/ui";
+import Dock from "@/components/layout/Dock/Dock.astro";
+import DockSeparator from "@/components/layout/Dock/DockSeparator/DockSeparator.astro";
+import CopyEmail from "@/components/layout/CopyEmail/CopyEmail.astro";
+import ThemeToggle from "@/components/layout/ThemeToggle/ThemeToggle.astro";
+import Footer from "@/components/layout/Footer/Footer.astro";
+import { navigation, type NavigationItem } from "@/config/navigation";
+import { localePath, type Lang } from "@/i18n/ui";
 
 interface Props {
   title: string;
@@ -12,7 +18,12 @@ interface Props {
   altPath?: string; // same page in the other language, without locale prefix
 }
 const { title, description, lang, ogSlug = "home", altPath = "/" } = Astro.props;
-const t = useTranslations(lang);
+// The page language every component reads with getLang(Astro).
+Astro.locals.lang = lang;
+// Dock item of this page: home only on "/", the others on their section and its subpages.
+const current = navigation.find((item: NavigationItem) =>
+  item.href === "/" ? altPath === "/" : altPath.startsWith(item.href),
+)?.id;
 const other: Lang = lang === "en" ? "es" : "en";
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
@@ -48,20 +59,19 @@ const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
   <body>
     <SkipLink />
     <div class="wrap">
-      <header>
-        <nav aria-label="Main">
-          <a href={localePath(lang, "/")}>{t("nav.home")}</a>
-          <a href={localePath(lang, "/projects/")}>{t("nav.projects")}</a>
-          <span style="flex:1"></span>
-          <a href={localePath(other, altPath)} hreflang={other} lang={other}>
-            {languages[other]}
-          </a>
-          <ThemeToggle label={t("theme.toggle")} />
-        </nav>
-      </header>
       <main id="main" tabindex="-1">
         <slot />
       </main>
     </div>
+    <Footer>
+      <CopyEmail variant="text" slot="copy-email" />
+    </Footer>
+    <Dock items={navigation} {current} variant="labels" mobileVariant="active-label">
+      <Fragment slot="actions">
+        <DockSeparator />
+        <CopyEmail />
+        <ThemeToggle />
+      </Fragment>
+    </Dock>
   </body>
 </html>

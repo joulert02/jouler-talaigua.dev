@@ -7,22 +7,16 @@ body {
   margin: 0;
   background: var(--color-bg);
   color: var(--color-text);
-  font:
-    16px/1.6 system-ui,
-    sans-serif;
+  font: 16px/1.6 var(--font-sans);
+  /* Page gutter, as in v11 (docs/design/v11/styles.css). */
+  padding-inline: clamp(16px, 3vw, 40px);
+  /* Room for the fixed Dock, so it never covers the end of the page. */
+  padding-bottom: calc(var(--space-10) + var(--space-7) + env(safe-area-inset-bottom, 0px));
 }
 .wrap {
   max-width: 44rem;
   margin: 0 auto;
   padding: 1.5rem 1rem;
-}
-header nav {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  flex-wrap: wrap;
-  border-bottom: 1px solid var(--color-border);
-  padding-bottom: 1rem;
 }
 ::selection {
   background: color-mix(in srgb, var(--color-accent) 14%, var(--color-surface));

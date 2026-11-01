@@ -39,6 +39,7 @@ export const ui = {
     "dock.roadmap": "Roadmap", // TODO(verify)
     "dock.copyLabel": "Copy my email address",
     "dock.copyTooltip": "Copy email",
+    "dock.copyText": "Copy",
     "dock.copied": "Email copied",
     "dock.failed": "Copy failed, here it is", // TODO(verify)
     "dock.themeLabel": "Toggle theme",
@@ -90,6 +91,7 @@ export const ui = {
     "dock.roadmap": "Roadmap", // TODO(verify)
     "dock.copyLabel": "Copiar mi correo",
     "dock.copyTooltip": "Copiar correo",
+    "dock.copyText": "Copiar",
     "dock.copied": "Correo copiado",
     "dock.failed": "No se pudo copiar, aquí está", // TODO(verify)
     "dock.themeLabel": "Cambiar tema",

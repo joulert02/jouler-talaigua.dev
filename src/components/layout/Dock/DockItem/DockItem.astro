@@ -1,7 +1,7 @@
 ---
 import Icon from "../../../ui/Icon/Icon.astro";
 import type { NavigationItem } from "../../../../config/navigation";
-import { getLang, useTranslations } from "../../../../i18n/ui";
+import { getLang, localePath, useTranslations } from "../../../../i18n/ui";
 interface Props {
   item: NavigationItem;
   /** Whether this item is the current page; the Dock sets it from its own `current`. */
@@ -12,7 +12,12 @@ const lang = getLang(Astro);
 const label = useTranslations(lang)(item.labelKey);
 ---
 
-<a class="dock__item" href={item.href} data-tip={label} aria-current={current ? "page" : undefined}>
+<a
+  class="dock__item"
+  href={localePath(lang, item.href)}
+  data-tip={label}
+  aria-current={current ? "page" : undefined}
+>
   <Icon name={item.icon} />
   <span class="dock__label">
     <span>{label}</span>

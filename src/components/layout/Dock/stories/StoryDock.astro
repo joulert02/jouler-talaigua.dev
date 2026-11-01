@@ -22,11 +22,11 @@ const frameProps = phone ? { label: "Dock on a phone" } : {};
 <story-dock class:list={["story-dock", { "story-dock--phone": phone }]}>
   <Frame {...frameProps}>
     <Dock {items} {current} {variant}>
-      <div slot="actions" class="story-dock__actions">
+      <Fragment slot="actions">
         <DockSeparator />
         <CopyEmail />
         <ThemeToggle />
-      </div>
+      </Fragment>
     </Dock>
   </Frame>
 </story-dock>
@@ -55,10 +55,5 @@ const frameProps = phone ? { label: "Dock on a phone" } : {};
     display: grid;
     place-items: center;
     padding: var(--space-6);
-  }
-  .story-dock__actions {
-    display: flex;
-    align-items: center;
-    gap: var(--space-1);
   }
 </style>

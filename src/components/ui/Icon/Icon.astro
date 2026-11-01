@@ -6,13 +6,13 @@ const { name } = Astro.props;
 ---
 
 <svg
-  viewBox={name === "roadmap" ? "0 0 24 24" : "0 0 20 20"}
+  viewBox="0 0 20 20"
   aria-hidden="true"
   width="20"
   height="20"
   fill="none"
   stroke="currentColor"
-  stroke-width={name === "roadmap" ? "1.92" : "1.6"}
+  stroke-width="1.6"
   stroke-linecap="round"
   stroke-linejoin="round"
 >
@@ -31,10 +31,10 @@ const { name } = Astro.props;
   )}
   {name === "roadmap" && (
     <>
-      <!-- Outline adapted from the v11 desk rocket. -->
-      <path d="M12 2.5c3 2.5 4.5 6 4.5 10.5h-9C7.5 8.5 9 5 12 2.5Z" />
-      <circle cx="12" cy="8.5" r="1.5" />
-      <path d="M7.5 10 4.5 13v3l3.5-1.5M16.5 10l3 3v3L16 14.5M9 13v3h6v-3M10 18c.3 1.5 1 2.5 2 3.5 1-1 1.7-2 2-3.5" />
+      <!-- Rocket from the v5 dock (docs/design/v5/index.html). -->
+      <path d="M10 2c3 2.5 4.2 6 3.8 10.5H6.2C5.8 8 7 4.5 10 2Z" />
+      <circle cx="10" cy="8" r="1.6" fill="currentColor" stroke="none" />
+      <path d="M6.4 10 4 13.5v2.5l2.7-2M13.6 10l2.4 3.5v2.5l-2.7-2M8.5 15.5 10 18l1.5-2.5" />
     </>
   )}
   {name === "email" && (

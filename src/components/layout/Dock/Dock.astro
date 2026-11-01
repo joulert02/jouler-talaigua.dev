@@ -4,22 +4,29 @@ import { getLang, useTranslations } from "../../../i18n/ui";
 import type { NavigationItem } from "../../../config/navigation";
 interface Props {
   items: readonly NavigationItem[];
-  current?: NavigationItem["id"];
+  /** Item of the current page; none on pages outside the navigation. */
+  current?: NavigationItem["id"] | undefined;
   /** How items are drawn: `labels` shows every label; `active-label` only the current page's; `icons` none. */
   variant?: "labels" | "active-label" | "icons";
+  /** Optional compact variant under 480px (the dock's own width), for a `labels` dock that must fit a phone. */
+  mobileVariant?: "active-label" | "icons";
 }
-const { items, current, variant = "labels" } = Astro.props;
+const { items, current, variant = "labels", mobileVariant } = Astro.props;
 const lang = getLang(Astro);
 const t = useTranslations(lang);
 ---
 
 <dock-nav>
-  <nav class="dock" aria-label={t("dock.main")} data-variant={variant}>
+  <nav class="dock" aria-label={t("dock.main")} data-variant={variant} data-mobile-variant={mobileVariant}>
     <span class="dock__indicator" aria-hidden="true"></span>
     {items.map((item) => (
       <DockItem item={item} current={item.id === current} />
     ))}
-    <slot name="actions" />
+    {Astro.slots.has("actions") && (
+      <div class="dock__actions">
+        <slot name="actions" />
+      </div>
+    )}
   </nav>
 </dock-nav>
 <script>
@@ -88,6 +95,11 @@ const t = useTranslations(lang);
   }
   .dock__indicator {
     display: none;
+  }
+  .dock__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
   }
   /* Compact variants: icons, a pill that slides to the current page and labels as tooltips. */
   .dock:not([data-variant="labels"]) {
@@ -175,6 +187,93 @@ const t = useTranslations(lang);
   }
   .dock[data-variant="active-label"] :global(.dock__item[aria-current="page"]::after) {
     display: none;
+  }
+  /* mobileVariant: the same compact rules as above, under 480px, keyed on data-mobile-variant. Keep them in sync. */
+  @container dock (max-width: 479px) {
+    .dock[data-mobile-variant] {
+      --_indicator-height: 44px;
+      --_indicator-duration: var(--duration-medium);
+      --_press-scale: 0.96;
+      width: max-content;
+      max-width: calc(100vw - 16px);
+    }
+    .dock[data-mobile-variant] .dock__indicator {
+      display: block;
+      position: absolute;
+      left: 0;
+      top: var(--_padding);
+      width: var(--_width, 0px);
+      height: var(--_height, var(--_indicator-height));
+      transform: translateX(var(--_x, 0px));
+      background: var(--color-surface-hover);
+      border-radius: var(--radius-lg);
+      pointer-events: none;
+      transition:
+        transform var(--_indicator-duration) var(--ease-out),
+        width var(--_indicator-duration) var(--ease-out),
+        height var(--_indicator-duration) var(--ease-out);
+    }
+    .dock[data-mobile-variant]:not([data-ready]) .dock__indicator,
+    .dock[data-mobile-variant] .dock__indicator[hidden] {
+      display: none;
+    }
+    .dock[data-ready][data-mobile-variant] :global(.dock__item[aria-current="page"]) {
+      background: transparent;
+    }
+    .dock[data-mobile-variant] :global(.dock__item),
+    .dock[data-mobile-variant] :global(copy-email),
+    .dock[data-mobile-variant] :global(dock-theme) {
+      position: relative;
+      z-index: 1;
+    }
+    .dock[data-mobile-variant] :global(button) {
+      transition:
+        transform var(--duration-fast) var(--ease-out),
+        background-color var(--duration-fast) var(--ease-out),
+        color var(--duration-fast) var(--ease-out);
+    }
+    .dock[data-mobile-variant] :global(.dock__item) {
+      transition:
+        transform var(--duration-fast) var(--ease-out),
+        color var(--duration-fast) var(--ease-out),
+        background-color var(--duration-fast) var(--ease-out);
+    }
+    .dock[data-mobile-variant] :global(.dock__item:active),
+    .dock[data-mobile-variant] :global(button:active) {
+      transform: scale(var(--_press-scale));
+    }
+    .dock[data-mobile-variant] :global(.dock__item:hover::after),
+    .dock[data-mobile-variant] :global(.dock__item:focus-visible::after) {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+    .dock[data-mobile-variant="icons"] :global(.dock__item > .dock__label) {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    .dock[data-mobile-variant="active-label"] :global(.dock__item > .dock__label) {
+      display: grid;
+      grid-template-columns: 0fr;
+      opacity: 0;
+      transition:
+        grid-template-columns var(--duration-medium) var(--ease-out),
+        opacity var(--duration-fast) var(--ease-out);
+    }
+    .dock[data-mobile-variant="active-label"] :global(.dock__item > .dock__label > span) {
+      min-width: 0;
+      overflow: hidden;
+    }
+    .dock[data-mobile-variant="active-label"] :global(.dock__item[aria-current="page"] > .dock__label) {
+      grid-template-columns: 1fr;
+      opacity: 1;
+    }
+    .dock[data-mobile-variant="active-label"] :global(.dock__item[aria-current="page"]::after) {
+      display: none;
+    }
   }
   @media (max-width: 380px) {
     .dock {

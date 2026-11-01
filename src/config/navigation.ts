@@ -8,12 +8,13 @@ interface NavigationEntry {
   icon: DockIconName;
 }
 
-// TODO(verify): routes before integrating the dock into the site.
+// Paths without the locale prefix; DockItem localizes them (localePath).
 export const navigation = [
-  { id: "home", labelKey: "dock.home", href: "#TODO(verify)-home", icon: "home" },
-  { id: "work", labelKey: "dock.work", href: "#TODO(verify)-work", icon: "work" },
-  { id: "notes", labelKey: "dock.notes", href: "#TODO(verify)-notes", icon: "notes" },
-  { id: "roadmap", labelKey: "dock.roadmap", href: "#TODO(verify)-roadmap", icon: "roadmap" },
+  { id: "home", labelKey: "dock.home", href: "/", icon: "home" },
+  { id: "work", labelKey: "dock.work", href: "/projects/", icon: "work" },
+  { id: "notes", labelKey: "dock.notes", href: "/notes/", icon: "notes" },
+  // Roadmap stays out of the menu for now; its page (/roadmap/) still exists.
+  // { id: "roadmap", labelKey: "dock.roadmap", href: "/roadmap/", icon: "roadmap" },
 ] as const satisfies readonly NavigationEntry[];
 export interface NavigationItem extends NavigationEntry {
   id: (typeof navigation)[number]["id"];
