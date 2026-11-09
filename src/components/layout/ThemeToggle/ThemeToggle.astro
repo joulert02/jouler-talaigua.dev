@@ -18,28 +18,32 @@ const t = useTranslations(lang);
   </button>
 </dock-theme>
 <script>
-  import { effectiveTheme, nextTheme } from "@/lib/theme.js";
+  import { THEME_COOKIE, effectiveTheme, nextTheme } from "@/lib/theme.js";
   class DockTheme extends HTMLElement {
+    private os?: AbortController;
     connectedCallback() {
       const button = this.querySelector("button");
       const root = document.documentElement;
-      const prefersDark = () => matchMedia("(prefers-color-scheme: dark)").matches;
+      const darkQuery = matchMedia("(prefers-color-scheme: dark)");
+      const prefersDark = () => darkQuery.matches;
       const sync = () =>
         button?.setAttribute(
           "aria-pressed",
           String(effectiveTheme(root.dataset["theme"], prefersDark()) === "dark"),
         );
       sync();
+      // Without a saved choice the page follows the OS live, so the pressed state must follow it too.
+      this.os = new AbortController();
+      darkQuery.addEventListener("change", sync, { signal: this.os.signal });
       button?.addEventListener("click", () => {
         const next = nextTheme(root.dataset["theme"], prefersDark());
         root.dataset["theme"] = next;
-        try {
-          localStorage.setItem("theme", next);
-        } catch {
-          /* storage unavailable */
-        }
+        document.cookie = `${THEME_COOKIE}=${next}; path=/; SameSite=Lax`;
         sync();
       });
+    }
+    disconnectedCallback() {
+      this.os?.abort();
     }
   }
   if (!customElements.get("dock-theme")) customElements.define("dock-theme", DockTheme);

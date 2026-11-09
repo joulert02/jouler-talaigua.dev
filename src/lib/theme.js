@@ -4,6 +4,12 @@
 export const THEMES = /** @type {const} */ ({ light: "light", dark: "dark" });
 
 /**
+ * Cookie with the theme the visitor picked; without it the site follows the OS. A session cookie (no expiry): every tab
+ * shares it and the browser drops it when it closes.
+ */
+export const THEME_COOKIE = "theme";
+
+/**
  * @param {string | undefined} current value of `data-theme` on the root, if any
  * @param {boolean} prefersDark whether `(prefers-color-scheme: dark)` matches
  * @returns {"light" | "dark"}
