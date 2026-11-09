@@ -2,8 +2,15 @@ import type { Lang, UiKey } from "../i18n/ui";
 export type LocalizedText = Record<Lang, string>;
 export interface ProfileLink {
   label: UiKey;
-  href: string;
+  /** One URL, or one per language (a file that exists in each language, like the CV). */
+  href: string | LocalizedText;
   target?: "_blank";
+  /** The link downloads a file instead of opening it. */
+  download?: true;
+}
+/** The URL of a profile link for the page's language. */
+export function linkHref(link: ProfileLink, lang: Lang): string {
+  return typeof link.href === "string" ? link.href : link.href[lang];
 }
 export interface CareerItem {
   company: string;
@@ -49,7 +56,6 @@ export const languageItems: readonly LanguageItem[] = [
   { lang: "en", label: "layout.en", href: "/" },
   { lang: "es", label: "layout.es", href: "/es/" },
 ];
-// TODO(verify): confirm the contact address before publication.
 export const contactEmail = "joulert02@gmail.com";
 export const brand: BrandData = { mark: "J", label: "JOTA", name: "Jouler Talaigua", href: "/" };
 // TODO(verify): v11 career rows are draft owner-supplied data, not publication approval.
@@ -80,8 +86,12 @@ export const identityLinks = [
   { label: "layout.github", href: "https://github.com/joulert02", target: "_blank" },
   { label: "layout.about", href: "#letter" },
 ] as const satisfies readonly ProfileLink[];
-// TODO(verify): the CV file is unavailable; #contact retains the prototype destination.
-export const cvLink: ProfileLink = { label: "layout.cv", href: "#contact" };
+// The CV PDFs live in public/cv/, one per language.
+export const cvLink: ProfileLink = {
+  label: "layout.cv",
+  href: { en: "/cv/Jouler_Talaigua_CV.pdf", es: "/cv/Jouler_Talaigua_CV_ES.pdf" },
+  download: true,
+};
 export const identity: IdentityData = {
   brand,
   // TODO(verify): v11 draft role and Spanish translation await owner approval.
@@ -96,7 +106,7 @@ export const identity: IdentityData = {
   links: identityLinks,
   career: careerItems,
 };
-// TODO(verify): Instagram/TikTok destinations and footer copy require owner approval.
+// TODO(verify): footer copy (location and origin lines) requires owner approval.
 export const footerColumns: readonly FooterColumn[] = [
   {
     heading: "layout.site",
@@ -110,8 +120,11 @@ export const footerColumns: readonly FooterColumn[] = [
   {
     heading: "layout.social",
     items: [
-      { kind: "link", link: { label: "layout.instagram", href: "#contact" } },
-      { kind: "link", link: { label: "layout.tiktok", href: "#contact" } },
+      {
+        kind: "link",
+        link: { label: "layout.instagram", href: "https://www.instagram.com/joulert02/", target: "_blank" },
+      },
+      { kind: "link", link: identityLinks[1] },
       { kind: "link", link: identityLinks[0] },
     ],
   },
@@ -120,8 +133,7 @@ export const footerColumns: readonly FooterColumn[] = [
     items: [
       { kind: "email", address: contactEmail },
       { kind: "link", link: { ...cvLink, label: "layout.cvPdf" } },
-      // TODO(verify): v11 location and availability copy, including Spanish translation.
-      { kind: "text", text: { en: "Madrid · CET · remote across EU", es: "Madrid · CET · remoto en la UE" } },
+      { kind: "text", text: { en: "Madrid · remote across EU", es: "Madrid · remoto en la UE" } },
     ],
   },
 ];

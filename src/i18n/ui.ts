@@ -23,10 +23,7 @@ export const ui = {
     "layout.notes": "Notes",
     "layout.roadmap": "Roadmap",
     "layout.letter": "A letter for you",
-    // TODO(verify): draft label or destination awaits owner approval.
     "layout.instagram": "Instagram",
-    // TODO(verify): draft label or destination awaits owner approval.
-    "layout.tiktok": "TikTok",
     "layout.language": "Language",
     "layout.en": "EN",
     "layout.es": "ES",
@@ -41,7 +38,7 @@ export const ui = {
     "dock.copyTooltip": "Copy email",
     "dock.copyText": "Copy",
     "dock.copied": "Email copied",
-    "dock.failed": "Copy failed, here it is", // TODO(verify)
+    "dock.failed": "Copy failed, here it is",
     "dock.themeLabel": "Toggle theme",
     "dock.themeTooltip": "Theme",
     "nav.home": "Home",
@@ -75,10 +72,7 @@ export const ui = {
     "layout.notes": "Notas",
     "layout.roadmap": "Hoja de ruta",
     "layout.letter": "Una carta para ti",
-    // TODO(verify): draft label or destination awaits owner approval.
     "layout.instagram": "Instagram",
-    // TODO(verify): draft label or destination awaits owner approval.
-    "layout.tiktok": "TikTok",
     "layout.language": "Idioma",
     "layout.en": "EN",
     "layout.es": "ES",
@@ -93,7 +87,7 @@ export const ui = {
     "dock.copyTooltip": "Copiar correo",
     "dock.copyText": "Copiar",
     "dock.copied": "Correo copiado",
-    "dock.failed": "No se pudo copiar, aquí está", // TODO(verify)
+    "dock.failed": "No se pudo copiar, aquí está",
     "dock.themeLabel": "Cambiar tema",
     "dock.themeTooltip": "Tema",
     "nav.home": "Inicio",
