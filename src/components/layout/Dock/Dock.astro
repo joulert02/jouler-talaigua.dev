@@ -6,10 +6,13 @@ interface Props {
   items: readonly NavigationItem[];
   /** Item of the current page; none on pages outside the navigation. */
   current?: NavigationItem["id"] | undefined;
-  /** How items are drawn: `labels` shows every label; `active-label` only the current page's; `icons` none. */
-  variant?: "labels" | "active-label" | "icons";
-  /** Optional compact variant under 480px (the dock's own width), for a `labels` dock that must fit a phone. */
-  mobileVariant?: "active-label" | "icons";
+  /**
+   * How items are drawn: `labels` shows every label beside its icon; `stacked` every label under its icon;
+   * `active-label` only the current page's; `icons` none.
+   */
+  variant?: "labels" | "stacked" | "active-label" | "icons";
+  /** Variant used when the dock's container is too narrow for `labels` (see the container query below). */
+  mobileVariant?: "stacked" | "active-label" | "icons";
 }
 const { items, current, variant = "labels", mobileVariant } = Astro.props;
 const lang = getLang(Astro);
@@ -78,6 +81,10 @@ const t = useTranslations(lang);
     --_radius: 18px;
     --_blur: 10px;
     --_padding: 6px;
+    --_stacked-height: 52px;
+    --_stacked-padding: 6px 8px;
+    --_stacked-gap: 4px;
+    --_stacked-label-size: 11px;
     position: fixed;
     left: 50%;
     bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
@@ -133,8 +140,7 @@ const t = useTranslations(lang);
     background: transparent;
   }
   .dock:not([data-variant="labels"]) :global(.dock__item),
-  .dock:not([data-variant="labels"]) :global(copy-email),
-  .dock:not([data-variant="labels"]) :global(dock-theme) {
+  .dock:not([data-variant="labels"]) .dock__actions {
     position: relative;
     z-index: 1;
   }
@@ -185,11 +191,34 @@ const t = useTranslations(lang);
     grid-template-columns: 1fr;
     opacity: 1;
   }
+  /* The current label is never narrower than its text, so no browser rounding or glyph overhang can clip it. */
+  .dock[data-variant="active-label"] :global(.dock__item[aria-current="page"] > .dock__label > span) {
+    min-width: max-content;
+    overflow: visible;
+  }
   .dock[data-variant="active-label"] :global(.dock__item[aria-current="page"]::after) {
     display: none;
   }
-  /* mobileVariant: the same compact rules as above, under 480px, keyed on data-mobile-variant. Keep them in sync. */
-  @container dock (max-width: 479px) {
+  /* stacked: every label stays visible, under its icon, so the dock fits narrow screens without losing text. */
+  .dock[data-variant="stacked"] :global(.dock__item) {
+    flex-direction: column;
+    gap: var(--_stacked-gap);
+    height: auto;
+    min-height: var(--_stacked-height);
+    padding: var(--_stacked-padding);
+  }
+  .dock[data-variant="stacked"] :global(.dock__item span) {
+    font-size: var(--_stacked-label-size);
+  }
+  .dock[data-variant="stacked"] :global(.dock__item::after) {
+    display: none;
+  }
+  /*
+   * mobileVariant: the compact rules above, keyed on data-mobile-variant, when the dock's container (the page width
+   * minus its gutter) is narrower than the `labels` dock: about 375px in Spanish, the longer language, measured
+   * 2026-11-02 with Home, Work, Notes and three actions. Revisit if items change. Keep these rules in sync.
+   */
+  @container dock (max-width: 389px) {
     .dock[data-mobile-variant] {
       --_indicator-height: 44px;
       --_indicator-duration: var(--duration-medium);
@@ -221,8 +250,7 @@ const t = useTranslations(lang);
       background: transparent;
     }
     .dock[data-mobile-variant] :global(.dock__item),
-    .dock[data-mobile-variant] :global(copy-email),
-    .dock[data-mobile-variant] :global(dock-theme) {
+    .dock[data-mobile-variant] .dock__actions {
       position: relative;
       z-index: 1;
     }
@@ -271,7 +299,25 @@ const t = useTranslations(lang);
       grid-template-columns: 1fr;
       opacity: 1;
     }
+    .dock[data-mobile-variant="active-label"]
+      :global(.dock__item[aria-current="page"] > .dock__label > span) {
+      min-width: max-content;
+      overflow: visible;
+    }
     .dock[data-mobile-variant="active-label"] :global(.dock__item[aria-current="page"]::after) {
+      display: none;
+    }
+    .dock[data-mobile-variant="stacked"] :global(.dock__item) {
+      flex-direction: column;
+      gap: var(--_stacked-gap);
+      height: auto;
+      min-height: var(--_stacked-height);
+      padding: var(--_stacked-padding);
+    }
+    .dock[data-mobile-variant="stacked"] :global(.dock__item span) {
+      font-size: var(--_stacked-label-size);
+    }
+    .dock[data-mobile-variant="stacked"] :global(.dock__item::after) {
       display: none;
     }
   }

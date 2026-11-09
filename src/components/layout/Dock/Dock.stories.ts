@@ -12,13 +12,13 @@ const meta = preview.meta({
     docs: {
       description: {
         component:
-          "Floating bottom navigation shown on every page. Items come from `src/config/navigation.ts`; `current` marks the page with `aria-current`. Actions (CopyEmail, ThemeToggle) are composed through the `actions` slot. `variant` sets how items are drawn: `labels` (every label), `active-label` (icons plus the current page's label) or `icons` (icons only, labels as tooltips); the compact variants add a pill that slides to the current page.",
+          "Floating bottom navigation shown on every page. Items come from `src/config/navigation.ts`; `current` marks the page with `aria-current`. Actions (CopyEmail, ThemeToggle) are composed through the `actions` slot. `variant` sets how items are drawn: `labels` (every label beside its icon), `stacked` (every label under its icon), `active-label` (icons plus the current page's label) or `icons` (icons only, labels as tooltips); the compact variants add a pill that slides to the current page.",
       },
     },
   },
   argTypes: {
     current: { control: "select", options: navigation.map((item) => item.id) },
-    variant: { control: "inline-radio", options: ["labels", "active-label", "icons"] },
+    variant: { control: "inline-radio", options: ["labels", "stacked", "active-label", "icons"] },
     items: { control: "object" },
     phone: { table: { disable: true } },
   },

@@ -1,6 +1,9 @@
 ---
 import Component from "../Footer.astro";
 import CopyEmail from "../../CopyEmail/CopyEmail.astro";
+import LanguageSwitch from "../../LanguageSwitch/LanguageSwitch.astro";
+import { storyLinks } from "../../../../../.storybook/links";
+import { languageItems } from "../../../../config/profile";
 import type { FooterData } from "../../../../config/profile";
 interface Props {
   data?: FooterData;
@@ -10,6 +13,7 @@ interface Props {
 <div class="footer-story">
   <Component {...Astro.props}>
     <CopyEmail variant="text" slot="copy-email" />
+    <LanguageSwitch items={storyLinks(languageItems)} slot="language" />
   </Component>
 </div>
 <style>

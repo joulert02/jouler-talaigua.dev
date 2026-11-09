@@ -7,7 +7,9 @@ import DockSeparator from "@/components/layout/Dock/DockSeparator/DockSeparator.
 import CopyEmail from "@/components/layout/CopyEmail/CopyEmail.astro";
 import ThemeToggle from "@/components/layout/ThemeToggle/ThemeToggle.astro";
 import Footer from "@/components/layout/Footer/Footer.astro";
+import LanguageSwitch from "@/components/layout/LanguageSwitch/LanguageSwitch.astro";
 import { navigation, type NavigationItem } from "@/config/navigation";
+import { languageItems } from "@/config/profile";
 import { localePath, type Lang } from "@/i18n/ui";
 
 interface Props {
@@ -25,6 +27,8 @@ const current = navigation.find((item: NavigationItem) =>
   item.href === "/" ? altPath === "/" : altPath.startsWith(item.href),
 )?.id;
 const other: Lang = lang === "en" ? "es" : "en";
+// This same page in every language, for the language switches (Dock and footer).
+const languages = languageItems.map((item) => ({ ...item, href: localePath(item.lang, altPath) }));
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
 ---
@@ -58,6 +62,10 @@ const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
   </head>
   <body>
     <SkipLink />
+    <!-- Trial placement, to validate: the language pill at the top right, besides the Dock and the footer. -->
+    <div class="top-language">
+      <LanguageSwitch items={languages} />
+    </div>
     <div class="wrap">
       <main id="main" tabindex="-1">
         <slot />
@@ -65,13 +73,24 @@ const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
     </div>
     <Footer>
       <CopyEmail variant="text" slot="copy-email" />
+      <LanguageSwitch items={languages} slot="language" />
     </Footer>
     <Dock items={navigation} {current} variant="labels" mobileVariant="active-label">
       <Fragment slot="actions">
         <DockSeparator />
         <CopyEmail />
+        {/* Trial: language out of the Dock while the top-right pill is validated. */}
+        {/* <LanguageSwitch variant="compact" items={languages} /> */}
         <ThemeToggle />
       </Fragment>
     </Dock>
   </body>
 </html>
+<style>
+  .top-language {
+    position: absolute;
+    top: var(--space-4);
+    right: clamp(16px, 3vw, 40px);
+    z-index: 20;
+  }
+</style>
