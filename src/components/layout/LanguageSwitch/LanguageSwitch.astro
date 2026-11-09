@@ -1,54 +1,34 @@
 ---
 import { languageItems, type LanguageItem } from "../../../config/profile";
-import { getLang, languages, useTranslations } from "../../../i18n/ui";
+import { getLang, useTranslations } from "../../../i18n/ui";
 interface Props {
   /** Languages offered, each with the URL of this page in that language. */
   items?: readonly LanguageItem[];
-  /** `pill`: v11 segmented pill with every language (footer). `compact`: one link to the other language (Dock). */
-  variant?: "pill" | "compact";
 }
-const { items = languageItems, variant = "pill" } = Astro.props;
+const { items = languageItems } = Astro.props;
 const lang = getLang(Astro);
 const t = useTranslations(lang);
-const others = items.filter((item) => item.lang !== lang);
 ---
 
-{variant === "compact" ? (
-  <span class="language-switch-compact">
-    {others.map((item) => (
+<nav class="language-switch" aria-label={t("layout.language")}>
+  {items.map((item) =>
+    item.lang === lang ? (
+      <span class="language-switch__option" aria-current="page" lang={item.lang}>
+        {t(item.label)}
+      </span>
+    ) : (
       <a
-        class="language-switch-compact__link"
+        class="language-switch__option"
         href={item.href}
         lang={item.lang}
         hreflang={item.lang}
         aria-label={useTranslations(item.lang)("layout.readIn")}
-        data-tip={languages[item.lang]}
       >
         {t(item.label)}
       </a>
-    ))}
-  </span>
-) : (
-  <nav class="language-switch" aria-label={t("layout.language")}>
-    {items.map((item) =>
-      item.lang === lang ? (
-        <span class="language-switch__option" aria-current="page" lang={item.lang}>
-          {t(item.label)}
-        </span>
-      ) : (
-        <a
-          class="language-switch__option"
-          href={item.href}
-          lang={item.lang}
-          hreflang={item.lang}
-          aria-label={useTranslations(item.lang)("layout.readIn")}
-        >
-          {t(item.label)}
-        </a>
-      ),
-    )}
-  </nav>
-)}
+    ),
+  )}
+</nav>
 <style>
   /* v11 segmented pill (docs/design/v11/case.css, .lang). */
   .language-switch {
@@ -82,83 +62,5 @@ const others = items.filter((item) => item.lang !== lang);
   a.language-switch__option:focus-visible {
     outline: 2px solid var(--color-text-accent);
     outline-offset: 2px;
-  }
-
-  /* compact: sized and styled like the Dock's icon buttons (ThemeToggle, CopyEmail). */
-  .language-switch-compact {
-    --_target-size: 44px;
-    --_focus-width: 2px;
-    --_tooltip-offset: 10px;
-    --_tooltip-font-size: 12.5px;
-    --_tooltip-padding-block: 7px;
-    --_tooltip-padding-inline: 9px;
-    display: inline-flex;
-  }
-  .language-switch-compact__link {
-    --_duration: 180ms;
-    position: relative;
-    box-sizing: border-box;
-    min-width: var(--_target-size);
-    height: var(--_target-size);
-    padding: 0 var(--space-3);
-    border-radius: var(--radius-lg);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--color-text-muted);
-    font: 500 13px/1 var(--font-mono);
-    text-decoration: none;
-    transition:
-      background-color var(--_duration) var(--ease-out),
-      color var(--_duration) var(--ease-out),
-      transform var(--duration-fast) var(--ease-out);
-  }
-  .language-switch-compact__link:hover {
-    background: var(--color-surface-hover);
-    color: var(--color-text);
-  }
-  .language-switch-compact__link:active {
-    transform: scale(0.96);
-  }
-  .language-switch-compact__link:focus-visible {
-    outline: var(--_focus-width) solid var(--color-text-accent);
-    outline-offset: var(--_focus-width);
-  }
-  .language-switch-compact__link::after {
-    content: attr(data-tip);
-    position: absolute;
-    bottom: calc(100% + var(--_tooltip-offset));
-    left: 50%;
-    transform: translate(-50%, 4px);
-    white-space: nowrap;
-    background: var(--color-text);
-    color: var(--color-bg);
-    font: 500 var(--_tooltip-font-size)/1 var(--font-sans);
-    padding: var(--_tooltip-padding-block) var(--_tooltip-padding-inline);
-    border-radius: var(--radius-md);
-    opacity: 0;
-    pointer-events: none;
-    transition:
-      opacity var(--duration-fast) var(--ease-out),
-      transform var(--duration-fast) var(--ease-out);
-  }
-  .language-switch-compact__link:hover::after,
-  .language-switch-compact__link:focus-visible::after {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
-  @media (max-width: 560px) {
-    .language-switch-compact__link {
-      padding: 0 var(--space-2);
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .language-switch-compact__link,
-    .language-switch-compact__link::after {
-      transition: none;
-    }
-    .language-switch-compact__link:active {
-      transform: none;
-    }
   }
 </style>

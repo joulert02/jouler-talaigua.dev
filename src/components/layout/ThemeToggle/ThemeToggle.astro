@@ -8,7 +8,7 @@ const t = useTranslations(lang);
 
 <dock-theme>
   <button
-    class="theme-toggle__button"
+    class="dock-control"
     type="button"
     aria-label={t("dock.themeLabel")}
     aria-pressed="false"
@@ -50,74 +50,6 @@ const t = useTranslations(lang);
 </script>
 <style>
   dock-theme {
-    --_target-size: 44px;
-    --_focus-width: 2px;
-    --_tooltip-offset: 10px;
-    --_tooltip-font-size: 12.5px;
-    --_tooltip-padding-block: 7px;
-    --_tooltip-padding-inline: 9px;
-
     display: inline-flex;
-  }
-  .theme-toggle__button {
-    --_duration: 180ms;
-    position: relative;
-    box-sizing: border-box;
-    min-width: var(--_target-size);
-    height: var(--_target-size);
-    padding: 0 var(--space-3);
-    border: 0;
-    border-radius: var(--radius-lg);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    color: var(--color-text-muted);
-    cursor: pointer;
-    transition:
-      background-color var(--_duration) var(--ease-out),
-      color var(--_duration) var(--ease-out);
-  }
-  .theme-toggle__button:hover {
-    background: var(--color-surface-hover);
-    color: var(--color-text);
-  }
-  .theme-toggle__button:focus-visible {
-    outline: var(--_focus-width) solid var(--color-text-accent);
-    outline-offset: var(--_focus-width);
-  }
-  .theme-toggle__button::after {
-    content: attr(data-tip);
-    position: absolute;
-    bottom: calc(100% + var(--_tooltip-offset));
-    left: 50%;
-    transform: translate(-50%, 4px);
-    white-space: nowrap;
-    background: var(--color-text);
-    color: var(--color-bg);
-    font: 500 var(--_tooltip-font-size)/1 var(--font-sans);
-    padding: var(--_tooltip-padding-block) var(--_tooltip-padding-inline);
-    border-radius: var(--radius-md);
-    opacity: 0;
-    pointer-events: none;
-    transition:
-      opacity var(--duration-fast) var(--ease-out),
-      transform var(--duration-fast) var(--ease-out);
-  }
-  .theme-toggle__button:hover::after,
-  .theme-toggle__button:focus-visible::after {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
-  @media (max-width: 560px) {
-    .theme-toggle__button {
-      padding: 0 var(--space-2);
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .theme-toggle__button,
-    .theme-toggle__button::after {
-      transition: none;
-    }
   }
 </style>

@@ -4,10 +4,8 @@ import Dock from "../Dock.astro";
 import DockSeparator from "../DockSeparator/DockSeparator.astro";
 import CopyEmail from "../../CopyEmail/CopyEmail.astro";
 import ThemeToggle from "../../ThemeToggle/ThemeToggle.astro";
-import LanguageSwitch from "../../LanguageSwitch/LanguageSwitch.astro";
 import PhoneFrame from "../../../ui/PhoneFrame/PhoneFrame.astro";
 import { navigation, type NavigationItem } from "../../../../config/navigation";
-import { languageItems } from "../../../../config/profile";
 interface Props {
   items?: readonly NavigationItem[];
   current?: NavigationItem["id"];
@@ -27,7 +25,6 @@ const frameProps = phone ? { label: "Dock on a phone" } : {};
       <Fragment slot="actions">
         <DockSeparator />
         <CopyEmail />
-        <LanguageSwitch variant="compact" items={storyLinks(languageItems)} />
         <ThemeToggle />
       </Fragment>
     </Dock>

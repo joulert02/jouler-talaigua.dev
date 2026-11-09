@@ -1,4 +1,4 @@
-// Fails when draft placeholders remain in content or in the Storybook design docs. Strict only on production
+// Fails when draft placeholders remain in content, site config and copy, or the Storybook design docs. Strict only on production
 // builds (Cloudflare Pages production branch, Vercel production) or with --strict, so drafts can live on
 // branches and previews while real facts are being filled in.
 import { readdir, readFile } from "node:fs/promises";
@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 
 const MARKER = "TODO(verify)";
 const PRODUCTION_BRANCH = "main"; // docs/adr/001-stack.md
-export const ROOTS = ["src/content/", ".storybook/docs/"];
+export const ROOTS = ["src/content/", "src/config/", "src/i18n/", ".storybook/docs/"];
 
 /**
  * @param {Record<string, string | undefined>} env
@@ -35,7 +35,7 @@ async function* walk(dir) {
   for (const entry of await readdir(dir, { withFileTypes: true })) {
     const path = join(dir, entry.name);
     if (entry.isDirectory()) yield* walk(path);
-    else if (/\.mdx?$/.test(entry.name)) yield path;
+    else if (/\.(mdx?|ts)$/.test(entry.name)) yield path;
   }
 }
 

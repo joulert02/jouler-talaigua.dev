@@ -13,7 +13,7 @@ const label = useTranslations(lang)(item.labelKey);
 ---
 
 <a
-  class="dock__item"
+  class="dock-control dock__item"
   href={localePath(lang, item.href)}
   data-tip={label}
   aria-current={current ? "page" : undefined}
@@ -25,42 +25,17 @@ const label = useTranslations(lang)(item.labelKey);
 </a>
 <style>
   .dock__item {
-    --_target-size: 44px;
-    --_focus-width: 2px;
     --_compact-padding: 7px;
     --_compact-label-size: 13px;
     --_compact-icon-size: 17px;
-
-    --_duration: 180ms;
-    --_tip-gap: 10px;
-    --_tip-size: 12.5px;
-    --_tip-padding: 7px 9px;
-    position: relative;
-    box-sizing: border-box;
-    min-width: var(--_target-size);
-    height: var(--_target-size);
-    padding: 0 var(--space-3);
-    border-radius: var(--radius-lg);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
     gap: var(--space-2);
-    color: var(--color-text-muted);
     font: 500 var(--font-size-small)/1 var(--font-sans);
     text-decoration: none;
     white-space: nowrap;
-    transition:
-      background-color var(--_duration) var(--ease-out),
-      color var(--_duration) var(--ease-out);
   }
-  .dock__item:hover,
   .dock__item[aria-current="page"] {
     background: var(--color-surface-hover);
     color: var(--color-text);
-  }
-  .dock__item:focus-visible {
-    outline: var(--_focus-width) solid var(--color-text-accent);
-    outline-offset: var(--_focus-width);
   }
   @media (max-width: 560px) {
     .dock__item {
@@ -86,30 +61,6 @@ const label = useTranslations(lang)(item.labelKey);
     .dock__item :global(svg) {
       width: var(--_compact-icon-size);
       height: var(--_compact-icon-size);
-    }
-  }
-  .dock__item::after {
-    content: attr(data-tip);
-    position: absolute;
-    bottom: calc(100% + var(--_tip-gap));
-    left: 50%;
-    transform: translate(-50%, 4px);
-    white-space: nowrap;
-    background: var(--color-text);
-    color: var(--color-bg);
-    font: 500 var(--_tip-size)/1 var(--font-sans);
-    padding: var(--_tip-padding);
-    border-radius: var(--radius-md);
-    opacity: 0;
-    pointer-events: none;
-    transition:
-      opacity var(--duration-fast) var(--ease-out),
-      transform var(--duration-fast) var(--ease-out);
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .dock__item,
-    .dock__item::after {
-      transition: none;
     }
   }
 </style>

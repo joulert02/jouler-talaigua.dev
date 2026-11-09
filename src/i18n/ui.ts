@@ -5,8 +5,6 @@ export const defaultLang: Lang = "en";
 export const ui = {
   en: {
     "layout.skip": "Skip to content",
-    "layout.projectsSkip": "Skip to projects",
-    "layout.homeLabel": "Jouler Talaigua, home",
     "layout.contact": "Get in touch",
     // TODO(verify): draft label or destination awaits owner approval.
     "layout.cv": "Download CV",
@@ -50,12 +48,9 @@ export const ui = {
     "projects.status.published": "Published",
     "projects.status.in-progress": "In progress",
     "projects.status.idea": "Idea",
-    "theme.toggle": "Toggle theme",
   },
   es: {
     "layout.skip": "Saltar al contenido",
-    "layout.projectsSkip": "Saltar a proyectos",
-    "layout.homeLabel": "Jouler Talaigua, inicio",
     "layout.contact": "Contactar",
     // TODO(verify): draft label or destination awaits owner approval.
     "layout.cv": "Descargar CV",
@@ -99,7 +94,6 @@ export const ui = {
     "projects.status.published": "Publicado",
     "projects.status.in-progress": "En desarrollo",
     "projects.status.idea": "Idea",
-    "theme.toggle": "Cambiar tema",
   },
 } as const satisfies Record<Lang, Record<string, string>>;
 
