@@ -47,7 +47,8 @@ test("spec values", () => {
   assert.equal(l["--color-accent"], "#6e44f0");
   assert.equal(d["--color-text-muted"], "#9aa0a9");
   assert.equal(d["--color-on-accent"], "#141418");
-  assert.equal(l["--font-size-body"], "17px");
+  assert.equal(l["--font-size-body"], "1rem");
+  assert.equal(l["--font-size-small"], "0.875rem");
   assert.equal(l["--line-height-body"], "1.7");
   assert.equal(l["--measure-prose"], "62ch");
   assert.equal(l["--space-1"], "4px");

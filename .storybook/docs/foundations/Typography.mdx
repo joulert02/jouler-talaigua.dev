@@ -39,8 +39,10 @@ Three families with separate jobs. Use the size tokens for every text; legibilit
 
 ## Rules
 
-- `--font-size-body` is the floor for reading text. Smaller sizes are for metadata, captions and labels only.
+- `--font-size-body` (16px) is the floor for reading text. `--font-size-small` (14px) is the floor for everything else: metadata, captions, labels and tooltips. No text is smaller.
+- Sizes are in `rem`, so text follows the default font size the visitor sets in the browser, not only zoom.
 - Reading text uses `--line-height-body` and a measure of `--measure-prose`; chapter leads may be wider and use `text-wrap: balance`.
+- Lists, metadata and short rows (a career row, a caption) use `--line-height-compact`. Paragraphs never do.
 - Labels are Geist Mono, uppercase, with letter spacing.
 - **Don't** use Caveat outside the letter greeting and the notes on desk objects.
 - Weights: Onest 400, 500 and 600; Geist Mono 400 and 500; Caveat 500 and 600. The fonts are self-hosted.
