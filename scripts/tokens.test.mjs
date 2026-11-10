@@ -140,10 +140,12 @@ test("docs blocks opt out of the Storybook docs typography", () => {
   }
 });
 
-test("Storybook docs follow the OS theme and never restyle Storybook's own .sb-unstyled nodes", () => {
-  // Only ThemePair forces a theme. Storybook also puts .sb-unstyled on heading anchors.
+test("Storybook docs and stories share the toolbar theme and never restyle Storybook's own .sb-unstyled nodes", () => {
+  // The toolbar starts from the OS preference and themes docs pages too; ThemePair still shows both themes.
+  // Storybook also puts .sb-unstyled on heading anchors.
   const preview = readFileSync(new URL("../.storybook/preview.js", import.meta.url), "utf8");
-  assert.match(preview, /getPreferredColorScheme\(\) === "dark" \? themes\.dark : themes\.light/);
+  assert.match(preview, /initialGlobals: \{ theme: osTheme \}/);
+  assert.match(preview, /context\.channel\.on\(GLOBALS_UPDATED/);
   assert.doesNotMatch(preview, /dataset\.theme/);
   const blocks = readFileSync(new URL("../.storybook/blocks/blocks.css", import.meta.url), "utf8");
   assert.doesNotMatch(blocks, /(^|[,}]\s*)\.sb-unstyled\s*[,{]/m);

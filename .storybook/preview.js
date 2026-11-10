@@ -5,7 +5,8 @@ import { getPreferredColorScheme, themes } from "storybook/theming";
 import { THEMES, effectiveTheme } from "../src/lib/theme.js";
 import { defaultLang } from "../src/i18n/ui";
 import StoryRoot from "./StoryRoot.astro";
-import { createElement as h, Fragment, lazy } from "react";
+import { GLOBALS_UPDATED } from "storybook/internal/core-events";
+import { createElement as h, Fragment, Suspense, lazy, useEffect, useState } from "react";
 
 // Component overview: what it is, the Playground with its props table, then only the variants (the Playground is not
 // listed twice). The blocks load lazily, like the renderer below, because they touch `document` during the prerender.
@@ -25,11 +26,36 @@ const OverviewPage = lazy(async () => {
   };
 });
 
+// One theme for docs pages and stories: the toolbar choice, which starts from the OS preference. The docs page re-themes
+// itself (its chrome and the tokens on the root) whenever the toolbar changes.
+const osTheme = getPreferredColorScheme() === "dark" ? THEMES.dark : THEMES.light;
+const ThemedDocs = lazy(async () => {
+  const { DocsContainer } = await import("@storybook/addon-docs/blocks");
+  return {
+    default: function ThemedDocs({ context, children }) {
+      // `store` is not in the public typings, but the docs context carries it; without it the OS theme is the start.
+      const [theme, setTheme] = useState(() =>
+        effectiveTheme(context.store?.userGlobals?.get().theme, osTheme === THEMES.dark),
+      );
+      useEffect(() => {
+        const onGlobals = ({ globals }) => setTheme(effectiveTheme(globals.theme, osTheme === THEMES.dark));
+        context.channel.on(GLOBALS_UPDATED, onGlobals);
+        return () => context.channel.off(GLOBALS_UPDATED, onGlobals);
+      }, [context]);
+      useEffect(() => globalThis.document.documentElement.setAttribute("data-theme", theme), [theme]);
+      return h(
+        DocsContainer,
+        { context, theme: theme === THEMES.dark ? themes.dark : themes.light },
+        children,
+      );
+    },
+  };
+});
+
 const addonDocs = () => ({
   parameters: {
     docs: {
-      // The docs page follows the OS theme, like the tokens; ThemePair shows both themes explicitly.
-      theme: getPreferredColorScheme() === "dark" ? themes.dark : themes.light,
+      container: (props) => h(Suspense, { fallback: null }, h(ThemedDocs, props)),
       page: OverviewPage,
       renderer: async () => {
         const { DocsRenderer } = await import("@storybook/addon-docs");
@@ -43,11 +69,11 @@ export default definePreview({
   addons: [addonDocs()],
   globalTypes: {
     theme: {
-      description: "Story theme",
+      description: "Theme of docs pages and stories",
       toolbar: { title: "Theme", icon: "paintbrush", items: Object.values(THEMES), dynamicTitle: true },
     },
   },
-  initialGlobals: { theme: THEMES.light },
+  initialGlobals: { theme: osTheme },
   // Every story renders through StoryRoot: the page language (the `locale` arg from withLocale, else the default) and
   // links that stay in the story.
   render: ({ locale = defaultLang, ...props }, context) => ({
