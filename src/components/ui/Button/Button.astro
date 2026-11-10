@@ -27,19 +27,26 @@ const Tag = href === undefined ? "button" : "a";
 </Tag>
 <style>
   .button {
-    --_label: 15px;
+    --_label: 0.9375rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 48px;
-    padding: var(--space-3) var(--space-5);
+    min-height: 44px;
+    padding: 12px 18px;
     border: 1px solid transparent;
     border-radius: var(--radius-pill);
-    font: 500 var(--_label)/1.4 var(--font-sans);
+    font: 500 var(--_label)/1 var(--font-sans);
     text-decoration: none;
     text-align: center;
     overflow-wrap: anywhere;
     cursor: pointer;
+    transition:
+      transform var(--duration-fast) var(--ease-out),
+      background-color var(--duration-fast) var(--ease-out),
+      box-shadow var(--duration-fast) var(--ease-out);
+  }
+  .button:active {
+    transform: scale(0.97);
   }
   .button--primary {
     background: var(--color-accent);
@@ -51,7 +58,7 @@ const Tag = href === undefined ? "button" : "a";
     background: transparent;
   }
   .button--sm {
-    --_label: 14px;
+    --_label: var(--font-size-small);
     min-height: 44px;
     padding: var(--space-2) var(--space-4);
   }
@@ -64,5 +71,13 @@ const Tag = href === undefined ? "button" : "a";
   .button:focus-visible {
     outline: 2px solid var(--color-text-accent);
     outline-offset: 3px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .button {
+      transition: none;
+    }
+    .button:active {
+      transform: none;
+    }
   }
 </style>

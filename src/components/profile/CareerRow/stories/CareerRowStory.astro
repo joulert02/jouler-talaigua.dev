@@ -1,0 +1,23 @@
+---
+import Component from "../CareerRow.astro";
+import type { CareerItem } from "../../../../config/profile";
+interface Props {
+  item: CareerItem;
+}
+---
+
+<div class="career-row-story">
+  <ol class="career-row-story__list">
+    <Component {...Astro.props} />
+  </ol>
+</div>
+<style>
+  .career-row-story {
+    padding: var(--space-6);
+  }
+  .career-row-story__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+</style>

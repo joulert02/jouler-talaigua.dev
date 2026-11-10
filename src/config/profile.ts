@@ -8,14 +8,15 @@ export interface ProfileLink {
   /** The link downloads a file instead of opening it. */
   download?: true;
 }
-/** The URL of a profile link for the page's language. */
-export function linkHref(link: ProfileLink, lang: Lang): string {
-  return typeof link.href === "string" ? link.href : link.href[lang];
+/** A value that is the same in every language, or the one for the page's language. */
+export function localized(value: string | LocalizedText, lang: Lang): string {
+  return typeof value === "string" ? value : value[lang];
 }
 export interface CareerItem {
   company: string;
   role: LocalizedText;
-  years: string;
+  /** One range, or one per language when it holds a word ("Present"). */
+  years: string | LocalizedText;
 }
 export interface BrandData {
   mark: string;
@@ -63,7 +64,7 @@ export const careerItems = [
   {
     company: "Cast & Crew",
     role: { en: "Senior Software Engineer · via Remoti", es: "Ingeniero de software sénior · vía Remoti" },
-    years: "2026 —",
+    years: { en: "2026 – Present", es: "2026 – Actualidad" },
   },
   {
     company: "EPAM Systems",

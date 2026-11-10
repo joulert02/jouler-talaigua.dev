@@ -1,5 +1,5 @@
 ---
-import { footer, linkHref, type FooterData } from "../../../config/profile";
+import { footer, localized, type FooterData } from "../../../config/profile";
 import { getLang, useTranslations } from "../../../i18n/ui";
 interface Props {
   data?: FooterData;
@@ -20,7 +20,7 @@ const t = useTranslations(lang);
               {item.kind === "link" ? (
                 <a
                   class="footer__link"
-                  href={linkHref(item.link, lang)}
+                  href={localized(item.link.href, lang)}
                   download={item.link.download}
                   target={item.link.target}
                   rel={item.link.target === "_blank" ? "noopener noreferrer" : undefined}
@@ -61,8 +61,8 @@ const t = useTranslations(lang);
 </footer>
 <style>
   .footer {
-    --_wordmark-min: 44px;
-    --_wordmark-max: 168px;
+    --_wordmark-min: 2.75rem;
+    --_wordmark-max: 10.5rem;
     --_flag-width: 16px;
     --_flag-height: 11px;
     max-width: var(--layout-container);
