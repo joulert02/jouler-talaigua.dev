@@ -59,11 +59,11 @@ export const languageItems: readonly LanguageItem[] = [
 ];
 export const contactEmail = "joulert02@gmail.com";
 export const brand: BrandData = { mark: "J", label: "JOTA", name: "Jouler Talaigua", href: "/" };
-// TODO(verify): v11 career rows are draft owner-supplied data, not publication approval.
+// Career rows approved by the owner for version A (2026-11-11).
 export const careerItems = [
   {
     company: "Cast & Crew",
-    role: { en: "Senior Software Engineer · via Remoti", es: "Ingeniero de software sénior · vía Remoti" },
+    role: { en: "Senior Software Engineer", es: "Ingeniero de software sénior" },
     years: { en: "2026 – Present", es: "2026 – Actualidad" },
   },
   {
@@ -95,26 +95,26 @@ export const cvLink: ProfileLink = {
 };
 export const identity: IdentityData = {
   brand,
-  // TODO(verify): v11 draft role and Spanish translation await owner approval.
-  role: { en: "Senior Full-Stack Software Engineer", es: "Ingeniero de software sénior full-stack" },
-  // TODO(verify): v11 draft sentence and Spanish translation await owner approval.
+  // Role and sentence approved by the owner for version A (2026-11-11).
+  role: { en: "Senior Software Engineer", es: "Ingeniero de software sénior" },
   sentence: {
-    en: "I build products with care for the people using them—and the teams behind them.",
-    es: "Creo productos cuidando a las personas que los usan y a los equipos que los hacen posibles.",
+    en: "I enjoy building products focused on the user experience and connecting with people along the way.",
+    es: "Me gusta construir productos enfocados en la experiencia del usuario y conectar con personas en el proceso.",
   },
   contact: { label: "layout.contact", href: "#contact" },
   cv: cvLink,
   links: identityLinks,
   career: careerItems,
 };
-// TODO(verify): footer copy (location and origin lines) requires owner approval.
+// Footer copy approved by the owner for version A (2026-11-11).
 export const footerColumns: readonly FooterColumn[] = [
   {
     heading: "layout.site",
     items: [
       { kind: "link", link: { label: "layout.work", href: "#work" } },
       { kind: "link", link: { label: "layout.notes", href: "#notes" } },
-      { kind: "link", link: { label: "layout.roadmap", href: "#roadmap" } },
+      // Roadmap stays out for now, as in the Dock (navigation.ts).
+      // { kind: "link", link: { label: "layout.roadmap", href: "#roadmap" } },
       { kind: "link", link: { label: "layout.letter", href: "#letter" } },
     ],
   },
@@ -134,14 +134,14 @@ export const footerColumns: readonly FooterColumn[] = [
     items: [
       { kind: "email", address: contactEmail },
       { kind: "link", link: { ...cvLink, label: "layout.cvPdf" } },
-      { kind: "text", text: { en: "Madrid · remote across EU", es: "Madrid · remoto en la UE" } },
+      { kind: "text", text: { en: "Madrid · Spain", es: "Madrid · Spain" } },
     ],
   },
 ];
 export const footer: FooterData = {
   columns: footerColumns,
   wordmark: brand.name,
-  // TODO(verify): v11 origin line awaits owner approval; intentionally Spanish in both locales.
+  // Intentionally Spanish in both locales.
   origin: { en: "Hecho en Madrid, con raíces colombianas", es: "Hecho en Madrid, con raíces colombianas" },
   originLang: "es",
   copyright: "© 2026",

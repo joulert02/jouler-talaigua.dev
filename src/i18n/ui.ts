@@ -6,9 +6,7 @@ export const ui = {
   en: {
     "layout.skip": "Skip to content",
     "layout.contact": "Get in touch",
-    // TODO(verify): draft label or destination awaits owner approval.
     "layout.cv": "Download CV",
-    // TODO(verify): draft label or destination awaits owner approval.
     "layout.cvPdf": "Download CV (PDF)",
     "layout.linkedin": "LinkedIn",
     "layout.github": "GitHub",
@@ -31,7 +29,7 @@ export const ui = {
     "dock.home": "Home",
     "dock.work": "Work",
     "dock.notes": "Notes",
-    "dock.roadmap": "Roadmap", // TODO(verify)
+    "dock.roadmap": "Roadmap", // Unused for now: Roadmap is out of the Dock and the footer.
     "dock.copyLabel": "Copy my email address",
     "dock.copyTooltip": "Copy email",
     "dock.copyText": "Copy",
@@ -52,9 +50,7 @@ export const ui = {
   es: {
     "layout.skip": "Saltar al contenido",
     "layout.contact": "Contactar",
-    // TODO(verify): draft label or destination awaits owner approval.
     "layout.cv": "Descargar CV",
-    // TODO(verify): draft label or destination awaits owner approval.
     "layout.cvPdf": "Descargar CV (PDF)",
     "layout.linkedin": "LinkedIn",
     "layout.github": "GitHub",
@@ -77,7 +73,7 @@ export const ui = {
     "dock.home": "Inicio",
     "dock.work": "Trabajo",
     "dock.notes": "Notas",
-    "dock.roadmap": "Roadmap", // TODO(verify)
+    "dock.roadmap": "Roadmap", // Unused for now: Roadmap is out of the Dock and the footer.
     "dock.copyLabel": "Copiar mi correo",
     "dock.copyTooltip": "Copiar correo",
     "dock.copyText": "Copiar",

@@ -40,15 +40,15 @@ const t = useTranslations(lang);
   <CareerPath items={data.career} />
 </article>
 <style>
+  /* Mobile first: the base rules are the phone; the media queries at the end add tablet (561px) and desktop (901px). */
   .identity-card {
     --_radius: 18px;
     --_width: 540px;
-    --_padding: clamp(24px, 4vw, 40px);
     display: grid;
     gap: 18px;
     width: 100%;
     max-width: var(--_width);
-    padding: var(--_padding);
+    padding: var(--space-6);
     border: 1px solid var(--color-border);
     border-radius: var(--_radius);
     background: var(--color-surface);
@@ -58,12 +58,9 @@ const t = useTranslations(lang);
     overflow-wrap: anywhere;
   }
   /* v11 `.card .mark`: a quieter mark inside the card. */
+  /* The mark is hidden on phones; it shows from 561px (see the media query below). */
   .identity-card :global(.jota-mark) {
-    --_mark-size: 21px;
-    width: fit-content;
-    min-height: auto;
-    gap: var(--space-2);
-    color: var(--color-text-muted);
+    display: none;
   }
   .identity-card__who {
     display: grid;
@@ -71,7 +68,7 @@ const t = useTranslations(lang);
   }
   .identity-card__name {
     margin: 0;
-    font-size: var(--font-size-display);
+    font-size: 2rem;
     font-weight: 600;
     line-height: 1.1;
     letter-spacing: -0.025em;
@@ -86,11 +83,10 @@ const t = useTranslations(lang);
   }
   .identity-card__sentence {
     margin: 0;
-    font-size: var(--font-size-lead);
+    font-size: var(--font-size-body);
     line-height: 1.55;
     letter-spacing: -0.01em;
     color: var(--color-text-secondary);
-    text-wrap: pretty;
   }
   .identity-card__actions {
     display: flex;
@@ -122,12 +118,15 @@ const t = useTranslations(lang);
     outline-offset: 3px;
     border-radius: var(--radius-sm);
   }
-  @media (max-width: 560px) {
+  @media (min-width: 561px) {
     .identity-card {
-      padding: var(--space-6);
+      padding: clamp(24px, 4vw, 40px);
+    }
+    .identity-card :global(.jota-mark) {
+      display: inline-flex;
     }
     .identity-card__name {
-      font-size: 2rem;
+      font-size: var(--font-size-display);
     }
   }
   /* v11 desktop (the card on the desk): tighter padding and gap, a smaller sentence and career rows. */
