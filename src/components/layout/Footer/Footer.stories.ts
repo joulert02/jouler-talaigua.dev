@@ -13,7 +13,7 @@ const meta = preview.meta({
     docs: {
       description: {
         component:
-          "Site footer: link columns, wordmark and origin line, all from `footer` in `src/config/profile.ts`. The email row has a `copy-email` slot (CopyEmail) and the bottom line a `language` slot (LanguageSwitch), here and on the site.",
+          "Site footer: link columns, wordmark and origin line, all from `footer` in `src/config/profile.ts`. The email row has a `copy-email` slot (CopyEmail).",
       },
     },
   },
