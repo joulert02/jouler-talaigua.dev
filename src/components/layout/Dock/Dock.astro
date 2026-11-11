@@ -37,6 +37,7 @@ const t = useTranslations(lang);
   class DockNav extends HTMLElement {
     private mutation?: MutationObserver;
     private resize?: ResizeObserver;
+    private scrollHandler?: () => void;
     connectedCallback() {
       const nav = this.querySelector<HTMLElement>(".dock");
       const indicator = this.querySelector<HTMLElement>(".dock__indicator");
@@ -62,10 +63,23 @@ const t = useTranslations(lang);
       this.resize.observe(nav);
       items.forEach((item) => this.resize?.observe(item));
       place();
+
+      const updateEndState = () => {
+        const atEnd = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
+        this.toggleAttribute("data-at-end", atEnd);
+      };
+      this.scrollHandler = updateEndState;
+      window.addEventListener("scroll", updateEndState, { passive: true });
+      window.addEventListener("resize", updateEndState);
+      updateEndState();
     }
     disconnectedCallback() {
       this.mutation?.disconnect();
       this.resize?.disconnect();
+      if (this.scrollHandler) {
+        window.removeEventListener("scroll", this.scrollHandler);
+        window.removeEventListener("resize", this.scrollHandler);
+      }
     }
   }
   if (!customElements.get("dock-nav")) customElements.define("dock-nav", DockNav);
@@ -93,13 +107,20 @@ const t = useTranslations(lang);
     z-index: 30;
     display: flex;
     align-items: center;
-    gap: var(--space-1);
+    /* Mobile first: the narrowest phones get a 1px gap; space-1 from 381px. */
+    gap: var(--_border-width);
     padding: var(--_padding);
     background: color-mix(in srgb, var(--color-surface) var(--_surface-opacity), transparent);
     backdrop-filter: blur(var(--_blur));
     border: var(--_border-width) solid var(--color-border);
     border-radius: var(--_radius);
     box-shadow: var(--shadow-lift);
+  }
+  dock-nav[data-at-end] .dock {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, calc(100% + var(--space-4)));
+    visibility: hidden;
   }
   .dock__indicator {
     display: none;
@@ -220,9 +241,9 @@ const t = useTranslations(lang);
       display: none;
     }
   }
-  @media (max-width: 380px) {
+  @media (min-width: 381px) {
     .dock {
-      gap: var(--_border-width);
+      gap: var(--space-1);
     }
   }
   @media (prefers-reduced-motion: reduce) {

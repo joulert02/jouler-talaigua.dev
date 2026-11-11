@@ -24,30 +24,41 @@ const label = useTranslations(lang)(item.labelKey);
   </span>
 </a>
 <style>
+  /*
+   * Mobile first: the base rules are the compact item (tighter padding and gap, a smaller icon). From 561px it widens,
+   * unless the Dock's own container is still 560px or narrower (the container query at the end), as with a compact
+   * variant, which zeroes that container.
+   */
   .dock__item {
     --_compact-padding: 7px;
     --_compact-label-size: var(--font-size-small);
     --_compact-icon-size: 17px;
-    gap: var(--space-2);
+    --_icon-size: 20px;
+    padding: 0 var(--_compact-padding);
+    gap: var(--space-1);
     font: 500 var(--font-size-small)/1 var(--font-sans);
     text-decoration: none;
     white-space: nowrap;
+  }
+  .dock__item span {
+    font-size: var(--_compact-label-size);
+  }
+  .dock__item :global(svg) {
+    width: var(--_compact-icon-size);
+    height: var(--_compact-icon-size);
   }
   .dock__item[aria-current="page"] {
     background: var(--color-surface-hover);
     color: var(--color-text);
   }
-  @media (max-width: 560px) {
+  @media (min-width: 561px) {
     .dock__item {
-      padding: 0 var(--_compact-padding);
-      gap: var(--space-1);
-    }
-    .dock__item span {
-      font-size: var(--_compact-label-size);
+      padding: 0 var(--space-3);
+      gap: var(--space-2);
     }
     .dock__item :global(svg) {
-      width: var(--_compact-icon-size);
-      height: var(--_compact-icon-size);
+      width: var(--_icon-size);
+      height: var(--_icon-size);
     }
   }
   @container dock (max-width: 560px) {

@@ -13,7 +13,8 @@ body {
   /* Page gutter, as in v11 (docs/design/v11/styles.css). */
   padding-inline: clamp(16px, 3vw, 40px);
   /* Room for the fixed Dock, so it never covers the end of the page. */
-  padding-bottom: calc(var(--space-10) + var(--space-7) + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+  /* padding-bottom: calc(var(--space-10) + var(--space-7) + env(safe-area-inset-bottom, 0px)); */
 }
 .wrap {
   max-width: 44rem;
@@ -44,13 +45,13 @@ main[tabindex="-1"]:focus {
   outline: none;
 }
 
-/* A Dock control (DockItem, CopyEmail, ThemeToggle): 44px target, hover, focus and a `data-tip` tooltip. */
+/* A Dock control (DockItem, CopyEmail, ThemeToggle): 44px target, hover, focus and a `data-tip` tooltip. Mobile first. */
 .dock-control {
   position: relative;
   box-sizing: border-box;
   min-width: 44px;
   height: 44px;
-  padding: 0 var(--space-3);
+  padding: 0 var(--space-2);
   border: 0;
   border-radius: var(--radius-lg);
   display: inline-flex;
@@ -94,9 +95,9 @@ main[tabindex="-1"]:focus {
   opacity: 1;
   transform: translate(-50%, 0);
 }
-@media (max-width: 560px) {
+@media (min-width: 561px) {
   .dock-control {
-    padding: 0 var(--space-2);
+    padding: 0 var(--space-3);
   }
 }
 @media (prefers-reduced-motion: reduce) {
