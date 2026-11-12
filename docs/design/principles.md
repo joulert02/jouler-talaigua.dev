@@ -27,7 +27,7 @@ The sober-board concept (option B) was approved on 2026-10-22. The following ref
 
 ## Principles
 
-1. **Legibility first.** Body text is never below 17px, and reading text gets a 1.7 line height. Text is never white on the accent for selection. If a choice trades legibility for style, legibility wins.
+1. **Legibility first.** Body text is never below 16px, no text is below 14px, and reading text gets a 1.7 line height. Text is never white on the accent for selection. If a choice trades legibility for style, legibility wins.
 2. **Hierarchy by size and tone.** Color is not used for hierarchy; the accent marks interaction only. Different sections need clear differences in scale, spacing and emphasis.
 3. **One accent, used sparingly.** Links, focus, selection, the primary button and small details. Each accent has a vivid fill tone and a darker text tone that passes WCAG AA (4.5:1).
 4. **Grayscale with a cool bias, never pure black.** Dark mode uses deep greys, not #000.

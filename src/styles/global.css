@@ -7,22 +7,19 @@ body {
   margin: 0;
   background: var(--color-bg);
   color: var(--color-text);
-  font:
-    16px/1.6 system-ui,
-    sans-serif;
+  font: var(--font-size-body)/var(--line-height-body) var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Page gutter, as in v11 (docs/design/v11/styles.css). */
+  padding-inline: clamp(16px, 3vw, 40px);
+  /* Room for the fixed Dock, so it never covers the end of the page. */
+  padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+  /* padding-bottom: calc(var(--space-10) + var(--space-7) + env(safe-area-inset-bottom, 0px)); */
 }
 .wrap {
   max-width: 44rem;
   margin: 0 auto;
-  padding: 1.5rem 1rem;
-}
-header nav {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  flex-wrap: wrap;
-  border-bottom: 1px solid var(--color-border);
-  padding-bottom: 1rem;
+  padding-block: 1.5rem;
 }
 ::selection {
   background: color-mix(in srgb, var(--color-accent) 14%, var(--color-surface));
@@ -34,17 +31,6 @@ a {
 .muted {
   color: var(--color-text-muted);
 }
-.skip {
-  position: absolute;
-  left: -999px;
-}
-.skip:focus {
-  left: 1rem;
-  top: 1rem;
-  background: var(--color-text);
-  color: var(--color-bg);
-  padding: 0.5rem;
-}
 button {
   font: inherit;
   background: none;
@@ -53,4 +39,88 @@ button {
   border-radius: 6px;
   padding: 0.25rem 0.6rem;
   cursor: pointer;
+}
+/* Skip-link targets take focus programmatically; the jump itself is the feedback, not a ring around the region. */
+main[tabindex="-1"]:focus {
+  outline: none;
+}
+
+/* A Dock control (DockItem, CopyEmail, ThemeToggle): 44px target, hover, focus and a `data-tip` tooltip. Mobile first. */
+.dock-control {
+  position: relative;
+  box-sizing: border-box;
+  min-width: 44px;
+  height: 44px;
+  padding: 0 var(--space-2);
+  border: 0;
+  border-radius: var(--radius-lg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition:
+    background-color 180ms var(--ease-out),
+    color 180ms var(--ease-out);
+}
+.dock-control:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text);
+}
+.dock-control:focus-visible {
+  outline: 2px solid var(--color-text-accent);
+  outline-offset: 2px;
+}
+.dock-control[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translate(-50%, 4px);
+  white-space: nowrap;
+  background: var(--color-text);
+  color: var(--color-bg);
+  font: 500 var(--font-size-small)/1 var(--font-sans);
+  padding: 7px 9px;
+  border-radius: var(--radius-md);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+.dock-control[data-tip]:hover::after,
+.dock-control[data-tip]:focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+@media (min-width: 561px) {
+  .dock-control {
+    padding: 0 var(--space-3);
+  }
+}
+/*
+ * Same-site navigations morph what keeps its view-transition-name and crossfade the rest. `profile-card` is the
+ * IdentityCard on the Home and the AboutMe card on "More about me": both keep their own scale, pinned to the top.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+}
+::view-transition-group(profile-card) {
+  animation-duration: var(--duration-medium);
+}
+::view-transition-old(profile-card),
+::view-transition-new(profile-card) {
+  height: 100%;
+  object-fit: none;
+  object-position: top;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dock-control,
+  .dock-control::after {
+    transition: none;
+  }
 }

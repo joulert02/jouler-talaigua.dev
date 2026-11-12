@@ -1,0 +1,59 @@
+---
+import Icon from "../../ui/Icon/Icon.astro";
+import { getLang, useTranslations } from "../../../i18n/ui";
+
+const lang = getLang(Astro);
+const t = useTranslations(lang);
+---
+
+<dock-theme>
+  <button
+    class="dock-control"
+    type="button"
+    aria-label={t("dock.themeLabel")}
+    aria-pressed="false"
+    data-tip={t("dock.themeTooltip")}
+  >
+    <Icon name="theme" />
+  </button>
+</dock-theme>
+<script>
+  import { THEME_COOKIE, effectiveTheme, nextTheme } from "@/lib/theme.js";
+  class DockTheme extends HTMLElement {
+    private os?: AbortController;
+    private root?: MutationObserver;
+    connectedCallback() {
+      const button = this.querySelector("button");
+      const root = document.documentElement;
+      const darkQuery = matchMedia("(prefers-color-scheme: dark)");
+      const prefersDark = () => darkQuery.matches;
+      const sync = () =>
+        button?.setAttribute(
+          "aria-pressed",
+          String(effectiveTheme(root.dataset["theme"], prefersDark()) === "dark"),
+        );
+      sync();
+      // Without a saved choice the page follows the OS live, so the pressed state must follow it too.
+      this.os = new AbortController();
+      darkQuery.addEventListener("change", sync, { signal: this.os.signal });
+      // Several toggles can share a page (the Dock and the settings panel): each follows the root, not its own clicks.
+      this.root = new MutationObserver(sync);
+      this.root.observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+      button?.addEventListener("click", () => {
+        const next = nextTheme(root.dataset["theme"], prefersDark());
+        root.dataset["theme"] = next;
+        document.cookie = `${THEME_COOKIE}=${next}; path=/; SameSite=Lax`;
+      });
+    }
+    disconnectedCallback() {
+      this.os?.abort();
+      this.root?.disconnect();
+    }
+  }
+  if (!customElements.get("dock-theme")) customElements.define("dock-theme", DockTheme);
+</script>
+<style>
+  dock-theme {
+    display: inline-flex;
+  }
+</style>

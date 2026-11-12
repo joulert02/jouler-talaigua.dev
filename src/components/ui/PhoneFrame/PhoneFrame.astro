@@ -1,0 +1,73 @@
+---
+// iPhone frame from the v11 case studies (`.phone` in docs/design/v11/case.css): the default slot is the screen.
+interface Props {
+  /** Accessible name of the screen region, e.g. what the phone is showing. */
+  label: string;
+}
+const { label } = Astro.props;
+---
+
+<div class="phone-frame" role="region" aria-label={label}>
+  <div class="phone-frame__screen">
+    <slot />
+  </div>
+  <span class="phone-frame__island" aria-hidden="true"></span>
+  <span class="phone-frame__home" aria-hidden="true"></span>
+</div>
+<style>
+  .phone-frame {
+    /* Hardware, not theme: the device looks the same in light and dark. */
+    --_bezel: #0e0f11;
+    --_rim: #46484d;
+    --_width: 420px;
+    --_height: 892px;
+    --_scale: 0.7;
+    position: relative;
+    box-sizing: border-box;
+    width: var(--_width);
+    height: var(--_height);
+    border: 9px solid var(--_bezel);
+    border-radius: 62px;
+    overflow: hidden;
+    zoom: var(--_scale);
+    box-shadow:
+      0 0 0 2px var(--_rim),
+      var(--shadow-lift);
+    background: var(--color-bg);
+  }
+  .phone-frame__screen {
+    position: absolute;
+    inset: 0;
+    overflow: auto;
+    /* Contains fixed-position content (the Dock) inside the screen instead of the page. */
+    transform: translateZ(0);
+  }
+  .phone-frame__island,
+  .phone-frame__home {
+    position: absolute;
+    z-index: 2;
+    left: 50%;
+    background: #000;
+    pointer-events: none;
+  }
+  .phone-frame__island {
+    top: 11px;
+    width: 122px;
+    height: 35px;
+    margin-left: -61px;
+    border-radius: 20px;
+  }
+  .phone-frame__home {
+    bottom: 9px;
+    width: 144px;
+    height: 5px;
+    margin-left: -72px;
+    border-radius: 3px;
+    background: var(--color-text);
+  }
+  @media (max-width: 460px) {
+    .phone-frame {
+      --_scale: 0.64;
+    }
+  }
+</style>

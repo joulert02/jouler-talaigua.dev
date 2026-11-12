@@ -1,0 +1,42 @@
+---
+import { getLang, useTranslations } from "../../../i18n/ui";
+interface Props {
+  /** In-page target; it needs `tabindex="-1"` to receive focus. */
+  href?: string;
+}
+const { href = "#main" } = Astro.props;
+const t = useTranslations(getLang(Astro));
+---
+
+<a class="skip-link" href={href}>
+  {t("layout.skip")}
+</a>
+<style>
+  /* Visually hidden (clipped, not moved off-screen) until it gets focus. */
+  .skip-link:not(:focus) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .skip-link:focus {
+    position: absolute;
+    left: var(--space-4);
+    top: var(--space-3);
+    z-index: 60;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    background: var(--color-text);
+    color: var(--color-bg);
+    font: var(--font-size-body)/1.5 var(--font-sans);
+  }
+  .skip-link:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 3px;
+  }
+</style>

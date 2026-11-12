@@ -1,0 +1,25 @@
+---
+import CareerRow from "../CareerRow/CareerRow.astro";
+import { careerItems, type CareerItem } from "../../../config/profile";
+import { getLang, useTranslations } from "../../../i18n/ui";
+interface Props {
+  items?: readonly CareerItem[];
+}
+const { items = careerItems } = Astro.props;
+const lang = getLang(Astro);
+const t = useTranslations(lang);
+---
+
+<ol class="career-path" aria-label={t("layout.career")}>
+  {items.map((item) => (
+    <CareerRow item={item} />
+  ))}
+</ol>
+<style>
+  .career-path {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--color-border);
+  }
+</style>

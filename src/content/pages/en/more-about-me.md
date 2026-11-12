@@ -1,40 +1,18 @@
 ---
 title: More about me
-description: Coffee, football, aerial silks, the road and what I'm learning outside code.
+description: Coffee, aerial silks, pole, football, psychology and the life I live outside code.
 lang: en
 ---
 
-I'm Jouler — Colombian, living in Madrid, and someone who is happiest when learning something new.
-Code is a big part of my life, but it isn't all of it. This is the rest.
+I'm Jouler: Colombian, living in Madrid, and happiest when I'm learning something new.
+Code is a big part of my life, but not all of it. This is the rest.
 
-## Coffee
+I grew up in one of the most coffee-loving countries in the world, so it was only a matter of time before I fell in love with my roots. These days I brew specialty coffee and love discovering new kinds of coffee. My favourite method is the V60, with the occasional exotic twist.
 
-I grew up in the country that sends coffee to the world, so it was only a matter of time.
-These days I brew pour-over at home and like to tweak ratios and grind the way I'd tweak a build config.
-TODO(verify): brewing method, favourite origin, a café in Madrid worth recommending.
+As a kid I learned to play football because it's part of the culture, but I was never very passionate about sports. Today I find a very special place in aerial silks, pole and football, where I get into the flow and often switch off from my other half, the one that thinks more in numbers.
 
-## Football
+I'm a psychology enthusiast and read a little about it in my free time. I really value learning new things and connecting with people, and I take a particular joy in it, so much so that it has led me to give talks at universities, foundations and a few other places.
 
-I play amateur football every week I can. It's where I switch off from screens and remember that
-teams win because people cover for each other, which is also the best lesson I know about engineering teams.
-TODO(verify): position, team or league.
+Moving from Medellín to Spain opened a map I'm still exploring: I'm meeting amazing people, discovering beautiful places and learning a lot.
 
-## Aerial silks
-
-Telas — aerial silks — is my other sport, and I train with competitions in mind. It's strength,
-patience and a lot of falling (safely) until a move finally clicks. It's also the most honest
-feedback loop I know: either you can hold the position or you can't.
-TODO(verify): add pole sport here too? Mention competitions or results?
-
-## On the road
-
-Moving from Medellín to Spain opened a map I'm still exploring, ideally by motorcycle.
-TODO(verify): favourite trips so far and the next one on the list.
-
-## Always learning
-
-Besides engineering, I'm studying psychology with a focus on social and community intervention.
-It connects with something I care about: teaching. I've given talks at universities and at a children's
-foundation in Medellín, and those rooms teach me as much as I teach them. Lately I'm also trying
-things that have nothing to do with logic — drawing and writing — to give my head some space.
-TODO(verify): confirm you want the psychology studies public; name of the foundation.
+If you've read this far, thank you. If we ever meet, the coffee's on me. In the meantime, feel free to explore my little corner of the internet!

@@ -1,0 +1,77 @@
+---
+import Icon from "../../ui/Icon/Icon.astro";
+import ThemeToggle from "../ThemeToggle/ThemeToggle.astro";
+import LanguageSwitch from "../LanguageSwitch/LanguageSwitch.astro";
+import { languageItems, type LanguageItem } from "../../../config/profile";
+import { getLang, useTranslations } from "../../../i18n/ui";
+interface Props {
+  /** Languages offered, each with the URL of this page in that language. */
+  languages?: readonly LanguageItem[];
+  /** Id of the panel; unique per page. */
+  id?: string;
+}
+const { languages = languageItems, id = "dock-settings" } = Astro.props;
+const lang = getLang(Astro);
+const t = useTranslations(lang);
+---
+
+<div class="dock-settings">
+  <button
+    class="dock-control"
+    type="button"
+    popovertarget={id}
+    aria-label={t("dock.settings")}
+    data-tip={t("dock.settings")}
+  >
+    <Icon name="settings" />
+  </button>
+  <!-- Native popover: opens from the button, closes on Escape or a click outside, and returns focus. -->
+  <div class="dock-settings__panel" id={id} popover aria-label={t("dock.settings")} role="group">
+    <div class="dock-settings__row">
+      <span>{t("dock.themeTooltip")}</span>
+      <ThemeToggle />
+    </div>
+    <div class="dock-settings__row">
+      <span>{t("layout.language")}</span>
+      <LanguageSwitch items={languages} />
+    </div>
+  </div>
+</div>
+<style>
+  .dock-settings {
+    display: inline-flex;
+  }
+  /* The panel sits in the top layer, above the Dock's right end: Dock offset + Dock height (44px control, 6px padding, 1px border) + a gap. */
+  .dock-settings__panel {
+    position: fixed;
+    inset: auto clamp(16px, 3vw, 40px)
+      calc(var(--space-4) + env(safe-area-inset-bottom, 0px) + 58px + var(--space-2)) auto;
+    margin: 0;
+    display: none;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-width: 220px;
+    padding: var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: 18px;
+    /* Same glass as the Dock (Dock.astro): translucent surface over a blur. */
+    background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+    backdrop-filter: blur(10px);
+    color: var(--color-text);
+    box-shadow: var(--shadow-lift);
+    font: 500 var(--font-size-small)/1 var(--font-sans);
+  }
+  .dock-settings__panel:popover-open {
+    display: flex;
+  }
+  .dock-settings__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+  /* The row names the control, so its tooltip would repeat it. */
+  .dock-settings__panel :global(.dock-control::after) {
+    display: none;
+  }
+</style>

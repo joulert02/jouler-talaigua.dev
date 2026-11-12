@@ -1,0 +1,17 @@
+---
+// A section whose page exists for navigation but has no content yet.
+import Base from "@/layouts/Base.astro";
+import { useTranslations, type Lang, type UiKey } from "@/i18n/ui";
+interface Props {
+  lang: Lang;
+  title: UiKey;
+  /** Path of this page without the locale prefix. */
+  path: string;
+}
+const { lang, title, path } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<Base title={t(title)} description={t(title)} lang={lang} altPath={path}>
+  <h1>{t(title)}</h1>
+</Base>

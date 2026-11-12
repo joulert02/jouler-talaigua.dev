@@ -22,6 +22,6 @@ test("a marker in inline code is a mention, not a placeholder", () => {
   );
 });
 
-test("scans content and the Storybook design docs", () => {
-  assert.deepEqual(ROOTS, ["src/content/", ".storybook/docs/"]);
+test("scans content, site config and copy, and the Storybook design docs", () => {
+  assert.deepEqual(ROOTS, ["src/content/", "src/config/", "src/i18n/", ".storybook/docs/"]);
 });

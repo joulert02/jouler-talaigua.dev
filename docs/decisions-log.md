@@ -2,6 +2,13 @@
 
 One line per decision, newest first. Details live in the linked document.
 
+- **2026-11-12 · HU-01 closed (scope changes in [#3](https://github.com/joulert02/jouler-talaigua.dev/issues/3)):**
+  - **Body text and Home:** body text is 16px, the browser default, against the 17px in the HU acceptance. The identity card lands in HU-01, centered from 561px and at the top on phones, with copy version A in both languages.
+  - **"More about me":** it is its own page, and the card morphs into it with cross-document view transitions, which [ADR 002](adr/002-language-switch-transitions.md) also adopts for the language switch.
+  - **Dock and settings:** the Dock takes ready links (`DockLink`) and steps away at the footer as in v11. On phones, theme and language move into a settings gear.
+  - **Out for now:** Roadmap and "A letter for you". The footer has no language pill.
+  - **Follow-ups:** components that are pure vs. containers in [SP-03](https://github.com/joulert02/jouler-talaigua.dev/issues/23), and the language switch's own transition, after the board, in [HU-15](https://github.com/joulert02/jouler-talaigua.dev/issues/25).
+
 - **2026-10-30 · SP-01 answered, HU-01 ready to plan:** HU-01 can be planned from Storybook, [the handoff](design/handoff.md) and `v11/` without reading the rounds. Settled inside HU-01: the dock keeps both variants (v11 without Roadmap, and one with it) until the layout is implemented; the Home language switch is designed first in `v12/`; the Draft scales (space, radius, motion) are frozen against v11 in the browser. The design docs target WCAG 2.2 AA. Testing moves to stories (interaction, accessibility, visual) through [SP-02](https://github.com/joulert02/jouler-talaigua.dev/issues/20), in parallel with HU-01; node tests stay for global guards.
 
 - **2026-10-30 · design documentation and tokens (SP-01):** design rules live in Storybook (Introduction, Foundations, Content, Accessibility, then Patterns and component docs), read live from `src/styles/tokens.css`; markdown keeps planning ([handoff](design/handoff.md)) and history. Tokens are one semantic layer named `--{category}-{role}-{variant}`, with no brand prefix and `--_name` for component-local variables; the spacing, radius and motion scales are Draft until the owner reviews them. Patterns pages are written once Home is built and iterated with each page. Onest, Geist Mono and Caveat are self-hosted; Inter stays for the OG images until HU-11. `guidelines.md` was folded into Storybook and the handoff (superseded statements below).

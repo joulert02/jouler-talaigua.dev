@@ -1,0 +1,12 @@
+---
+import AboutMe from "../AboutMe.astro";
+import { getLang } from "../../../../i18n/ui";
+import * as en from "../../../../content/pages/en/more-about-me.md";
+import * as es from "../../../../content/pages/es/more-about-me.md";
+// Story only: the real "More about me" copy for the story's language.
+const page = getLang(Astro) === "es" ? es : en;
+---
+
+<AboutMe title={page.frontmatter.title}>
+  <page.Content />
+</AboutMe>

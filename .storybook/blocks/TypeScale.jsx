@@ -11,9 +11,17 @@ export function TypeScale({ tokens, family, sample = "Calm surface, curious dept
             <code>{token}</code>
             <span className="sb-muted">{values[token]}</span>
           </div>
-          <p style={{ fontFamily: `var(${family})`, fontSize: `var(${token})`, margin: 0, lineHeight: 1.3 }}>
-            {sample}
-          </p>
+          {token === "--font-size-label" ? (
+            <p className="sb-label" style={{ margin: 0 }}>
+              {sample}
+            </p>
+          ) : (
+            <p
+              style={{ fontFamily: `var(${family})`, fontSize: `var(${token})`, margin: 0, lineHeight: 1.3 }}
+            >
+              {sample}
+            </p>
+          )}
         </div>
       ))}
     </div>

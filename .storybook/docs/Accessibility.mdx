@@ -21,10 +21,10 @@ Every interactive element shows a 2px `--color-text-accent` outline with a 2–4
 
 ## Checklist
 
-- Reading text is at least `--font-size-body` with `--line-height-body`.
+- Reading text is at least `--font-size-body` with `--line-height-body`; no text is smaller than `--font-size-small`. Font sizes use `rem`.
 - Every text pair passes AA contrast (see Foundations · Color); borders never carry meaning alone.
 - Every interactive element has a visible focus ring; `scroll-padding-bottom` keeps focus clear of the dock.
-- Targets are at least 44px tall; pills and the back control are 48px.
+- Targets, pills included, are at least 44px tall; the back control is 48px.
 - Everything works by keyboard. A list is one tab stop with arrow keys (roving tabindex). The desk supports Tab, Enter, M plus arrows, and `0` or Home.
 - Dialogs move focus in, close with Escape, make the background inert and return focus to their launcher.
 - A demo announces each run once through `aria-live` and marks running controls with `aria-disabled`, not `disabled`, so focus is not lost.

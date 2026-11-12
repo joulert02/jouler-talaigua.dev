@@ -4,38 +4,114 @@ export const defaultLang: Lang = "en";
 
 export const ui = {
   en: {
+    "layout.skip": "Skip to content",
+    "layout.contact": "Get in touch",
+    "layout.cv": "Download CV",
+    "layout.cvPdf": "Download CV (PDF)",
+    "layout.linkedin": "LinkedIn",
+    "layout.github": "GitHub",
+    "layout.about": "More about me",
+    "layout.back": "Back",
+    "layout.career": "Career",
+    "layout.site": "Site",
+    "layout.social": "Social",
+    "layout.contactHeading": "Contact",
+    "layout.work": "Work",
+    "layout.notes": "Notes",
+    "layout.roadmap": "Roadmap",
+    "layout.letter": "A letter for you",
+    "layout.instagram": "Instagram",
+    "layout.language": "Language",
+    "layout.en": "EN",
+    "layout.es": "ES",
+    "layout.readIn": "Read in English",
+    "layout.mainContent": "Main content",
+    "dock.main": "Main",
+    "dock.home": "Home",
+    "dock.work": "Work",
+    "dock.notes": "Notes",
+    "dock.roadmap": "Roadmap", // Unused for now: Roadmap is out of the Dock and the footer.
+    "dock.copyLabel": "Copy my email address",
+    "dock.copyTooltip": "Copy email",
+    "dock.copyText": "Copy",
+    "dock.copied": "Email copied",
+    "dock.failed": "Copy failed, here it is",
+    "dock.themeLabel": "Toggle theme",
+    "dock.themeTooltip": "Theme",
+    "dock.settings": "Settings",
     "nav.home": "Home",
     "nav.projects": "Projects",
     "nav.writing": "Writing",
     "nav.about": "About",
-    "home.title": "Jouler Talaigua",
-    "home.lead": "Spike page — validating the stack. Real copy comes after the discovery brief.",
+    "home.title": "Jouler Talaigua | Senior Software Engineer",
     "projects.status.published": "Published",
     "projects.status.in-progress": "In progress",
     "projects.status.idea": "Idea",
-    "theme.toggle": "Toggle theme",
   },
   es: {
+    "layout.skip": "Saltar al contenido",
+    "layout.contact": "Contactar",
+    "layout.cv": "Descargar CV",
+    "layout.cvPdf": "Descargar CV (PDF)",
+    "layout.linkedin": "LinkedIn",
+    "layout.github": "GitHub",
+    "layout.about": "Más sobre mí",
+    "layout.back": "Volver",
+    "layout.career": "Trayectoria",
+    "layout.site": "Sitio",
+    "layout.social": "Social",
+    "layout.contactHeading": "Contacto",
+    "layout.work": "Proyectos",
+    "layout.notes": "Notas",
+    "layout.roadmap": "Hoja de ruta",
+    "layout.letter": "Una carta para ti",
+    "layout.instagram": "Instagram",
+    "layout.language": "Idioma",
+    "layout.en": "EN",
+    "layout.es": "ES",
+    "layout.readIn": "Leer en español",
+    "layout.mainContent": "Contenido principal",
+    "dock.main": "Principal",
+    "dock.home": "Inicio",
+    "dock.work": "Proyectos",
+    "dock.notes": "Notas",
+    "dock.roadmap": "Roadmap", // Unused for now: Roadmap is out of the Dock and the footer.
+    "dock.copyLabel": "Copiar mi correo",
+    "dock.copyTooltip": "Copiar correo",
+    "dock.copyText": "Copiar",
+    "dock.copied": "Correo copiado",
+    "dock.failed": "No se pudo copiar, aquí está",
+    "dock.themeLabel": "Cambiar tema",
+    "dock.themeTooltip": "Tema",
+    "dock.settings": "Ajustes",
     "nav.home": "Inicio",
     "nav.projects": "Proyectos",
     "nav.writing": "Artículos",
     "nav.about": "Sobre mí",
     "home.title": "Jouler Talaigua",
-    "home.lead": "Página del spike — validando el stack. El copy real llega tras el brief de discovery.",
     "projects.status.published": "Publicado",
     "projects.status.in-progress": "En desarrollo",
     "projects.status.idea": "Idea",
-    "theme.toggle": "Cambiar tema",
   },
 } as const satisfies Record<Lang, Record<string, string>>;
 
 export type UiKey = keyof (typeof ui)["en"];
+
+/**
+ * The page's language, read once per render instead of passed through props: `Astro.locals.lang` when a render sets it,
+ * else the route's locale (`/` or `/es/`, from the i18n config). Every component on a page gets the same answer.
+ */
+export function getLang(astro: { locals: App.Locals; currentLocale?: string | undefined }): Lang {
+  const lang = astro.locals.lang ?? astro.currentLocale;
+  return lang !== undefined && lang in languages ? (lang as Lang) : defaultLang;
+}
 
 export function useTranslations(lang: Lang) {
   return (key: UiKey): string => ui[lang][key];
 }
 
 export function localePath(lang: Lang, path = "/"): string {
+  if (path.startsWith("#")) return path; // an in-page fragment has no locale
   const clean = path.startsWith("/") ? path : `/${path}`;
   return lang === defaultLang ? clean : `/${lang}${clean === "/" ? "/" : clean}`;
 }

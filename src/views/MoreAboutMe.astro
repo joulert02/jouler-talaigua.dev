@@ -1,0 +1,37 @@
+---
+// "More about me" as its own page: the AboutMe card, which morphs from the Home's IdentityCard.
+import { getEntry, render } from "astro:content";
+import Base from "@/layouts/Base.astro";
+import AboutMe from "@/components/profile/AboutMe/AboutMe.astro";
+import type { Lang } from "@/i18n/ui";
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const about = await getEntry("pages", `${lang}/more-about-me`);
+if (!about) throw new Error(`Missing content: pages/${lang}/more-about-me`);
+const { Content } = await render(about);
+---
+
+<Base
+  title={about.data.title}
+  description={about.data.description}
+  lang={lang}
+  ogSlug="more-about-me"
+  altPath="/more-about-me/"
+  dockHidden
+>
+  <div class="more-about-me">
+    <AboutMe title={about.data.title}>
+      <Content />
+    </AboutMe>
+  </div>
+</Base>
+<style>
+  .more-about-me {
+    display: grid;
+    justify-items: center;
+    align-items: start;
+    padding-top: var(--space-4);
+  }
+</style>
