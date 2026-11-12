@@ -100,6 +100,24 @@ main[tabindex="-1"]:focus {
     padding: 0 var(--space-3);
   }
 }
+/*
+ * Same-site navigations morph what keeps its view-transition-name and crossfade the rest. `profile-card` is the
+ * IdentityCard on the Home and the AboutMe card on "More about me": both keep their own scale, pinned to the top.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+}
+::view-transition-group(profile-card) {
+  animation-duration: var(--duration-medium);
+}
+::view-transition-old(profile-card),
+::view-transition-new(profile-card) {
+  height: 100%;
+  object-fit: none;
+  object-position: top;
+}
 @media (prefers-reduced-motion: reduce) {
   .dock-control,
   .dock-control::after {

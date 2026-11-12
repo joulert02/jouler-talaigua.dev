@@ -42,12 +42,15 @@ const t = useTranslations(lang);
 <style>
   /* Mobile first: the base rules are the phone; the media queries at the end add tablet (561px) and desktop (901px). */
   .identity-card {
+    /* Morphs into AboutMe's card on "More about me" (cross-document view transition, global.css). */
+    view-transition-name: profile-card;
     --_radius: 18px;
     --_width: 540px;
     display: grid;
     gap: 18px;
     width: 100%;
     max-width: var(--_width);
+    margin-inline: auto;
     padding: var(--space-6);
     border: 1px solid var(--color-border);
     border-radius: var(--_radius);

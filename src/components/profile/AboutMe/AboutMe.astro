@@ -1,0 +1,87 @@
+---
+import { getLang, localePath, useTranslations } from "../../../i18n/ui";
+interface Props {
+  /** Heading of the page; defaults to the "More about me" label. The body comes through the default slot. */
+  title?: string | undefined;
+}
+const { title } = Astro.props;
+const lang = getLang(Astro);
+const t = useTranslations(lang);
+---
+
+<!-- The "More about me" card: Back to the Home, the heading and the Markdown body. -->
+<article class="about-me">
+  <a class="about-me__back" href={localePath(lang, "/")}>
+    <span aria-hidden="true">←</span>
+    {t("layout.back")}
+  </a>
+  <h1 class="about-me__title">{title ?? t("layout.about")}</h1>
+  <slot />
+</article>
+<style>
+  /* The same card as the IdentityCard (size, surface, padding), so one morphs into the other. */
+  .about-me {
+    display: grid;
+    gap: var(--space-3);
+    width: 100%;
+    max-width: 540px;
+    padding: var(--space-6);
+    border: 1px solid var(--color-border);
+    border-radius: 18px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    box-shadow: var(--shadow-rest);
+    font: var(--font-size-body)/var(--line-height-body) var(--font-sans);
+    overflow-wrap: anywhere;
+    view-transition-name: profile-card;
+  }
+  .about-me__back {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    justify-self: start;
+    min-height: 48px;
+    padding: 0 var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    color: var(--color-text);
+    font: 500 var(--font-size-body)/1 var(--font-sans);
+    text-decoration: none;
+  }
+  .about-me__back:hover {
+    background: var(--color-surface-hover);
+  }
+  .about-me__back:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 3px;
+  }
+  .about-me__title {
+    margin: var(--space-2) 0 0;
+    font-size: var(--font-size-lead);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+  }
+  /* The slot is Markdown: its headings name each topic, its paragraphs read like the card's sentence. */
+  .about-me :global(h2) {
+    margin: var(--space-3) 0 0;
+    font-size: var(--font-size-body);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .about-me :global(p) {
+    margin: 0;
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-body);
+  }
+  @media (min-width: 561px) {
+    .about-me {
+      padding: clamp(24px, 4vw, 40px);
+    }
+  }
+  @media (min-width: 901px) {
+    .about-me {
+      padding: 28px;
+    }
+  }
+</style>
