@@ -33,12 +33,15 @@ const t = useTranslations(lang);
     connectedCallback() {
       const button = this.querySelector("button");
       const feedback = this.querySelector<HTMLElement>(".copy-email__feedback");
+      let clear: ReturnType<typeof setTimeout> | undefined;
       button?.addEventListener("click", async () => {
         try {
           await navigator.clipboard.writeText(this.dataset.email ?? "");
           if (feedback) {
             feedback.textContent = this.dataset.copied ?? "";
-            setTimeout(() => (feedback.textContent = ""), 2000);
+            // A new copy restarts the 2s, so an older timer never clears the newer message.
+            clearTimeout(clear);
+            clear = setTimeout(() => (feedback.textContent = ""), 2000);
           }
         } catch {
           if (feedback) feedback.textContent = `${this.dataset.failed ?? ""}: ${this.dataset.email ?? ""}`;
