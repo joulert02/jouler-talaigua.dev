@@ -13,4 +13,9 @@ export default defineConfig({
     defaultLocale: "en",
     routing: { prefixDefaultLocale: false },
   },
+  vite: {
+    // The OG image route renders with @resvg/resvg-js, a native (.node) module: it runs only on the server, and
+    // the dev dependency optimizer cannot bundle it ("UNLOADABLE_DEPENDENCY").
+    optimizeDeps: { exclude: ["@resvg/resvg-js"] },
+  },
 });

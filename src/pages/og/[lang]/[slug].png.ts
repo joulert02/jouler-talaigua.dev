@@ -11,6 +11,10 @@ export const getStaticPaths = (async () => {
       params: { lang, slug: "home" },
       props: { title: ui[lang]["home.title"], kicker: "jouler.dev" },
     });
+    paths.push({
+      params: { lang, slug: "more-about-me" },
+      props: { title: ui[lang]["layout.about"], kicker: "jouler.dev" },
+    });
     for (const p of await getProjects(lang)) {
       paths.push({
         params: { lang, slug: slugOf(p.id) },

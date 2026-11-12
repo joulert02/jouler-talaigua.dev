@@ -1,40 +1,18 @@
 ---
 title: Más sobre mí
-description: Café, fútbol, telas, la carretera y lo que aprendo fuera del código.
+description: Café, telas, pole, fútbol, psicología y lo que vivo fuera del código.
 lang: es
 ---
 
 Soy Jouler: colombiano, vivo en Madrid y soy más feliz cuando estoy aprendiendo algo nuevo.
 El código ocupa gran parte de mi vida, pero no toda. Esto es lo demás.
 
-## Café
+Crecí en uno de los países más cafeteros del mundo, así que era cuestión de tiempo que me enamorara de mis raíces. Hoy preparo café de especialidad y me apasiona descubrir nuevos tipos de café. Mi método favorito es la V60, con alguna variante exótica.
 
-Crecí en el país que le manda café al mundo, así que era cuestión de tiempo.
-Hoy preparo café de filtro en casa y ajusto proporciones y molienda como quien ajusta la configuración de un build.
-TODO(verify): método, origen favorito, una cafetería de Madrid para recomendar.
+Desde pequeño, por temas culturales, aprendí a jugar fútbol, pero nunca fui muy apasionado por los deportes. Hoy encuentro en las telas, el pole y el fútbol un lugar muy especial, donde fluyo y muchas veces me desconecto de mi otra mitad, aquella que piensa más en los números.
 
-## Fútbol
+Soy un aficionado a la psicología y leo un poco en mis tiempos libres. Valoro mucho aprender cosas nuevas e interactuar con las personas, y encuentro en ello un gusto particular, tanto así que me ha llevado a dar charlas en universidades, fundaciones y algunos otros espacios.
 
-Juego fútbol aficionado cada semana que puedo. Es donde me desconecto de las pantallas y recuerdo que
-los equipos ganan porque la gente se cubre entre sí, que es también la mejor lección que conozco sobre equipos de ingeniería.
-TODO(verify): posición, equipo o liga.
+Mudarme de Medellín a España me abrió un mapa que sigo explorando: estoy conociendo gente increíble y lugares hermosos, y aprendiendo muchísimo.
 
-## Telas
-
-Las telas aéreas son mi otro deporte, y entreno pensando en competir. Es fuerza, paciencia y muchas
-caídas (seguras) hasta que un movimiento por fin sale. Es también el ciclo de feedback más honesto
-que conozco: o sostienes la posición o no.
-TODO(verify): ¿añadimos pole? ¿Competencias o resultados?
-
-## En la carretera
-
-Mudarme de Medellín a España me abrió un mapa que sigo explorando, idealmente en moto.
-TODO(verify): viajes favoritos y el próximo en la lista.
-
-## Siempre aprendiendo
-
-Además de ingeniería, estudio psicología con enfoque en intervención social y comunitaria.
-Conecta con algo que me importa: enseñar. He dado charlas en universidades y en una fundación de niños
-en Medellín, y esas salas me enseñan tanto como yo a ellas. Últimamente también pruebo cosas que no tienen
-nada que ver con la lógica, como dibujar y escribir, para darle espacio a la cabeza.
-TODO(verify): confirmar si los estudios de psicología van públicos; nombre de la fundación.
+Si leíste hasta acá, te lo agradezco. Si alguna vez nos conocemos, el café lo invito yo. Mientras tanto, ¡te invito a explorar mi pequeño espacio en internet!

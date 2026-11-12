@@ -1,0 +1,280 @@
+---
+import DockItem from "./DockItem/DockItem.astro";
+import type { DockLink } from "./types";
+interface Props {
+  /** Links, with their label and href ready to show (see `DockLink`). */
+  items: readonly DockLink[];
+  /** Accessible name of the navigation landmark ("Main"). */
+  label: string;
+  /** `id` of the current page's item; none on pages outside the navigation. */
+  current?: string | undefined;
+  /**
+   * How items are drawn: `labels` shows every label beside its icon; `stacked` every label under its icon;
+   * `active-label` only the current page's; `icons` none.
+   */
+  variant?: "labels" | "stacked" | "active-label" | "icons";
+  /** Variant used when the dock's container is too narrow for `labels` (see the container query below). */
+  mobileVariant?: "stacked" | "active-label" | "icons";
+}
+const { items, label, current, variant = "labels", mobileVariant } = Astro.props;
+const compact = variant === "labels" ? mobileVariant : variant;
+---
+
+<dock-nav class:list={{ "dock-nav--compact": variant !== "labels" }}>
+  <nav class="dock" aria-label={label} data-compact={compact}>
+    <span class="dock__indicator" aria-hidden="true"></span>
+    {items.map((item) => (
+      <DockItem item={item} current={item.id === current} />
+    ))}
+    {Astro.slots.has("actions") && (
+      <div class="dock__actions">
+        <slot name="actions" />
+      </div>
+    )}
+  </nav>
+</dock-nav>
+<script>
+  class DockNav extends HTMLElement {
+    private mutation?: MutationObserver;
+    private resize?: ResizeObserver;
+    private footer?: IntersectionObserver;
+    connectedCallback() {
+      const nav = this.querySelector<HTMLElement>(".dock");
+      const indicator = this.querySelector<HTMLElement>(".dock__indicator");
+      if (!nav || !indicator) return;
+      const items = [...nav.querySelectorAll<HTMLAnchorElement>("a.dock__item")];
+      const place = () => {
+        const current = items.find((item) => item.getAttribute("aria-current") === "page");
+        if (!current) {
+          indicator.hidden = true;
+          return;
+        }
+        indicator.hidden = false;
+        indicator.style.setProperty("--_x", `${current.offsetLeft}px`);
+        indicator.style.setProperty("--_width", `${current.offsetWidth}px`);
+        indicator.style.setProperty("--_height", `${current.offsetHeight}px`);
+        nav.dataset["ready"] = "true";
+      };
+      this.mutation = new MutationObserver(place);
+      items.forEach((item) => {
+        this.mutation?.observe(item, { attributes: true, attributeFilter: ["aria-current"] });
+      });
+      this.resize = new ResizeObserver(place);
+      this.resize.observe(nav);
+      items.forEach((item) => this.resize?.observe(item));
+      place();
+
+      // As in v11 (docs/design/v11/case.js): the Dock steps away once 15% of the footer is in view.
+      // Only after a scroll: on a short page the footer is in view from the start, and the Dock must stay.
+      const footer = document.querySelector("footer");
+      if (footer) {
+        this.footer = new IntersectionObserver(
+          (entries) =>
+            entries.forEach((entry) =>
+              this.toggleAttribute("data-at-end", entry.isIntersecting && scrollY > 0),
+            ),
+          { threshold: 0.15 },
+        );
+        this.footer.observe(footer);
+      }
+    }
+    disconnectedCallback() {
+      this.mutation?.disconnect();
+      this.resize?.disconnect();
+      this.footer?.disconnect();
+    }
+  }
+  if (!customElements.get("dock-nav")) customElements.define("dock-nav", DockNav);
+</script>
+<style>
+  dock-nav {
+    display: block;
+    container: dock / inline-size;
+  }
+  .dock {
+    --_surface-opacity: 92%;
+    --_border-width: 1px;
+
+    --_radius: 18px;
+    --_blur: 10px;
+    --_padding: 6px;
+    --_stacked-height: 52px;
+    --_stacked-padding: 6px 8px;
+    --_stacked-gap: 4px;
+    --_stacked-label-size: var(--font-size-small);
+    position: fixed;
+    left: 50%;
+    bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    /* Mobile first: the narrowest phones get a 1px gap; space-1 from 381px. */
+    gap: var(--_border-width);
+    padding: var(--_padding);
+    background: color-mix(in srgb, var(--color-surface) var(--_surface-opacity), transparent);
+    backdrop-filter: blur(var(--_blur));
+    border: var(--_border-width) solid var(--color-border);
+    border-radius: var(--_radius);
+    /* The resting shadow ends ~20px below, where shadow-lift (~42px) ran into the phone's bottom safe area. */
+    box-shadow: var(--shadow-rest);
+    --_away-fade: 250ms;
+    --_away-slide: 300ms;
+    transition:
+      opacity var(--_away-fade) var(--ease-out),
+      transform var(--_away-slide) var(--ease-out),
+      visibility 0s;
+  }
+  /*
+   * Away (v11 `.dock.away`): it fades and slides 20px down. Used at the footer and on pages that ask for it with
+   * `data-dock-hidden` on the root (Base's `dockHidden`). Visibility flips after the fade, so a hidden Dock leaves the tab order.
+   */
+  dock-nav[data-at-end] .dock,
+  :global(:root[data-dock-hidden]) .dock {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 20px);
+    visibility: hidden;
+    transition:
+      opacity var(--_away-fade) var(--ease-out),
+      transform var(--_away-slide) var(--ease-out),
+      visibility 0s var(--_away-fade);
+  }
+  .dock__indicator {
+    display: none;
+  }
+  .dock__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+  /*
+   * Compact variants (icons, active-label, stacked): a pill slides to the current page and labels become tooltips.
+   * They apply when the dock's container (the page width minus its gutter) is narrower than the `labels` dock: about
+   * 375px in Spanish, the longer language, measured 2026-11-02 with Home, Work, Notes and three actions; revisit if
+   * items change. A non-`labels` variant zeroes the container (the dock is fixed, so it does not move) to apply always.
+   */
+  .dock-nav--compact {
+    inline-size: 0;
+  }
+  .dock :global(.dock__item::after) {
+    display: none;
+  }
+  @container dock (max-width: 389px) {
+    .dock[data-compact] {
+      --_indicator-height: 44px;
+      --_indicator-duration: var(--duration-medium);
+      --_press-scale: 0.96;
+      width: max-content;
+      max-width: calc(100vw - 16px);
+    }
+    .dock[data-compact] .dock__indicator {
+      display: block;
+      position: absolute;
+      left: 0;
+      top: var(--_padding);
+      width: var(--_width, 0px);
+      height: var(--_height, var(--_indicator-height));
+      transform: translateX(var(--_x, 0px));
+      background: var(--color-surface-hover);
+      border-radius: var(--radius-lg);
+      pointer-events: none;
+      transition:
+        transform var(--_indicator-duration) var(--ease-out),
+        width var(--_indicator-duration) var(--ease-out),
+        height var(--_indicator-duration) var(--ease-out);
+    }
+    .dock[data-compact]:not([data-ready]) .dock__indicator,
+    .dock[data-compact] .dock__indicator[hidden] {
+      display: none;
+    }
+    .dock[data-ready][data-compact] :global(.dock__item[aria-current="page"]) {
+      background: transparent;
+    }
+    .dock[data-compact] :global(.dock__item),
+    .dock[data-compact] .dock__actions {
+      position: relative;
+      z-index: 1;
+    }
+    .dock[data-compact] :global(.dock__item),
+    .dock[data-compact] :global(button) {
+      transition:
+        transform var(--duration-fast) var(--ease-out),
+        background-color var(--duration-fast) var(--ease-out),
+        color var(--duration-fast) var(--ease-out);
+    }
+    .dock[data-compact] :global(.dock__item:active),
+    .dock[data-compact] :global(button:active) {
+      transform: scale(var(--_press-scale));
+    }
+    .dock[data-compact] :global(.dock__item::after) {
+      display: block;
+    }
+    /* icons: labels stay for screen readers only. */
+    .dock[data-compact="icons"] :global(.dock__item > .dock__label) {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    /* active-label: every label collapses to 0 width; the current one expands. */
+    .dock[data-compact="active-label"] :global(.dock__item > .dock__label) {
+      display: grid;
+      grid-template-columns: 0fr;
+      opacity: 0;
+      transition:
+        grid-template-columns var(--duration-medium) var(--ease-out),
+        opacity var(--duration-fast) var(--ease-out);
+    }
+    .dock[data-compact="active-label"] :global(.dock__item > .dock__label > span) {
+      min-width: 0;
+      overflow: hidden;
+    }
+    .dock[data-compact="active-label"] :global(.dock__item[aria-current="page"] > .dock__label) {
+      grid-template-columns: 1fr;
+      opacity: 1;
+    }
+    /* The current label is never narrower than its text, so no browser rounding or glyph overhang can clip it. */
+    .dock[data-compact="active-label"] :global(.dock__item[aria-current="page"] > .dock__label > span) {
+      min-width: max-content;
+      overflow: visible;
+    }
+    .dock[data-compact="active-label"] :global(.dock__item[aria-current="page"]::after) {
+      display: none;
+    }
+    /* stacked: every label stays visible, under its icon. */
+    .dock[data-compact="stacked"] :global(.dock__item) {
+      flex-direction: column;
+      gap: var(--_stacked-gap);
+      height: auto;
+      min-height: var(--_stacked-height);
+      padding: var(--_stacked-padding);
+    }
+    .dock[data-compact="stacked"] :global(.dock__item span) {
+      font-size: var(--_stacked-label-size);
+    }
+    .dock[data-compact="stacked"] :global(.dock__item::after) {
+      display: none;
+    }
+  }
+  @media (min-width: 381px) {
+    .dock {
+      gap: var(--space-1);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .dock,
+    .dock__indicator,
+    .dock :global(.dock__item),
+    .dock :global(.dock__item > .dock__label),
+    .dock :global(button) {
+      transition: none !important;
+    }
+    .dock :global(.dock__item:active),
+    .dock :global(button:active) {
+      transform: none;
+    }
+  }
+</style>

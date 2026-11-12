@@ -1,0 +1,39 @@
+---
+// Root of every story, set as the project `render` in preview.js. It renders the story's component itself (not a
+// decorator around it, which storybook-astro renders in a separate pass), so what it sets reaches every component:
+// - the page language (the `locale` control, .storybook/locale.js), read by getLang(Astro) as the route's locale is on
+//   the site;
+// - links that stay in the story: a click only follows an in-page link whose target exists (SkipLink's #main).
+import type { Lang } from "../src/i18n/ui";
+interface Props {
+  lang: Lang;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- any Astro component
+  component: any;
+  props: Record<string, unknown>;
+}
+const { lang, component: Component, props } = Astro.props;
+Astro.locals.lang = lang;
+---
+
+<story-root>
+  <Component {...props} />
+</story-root>
+<script>
+  class StoryRoot extends HTMLElement {
+    connectedCallback() {
+      this.addEventListener("click", (event) => {
+        const link = event.target instanceof Element ? event.target.closest("a[href]") : null;
+        const href = link?.getAttribute("href") ?? "";
+        const inPage =
+          href.startsWith("#") && href.length > 1 && document.getElementById(href.slice(1)) !== null;
+        if (link && !inPage) event.preventDefault();
+      });
+    }
+  }
+  if (!customElements.get("story-root")) customElements.define("story-root", StoryRoot);
+</script>
+<style>
+  story-root {
+    display: contents;
+  }
+</style>

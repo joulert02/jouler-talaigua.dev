@@ -28,7 +28,7 @@ function skipAstroMdxForStorybookDocs(plugins = []) {
 
 export default defineMain({
   stories: ["../.storybook/docs/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
-  addons: ["@storybook/addon-docs"],
+  addons: ["@storybook/addon-docs", "@storybook/addon-mcp"],
   framework: {
     name: "@storybook-astro/framework",
     options: {},

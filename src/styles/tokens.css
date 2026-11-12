@@ -33,13 +33,14 @@
   --font-sans: "Onest", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   --font-hand: "Caveat", "Segoe Print", "Bradley Hand", cursive;
-  --font-size-display: 36px;
-  --font-size-title: 26px;
-  --font-size-lead: 20px;
-  --font-size-body: 17px;
-  --font-size-small: 14.5px;
-  --font-size-label: 11.5px;
+  --font-size-display: 2.25rem; /* 36px */
+  --font-size-title: 1.625rem; /* 26px */
+  --font-size-lead: 1.25rem; /* 20px */
+  --font-size-body: 1rem; /* 16px, the browser default */
+  --font-size-small: 0.875rem; /* 14px, the floor: no text is smaller */
+  --font-size-label: var(--font-size-small);
   --line-height-body: 1.7;
+  --line-height-compact: 1.4; /* lists, metadata and short rows, never paragraphs */
   --measure-prose: 62ch;
 
   /* Draft scales: reviewed by the owner in Storybook before they are approved. */

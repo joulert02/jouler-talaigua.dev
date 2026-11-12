@@ -1,7 +1,18 @@
 ---
 import "@/styles/global.css";
-import ThemeToggle from "@/components/ThemeToggle.astro";
-import { languages, localePath, useTranslations, type Lang } from "@/i18n/ui";
+import "@/styles/fonts.css";
+import SkipLink from "@/components/layout/SkipLink/SkipLink.astro";
+import Dock from "@/components/layout/Dock/Dock.astro";
+import DockSeparator from "@/components/layout/Dock/DockSeparator/DockSeparator.astro";
+import CopyEmail from "@/components/layout/CopyEmail/CopyEmail.astro";
+import ThemeToggle from "@/components/layout/ThemeToggle/ThemeToggle.astro";
+import DockSettings from "@/components/layout/DockSettings/DockSettings.astro";
+import Footer from "@/components/layout/Footer/Footer.astro";
+import LanguageSwitch from "@/components/layout/LanguageSwitch/LanguageSwitch.astro";
+import { navigation } from "@/config/navigation";
+import { languageItems } from "@/config/profile";
+import { localePath, useTranslations, type Lang } from "@/i18n/ui";
+import { THEME_COOKIE } from "@/lib/theme.js";
 
 interface Props {
   title: string;
@@ -9,23 +20,38 @@ interface Props {
   lang: Lang;
   ogSlug?: string;
   altPath?: string; // same page in the other language, without locale prefix
+  /** The page starts with the Dock away (a reading view such as "More about me"). */
+  dockHidden?: boolean;
 }
-const { title, description, lang, ogSlug = "home", altPath = "/" } = Astro.props;
+const { title, description, lang, ogSlug = "home", altPath = "/", dockHidden = false } = Astro.props;
+Astro.locals.lang = lang;
+const current = navigation.find((item) =>
+  item.href === "/" ? altPath === "/" : altPath.startsWith(item.href),
+)?.id;
 const t = useTranslations(lang);
-const other: Lang = lang === "en" ? "es" : "en";
+// The Dock takes its links ready to show: label in this language, href with the locale prefix.
+const dockItems = navigation.map(({ id, labelKey, href, icon }) => ({
+  id,
+  label: t(labelKey),
+  href: localePath(lang, href),
+  icon,
+}));
+const languages = languageItems.map((item) => ({ ...item, href: localePath(item.lang, altPath) }));
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
 ---
 
 <!doctype html>
-<html lang={lang}>
+<html lang={lang} data-dock-hidden={dockHidden ? "" : undefined}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <link rel="alternate" hreflang={other} href={new URL(localePath(other, altPath), Astro.site)} />
+    {languages.map((item) => (
+      <link rel="alternate" hreflang={item.lang} href={new URL(item.href, Astro.site)} />
+    ))}
     <link rel="alternate" hreflang="x-default" href={new URL(localePath("en", altPath), Astro.site)} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -34,35 +60,64 @@ const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <script is:inline>
-      try {
-        const s = localStorage.getItem("theme");
-        const t = s ?? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-        document.documentElement.dataset.theme = t;
-      } catch {
-        /* no storage */
-      }
+    <script is:inline define:vars={{ name: THEME_COOKIE }}>
+      const theme = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`))?.[1];
+      if (theme) document.documentElement.dataset.theme = theme;
     </script>
   </head>
   <body>
-    <a class="skip" href="#main">
-      Skip to content
-    </a>
+    <SkipLink />
+    <!-- Trial placement, to validate: the language pill at the top right, besides the Dock and the footer. -->
+    <div class="top-language">
+      <LanguageSwitch items={languages} />
+    </div>
     <div class="wrap">
-      <header>
-        <nav aria-label="Main">
-          <a href={localePath(lang, "/")}>{t("nav.home")}</a>
-          <a href={localePath(lang, "/projects/")}>{t("nav.projects")}</a>
-          <span style="flex:1"></span>
-          <a href={localePath(other, altPath)} hreflang={other} lang={other}>
-            {languages[other]}
-          </a>
-          <ThemeToggle label={t("theme.toggle")} />
-        </nav>
-      </header>
-      <main id="main">
+      <main id="main" tabindex="-1">
         <slot />
       </main>
     </div>
+    <Footer>
+      <CopyEmail variant="text" slot="copy-email" />
+    </Footer>
+    <Dock items={dockItems} label={t("dock.main")} {current} variant="labels" mobileVariant="active-label">
+      <Fragment slot="actions">
+        <DockSeparator />
+        <CopyEmail />
+        <!-- Up to 560px the theme and the language move into the settings panel; above it, the toggle and the top pill. -->
+        <span class="wide-only">
+          <ThemeToggle />
+        </span>
+        <span class="narrow-only">
+          <DockSettings languages={languages} />
+        </span>
+      </Fragment>
+    </Dock>
   </body>
 </html>
+<style>
+  /* Mobile first: phones get the settings gear; from 561px, the theme toggle and the top language pill. */
+  .narrow-only {
+    display: contents;
+  }
+  .wide-only,
+  .top-language {
+    display: none;
+  }
+  .top-language {
+    position: absolute;
+    top: var(--space-4);
+    right: clamp(16px, 3vw, 40px);
+    z-index: 20;
+  }
+  @media (min-width: 561px) {
+    .narrow-only {
+      display: none;
+    }
+    .wide-only {
+      display: contents;
+    }
+    .top-language {
+      display: block;
+    }
+  }
+</style>

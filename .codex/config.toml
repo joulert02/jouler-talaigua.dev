@@ -1,3 +1,7 @@
 [mcp_servers.chrome-devtools]
 command = "npx"
 args = ["-y", "chrome-devtools-mcp@latest", "--no-usage-statistics"]
+
+# Storybook MCP (@storybook/addon-mcp); needs `npm run storybook` running.
+[mcp_servers.jota-storybook]
+url = "http://localhost:6006/mcp"

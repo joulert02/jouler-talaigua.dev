@@ -1,0 +1,105 @@
+---
+import Icon from "../../ui/Icon/Icon.astro";
+import { getLang, useTranslations } from "../../../i18n/ui";
+import { contactEmail } from "../../../config/profile";
+interface Props {
+  /** `icon`: envelope with a tooltip (the Dock). `text`: a small "Copy" button next to the address (v11 footer). */
+  variant?: "icon" | "text";
+}
+const { variant = "icon" } = Astro.props;
+const lang = getLang(Astro);
+const t = useTranslations(lang);
+---
+
+<copy-email data-email={contactEmail} data-copied={t("dock.copied")} data-failed={t("dock.failed")}>
+  {variant === "text" ? (
+    <button class="copy-email__text" type="button" aria-label={t("dock.copyLabel")}>
+      {t("dock.copyText")}
+    </button>
+  ) : (
+    <button
+      class="dock-control"
+      type="button"
+      aria-label={t("dock.copyLabel")}
+      data-tip={t("dock.copyTooltip")}
+    >
+      <Icon name="email" />
+    </button>
+  )}
+  <span class="copy-email__feedback" role="status" aria-live="polite"></span>
+</copy-email>
+<script>
+  class CopyEmail extends HTMLElement {
+    connectedCallback() {
+      const button = this.querySelector("button");
+      const feedback = this.querySelector<HTMLElement>(".copy-email__feedback");
+      let clear: ReturnType<typeof setTimeout> | undefined;
+      button?.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(this.dataset.email ?? "");
+          if (feedback) {
+            feedback.textContent = this.dataset.copied ?? "";
+            // A new copy restarts the 2s, so an older timer never clears the newer message.
+            clearTimeout(clear);
+            clear = setTimeout(() => (feedback.textContent = ""), 2000);
+          }
+        } catch {
+          if (feedback) feedback.textContent = `${this.dataset.failed ?? ""}: ${this.dataset.email ?? ""}`;
+        }
+      });
+    }
+  }
+  if (!customElements.get("copy-email")) customElements.define("copy-email", CopyEmail);
+</script>
+<style>
+  copy-email {
+    --_focus-width: 2px;
+    --_feedback-bottom: 88px;
+    --_feedback-padding: 10px 14px;
+
+    position: relative;
+    display: inline-flex;
+  }
+  /* v11 footer `.copy` (docs/design/v11/styles.css). */
+  .copy-email__text {
+    --_duration: 180ms;
+    padding: 5px 8px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--color-text-muted);
+    font: 500 var(--font-size-small)/1 var(--font-mono);
+    cursor: pointer;
+    transition:
+      color var(--_duration) var(--ease-out),
+      border-color var(--_duration) var(--ease-out);
+  }
+  .copy-email__text:hover {
+    border-color: var(--color-text-muted);
+    color: var(--color-text);
+  }
+  .copy-email__text:focus-visible {
+    outline: var(--_focus-width) solid var(--color-text-accent);
+    outline-offset: var(--_focus-width);
+  }
+  .copy-email__feedback:not(:empty) {
+    --_feedback-max: calc(100vw - 32px);
+    max-width: var(--_feedback-max);
+    overflow-wrap: anywhere;
+    position: fixed;
+    bottom: var(--_feedback-bottom);
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: normal;
+    background: var(--color-text);
+    color: var(--color-bg);
+    font: 500 var(--font-size-small)/1 var(--font-sans);
+    padding: var(--_feedback-padding);
+    border-radius: var(--radius-pill);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .copy-email__text {
+      transition: none;
+    }
+  }
+</style>

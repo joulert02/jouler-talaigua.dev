@@ -1,0 +1,83 @@
+---
+interface Props {
+  /** Visible text. Name the action it performs ("Get in touch", not "Click here"). */
+  label: string;
+  /** `primary` for the single most important action in an area; `ghost` for everything else. */
+  variant?: "primary" | "ghost";
+  /** `sm` for dense areas; both sizes keep a touch target of at least 44px. */
+  size?: "md" | "sm";
+  /** Renders a link instead of a button. An `http(s)` URL opens in a new tab with `rel="noopener noreferrer"`. */
+  href?: string;
+  /** Button type when there is no `href`. */
+  type?: "button" | "submit" | "reset";
+}
+const { label, variant = "primary", size = "md", href, type = "button" } = Astro.props;
+const destination = href && /^https?:\/\//i.test(href) ? "external" : "local";
+const Tag = href === undefined ? "button" : "a";
+---
+
+<Tag
+  class:list={["button", `button--${variant}`, `button--${size}`]}
+  href={href}
+  type={href === undefined ? type : undefined}
+  target={destination === "external" ? "_blank" : undefined}
+  rel={destination === "external" ? "noopener noreferrer" : undefined}
+>
+  {label}
+</Tag>
+<style>
+  .button {
+    --_label: 0.9375rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 12px 18px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-pill);
+    font: 500 var(--_label)/1 var(--font-sans);
+    text-decoration: none;
+    text-align: center;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+    transition:
+      transform var(--duration-fast) var(--ease-out),
+      background-color var(--duration-fast) var(--ease-out),
+      box-shadow var(--duration-fast) var(--ease-out);
+  }
+  .button:active {
+    transform: scale(0.97);
+  }
+  .button--primary {
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+  }
+  .button--ghost {
+    border-color: var(--color-border);
+    color: var(--color-text);
+    background: transparent;
+  }
+  .button--sm {
+    --_label: var(--font-size-small);
+    min-height: 44px;
+    padding: var(--space-2) var(--space-4);
+  }
+  .button--primary:hover {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-accent) 18%, transparent);
+  }
+  .button--ghost:hover {
+    background: var(--color-surface-hover);
+  }
+  .button:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 3px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .button {
+      transition: none;
+    }
+    .button:active {
+      transform: none;
+    }
+  }
+</style>

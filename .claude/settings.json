@@ -1,5 +1,9 @@
 {
   "enabledPlugins": {
-    "chrome-devtools-mcp@chrome-devtools-plugins": true
+    "chrome-devtools-mcp@chrome-devtools-plugins": true,
+    "context7@anthropic-plugin-directory": true,
+    "chrome-devtools-mcp@claude-plugins-official": true,
+    "playwright@anthropic-plugin-directory": true,
+    "code-review-anthropics@anthropic-plugin-directory": true
   }
 }
