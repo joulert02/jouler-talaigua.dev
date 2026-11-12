@@ -64,7 +64,7 @@ export const careerItems = [
   {
     company: "Cast & Crew",
     role: { en: "Senior Software Engineer", es: "Ingeniero de software sénior" },
-    years: { en: "2026 – Present", es: "2026 – Actualidad" },
+    years: { en: "Present", es: "Actualidad" },
   },
   {
     company: "EPAM Systems",
@@ -85,7 +85,7 @@ export const careerItems = [
 export const identityLinks = [
   { label: "layout.linkedin", href: "https://www.linkedin.com/in/jouler-talaigua", target: "_blank" },
   { label: "layout.github", href: "https://github.com/joulert02", target: "_blank" },
-  { label: "layout.about", href: "#letter" },
+  { label: "layout.about", href: { en: "/more-about-me/", es: "/es/more-about-me/" } },
 ] as const satisfies readonly ProfileLink[];
 // The CV PDFs live in public/cv/, one per language.
 export const cvLink: ProfileLink = {
@@ -111,11 +111,10 @@ export const footerColumns: readonly FooterColumn[] = [
   {
     heading: "layout.site",
     items: [
-      { kind: "link", link: { label: "layout.work", href: "#work" } },
-      { kind: "link", link: { label: "layout.notes", href: "#notes" } },
+      { kind: "link", link: { label: "layout.work", href: { en: "/projects/", es: "/es/projects/" } } },
+      { kind: "link", link: { label: "layout.notes", href: { en: "/notes/", es: "/es/notes/" } } },
       // Roadmap stays out for now, as in the Dock (navigation.ts).
       // { kind: "link", link: { label: "layout.roadmap", href: "#roadmap" } },
-      { kind: "link", link: { label: "layout.letter", href: "#letter" } },
     ],
   },
   {
@@ -134,7 +133,7 @@ export const footerColumns: readonly FooterColumn[] = [
     items: [
       { kind: "email", address: contactEmail },
       { kind: "link", link: { ...cvLink, label: "layout.cvPdf" } },
-      { kind: "text", text: { en: "Madrid · Spain", es: "Madrid · Spain" } },
+      { kind: "text", text: { en: "Madrid · Spain", es: "Madrid · España" } },
     ],
   },
 ];
