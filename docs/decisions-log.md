@@ -2,6 +2,21 @@
 
 One line per decision, newest first. Details live in the linked document.
 
+- **2026-11-12 · SP-03 recommendation (pending owner acceptance, [#23](https://github.com/joulert02/jouler-talaigua.dev/issues/23)):** pure components take already-resolved copy as one typed `labels` object; containers (Base, views, IdentityCard, Footer, CareerPath, AboutMe) read the language once. Labels are built with a plain helper (option 3), not a HOC (1) or a wrapper per component (2). This comes from reading the code and Astro's component model; nothing was installed or run (see "Not verified").
+
+  | | 1. HOC `withLabels` | 2. Wrapper `.astro` | 3. Helper `labelsFor` |
+  | --- | --- | --- | --- |
+  | Typed props under `astro check` | Not expected: `.astro` files compile to render functions with no public wrapping API, so it would need casts | Yes | Yes (`labels: ThemeToggleLabels`) |
+  | Slots and `<script>` | Slots forwarded by hand through internal APIs; scripts are bundled per module, so runtime wrapping is fragile | Yes (`<Pure {labels}><slot /></Pure>`) | Unchanged: the component renders directly |
+  | Cost per component | One shared factory, plus casts and internal API use | About 10 lines and one more file each | 1 type in the component, 1 line in the container |
+  | Storybook Controls | The story renders the wrapper, so Controls stay tied to translations | Same: Controls reach the wrapper, not the labels | The story renders the pure component; `labels` is an editable object control |
+
+  Why 3: it is the only option where the story renders the same component the site renders, so the copy changes from Controls with no `locale` control. A page still cannot mix languages, because containers call the helper with the one page language. Option 2 stays an escape hatch for a container that needs composition, not a pattern per component.
+
+  Sketch, to implement on acceptance: `labelsFor(lang, { label: "dock.themeLabel", tooltip: "dock.themeTooltip" })` returns `{ label: string; tooltip: string }`, typed from the map's keys, in `src/i18n/ui.ts`.
+
+  Not verified: the ThemeToggle probe for each option was not built or run through `astro check` or Storybook, because dependencies were not installed in this run and installing them was not permitted. The option 1 and 2 cells are expectations to confirm before accepting. The migration of the issue's table has not started; it waits for acceptance.
+
 - **2026-11-12 · HU-01 closed (scope changes in [#3](https://github.com/joulert02/jouler-talaigua.dev/issues/3)):**
   - **Body text and Home:** body text is 16px, the browser default, against the 17px in the HU acceptance. The identity card lands in HU-01, centered from 561px and at the top on phones, with copy version A in both languages.
   - **"More about me":** it is its own page, and the card morphs into it with cross-document view transitions, which [ADR 002](adr/002-language-switch-transitions.md) also adopts for the language switch.
