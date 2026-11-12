@@ -1,5 +1,5 @@
 import "../src/styles/global.css";
-import "../src/styles/fonts.css";
+import "./fonts.css";
 import { definePreview } from "@storybook-astro/framework";
 import { getPreferredColorScheme, themes } from "storybook/theming";
 import { THEMES, effectiveTheme } from "../src/lib/theme.js";

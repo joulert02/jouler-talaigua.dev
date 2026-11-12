@@ -30,9 +30,7 @@
   --shadow-rest: 0 1px 2px rgb(20 21 23 / 0.06), 0 8px 24px -12px rgb(20 21 23 / 0.18);
   --shadow-lift: 0 2px 4px rgb(20 21 23 / 0.08), 0 18px 40px -16px rgb(20 21 23 / 0.28);
 
-  --font-sans: "Onest", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --font-hand: "Caveat", "Segoe Print", "Bradley Hand", cursive;
+  /* --font-sans, --font-mono and --font-hand come from the Fonts API (astro.config.mjs, <Font /> in Base.astro). */
   --font-size-display: 2.25rem; /* 36px */
   --font-size-title: 1.625rem; /* 26px */
   --font-size-lead: 1.25rem; /* 20px */
