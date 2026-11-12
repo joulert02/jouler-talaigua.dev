@@ -27,6 +27,8 @@ export const ui = {
     "layout.readIn": "Read in English",
     "layout.mainContent": "Main content",
     "dock.main": "Main",
+    "desk.label":
+      "Personal desk. Drag, scroll or use the arrow keys to explore; 0 or Home recenters. Tab moves to each item and brings it into view.",
     "dock.home": "Home",
     "dock.work": "Work",
     "dock.notes": "Notes",
@@ -72,6 +74,8 @@ export const ui = {
     "layout.readIn": "Leer en español",
     "layout.mainContent": "Contenido principal",
     "dock.main": "Principal",
+    "desk.label":
+      "Escritorio personal. Arrastra, desplázate o usa las flechas para explorar; 0 o Inicio vuelve al centro. Tab pasa a cada elemento y lo trae a la vista.",
     "dock.home": "Inicio",
     "dock.work": "Proyectos",
     "dock.notes": "Notas",

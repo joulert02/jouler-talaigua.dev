@@ -1,5 +1,6 @@
 ---
 import Base from "@/layouts/Base.astro";
+import Desk from "@/components/board/Desk/Desk.astro";
 import IdentityCard from "@/components/profile/IdentityCard/IdentityCard.astro";
 import { identity } from "@/config/profile";
 import { useTranslations, type Lang } from "@/i18n/ui";
@@ -12,7 +13,9 @@ const t = useTranslations(lang);
 
 <Base title={t("home.title")} description={identity.sentence[lang]} lang={lang}>
   <div class="home">
-    <IdentityCard />
+    <Desk>
+      <IdentityCard slot="anchor" />
+    </Desk>
   </div>
 </Base>
 <style>
@@ -26,11 +29,28 @@ const t = useTranslations(lang);
     /* Compensate for `.wrap`'s 1.5rem block padding. */
     min-height: calc(100svh - 3rem);
   }
-  /* Tablet and desktop (561px and up): the card centers in the viewport minus 80px at the bottom for the Dock. */
+  /* Tablet (561px to 900px): the card centers in the viewport minus 80px at the bottom for the Dock. */
   @media (min-width: 561px) {
     .home {
       align-items: center;
       padding-block: 0 80px;
+    }
+  }
+  /* Desktop (901px and up): the desk fills the first screen, edge to edge (v11). */
+  @media (min-width: 901px) {
+    :global(html:has(.home)) {
+      /* 100vw counts the scrollbar; clip the sliver it would add instead of scrolling sideways. */
+      overflow-x: clip;
+    }
+    .home {
+      display: block;
+      width: 100vw;
+      height: 100svh;
+      min-height: 0;
+      padding: 0;
+      /* Out of `.wrap`'s 44rem column and its 1.5rem top padding. */
+      margin-inline: calc(50% - 50vw);
+      margin-top: -1.5rem;
     }
   }
 </style>
