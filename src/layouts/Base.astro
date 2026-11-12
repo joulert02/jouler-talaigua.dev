@@ -45,8 +45,8 @@ const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
 <html lang={lang} data-dock-hidden={dockHidden ? "" : undefined}>
   <head>
     <meta charset="utf-8" />
-    <Font cssVariable="--font-sans" preload={[{ weight: 400 }]} />
-    <Font cssVariable="--font-mono" />
+    <Font cssVariable="--font-sans" preload />
+    <Font cssVariable="--font-mono" preload />
     <Font cssVariable="--font-hand" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>

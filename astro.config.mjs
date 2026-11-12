@@ -8,13 +8,14 @@ import sitemap from "@astrojs/sitemap";
 export default defineConfig({
   site: "https://jouler.dev",
   integrations: [react(), mdx(), sitemap({ i18n: { defaultLocale: "en", locales: { en: "en", es: "es" } } })],
-  // Self-hosted at build time; <Font /> in Base.astro emits the @font-face rules, metric-adjusted fallbacks and preload.
+  // Self-hosted at build time; <Font /> in Base.astro emits the @font-face rules, metric-adjusted fallbacks and preloads.
   fonts: [
     {
       provider: fontProviders.fontsource(),
       name: "Onest",
       cssVariable: "--font-sans",
-      weights: [300, 400, 500, 600],
+      weights: ["300 600"], // variable font: one file for every weight
+      display: "optional", // preloaded; on a slow first visit the fallback stays for that view instead of swapping
       styles: ["normal"],
       subsets: ["latin"],
       formats: ["woff2"],
@@ -24,7 +25,8 @@ export default defineConfig({
       provider: fontProviders.fontsource(),
       name: "Geist Mono",
       cssVariable: "--font-mono",
-      weights: [400, 500],
+      weights: ["400 500"],
+      display: "optional",
       styles: ["normal"],
       subsets: ["latin"],
       formats: ["woff2"],
