@@ -1,0 +1,10 @@
+---
+// Option 2: one wrapper .astro per pure component. A component with slots would also need `<slot />` forwarded by hand.
+import ThemeTogglePure from "./ThemeTogglePure.astro";
+import { getLang } from "../../../../i18n/ui";
+import { labelsFor, themeToggleKeys } from "./labels";
+
+const labels = labelsFor(getLang(Astro), themeToggleKeys);
+---
+
+<ThemeTogglePure labels={labels} />
