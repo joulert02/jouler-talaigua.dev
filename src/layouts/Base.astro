@@ -11,7 +11,7 @@ import Footer from "@/components/layout/Footer/Footer.astro";
 import LanguageSwitch from "@/components/layout/LanguageSwitch/LanguageSwitch.astro";
 import { navigation } from "@/config/navigation";
 import { languageItems } from "@/config/profile";
-import { localePath, type Lang } from "@/i18n/ui";
+import { localePath, useTranslations, type Lang } from "@/i18n/ui";
 import { THEME_COOKIE } from "@/lib/theme.js";
 
 interface Props {
@@ -20,19 +20,29 @@ interface Props {
   lang: Lang;
   ogSlug?: string;
   altPath?: string; // same page in the other language, without locale prefix
+  /** The page starts with the Dock away (a reading view such as "More about me"). */
+  dockHidden?: boolean;
 }
-const { title, description, lang, ogSlug = "home", altPath = "/" } = Astro.props;
+const { title, description, lang, ogSlug = "home", altPath = "/", dockHidden = false } = Astro.props;
 Astro.locals.lang = lang;
 const current = navigation.find((item) =>
   item.href === "/" ? altPath === "/" : altPath.startsWith(item.href),
 )?.id;
+const t = useTranslations(lang);
+// The Dock takes its links ready to show: label in this language, href with the locale prefix.
+const dockItems = navigation.map(({ id, labelKey, href, icon }) => ({
+  id,
+  label: t(labelKey),
+  href: localePath(lang, href),
+  icon,
+}));
 const languages = languageItems.map((item) => ({ ...item, href: localePath(item.lang, altPath) }));
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
 ---
 
 <!doctype html>
-<html lang={lang}>
+<html lang={lang} data-dock-hidden={dockHidden ? "" : undefined}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -69,7 +79,7 @@ const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
     <Footer>
       <CopyEmail variant="text" slot="copy-email" />
     </Footer>
-    <Dock items={navigation} {current} variant="labels" mobileVariant="active-label">
+    <Dock items={dockItems} label={t("dock.main")} {current} variant="labels" mobileVariant="active-label">
       <Fragment slot="actions">
         <DockSeparator />
         <CopyEmail />

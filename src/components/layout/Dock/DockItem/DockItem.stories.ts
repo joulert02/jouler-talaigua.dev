@@ -1,7 +1,6 @@
 import preview from "../../../../../.storybook/preview";
-import { storyLinks } from "../../../../../.storybook/links";
 import DockItem from "./DockItem.astro";
-import { navigation } from "../../../../config/navigation";
+import { ui } from "../../../../i18n/ui";
 
 const meta = preview.meta({
   title: "Components/Layout/Dock/DockItem",
@@ -19,7 +18,7 @@ const meta = preview.meta({
 export default meta;
 
 export const Playground = meta.story({
-  args: { item: storyLinks(navigation[0]), current: true },
+  args: { item: { id: "home", label: ui.en["dock.home"], href: "#", icon: "home" }, current: true },
   parameters: {
     docs: { description: { story: "Toggle `current` to compare the current and resting states." } },
   },

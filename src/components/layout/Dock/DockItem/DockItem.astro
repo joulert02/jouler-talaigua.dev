@@ -1,20 +1,19 @@
 ---
 import Icon from "../../../ui/Icon/Icon.astro";
-import type { NavigationItem } from "../../../../config/navigation";
-import { getLang, localePath, useTranslations } from "../../../../i18n/ui";
+import type { DockLink } from "../types";
 interface Props {
-  item: NavigationItem;
+  /** The link, with its label and href ready to show. */
+  item: DockLink;
   /** Whether this item is the current page; the Dock sets it from its own `current`. */
   current?: boolean;
 }
 const { item, current = false } = Astro.props;
-const lang = getLang(Astro);
-const label = useTranslations(lang)(item.labelKey);
+const { label } = item;
 ---
 
 <a
   class="dock-control dock__item"
-  href={localePath(lang, item.href)}
+  href={item.href}
   data-tip={label}
   aria-current={current ? "page" : undefined}
 >

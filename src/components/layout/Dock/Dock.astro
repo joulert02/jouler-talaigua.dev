@@ -1,11 +1,13 @@
 ---
 import DockItem from "./DockItem/DockItem.astro";
-import { getLang, useTranslations } from "../../../i18n/ui";
-import type { NavigationItem } from "../../../config/navigation";
+import type { DockLink } from "./types";
 interface Props {
-  items: readonly NavigationItem[];
-  /** Item of the current page; none on pages outside the navigation. */
-  current?: NavigationItem["id"] | undefined;
+  /** Links, with their label and href ready to show (see `DockLink`). */
+  items: readonly DockLink[];
+  /** Accessible name of the navigation landmark ("Main"). */
+  label: string;
+  /** `id` of the current page's item; none on pages outside the navigation. */
+  current?: string | undefined;
   /**
    * How items are drawn: `labels` shows every label beside its icon; `stacked` every label under its icon;
    * `active-label` only the current page's; `icons` none.
@@ -14,14 +16,12 @@ interface Props {
   /** Variant used when the dock's container is too narrow for `labels` (see the container query below). */
   mobileVariant?: "stacked" | "active-label" | "icons";
 }
-const { items, current, variant = "labels", mobileVariant } = Astro.props;
+const { items, label, current, variant = "labels", mobileVariant } = Astro.props;
 const compact = variant === "labels" ? mobileVariant : variant;
-const lang = getLang(Astro);
-const t = useTranslations(lang);
 ---
 
 <dock-nav class:list={{ "dock-nav--compact": variant !== "labels" }}>
-  <nav class="dock" aria-label={t("dock.main")} data-compact={compact}>
+  <nav class="dock" aria-label={label} data-compact={compact}>
     <span class="dock__indicator" aria-hidden="true"></span>
     {items.map((item) => (
       <DockItem item={item} current={item.id === current} />
@@ -37,7 +37,7 @@ const t = useTranslations(lang);
   class DockNav extends HTMLElement {
     private mutation?: MutationObserver;
     private resize?: ResizeObserver;
-    private scrollHandler?: () => void;
+    private footer?: IntersectionObserver;
     connectedCallback() {
       const nav = this.querySelector<HTMLElement>(".dock");
       const indicator = this.querySelector<HTMLElement>(".dock__indicator");
@@ -64,22 +64,24 @@ const t = useTranslations(lang);
       items.forEach((item) => this.resize?.observe(item));
       place();
 
-      const updateEndState = () => {
-        const atEnd = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
-        this.toggleAttribute("data-at-end", atEnd);
-      };
-      this.scrollHandler = updateEndState;
-      window.addEventListener("scroll", updateEndState, { passive: true });
-      window.addEventListener("resize", updateEndState);
-      updateEndState();
+      // As in v11 (docs/design/v11/case.js): the Dock steps away once 15% of the footer is in view.
+      // Only after a scroll: on a short page the footer is in view from the start, and the Dock must stay.
+      const footer = document.querySelector("footer");
+      if (footer) {
+        this.footer = new IntersectionObserver(
+          (entries) =>
+            entries.forEach((entry) =>
+              this.toggleAttribute("data-at-end", entry.isIntersecting && scrollY > 0),
+            ),
+          { threshold: 0.15 },
+        );
+        this.footer.observe(footer);
+      }
     }
     disconnectedCallback() {
       this.mutation?.disconnect();
       this.resize?.disconnect();
-      if (this.scrollHandler) {
-        window.removeEventListener("scroll", this.scrollHandler);
-        window.removeEventListener("resize", this.scrollHandler);
-      }
+      this.footer?.disconnect();
     }
   }
   if (!customElements.get("dock-nav")) customElements.define("dock-nav", DockNav);
@@ -114,13 +116,29 @@ const t = useTranslations(lang);
     backdrop-filter: blur(var(--_blur));
     border: var(--_border-width) solid var(--color-border);
     border-radius: var(--_radius);
-    box-shadow: var(--shadow-lift);
+    /* The resting shadow ends ~20px below, where shadow-lift (~42px) ran into the phone's bottom safe area. */
+    box-shadow: var(--shadow-rest);
+    --_away-fade: 250ms;
+    --_away-slide: 300ms;
+    transition:
+      opacity var(--_away-fade) var(--ease-out),
+      transform var(--_away-slide) var(--ease-out),
+      visibility 0s;
   }
-  dock-nav[data-at-end] .dock {
+  /*
+   * Away (v11 `.dock.away`): it fades and slides 20px down. Used at the footer and on pages that ask for it with
+   * `data-dock-hidden` on the root (Base's `dockHidden`). Visibility flips after the fade, so a hidden Dock leaves the tab order.
+   */
+  dock-nav[data-at-end] .dock,
+  :global(:root[data-dock-hidden]) .dock {
     opacity: 0;
     pointer-events: none;
-    transform: translate(-50%, calc(100% + var(--space-4)));
+    transform: translate(-50%, 20px);
     visibility: hidden;
+    transition:
+      opacity var(--_away-fade) var(--ease-out),
+      transform var(--_away-slide) var(--ease-out),
+      visibility 0s var(--_away-fade);
   }
   .dock__indicator {
     display: none;
@@ -247,6 +265,7 @@ const t = useTranslations(lang);
     }
   }
   @media (prefers-reduced-motion: reduce) {
+    .dock,
     .dock__indicator,
     .dock :global(.dock__item),
     .dock :global(.dock__item > .dock__label),

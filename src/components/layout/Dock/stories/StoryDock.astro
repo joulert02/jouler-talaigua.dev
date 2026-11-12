@@ -1,27 +1,28 @@
 ---
-import { storyLinks } from "../../../../../.storybook/links";
 import Dock from "../Dock.astro";
+import type { DockLink } from "../types";
 import DockSeparator from "../DockSeparator/DockSeparator.astro";
 import CopyEmail from "../../CopyEmail/CopyEmail.astro";
 import ThemeToggle from "../../ThemeToggle/ThemeToggle.astro";
 import PhoneFrame from "../../../ui/PhoneFrame/PhoneFrame.astro";
-import { navigation, type NavigationItem } from "../../../../config/navigation";
 interface Props {
-  items?: readonly NavigationItem[];
-  current?: NavigationItem["id"];
+  items: readonly DockLink[];
+  /** Accessible name of the navigation landmark. */
+  label?: string;
+  current?: string;
   /** How items are drawn: `labels` / `stacked` show every label (beside / under the icon); `active-label` only the current page's; `icons` none. */
   variant?: "labels" | "stacked" | "active-label" | "icons";
   /** Story only (the Phone story): render the dock inside an iPhone. */
   phone?: boolean;
 }
-const { items = storyLinks(navigation), current = "home", variant = "labels", phone = false } = Astro.props;
+const { items, label = "Main", current = "home", variant = "labels", phone = false } = Astro.props;
 const Frame = phone ? PhoneFrame : Fragment;
 const frameProps = phone ? { label: "Dock on a phone" } : {};
 ---
 
 <story-dock class:list={["story-dock", { "story-dock--phone": phone }]}>
   <Frame {...frameProps}>
-    <Dock {items} {current} {variant}>
+    <Dock {items} {label} {current} {variant}>
       <Fragment slot="actions">
         <DockSeparator />
         <CopyEmail />

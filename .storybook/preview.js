@@ -10,7 +10,7 @@ import { createElement as h, Fragment, Suspense, lazy, useEffect, useState } fro
 
 // Component overview: what it is, the Playground with its props table, then only the variants (the Playground is not
 // listed twice). The blocks load lazily, like the renderer below, because they touch `document` during the prerender.
-const OverviewPage = lazy(async () => {
+const OverviewBlocks = lazy(async () => {
   const { Controls, Description, Primary, Stories, Title } = await import("@storybook/addon-docs/blocks");
   return {
     default: () =>
@@ -56,7 +56,9 @@ const addonDocs = () => ({
   parameters: {
     docs: {
       container: (props) => h(Suspense, { fallback: null }, h(ThemedDocs, props)),
-      page: OverviewPage,
+      // A plain function, never the lazy object itself: parameters travel to the manager, and a React lazy object
+      // carries deep dev-only debug data that breaks that serialization (the Controls panel then gets no args).
+      page: () => h(Suspense, { fallback: null }, h(OverviewBlocks)),
       renderer: async () => {
         const { DocsRenderer } = await import("@storybook/addon-docs");
         return new DocsRenderer();
