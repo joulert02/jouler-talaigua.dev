@@ -25,9 +25,11 @@ const t = useTranslations(getLang(Astro));
 
 <script>
   // Astro ships this as a module script: deferred, it never blocks the HTML or CSS from rendering.
-  import { DeskCamera } from "./camera";
+  import { DeskCamera, type WheelMode } from "./camera";
 
   const desktop = matchMedia("(min-width: 901px)");
+  // Experiment flag: `?wheel=page` lets the vertical wheel scroll the page instead of panning the desk.
+  const wheelMode: WheelMode = new URLSearchParams(location.search).get("wheel") === "page" ? "page" : "desk";
 
   class DeskBoard extends HTMLElement {
     private camera: DeskCamera | undefined;
@@ -55,7 +57,7 @@ const t = useTranslations(getLang(Astro));
       viewport.tabIndex = 0;
       viewport.setAttribute("role", "region");
       viewport.setAttribute("aria-label", this.dataset["label"] ?? "");
-      this.camera = new DeskCamera(viewport, layer, world);
+      this.camera = new DeskCamera(viewport, layer, world, wheelMode);
       this.resize = new ResizeObserver(() => this.camera?.refit());
       this.resize.observe(viewport);
     }

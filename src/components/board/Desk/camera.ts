@@ -17,6 +17,13 @@ const FOCUS_MARGIN = 20;
 /** Elements that keep their own pointer behaviour instead of panning the desk. */
 const INTERACTIVE = "button,a[href],input,textarea,select,[data-desk-object]";
 
+/**
+ * What the vertical wheel does over the desk.
+ * `desk` (v11, default): it pans the desk. `page`: it scrolls the page as usual; only drag and
+ * sideways wheel/trackpad pan. `page` is an experiment variant, reached with `?wheel=page` (see the SP issue).
+ */
+export type WheelMode = "desk" | "page";
+
 interface Pan {
   id: number;
   startX: number;
@@ -47,6 +54,7 @@ export class DeskCamera {
     private readonly viewport: HTMLElement,
     private readonly layer: HTMLElement,
     private readonly world: HTMLElement,
+    private readonly wheelMode: WheelMode = "desk",
   ) {
     const signal = this.abort.signal;
     viewport.addEventListener("pointerdown", (event) => this.onPointerDown(event), { signal });
@@ -198,6 +206,9 @@ export class DeskCamera {
   private onWheel(event: WheelEvent) {
     // Pinch-zoom (ctrl) and browser shortcuts (meta) stay with the browser.
     if (!event.cancelable || event.ctrlKey || event.metaKey) return;
+    // Page mode: a mostly vertical, unshifted wheel belongs to the page.
+    if (this.wheelMode === "page" && !event.shiftKey && Math.abs(event.deltaY) >= Math.abs(event.deltaX))
+      return;
     event.preventDefault();
     this.touched = true;
     const unit =
