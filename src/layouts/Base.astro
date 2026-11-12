@@ -1,6 +1,6 @@
 ---
 import "@/styles/global.css";
-import "@/styles/fonts.css";
+import { Font } from "astro:assets";
 import SkipLink from "@/components/layout/SkipLink/SkipLink.astro";
 import Dock from "@/components/layout/Dock/Dock.astro";
 import DockSeparator from "@/components/layout/Dock/DockSeparator/DockSeparator.astro";
@@ -45,6 +45,9 @@ const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
 <html lang={lang} data-dock-hidden={dockHidden ? "" : undefined}>
   <head>
     <meta charset="utf-8" />
+    <Font cssVariable="--font-sans" preload />
+    <Font cssVariable="--font-mono" preload />
+    <Font cssVariable="--font-hand" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />

@@ -1,0 +1,17 @@
+/* Storybook's copy of the site fonts. The site loads them through the Fonts API (astro.config.mjs, <Font /> in
+   Base.astro), but the static Storybook build prerenders each component without StoryRoot, so <Font /> would not reach
+   it. Keep the families, weights and fallbacks in step with astro.config.mjs. */
+@import "@fontsource/onest/300.css";
+@import "@fontsource/onest/400.css";
+@import "@fontsource/onest/500.css";
+@import "@fontsource/onest/600.css";
+@import "@fontsource/geist-mono/400.css";
+@import "@fontsource/geist-mono/500.css";
+@import "@fontsource/caveat/500.css";
+@import "@fontsource/caveat/600.css";
+
+:root {
+  --font-sans: "Onest", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-hand: "Caveat", "Segoe Print", "Bradley Hand", cursive;
+}

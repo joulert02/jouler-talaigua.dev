@@ -1,9 +1,0 @@
-/* Self-hosted families from the design (Onest, Geist Mono, Caveat), loaded by the site (Base.astro) and Storybook. */
-@import "@fontsource/onest/300.css";
-@import "@fontsource/onest/400.css";
-@import "@fontsource/onest/500.css";
-@import "@fontsource/onest/600.css";
-@import "@fontsource/geist-mono/400.css";
-@import "@fontsource/geist-mono/500.css";
-@import "@fontsource/caveat/500.css";
-@import "@fontsource/caveat/600.css";
