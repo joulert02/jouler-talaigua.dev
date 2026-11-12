@@ -1,5 +1,6 @@
 import preview from "../../../../.storybook/preview";
 import Icon from "./Icon.astro";
+import { icons } from "./icons";
 
 const meta = preview.meta({
   title: "Components/UI/Icon",
@@ -13,7 +14,7 @@ const meta = preview.meta({
       },
     },
   },
-  argTypes: { name: { control: "select", options: ["home", "work", "notes", "roadmap", "email", "theme"] } },
+  argTypes: { name: { control: "select", options: Object.keys(icons) } },
 });
 export default meta;
 
