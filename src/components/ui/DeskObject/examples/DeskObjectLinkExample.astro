@@ -1,0 +1,22 @@
+---
+// The child is a plain link: a click follows it, a drag only moves the object.
+import Desk from "../../Desk/Desk.astro";
+import DeskObject from "../DeskObject.astro";
+import RocketCard from "../../../board/objects/RocketCard/RocketCard.astro";
+---
+
+<div class="desk-object-example">
+  <Desk world={{ width: 880, height: 440 }} origin={{ x: 440, y: 220 }}>
+    <DeskObject x={330} y={120} tilt={3}>
+      <a href="#" aria-label="Rocket: my roadmap from senior to staff. Opens the roadmap">
+        <RocketCard title="Roadmap" text="Senior → Staff, step by step" />
+      </a>
+    </DeskObject>
+  </Desk>
+</div>
+
+<style>
+  .desk-object-example {
+    height: 560px;
+  }
+</style>

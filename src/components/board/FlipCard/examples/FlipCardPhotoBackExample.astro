@@ -1,0 +1,24 @@
+---
+// A photo placed straight in the back is cropped to fill it.
+import { Image } from "astro:assets";
+import FlipCard from "../FlipCard.astro";
+import ObjectCard from "../../objects/ObjectCard/ObjectCard.astro";
+import pole from "@/assets/photos/desk-pole.jpg";
+---
+
+<FlipCard id="pole" label="Card: pole sport. Flip to see a photo">
+  <ObjectCard
+    illustration="pole"
+    title="Pole sport"
+    text="Strength, patience and a lot of falling. Flip it."
+  />
+  <Image
+    slot="back"
+    src={pole}
+    alt="Jouler holding a horizontal pole sport figure in a studio"
+    width={184}
+    height={184}
+    densities={[1, 2]}
+    fit="cover"
+  />
+</FlipCard>

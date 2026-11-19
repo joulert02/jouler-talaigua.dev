@@ -1,0 +1,145 @@
+---
+interface Props {
+  /** Where the object rests, in world pixels from the desk's top-left corner. Ignored outside a Desk. */
+  x: number;
+  y: number;
+  /** Resting rotation in degrees; reduced motion lays every object straight. */
+  tilt?: number;
+}
+const { x, y, tilt = 0 } = Astro.props;
+---
+
+<!--
+  Places one child on the desk and lets the visitor drag it around (901px and up). The child is the object
+  itself and owns its behaviour: a FlipCard, a link, or anything static. A press that does not travel is a
+  normal click on the child; a drag moves the object and swallows that click. Positions reset on reload.
+-->
+<desk-object
+  class="desk-object"
+  style={`--desk-object-x: ${x}px; --desk-object-y: ${y}px; --desk-object-tilt: ${tilt}deg`}
+>
+  <slot />
+</desk-object>
+
+<script>
+  import { DRAG_THRESHOLD } from "../Desk/camera";
+
+  const desktop = matchMedia("(min-width: 901px)");
+  /** Last stacking order handed out: the object picked up last sits on top. */
+  let stack = 0;
+
+  class DeskObjectElement extends HTMLElement {
+    private abort: AbortController | undefined;
+
+    connectedCallback() {
+      this.abort = new AbortController();
+      const signal = this.abort.signal;
+      this.addEventListener("pointerdown", (event) => this.onPointerDown(event), { signal });
+      // Links and images are natively draggable; that would fight the desk's own drag.
+      this.addEventListener("dragstart", (event) => event.preventDefault(), { signal });
+    }
+
+    disconnectedCallback() {
+      this.abort?.abort();
+    }
+
+    private onPointerDown(down: PointerEvent) {
+      const world = this.parentElement;
+      if (down.button !== 0 || !desktop.matches || !world?.classList.contains("desk__world")) return;
+      const startX = parseFloat(this.style.getPropertyValue("--desk-object-x")) || 0;
+      const startY = parseFloat(this.style.getPropertyValue("--desk-object-y")) || 0;
+      const maxX = world.clientWidth - this.offsetWidth;
+      const maxY = world.clientHeight - this.offsetHeight;
+      let dragging = false;
+      // Listen on the window, not with pointer capture: capture would retarget the click away from the child.
+      const moves = new AbortController();
+      const move = (event: PointerEvent) => {
+        if (event.pointerId !== down.pointerId) return;
+        const dx = event.clientX - down.clientX;
+        const dy = event.clientY - down.clientY;
+        if (!dragging) {
+          if (Math.hypot(dx, dy) <= DRAG_THRESHOLD) return;
+          dragging = true;
+          this.dataset["dragging"] = "";
+          this.style.zIndex = String(++stack);
+          // The pointer crosses other text while dragging: nothing on the page gets selected.
+          getSelection()?.removeAllRanges();
+        }
+        this.style.setProperty("--desk-object-x", `${Math.max(0, Math.min(maxX, startX + dx))}px`);
+        this.style.setProperty("--desk-object-y", `${Math.max(0, Math.min(maxY, startY + dy))}px`);
+      };
+      const end = (event: PointerEvent) => {
+        if (event.pointerId !== down.pointerId) return;
+        moves.abort();
+        if (!dragging) return;
+        delete this.dataset["dragging"];
+        // The release after a drag must not flip the card or follow the link.
+        const swallow = (click: Event) => {
+          click.preventDefault();
+          click.stopPropagation();
+        };
+        this.addEventListener("click", swallow, { capture: true, once: true });
+        setTimeout(() => this.removeEventListener("click", swallow, { capture: true }), 0);
+      };
+      window.addEventListener("pointermove", move, { signal: moves.signal });
+      window.addEventListener("selectstart", (event) => dragging && event.preventDefault(), {
+        signal: moves.signal,
+      });
+      window.addEventListener("pointerup", end, { signal: moves.signal });
+      window.addEventListener("pointercancel", end, { signal: moves.signal });
+    }
+  }
+
+  if (!customElements.get("desk-object")) customElements.define("desk-object", DeskObjectElement);
+</script>
+
+<style>
+  .desk-object {
+    display: inline-block;
+    rotate: var(--desk-object-tilt);
+    transition:
+      translate var(--duration-fast) var(--ease-out),
+      rotate var(--duration-fast) var(--ease-out);
+  }
+  /* On the desk the object rests at its world coordinates. */
+  .desk__world > .desk-object {
+    position: absolute;
+    left: var(--desk-object-x);
+    top: var(--desk-object-y);
+    cursor: grab;
+    touch-action: none;
+  }
+  .desk__world > .desk-object[data-dragging] {
+    cursor: grabbing;
+    user-select: none;
+    translate: none;
+    rotate: 0deg;
+  }
+  /* A link child keeps the face's look: no underline or link color. */
+  .desk-object > a {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+  }
+  .desk-object > a:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 4px;
+  }
+
+  @media (hover: hover) {
+    .desk-object:hover {
+      translate: 0 -4px;
+      rotate: calc(var(--desk-object-tilt) * 0.4);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .desk-object,
+    .desk-object:hover {
+      translate: none;
+      rotate: 0deg;
+      transition: none;
+    }
+  }
+</style>

@@ -1,0 +1,255 @@
+---
+interface Props {
+  /** Song title printed on the sleeve, e.g. "Unicornio". */
+  title: string;
+  /** Artist printed under the title, e.g. "Nanpa Básico". */
+  artist: string;
+  /** Accessible name of the toggle; defaults to "Play {title} by {artist}". Pass a translated one on Spanish pages. */
+  label?: string;
+}
+const { title, artist, label = `Play ${title} by ${artist}` } = Astro.props;
+---
+
+<!--
+  A record in its sleeve, as a toggle button. Pressing it "plays" the song (no audio): the record slides
+  out of the sleeve and spins, and equalizer bars move on the sleeve. Pressing again stops it and the
+  record slides back in. aria-pressed carries the state; the name stays the same.
+-->
+<button type="button" class="vinyl" aria-pressed="false" aria-label={label}>
+  <span class="vinyl__stage">
+    <span class="vinyl__record" aria-hidden="true"></span>
+    <span class="vinyl__sleeve">
+      <span class="vinyl__art" aria-hidden="true"></span>
+      <span class="vinyl__bars" aria-hidden="true">
+        <span class="vinyl__bar"></span>
+        <span class="vinyl__bar"></span>
+        <span class="vinyl__bar"></span>
+      </span>
+      <span class="vinyl__title">{title}</span>
+      <span class="vinyl__artist">{artist}</span>
+    </span>
+  </span>
+</button>
+
+<script>
+  // One listener for every record on the page. On the desk, <desk-object> swallows the click after a drag.
+  document.addEventListener("click", (event) => {
+    const vinyl = (event.target as Element).closest<HTMLButtonElement>(".vinyl");
+    if (!vinyl) return;
+    vinyl.setAttribute("aria-pressed", String(vinyl.getAttribute("aria-pressed") !== "true"));
+  });
+</script>
+
+<style>
+  .vinyl {
+    all: unset;
+    box-sizing: border-box;
+    display: inline-block;
+    cursor: pointer;
+    /* Local illustration colors, the same in both themes: a black record with a cream and red label (v11)
+       and an original abstract sleeve (night blue, a cream sun, a coral wave). */
+    --_disc: #1b1b1d;
+    --_groove: #111;
+    --_hole: #141517;
+    --_label: #f6eedd;
+    --_label-ring: #d9534a;
+    --_sleeve: #23214a;
+    --_sleeve-deep: #15142e;
+    --_sun: #f6eedd;
+    --_wave: #ef7a5d;
+    --_sleeve-text: #f6eedd;
+    --_sleeve-muted: #c9c3e6;
+    /* Geometry: the record peeks out of the sleeve's right edge and slides out further when playing. */
+    --_sleeve-size: 184px;
+    --_record-size: 172px;
+    --_peek: 18px;
+    --_hover-out: 14px;
+    --_play-out: 92px;
+  }
+  .vinyl:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
+  }
+  .vinyl__stage {
+    position: relative;
+    display: block;
+    width: calc(var(--_sleeve-size) + var(--_peek));
+    height: var(--_sleeve-size);
+  }
+
+  /* The record: behind the sleeve, sliding along the x axis and spinning on its own rotate property. */
+  .vinyl__record {
+    position: absolute;
+    top: calc((var(--_sleeve-size) - var(--_record-size)) / 2);
+    left: calc(var(--_sleeve-size) + var(--_peek) - var(--_record-size));
+    width: var(--_record-size);
+    height: var(--_record-size);
+    border-radius: var(--radius-round);
+    background: radial-gradient(
+      circle,
+      var(--_hole) 0 2.5%,
+      var(--_label) 3% 15%,
+      var(--_label-ring) 15.5% 19%,
+      var(--_groove) 19.5% 21%,
+      var(--_disc) 22% 100%
+    );
+    /* The hairline keeps the black record visible on the dark theme's desk. */
+    box-shadow:
+      inset 0 0 0 2px rgb(255 255 255 / 0.08),
+      0 0 0 1px var(--color-border),
+      var(--shadow-rest);
+    transition: translate var(--duration-slow) var(--ease-out);
+    /* Always running but paused, so stopping keeps the angle instead of snapping back. */
+    animation: vinyl-spin 1.8s linear infinite paused;
+  }
+  /* Grooves and a small printed mark on the label, so the spin reads. */
+  .vinyl__record::before,
+  .vinyl__record::after {
+    content: "";
+    position: absolute;
+    border-radius: var(--radius-round);
+  }
+  .vinyl__record::before {
+    inset: 8%;
+    background: repeating-radial-gradient(circle, transparent 0 3px, rgb(255 255 255 / 0.05) 3px 4px);
+  }
+  .vinyl__record::after {
+    top: 40%;
+    left: 50%;
+    width: 9%;
+    height: 3%;
+    border-radius: var(--radius-pill);
+    background: var(--_label-ring);
+    translate: -50% 0;
+  }
+  .vinyl:hover .vinyl__record {
+    translate: var(--_hover-out) 0;
+  }
+  .vinyl[aria-pressed="true"] .vinyl__record {
+    translate: var(--_play-out) 0;
+    animation-play-state: running;
+  }
+
+  /* The sleeve: a square card over the record with abstract art and the song printed on it. */
+  .vinyl__sleeve {
+    position: absolute;
+    inset: 0 auto 0 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    width: var(--_sleeve-size);
+    padding: var(--space-3) var(--space-3) var(--space-3);
+    box-sizing: border-box;
+    overflow: hidden;
+    border-radius: var(--radius-xs);
+    background: linear-gradient(160deg, var(--_sleeve) 0%, var(--_sleeve-deep) 100%);
+    box-shadow:
+      0 0 0 1px var(--color-border),
+      var(--shadow-rest);
+    text-align: start;
+  }
+  /* A cream sun rising behind a coral wave, plus faint horizon lines. */
+  .vinyl__art {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle 46px at 62% 40%, var(--_sun) 0 98%, transparent 100%),
+      repeating-linear-gradient(to bottom, transparent 0 9px, rgb(246 238 221 / 0.07) 9px 10px);
+  }
+  .vinyl__art::after {
+    content: "";
+    position: absolute;
+    left: -20%;
+    right: -20%;
+    top: 46%;
+    height: 40px;
+    background: var(--_wave);
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+    box-shadow: 0 40px 0 0 var(--_sleeve-deep);
+  }
+  .vinyl__title,
+  .vinyl__artist {
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .vinyl__title {
+    font: 600 var(--font-size-lead) / 1.15 var(--font-sans);
+    color: var(--_sleeve-text);
+  }
+  .vinyl__artist {
+    font: 500 var(--font-size-small) / var(--line-height-compact) var(--font-mono);
+    color: var(--_sleeve-muted);
+  }
+
+  /* "Now playing" bars in the sleeve's top-left corner, only while pressed. */
+  .vinyl__bars {
+    position: absolute;
+    top: var(--space-3);
+    left: var(--space-3);
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 16px;
+    opacity: 0;
+    transition: opacity var(--duration-medium) var(--ease-out);
+  }
+  .vinyl__bar {
+    width: 4px;
+    height: 100%;
+    border-radius: 1px;
+    background: var(--_wave);
+    transform-origin: bottom;
+    scale: 1 0.4;
+    animation: vinyl-eq 0.9s ease-in-out infinite alternate paused;
+  }
+  .vinyl__bar:nth-child(2) {
+    scale: 1 0.8;
+    animation-duration: 0.7s;
+    animation-delay: -0.3s;
+  }
+  .vinyl__bar:nth-child(3) {
+    scale: 1 0.6;
+    animation-duration: 1.1s;
+    animation-delay: -0.6s;
+  }
+  .vinyl[aria-pressed="true"] .vinyl__bars {
+    opacity: 1;
+  }
+  .vinyl[aria-pressed="true"] .vinyl__bar {
+    animation-play-state: running;
+  }
+
+  @keyframes vinyl-spin {
+    to {
+      rotate: 360deg;
+    }
+  }
+  @keyframes vinyl-eq {
+    from {
+      scale: 1 0.25;
+    }
+    to {
+      scale: 1 1;
+    }
+  }
+
+  /* Reduced motion: no sliding or spinning; pressing still shows the record out and the bars, statically. */
+  @media (prefers-reduced-motion: reduce) {
+    .vinyl__record,
+    .vinyl__bars,
+    .vinyl__bar {
+      transition: none;
+      animation: none;
+    }
+    .vinyl:hover .vinyl__record {
+      translate: none;
+    }
+    .vinyl[aria-pressed="true"] .vinyl__record {
+      translate: var(--_play-out) 0;
+    }
+  }
+</style>

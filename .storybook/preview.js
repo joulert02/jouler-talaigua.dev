@@ -5,6 +5,7 @@ import { getPreferredColorScheme, themes } from "storybook/theming";
 import { THEMES, effectiveTheme } from "../src/lib/theme.js";
 import { defaultLang } from "../src/i18n/ui";
 import StoryRoot from "./StoryRoot.astro";
+import { astroSource } from "./source.js";
 import { GLOBALS_UPDATED } from "storybook/internal/core-events";
 import { createElement as h, Fragment, Suspense, lazy, useEffect, useState } from "react";
 
@@ -83,6 +84,8 @@ export default definePreview({
     props: { lang: locale, component: context.component, props },
   }),
   decorators: [
+    // "Show code": generated from the args, or the example file a composition story renders (see source.js).
+    astroSource,
     (Story, context) => {
       if (context.viewMode === "story" && globalThis.document) {
         // The toolbar choice wins over the OS preference; an unknown value falls back to light.

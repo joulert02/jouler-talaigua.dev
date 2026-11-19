@@ -1,0 +1,26 @@
+---
+// The Home's board section, exactly as the page renders it: the identity card at the center of the desk.
+// Its story renders this file as is, so changing the section changes the story.
+import Desk from "../../ui/Desk/Desk.astro";
+import IdentityCard from "../../profile/IdentityCard/IdentityCard.astro";
+---
+
+<div class="board">
+  <Desk>
+    <IdentityCard slot="center" />
+  </Desk>
+</div>
+
+<style>
+  /* Below 901px the board adds no box: the card flows with the page. */
+  .board {
+    display: contents;
+  }
+  /* From 901px the desk fills the first screen. */
+  @media (min-width: 901px) {
+    .board {
+      display: block;
+      height: 100svh;
+    }
+  }
+</style>

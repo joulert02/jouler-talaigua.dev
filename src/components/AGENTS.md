@@ -17,12 +17,12 @@ Grouped by what a component knows, following the design system ecosystem model (
 
 ```text
 src/components/
-  ui/        # core: knows no site content, would work in another project (Button, JotaMark)
+  ui/        # core: pure, knows no site content, would work in another project (Button, JotaMark, Desk, DeskObject)
   layout/    # site chrome on every page (SkipLink, Dock, Footer, LanguageSwitch)
   profile/   # recipes per content domain: who Jouler is (IdentityCard, CareerPath)
   projects/  # (next) shows the `projects` collection: ProjectCard, ProjectHeader…
   articles/  # (next) shows the `articles` collection: ArticleCard, ArticleBody…
-  board/     # (HU-02) objects of the Home board
+  board/     # (HU-02) the Home's board section (Board) and its own parts (FlipCard, objects/)
 src/pages/   # product: pages only compose; they own no components
 ```
 
@@ -42,11 +42,11 @@ src/components/<group>/<Component>/
   <Component>.stories.ts   # overview, playground and meaningful variants
   <component>.config.ts    # typed data and constants, when it has any
   types.ts                 # shared types, when needed
-  stories/                 # story-only helpers (frames, fixtures)
+  examples/                # composition examples its stories render and show as code
   <Part>/                  # a private part, with the same layout (Dock/DockItem/)
 ```
 
-Story-only helpers never sit beside the production files with production-looking names.
+Example files live only in `examples/`, never beside the production files, and are written as a page would write them (real components, imported by relative path: storybook-astro loads a component's CSS only through relative `.astro` imports). Each one is registered in `.storybook/Example.astro`.
 
 Story titles mirror the path, as Storybook recommends: `Components/<Group>/<Component>`, and a private part goes under its parent (`Components/Layout/Dock/DockItem`).
 
@@ -58,7 +58,7 @@ storybook-astro (1.14) injects each component's `<style>` into the Storybook doc
 
 - Class selectors only, never bare elements (`a`, `li`, `h2`, `button`). Give each element you style a class.
 - Prefix every class with the component name, BEM style: `.footer`, `.footer__link`, `.footer__item--email`. No generic names (`.item`, `.label`, `.example`).
-- Story helpers follow the same rule (`.footer-story`).
+- Example files follow the same rule (`.desk-example`).
 
 ## Stories
 
@@ -72,6 +72,17 @@ Each component's stories file gives three things, following Storybook's recommen
 - Every story has a one-sentence docs description that says what to look at or try. If it cannot say something the Playground does not, it should not exist.
 - A component with no props and no behaviour worth exploring (DockSeparator) gets no stories.
 
+**Flow for pure components and sections:**
+
+1. A transversal, pure component goes in `ui/`, and a code example is mandatory: its stories render an example file that shows how to compose it (Desk with a simple card in its `center` slot and one DeskObject).
+2. A section of the site (`board/Board`) is a real component the page uses as is. Its story renders that component itself, with no example file, so changing the section changes the story; its Show code shows only `<Board />`, not its subcomponents.
+3. The section's own parts (FlipCard, the board objects) live in the section's folder with their own stories.
+
+**Show code** is always generated, never written by hand (`.storybook/source.js`, guarded by `scripts/stories-source.test.mjs`):
+
+- A story that renders its component with args gets its snippet from storybook-astro's generator, which follows the Controls. The meta `component` is the component itself.
+- A composition story (other components inside its slots, or a context such as a list or a desk) renders an example file from `examples/`, written as a page would write it, and shows that same file. Its meta sets `component: Example` (`.storybook/Example.astro`) and `...exampleMeta(TheComponent)`, which documents the real component's props without live controls; each story names its file in `args: { example: "<group>/<Component>/examples/<File>.astro" }`. The static build prerenders only the meta component with its args, which is why the file is an arg.
+
 Source: Storybook, [Structuring your Storybook](https://storybook.js.org/blog/structuring-your-storybook/).
 
 ## Storybook MCP
@@ -80,5 +91,5 @@ With `npm run storybook` running, the `jota-storybook` MCP server (`@storybook/a
 
 - Before creating or editing a component or its stories, call `get-storybook-story-instructions`; the owner preferences above win where they differ.
 - After any visual change, call `stories-preview` for the affected stories and include the preview URLs in your result.
-- `stories-find-by-component` matches the story's `component`. A story rendered through a `stories/` helper is found by the helper's path, not the component's.
+- `stories-find-by-component` matches the story's `component`, which is always the component itself.
 - The docs toolset (`docs-list`, `docs-show`) is not available: storybook-astro generates no components manifest.

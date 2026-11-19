@@ -1,0 +1,83 @@
+---
+interface Props {
+  /** Unique id on the page; names the back for `aria-describedby`. */
+  id: string;
+  /** Accessible name: what the card is, e.g. "Photo: giving a talk at a university". */
+  label: string;
+}
+const { id, label } = Astro.props;
+const backId = `${id}-back`;
+---
+
+<!--
+  A two-sided card: the default slot is the face, the `back` slot what a click or Enter reveals.
+  It is a toggle button (aria-pressed) whose back describes it. A photo placed straight in the back
+  (an <img> or <Image>) is cropped to fill it.
+-->
+<button class="flip-card" type="button" aria-label={label} aria-pressed="false" aria-describedby={backId}>
+  <span class="flip-card__inner">
+    <span class="flip-card__face">
+      <slot />
+    </span>
+    <span class="flip-card__back" id={backId}>
+      <slot name="back" />
+    </span>
+  </span>
+</button>
+
+<script>
+  // One listener for every card on the page.
+  document.addEventListener("click", (event) => {
+    const card = (event.target as Element).closest<HTMLButtonElement>(".flip-card");
+    if (!card) return;
+    card.setAttribute("aria-pressed", String(card.getAttribute("aria-pressed") !== "true"));
+  });
+</script>
+
+<style>
+  .flip-card {
+    all: unset;
+    box-sizing: border-box;
+    display: block;
+    cursor: pointer;
+  }
+  .flip-card:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 4px;
+  }
+  .flip-card__inner {
+    position: relative;
+    display: block;
+    transform-style: preserve-3d;
+    transition: transform var(--duration-slow) var(--ease-out);
+  }
+  .flip-card[aria-pressed="true"] .flip-card__inner {
+    transform: rotateY(180deg);
+  }
+  .flip-card__face,
+  .flip-card__back {
+    display: block;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  /* The back takes the face's size. */
+  .flip-card__back {
+    position: absolute;
+    inset: 0;
+    transform: rotateY(180deg);
+  }
+  .flip-card__back > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-rest);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flip-card__inner {
+      transition: none;
+    }
+  }
+</style>

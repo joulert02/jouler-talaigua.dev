@@ -1,0 +1,55 @@
+---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+interface Props {
+  /** A photo imported from `src/assets/`; it is cropped to the print's 150 × 190 frame. */
+  image: ImageMetadata;
+  /** What the photo shows, for screen readers. */
+  alt: string;
+  /** Short handwritten line under the photo, e.g. "Road trip · Colombia". */
+  caption: string;
+}
+const { image, alt, caption } = Astro.props;
+---
+
+<!-- A printed photo with a white border and a caption, as it lies on the desk. -->
+<span class="photo-print">
+  <Image
+    class="photo-print__image"
+    src={image}
+    {alt}
+    width={150}
+    height={190}
+    densities={[1, 2]}
+    fit="cover"
+    draggable="false"
+  />
+  <span class="photo-print__caption">{caption}</span>
+</span>
+
+<style>
+  .photo-print {
+    display: block;
+    width: 170px;
+    padding: 10px 10px 12px;
+    background: var(--color-surface);
+    border-radius: 3px;
+    box-shadow: var(--shadow-rest);
+  }
+  .photo-print__image {
+    display: block;
+    width: 150px;
+    height: 190px;
+    object-fit: cover;
+    filter: saturate(0.88);
+  }
+  /* v11 used 11px mono; the type floor is 14px, so the caption is sans and may wrap to two lines. */
+  .photo-print__caption {
+    display: block;
+    margin-top: 10px;
+    padding-inline: 2px;
+    font: 500 var(--font-size-small) / var(--line-height-compact) var(--font-sans);
+    color: var(--color-text-muted);
+    text-align: start;
+  }
+</style>

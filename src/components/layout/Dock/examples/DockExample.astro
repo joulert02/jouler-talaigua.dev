@@ -1,0 +1,26 @@
+---
+// The site Dock, as Base.astro builds it: the navigation in this language, then the actions.
+import Dock from "../Dock.astro";
+import DockSeparator from "../DockSeparator/DockSeparator.astro";
+import CopyEmail from "../../CopyEmail/CopyEmail.astro";
+import ThemeToggle from "../../ThemeToggle/ThemeToggle.astro";
+import { navigation } from "@/config/navigation";
+import { getLang, localePath, useTranslations } from "@/i18n/ui";
+
+const lang = getLang(Astro);
+const t = useTranslations(lang);
+const items = navigation.map(({ id, labelKey, href, icon }) => ({
+  id,
+  label: t(labelKey),
+  href: localePath(lang, href),
+  icon,
+}));
+---
+
+<Dock {items} label={t("dock.main")} current="home" variant="labels">
+  <Fragment slot="actions">
+    <DockSeparator />
+    <CopyEmail />
+    <ThemeToggle />
+  </Fragment>
+</Dock>

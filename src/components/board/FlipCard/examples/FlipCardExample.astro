@@ -1,0 +1,15 @@
+---
+import FlipCard from "../FlipCard.astro";
+import DeskNote from "../../objects/DeskNote/DeskNote.astro";
+import PhotoPrint from "../../objects/PhotoPrint/PhotoPrint.astro";
+import moto from "@/assets/photos/desk-moto.jpg";
+---
+
+<FlipCard id="moto" label="Photo: on a motorbike trip in the Colombian mountains">
+  <PhotoPrint
+    image={moto}
+    alt="Jouler in riding gear next to his motorbike on a wet mountain road"
+    caption="Road trip · Colombia"
+  />
+  <DeskNote slot="back" title="Two wheels, long roads." text="Riding is how I reset. Rain included." />
+</FlipCard>

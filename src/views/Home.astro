@@ -1,7 +1,6 @@
 ---
 import Base from "@/layouts/Base.astro";
-import Desk from "@/components/board/Desk/Desk.astro";
-import IdentityCard from "@/components/profile/IdentityCard/IdentityCard.astro";
+import Board from "@/components/board/Board/Board.astro";
 import { identity } from "@/config/profile";
 import { useTranslations, type Lang } from "@/i18n/ui";
 interface Props {
@@ -13,9 +12,7 @@ const t = useTranslations(lang);
 
 <Base title={t("home.title")} description={identity.sentence[lang]} lang={lang}>
   <div class="home">
-    <Desk>
-      <IdentityCard slot="anchor" />
-    </Desk>
+    <Board />
   </div>
 </Base>
 <style>
