@@ -1,4 +1,7 @@
 ---
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+import { getLang, useTranslations } from "../../../../i18n/ui";
 interface Props {
   /** Song title printed on the sleeve, e.g. "Unicornio". */
   title: string;
@@ -6,8 +9,14 @@ interface Props {
   artist: string;
   /** Accessible name of the toggle; defaults to "Play {title} by {artist}". Pass a translated one on Spanish pages. */
   label?: string;
+  /** The record's real cover. It replaces the abstract art and the printed title, which the cover already carries. */
+  cover?: ImageMetadata;
+  /** Spotify URI of what plays, e.g. "spotify:album:4Ff07AMyi4ZUOORYUZpN9c" (a track works too). When set, pressing
+   *  the record opens Spotify's player in the bottom-right corner; nothing loads from Spotify before that press. */
+  spotify?: string;
 }
-const { title, artist, label = `Play ${title} by ${artist}` } = Astro.props;
+const { title, artist, label = `Play ${title} by ${artist}`, cover, spotify } = Astro.props;
+const t = useTranslations(getLang(Astro));
 ---
 
 <!--
@@ -15,29 +24,157 @@ const { title, artist, label = `Play ${title} by ${artist}` } = Astro.props;
   out of the sleeve and spins, and equalizer bars move on the sleeve. Pressing again stops it and the
   record slides back in. aria-pressed carries the state; the name stays the same.
 -->
-<button type="button" class="vinyl" aria-pressed="false" aria-label={label}>
+<button
+  type="button"
+  class="vinyl"
+  aria-pressed="false"
+  aria-label={label}
+  data-spotify={spotify}
+  data-player-label={spotify && t("vinyl.player")}
+  data-close-label={spotify && t("vinyl.close")}
+>
   <span class="vinyl__stage">
     <span class="vinyl__record" aria-hidden="true"></span>
     <span class="vinyl__sleeve">
-      <span class="vinyl__art" aria-hidden="true"></span>
+      {cover ? (
+        <Image class="vinyl__cover" src={cover} alt="" width={184} height={184} />
+      ) : (
+        <>
+          <span class="vinyl__art" aria-hidden="true" />
+          <span class="vinyl__title">{title}</span>
+          <span class="vinyl__artist">{artist}</span>
+        </>
+      )}
       <span class="vinyl__bars" aria-hidden="true">
-        <span class="vinyl__bar"></span>
-        <span class="vinyl__bar"></span>
-        <span class="vinyl__bar"></span>
+        <span class="vinyl__bar" />
+        <span class="vinyl__bar" />
+        <span class="vinyl__bar" />
       </span>
-      <span class="vinyl__title">{title}</span>
-      <span class="vinyl__artist">{artist}</span>
     </span>
   </span>
 </button>
 
 <script>
   // One listener for every record on the page. On the desk, <desk-object> swallows the click after a drag.
-  document.addEventListener("click", (event) => {
-    const vinyl = (event.target as Element).closest<HTMLButtonElement>(".vinyl");
-    if (!vinyl) return;
-    vinyl.setAttribute("aria-pressed", String(vinyl.getAttribute("aria-pressed") !== "true"));
-  });
+  // A record with a Spotify URI opens Spotify's own player (its iFrame API) in a panel in the bottom-right corner.
+  // The panel lives in <body>: on the desk the record sits inside rotated, translated boxes, where position: fixed
+  // would follow the box instead of the screen.
+  type Controller = {
+    play(): void;
+    togglePlay(): void;
+    loadUri(uri: string): void;
+    destroy(): void;
+    addListener(
+      event: "ready" | "playback_update",
+      callback: (event: { data: { isPaused: boolean } }) => void,
+    ): void;
+  };
+  type IFrameAPI = {
+    createController(element: HTMLElement, options: object, callback: (controller: Controller) => void): void;
+  };
+  type Player = {
+    panel: HTMLElement;
+    controller: Promise<Controller>;
+    vinyl: HTMLButtonElement;
+    uri: string;
+  };
+  type VinylState = { api?: Promise<IFrameAPI>; player?: Player };
+
+  // Page-wide state, set up once: a page that runs this script again (Storybook does when switching stories)
+  // must not add a second listener, or one press would open two players.
+  const scope = window as unknown as {
+    vinylState?: VinylState;
+    onSpotifyIframeApiReady?: (api: IFrameAPI) => void;
+  };
+  const firstRun = !scope.vinylState;
+  const state = (scope.vinylState ??= {});
+
+  /** Loads Spotify's iFrame API once, on the first press of a record. */
+  function loadApi() {
+    state.api ??= new Promise((resolve) => {
+      scope.onSpotifyIframeApiReady = resolve;
+      const script = document.createElement("script");
+      script.src = "https://open.spotify.com/embed/iframe-api/v1";
+      script.async = true;
+      document.head.append(script);
+    });
+    return state.api;
+  }
+
+  function setPlaying(vinyl: HTMLButtonElement, playing: boolean) {
+    vinyl.setAttribute("aria-pressed", String(playing));
+  }
+
+  function closePlayer() {
+    const player = state.player;
+    if (!player) return;
+    delete state.player;
+    void player.controller.then((controller) => controller.destroy());
+    player.panel.remove();
+    setPlaying(player.vinyl, false);
+    player.vinyl.focus();
+  }
+
+  /** Creates the panel right away, so a second press while Spotify loads finds it instead of opening another. */
+  function openPlayer(vinyl: HTMLButtonElement, uri: string): Player {
+    const panel = document.createElement("aside");
+    panel.className = "vinyl-player";
+    panel.setAttribute("aria-label", vinyl.dataset["playerLabel"] ?? "");
+    const close = document.createElement("button");
+    close.type = "button";
+    close.className = "vinyl-player__close";
+    close.setAttribute("aria-label", vinyl.dataset["closeLabel"] ?? "");
+    close.textContent = "✕";
+    close.addEventListener("click", closePlayer);
+    const embed = document.createElement("div");
+    panel.append(close, embed);
+    document.body.append(panel);
+
+    const controller = loadApi().then(
+      (api) =>
+        new Promise<Controller>((resolve) => {
+          api.createController(embed, { uri, width: "100%", height: 152 }, (created) => {
+            created.addListener("ready", () => created.play());
+            // The record follows the player, also when the visitor pauses inside it.
+            created.addListener("playback_update", ({ data }) => {
+              if (state.player?.controller === controller) setPlaying(state.player.vinyl, !data.isPaused);
+            });
+            resolve(created);
+          });
+        }),
+    );
+    return { panel, controller, vinyl, uri };
+  }
+
+  async function playOnSpotify(vinyl: HTMLButtonElement, uri: string) {
+    const player = state.player;
+    if (!player) {
+      state.player = openPlayer(vinyl, uri);
+      return;
+    }
+    if (player.uri === uri) {
+      player.vinyl = vinyl;
+      (await player.controller).togglePlay();
+      return;
+    }
+    // Another record: the same player switches to its song.
+    setPlaying(player.vinyl, false);
+    player.vinyl = vinyl;
+    player.uri = uri;
+    const controller = await player.controller;
+    controller.loadUri(uri);
+    controller.play();
+  }
+
+  if (firstRun) {
+    document.addEventListener("click", (event) => {
+      const vinyl = (event.target as Element).closest<HTMLButtonElement>(".vinyl");
+      if (!vinyl) return;
+      setPlaying(vinyl, vinyl.getAttribute("aria-pressed") !== "true");
+      const uri = vinyl.dataset["spotify"];
+      if (uri) void playOnSpotify(vinyl, uri);
+    });
+  }
 </script>
 
 <style>
@@ -150,6 +287,14 @@ const { title, artist, label = `Play ${title} by ${artist}` } = Astro.props;
       var(--shadow-rest);
     text-align: start;
   }
+  /* The real cover fills the sleeve. */
+  .vinyl__cover {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
   /* A cream sun rising behind a coral wave, plus faint horizon lines. */
   .vinyl__art {
     position: absolute;
@@ -221,6 +366,50 @@ const { title, artist, label = `Play ${title} by ${artist}` } = Astro.props;
   }
   .vinyl[aria-pressed="true"] .vinyl__bar {
     animation-play-state: running;
+  }
+
+  /* Spotify's player, created in <body> by the script above (hence :global). The close button sits on its corner. */
+  :global(.vinyl-player) {
+    position: fixed;
+    right: var(--space-4);
+    bottom: var(--space-4);
+    z-index: 100;
+    width: min(352px, calc(100vw - 2 * var(--space-4)));
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-rest);
+  }
+  /* Below 901px the Dock sits at the bottom of the screen: the player rests above its 80px. */
+  @media (max-width: 900px) {
+    :global(.vinyl-player) {
+      bottom: 80px;
+    }
+  }
+  :global(.vinyl-player__close) {
+    position: absolute;
+    top: calc(-1 * var(--space-3));
+    left: calc(-1 * var(--space-3));
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: var(--space-6);
+    height: var(--space-6);
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-round);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-rest);
+    color: var(--color-text);
+    font: 600 12px / 1 var(--font-sans);
+    cursor: pointer;
+  }
+  :global(.vinyl-player__close:focus-visible) {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 2px;
+  }
+  :global(.vinyl-player iframe) {
+    display: block;
+    border: 0;
+    border-radius: var(--radius-lg);
   }
 
   @keyframes vinyl-spin {

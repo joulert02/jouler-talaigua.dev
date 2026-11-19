@@ -29,6 +29,8 @@ export const ui = {
     "dock.main": "Main",
     "desk.label":
       "Personal desk. Drag, scroll or use the arrow keys to explore; 0 or Home recenters. Tab moves to each item and brings it into view.",
+    "vinyl.player": "Spotify player",
+    "vinyl.close": "Close the player",
     "dock.home": "Home",
     "dock.work": "Work",
     "dock.notes": "Notes",
@@ -76,6 +78,8 @@ export const ui = {
     "dock.main": "Principal",
     "desk.label":
       "Escritorio personal. Arrastra, desplázate o usa las flechas para explorar; 0 o Inicio vuelve al centro. Tab pasa a cada elemento y lo trae a la vista.",
+    "vinyl.player": "Reproductor de Spotify",
+    "vinyl.close": "Cerrar el reproductor",
     "dock.home": "Inicio",
     "dock.work": "Proyectos",
     "dock.notes": "Notas",
