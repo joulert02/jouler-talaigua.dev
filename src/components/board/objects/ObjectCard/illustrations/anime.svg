@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+  <!-- Ramen bowl with chopsticks, from v11 (docs/design/v11/app.js, "naruto"). -->
+  <path d="M5 18h30c0 9-7 15-15 15S5 27 5 18Z" />
+  <path d="M14 6l3 10M22 4l1 12" />
+  <path d="M9 18c2-3 5-4 8-3m4 0c3-2 7-1 10 3" style="stroke: var(--color-accent)" />
+</svg>

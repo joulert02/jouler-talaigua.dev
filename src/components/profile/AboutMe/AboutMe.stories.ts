@@ -1,11 +1,13 @@
 import preview from "../../../../.storybook/preview";
 import { withLocale } from "../../../../.storybook/locale";
-import StoryAboutMe from "./stories/StoryAboutMe.astro";
+import AboutMe from "./AboutMe.astro";
+import Example from "../../../../.storybook/Example.astro";
+import { exampleMeta } from "../../../../.storybook/example";
 
 const meta = preview.meta({
-  ...withLocale,
   title: "Components/Profile/AboutMe",
-  component: StoryAboutMe,
+  component: Example,
+  ...exampleMeta(AboutMe, withLocale),
   tags: ["autodocs"],
   parameters: {
     docs: {
@@ -19,5 +21,8 @@ const meta = preview.meta({
 export default meta;
 
 export const Playground = meta.story({
-  parameters: { docs: { description: { story: "Switch `locale` to review the copy in both languages." } } },
+  args: { example: "profile/AboutMe/examples/AboutMeExample.astro" },
+  parameters: {
+    docs: { description: { story: "Switch `locale` to review the copy in both languages." } },
+  },
 });

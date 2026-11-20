@@ -1,16 +1,14 @@
 import preview from "../../../../.storybook/preview";
-import StoryDock from "./stories/StoryDock.astro";
-import { navigation } from "../../../config/navigation";
-import { ui } from "../../../i18n/ui";
-
-// The Dock takes links ready to show; here, the site's navigation with English labels and links that stay put.
-const items = navigation.map(({ id, labelKey, icon }) => ({ id, label: ui.en[labelKey], href: "#", icon }));
+import { withLocale } from "../../../../.storybook/locale";
+import Dock from "./Dock.astro";
+import Example from "../../../../.storybook/Example.astro";
+import { exampleMeta } from "../../../../.storybook/example";
 
 const meta = preview.meta({
   title: "Components/Layout/Dock",
-  component: StoryDock,
+  component: Example,
+  ...exampleMeta(Dock, withLocale),
   tags: ["autodocs"],
-  args: { items, label: ui.en["dock.main"], current: "home", variant: "labels", phone: false },
   parameters: {
     docs: {
       description: {
@@ -19,28 +17,24 @@ const meta = preview.meta({
       },
     },
   },
-  argTypes: {
-    current: { control: "select", options: navigation.map((item) => item.id) },
-    variant: { control: "inline-radio", options: ["labels", "stacked", "active-label", "icons"] },
-    items: { control: "object" },
-    phone: { table: { disable: true } },
-  },
 });
 export default meta;
 
 export const Playground = meta.story({
+  args: { example: "layout/Dock/examples/DockExample.astro" },
   parameters: {
     docs: {
       description: {
-        story: "Click an item to move the current page (here only; on the site each item navigates).",
+        story:
+          "The Dock as every page renders it, with the `labels` variant; switch `locale` to review it in Spanish.",
       },
     },
   },
 });
 
 export const Phone = meta.story({
-  args: { phone: true, variant: "active-label" },
+  args: { example: "layout/Dock/examples/DockPhoneExample.astro" },
   parameters: {
-    docs: { description: { story: "The dock inside an iPhone, to judge each variant at phone size." } },
+    docs: { description: { story: "The `active-label` variant inside an iPhone, as phones show it." } },
   },
 });

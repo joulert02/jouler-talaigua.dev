@@ -1,0 +1,44 @@
+---
+// Renders a composition story's example file. The story passes the file as an arg (a path under src/components/),
+// so the static build, which prerenders the meta component with its args only, renders it too. "Show code" shows the
+// same file (source.js), and the props table documents the real component (example.js).
+// Every example is imported statically, and examples import their components by relative path: storybook-astro only
+// loads the CSS of .astro files reachable that way. scripts/stories-source.test.mjs keeps this list complete.
+import type { Lang } from "../src/i18n/ui";
+import DeskExample from "../src/components/ui/Desk/examples/DeskExample.astro";
+import DeskObjectExample from "../src/components/ui/DeskObject/examples/DeskObjectExample.astro";
+import DeskObjectLinkExample from "../src/components/ui/DeskObject/examples/DeskObjectLinkExample.astro";
+import FlipCardExample from "../src/components/board/FlipCard/examples/FlipCardExample.astro";
+import FlipCardPhotoBackExample from "../src/components/board/FlipCard/examples/FlipCardPhotoBackExample.astro";
+import DockExample from "../src/components/layout/Dock/examples/DockExample.astro";
+import DockPhoneExample from "../src/components/layout/Dock/examples/DockPhoneExample.astro";
+import FooterExample from "../src/components/layout/Footer/examples/FooterExample.astro";
+import SkipLinkExample from "../src/components/layout/SkipLink/examples/SkipLinkExample.astro";
+import AboutMeExample from "../src/components/profile/AboutMe/examples/AboutMeExample.astro";
+import CareerRowExample from "../src/components/profile/CareerRow/examples/CareerRowExample.astro";
+interface Props {
+  /** Example file under src/components/, e.g. "ui/Desk/examples/DeskExample.astro". */
+  example: string;
+  /** Page language; the dev render sets it through StoryRoot, the static build through this arg. */
+  locale?: Lang;
+}
+const examples = {
+  "ui/Desk/examples/DeskExample.astro": DeskExample,
+  "ui/DeskObject/examples/DeskObjectExample.astro": DeskObjectExample,
+  "ui/DeskObject/examples/DeskObjectLinkExample.astro": DeskObjectLinkExample,
+  "board/FlipCard/examples/FlipCardExample.astro": FlipCardExample,
+  "board/FlipCard/examples/FlipCardPhotoBackExample.astro": FlipCardPhotoBackExample,
+  "layout/Dock/examples/DockExample.astro": DockExample,
+  "layout/Dock/examples/DockPhoneExample.astro": DockPhoneExample,
+  "layout/Footer/examples/FooterExample.astro": FooterExample,
+  "layout/SkipLink/examples/SkipLinkExample.astro": SkipLinkExample,
+  "profile/AboutMe/examples/AboutMeExample.astro": AboutMeExample,
+  "profile/CareerRow/examples/CareerRowExample.astro": CareerRowExample,
+};
+const { example, locale } = Astro.props;
+if (locale) Astro.locals.lang = locale;
+const Example = examples[example as keyof typeof examples];
+if (!Example) throw new Error(`Unknown example: ${example}`);
+---
+
+<Example />

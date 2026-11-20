@@ -35,6 +35,18 @@ export default defineMain({
   },
   viteFinal(config, { configType }) {
     skipAstroMdxForStorybookDocs(config.plugins);
+    // `preview.js` imports these, but Vite only discovers them after the
+    // first load and then re-optimizes mid-session: open docs pages keep requesting the old chunk hashes and lazy
+    // blocks such as "Show code" fail with "504 Outdated Optimize Dep". Pre-bundling them up front avoids it.
+    config.optimizeDeps = {
+      ...config.optimizeDeps,
+      include: [
+        ...(config.optimizeDeps?.include ?? []),
+        "storybook/theming",
+        "storybook/preview-api",
+        "@storybook-astro/renderer/entry-preview-docs",
+      ],
+    };
     if (configType === "PRODUCTION") config.base = "./";
     return config;
   },

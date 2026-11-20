@@ -10,7 +10,7 @@ import DockSettings from "@/components/layout/DockSettings/DockSettings.astro";
 import Footer from "@/components/layout/Footer/Footer.astro";
 import LanguageSwitch from "@/components/layout/LanguageSwitch/LanguageSwitch.astro";
 import { navigation } from "@/config/navigation";
-import { languageItems } from "@/config/profile";
+import { identityLinks, languageItems } from "@/config/profile";
 import { localePath, useTranslations, type Lang } from "@/i18n/ui";
 import { THEME_COOKIE } from "@/lib/theme.js";
 
@@ -38,6 +38,10 @@ const dockItems = navigation.map(({ id, labelKey, href, icon }) => ({
 }));
 const languages = languageItems.map((item) => ({ ...item, href: localePath(item.lang, altPath) }));
 const canonical = new URL(Astro.url.pathname, Astro.site);
+// Page transitions (the pagereveal script below): the Home in every language, and the pages the identity card morphs into.
+const homePaths = languageItems.map((item) => localePath(item.lang, "/"));
+const about = identityLinks.find((link) => link.label === "layout.about")?.href;
+const morphPaths = about && typeof about === "object" ? Object.values(about) : [];
 const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
 ---
 
@@ -67,6 +71,41 @@ const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
       const theme = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`))?.[1];
       if (theme) document.documentElement.dataset.theme = theme;
     </script>
+    <!--
+      Home ↔ pages (HU-02, v11): every page sits "below" the Home. Going from the Home to a page (the board's hand-off,
+      the Dock, any link, Forward) slides the page in from below, as if the Home scrolled down to it; coming back to the
+      Home slides it in from above. Between two other pages, or from the Home to itself, the default crossfade stays.
+      "More about me" keeps its own transition: the identity card morphs into its card (global.css, profile-card).
+      Inline in the head because `pagereveal` fires before deferred scripts run. The styles live in global.css. The
+      paths are shared with the way back at the end of this layout.
+    -->
+    <script
+      is:inline
+      type="application/json"
+      id="page-transitions"
+      set:html={JSON.stringify({ homePaths, morphPaths })}
+    />
+    <script is:inline>
+      addEventListener("pagereveal", (event) => {
+        const { homePaths, morphPaths } = JSON.parse(document.getElementById("page-transitions").textContent);
+        const transition = event.viewTransition;
+        if (!transition) return;
+        // Where the visitor comes from: the Navigation API knows for links, Back and Forward; without it, the referrer
+        // covers links only (on Back and Forward it names an older page).
+        const activation = window.navigation?.activation;
+        const traversed = performance.getEntriesByType("navigation")[0]?.type === "back_forward";
+        const from = activation ? activation.from?.url : traversed ? null : document.referrer;
+        if (!from) return;
+        const source = new URL(from);
+        if (source.origin !== location.origin) return;
+        const before = source.pathname;
+        const after = location.pathname;
+        if (before === after || morphPaths.includes(before) || morphPaths.includes(after)) return;
+        const isHome = (path) => homePaths.includes(path);
+        if (isHome(before) && !isHome(after)) transition.types.add("home-to-page");
+        else if (!isHome(before) && isHome(after)) transition.types.add("page-to-home");
+      });
+    </script>
   </head>
   <body>
     <SkipLink />
@@ -79,9 +118,8 @@ const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
         <slot />
       </main>
     </div>
-    <Footer>
-      <CopyEmail variant="text" slot="copy-email" />
-    </Footer>
+    <!-- The Dock before the footer: it is fixed on screen, so only the Tab order follows, and after the footer the
+         page ends. -->
     <Dock items={dockItems} label={t("dock.main")} {current} variant="labels" mobileVariant="active-label">
       <Fragment slot="actions">
         <DockSeparator />
@@ -95,8 +133,66 @@ const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
         </span>
       </Fragment>
     </Dock>
+    <Footer>
+      <CopyEmail variant="text" slot="copy-email" />
+    </Footer>
   </body>
 </html>
+<script>
+  // Way back to the Home (HU-02): on a page opened from the Home, scrolling up past the top goes back to it, and the
+  // pagereveal script in the head plays the slide in reverse. Other pages scroll as usual (src/lib/handoff.js).
+  import { followWheel, returnsToHome, type Gesture } from "@/lib/handoff.js";
+
+  const paths = JSON.parse(document.getElementById("page-transitions")?.textContent ?? "{}") as {
+    homePaths?: string[];
+    morphPaths?: string[];
+  };
+  let gesture: Gesture | null = null;
+  let leaving = false;
+
+  /** Needs the Navigation API to see the previous entry, as the reverse slide does; without it, pages scroll as usual. */
+  function openedFromHome() {
+    const nav = window.navigation;
+    const index = nav?.currentEntry?.index ?? -1;
+    const previous = index > 0 ? nav?.entries()[index - 1]?.url : null;
+    return returnsToHome({
+      previous: previous ? new URL(previous).pathname : undefined,
+      current: location.pathname,
+      homePaths: paths.homePaths ?? [],
+      morphPaths: paths.morphPaths ?? [],
+    });
+  }
+
+  addEventListener(
+    "wheel",
+    (event) => {
+      // Pinch-zoom and sideways scrolls are not a way back.
+      if (leaving || event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY) || !openedFromHome())
+        return;
+      const unit =
+        event.deltaMode === WheelEvent.DOM_DELTA_LINE
+          ? 16
+          : event.deltaMode === WheelEvent.DOM_DELTA_PAGE
+            ? innerHeight
+            : 1;
+      const result = followWheel(gesture, {
+        time: event.timeStamp,
+        deltaY: event.deltaY * unit,
+        atTop: scrollY <= 0,
+      });
+      gesture = result.gesture;
+      if (!result.back) return;
+      leaving = true;
+      history.back();
+    },
+    { passive: true },
+  );
+  // Forward from the Home can restore this page from the back/forward cache: start clean.
+  addEventListener("pageshow", () => {
+    gesture = null;
+    leaving = false;
+  });
+</script>
 <style>
   /* Mobile first: phones get the settings gear; from 561px, the theme toggle and the top language pill. */
   .narrow-only {

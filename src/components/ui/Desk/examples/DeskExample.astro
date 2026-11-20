@@ -1,0 +1,34 @@
+---
+// A desk with a card in its center slot and one object around it. Drag the object; drag the background to move.
+import Desk from "../Desk.astro";
+import DeskObject from "../../DeskObject/DeskObject.astro";
+import ObjectCard from "../../../board/objects/ObjectCard/ObjectCard.astro";
+---
+
+<div class="desk-example">
+  <Desk>
+    <article slot="center" class="desk-example__card">
+      <h2>Center element</h2>
+      <p>Any element goes in the center slot; the resting view centers on it.</p>
+    </article>
+    <DeskObject x={1310} y={330} tilt={4}>
+      <ObjectCard illustration="game" title="League of Legends" text="ADC main. Lucian or Camille." />
+    </DeskObject>
+  </Desk>
+</div>
+
+<style>
+  .desk-example {
+    height: 720px;
+  }
+  .desk-example__card {
+    width: 540px;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-rest);
+    color: var(--color-text);
+  }
+</style>

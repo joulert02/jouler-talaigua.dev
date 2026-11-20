@@ -107,6 +107,8 @@ const compact = variant === "labels" ? mobileVariant : variant;
     bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
     transform: translateX(-50%);
     z-index: 30;
+    /* Its own layer in page transitions: fixed, it stays put while the page around it changes (global.css). */
+    view-transition-name: dock;
     display: flex;
     align-items: center;
     /* Mobile first: the narrowest phones get a 1px gap; space-1 from 381px. */

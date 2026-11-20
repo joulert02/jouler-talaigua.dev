@@ -145,6 +145,21 @@ const t = useTranslations(lang);
       padding-block: var(--space-2);
     }
   }
+  /* Compact (v11 mobile): on the desk opened full screen below 901px, only the mark, name and role stay. */
+  @media (max-width: 900px) {
+    :global(.desk[data-open]) .identity-card {
+      width: min(360px, calc(100vw - 48px));
+      padding: var(--space-6);
+      gap: var(--space-4);
+    }
+    /* :global: the career path is another component's root, which does not carry this component's scope. */
+    :global(.desk[data-open]) .identity-card > :global(:not(.identity-card__who, .jota-mark)) {
+      display: none;
+    }
+    :global(.desk[data-open]) .identity-card :global(.jota-mark) {
+      display: inline-flex;
+    }
+  }
   @media (prefers-reduced-motion: reduce) {
     .identity-card__link {
       transition: none;

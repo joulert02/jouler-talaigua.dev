@@ -1,0 +1,12 @@
+---
+// The skip link and its target: the target needs tabindex="-1" to receive focus.
+import SkipLink from "../SkipLink.astro";
+import { getLang, useTranslations } from "@/i18n/ui";
+
+const t = useTranslations(getLang(Astro));
+---
+
+<SkipLink />
+<main id="main" tabindex="-1">
+  <p>{t("layout.mainContent")}</p>
+</main>

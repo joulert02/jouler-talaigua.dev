@@ -1,9 +1,12 @@
 import preview from "../../../../.storybook/preview";
-import SkipLinkStory from "./stories/SkipLinkStory.astro";
+import SkipLink from "./SkipLink.astro";
+import Example from "../../../../.storybook/Example.astro";
+import { exampleMeta } from "../../../../.storybook/example";
 
 const meta = preview.meta({
   title: "Components/Layout/SkipLink",
-  component: SkipLinkStory,
+  component: Example,
+  ...exampleMeta(SkipLink),
   tags: ["autodocs"],
   parameters: {
     docs: {
@@ -17,6 +20,8 @@ const meta = preview.meta({
 export default meta;
 
 export const Playground = meta.story({
-  args: { href: "#main" },
-  parameters: { docs: { description: { story: "Click inside the canvas and press Tab to reveal it." } } },
+  args: { example: "layout/SkipLink/examples/SkipLinkExample.astro" },
+  parameters: {
+    docs: { description: { story: "Click inside the canvas and press Tab to reveal it." } },
+  },
 });

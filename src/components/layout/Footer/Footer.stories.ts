@@ -1,13 +1,13 @@
 import preview from "../../../../.storybook/preview";
-import { storyLinks } from "../../../../.storybook/links";
 import { withLocale } from "../../../../.storybook/locale";
-import FooterStory from "./stories/FooterStory.astro";
-import { footer } from "../../../config/profile";
+import Footer from "./Footer.astro";
+import Example from "../../../../.storybook/Example.astro";
+import { exampleMeta } from "../../../../.storybook/example";
 
 const meta = preview.meta({
-  ...withLocale,
   title: "Components/Layout/Footer",
-  component: FooterStory,
+  component: Example,
+  ...exampleMeta(Footer, withLocale),
   tags: ["autodocs"],
   parameters: {
     docs: {
@@ -21,11 +21,11 @@ const meta = preview.meta({
 export default meta;
 
 export const Playground = meta.story({
-  args: { data: storyLinks(footer) },
+  args: { example: "layout/Footer/examples/FooterExample.astro" },
   parameters: {
     docs: {
       description: {
-        story: "Edit `data` to try other columns or copy, and `locale` to review it in Spanish.",
+        story: "Switch `locale` to review the copy in Spanish.",
       },
     },
   },

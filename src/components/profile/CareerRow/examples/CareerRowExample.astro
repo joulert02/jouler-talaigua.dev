@@ -1,0 +1,17 @@
+---
+// A CareerRow is a list item: CareerPath renders one per entry inside its list.
+import CareerRow from "../CareerRow.astro";
+import { careerItems } from "@/config/profile";
+---
+
+<ol class="career-row-example">
+  <CareerRow item={careerItems[0]} />
+</ol>
+
+<style>
+  .career-row-example {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+</style>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- A figure on a pole, from v11 (docs/design/v11/app.js, "pole"). -->
+  <path d="M20 3v34" stroke-width="2.5" />
+  <circle cx="12" cy="13" r="3" stroke="none" style="fill: var(--color-accent)" />
+  <path d="M14 16l6 4m-6-4-4 8 8 4" />
+</svg>

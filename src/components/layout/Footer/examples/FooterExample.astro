@@ -1,0 +1,9 @@
+---
+// The site footer, as Base.astro renders it: its copy comes from `footer` in src/config/profile.ts.
+import Footer from "../Footer.astro";
+import CopyEmail from "../../CopyEmail/CopyEmail.astro";
+---
+
+<Footer>
+  <CopyEmail variant="text" slot="copy-email" />
+</Footer>

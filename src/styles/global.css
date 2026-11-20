@@ -118,6 +118,74 @@ main[tabindex="-1"]:focus {
   object-fit: none;
   object-position: top;
 }
+/*
+ * The phone desk opening or closing full screen (ui/Desk sets data-desk-transition): the identity card morphs between
+ * the page and the desk's compact card, clipped to its own box, and the Dock, which the open desk covers, fades with it.
+ */
+:root[data-desk-transition]::view-transition-group(profile-card) {
+  overflow: clip;
+  border-radius: 18px;
+  animation-duration: var(--duration-slow);
+}
+:root[data-desk-transition="open"]::view-transition-new(dock),
+:root[data-desk-transition="close"]::view-transition-old(dock) {
+  animation: none;
+  opacity: 0;
+}
+/*
+ * Home ↔ pages (HU-02, v11): every page sits "below" the Home. Going to a page, the Home leaves upward while the page
+ * enters from below, like scrolling one screen down; coming back to the Home plays it the other way. The types come
+ * from the pagereveal script in Base.astro. The identity card (`profile-card`) has no partner on those pages, so it
+ * travels with the Home; the Dock keeps its own name and stays put, as a fixed element does while the page scrolls.
+ */
+:root:active-view-transition-type(home-to-page, page-to-home) {
+  &::view-transition-old(root),
+  &::view-transition-new(root),
+  &::view-transition-old(profile-card),
+  &::view-transition-new(profile-card) {
+    animation-duration: var(--duration-slow);
+    animation-timing-function: ease-in-out;
+    mix-blend-mode: normal;
+  }
+}
+:root:active-view-transition-type(home-to-page) {
+  &::view-transition-old(root),
+  &::view-transition-old(profile-card) {
+    animation-name: handoff-leave-up;
+  }
+  &::view-transition-new(root) {
+    animation-name: handoff-enter-up;
+  }
+}
+:root:active-view-transition-type(page-to-home) {
+  &::view-transition-old(root) {
+    animation-name: handoff-leave-down;
+  }
+  &::view-transition-new(root),
+  &::view-transition-new(profile-card) {
+    animation-name: handoff-enter-down;
+  }
+}
+@keyframes handoff-leave-up {
+  to {
+    translate: 0 -100vh;
+  }
+}
+@keyframes handoff-enter-up {
+  from {
+    translate: 0 100vh;
+  }
+}
+@keyframes handoff-leave-down {
+  to {
+    translate: 0 100vh;
+  }
+}
+@keyframes handoff-enter-down {
+  from {
+    translate: 0 -100vh;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   .dock-control,
   .dock-control::after {
