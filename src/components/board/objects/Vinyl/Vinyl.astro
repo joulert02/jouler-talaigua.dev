@@ -10,7 +10,8 @@ interface Props {
   /** Accessible name of the toggle; defaults to "Play {title} by {artist}". Pass a translated one on Spanish pages. */
   label?: string;
   /** The record's real cover. It replaces the abstract art and the printed title, which the cover already carries.
-   *  For a sleeve that is not a plain image, use the `sleeve` slot instead. */
+   *  For a sleeve that is not a plain image, use the `sleeve` slot instead. Shown at 184px in 1x and 2x, so the
+   *  source should be at least 368px square. */
   cover?: ImageMetadata;
   /** Spotify URI of what plays, e.g. "spotify:album:4Ff07AMyi4ZUOORYUZpN9c" (a track works too). When set, pressing
    *  the record opens Spotify's player in the bottom-right corner, with a loading box of its size while it loads.
@@ -48,7 +49,7 @@ const customSleeve = Astro.slots.has("sleeve");
           <slot name="sleeve" />
         </span>
       ) : cover ? (
-        <Image class="vinyl__cover" src={cover} alt="" width={184} height={184} />
+        <Image class="vinyl__cover" src={cover} alt="" width={184} height={184} densities={[1, 2]} />
       ) : (
         <>
           <span class="vinyl__art" aria-hidden="true" />

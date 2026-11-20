@@ -1,6 +1,6 @@
 import preview from "../../../../../.storybook/preview";
 import Vinyl from "./Vinyl.astro";
-import unicornio from "../../../../assets/covers/unicornio.png";
+import unicornio from "../../../../assets/covers/unicornio.jpg";
 import moto from "../../../../assets/photos/desk-moto.jpg";
 
 const meta = preview.meta({
