@@ -101,15 +101,16 @@ const { x, y, tilt = 0 } = Astro.props;
       translate var(--duration-fast) var(--ease-out),
       rotate var(--duration-fast) var(--ease-out);
   }
-  /* On the desk the object rests at its world coordinates. */
-  .desk__world > .desk-object {
+  /* On the desk the object rests at its world coordinates. The world belongs to Desk, hence :global: a scoped
+     .desk__world would carry this component's attribute and never match. */
+  :global(.desk__world) > .desk-object {
     position: absolute;
     left: var(--desk-object-x);
     top: var(--desk-object-y);
     cursor: grab;
     touch-action: none;
   }
-  .desk__world > .desk-object[data-dragging] {
+  :global(.desk__world) > .desk-object[data-dragging] {
     cursor: grabbing;
     user-select: none;
     translate: none;

@@ -41,6 +41,9 @@ const t = useTranslations(lang);
     }
     .home {
       display: block;
+      /* The mobile grid's centering would shrink the board to nothing: newer browsers apply justify-items to block
+         layout too, and the board's content is absolutely positioned. */
+      place-items: normal;
       width: 100vw;
       height: 100svh;
       min-height: 0;
