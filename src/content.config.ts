@@ -4,20 +4,27 @@ import { z } from "astro/zod";
 
 const lang = z.enum(["en", "es"]);
 
-// Projects: status split (published / in progress / idea) comes from the Obsidian brief.
+// Projects: one file per language and project; the Work page lists them (HU-03), each case page renders one (HU-04 on).
 const projects = defineCollection({
   loader: glob({ base: "./src/content/projects", pattern: "**/*.{md,mdx}" }),
-  schema: z.object({
-    title: z.string(),
-    summary: z.string(),
-    lang,
-    status: z.enum(["published", "in-progress", "idea"]),
-    role: z.string().optional(),
-    stack: z.array(z.string()).default([]),
-    featured: z.boolean().default(false),
-    links: z.object({ repo: z.url().optional(), live: z.url().optional() }).default({}),
-    date: z.coerce.date(),
-  }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      company: z.string(),
+      summary: z.string(),
+      lang,
+      /** Content tier (docs/content/projects/README.md): 1 full case, 2 showcase, 3 status page. */
+      tier: z.union([z.literal(1), z.literal(2), z.literal(3)]),
+      /** Position inside its tier on the Work page. */
+      order: z.number().int(),
+      focus: z.array(z.string()).default([]),
+      /** Shown on the Work page's preview and thumbnails; without one, the preview shows a status tile. */
+      cover: image().optional(),
+      /** Whether the case page is built: a "coming" case is listed without a link. */
+      case: z.enum(["coming", "live"]),
+      /** A status that replaces "Coming soon" on the Work page, e.g. "Under construction". */
+      label: z.string().optional(),
+    }),
 });
 
 const articles = defineCollection({

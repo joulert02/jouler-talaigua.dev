@@ -1,0 +1,164 @@
+---
+import { Image } from "astro:assets";
+import type { WorkItem } from "../types";
+interface Props {
+  /** The project. With `href` the row is a link to its case; without one it is plain text with its status tag. */
+  item: WorkItem;
+  /** Whether the Work preview starts on this row (the first one). */
+  active?: boolean;
+}
+const { item, active = false } = Astro.props;
+const Body = item.href ? "a" : "div";
+---
+
+<li class="work-row" data-work-slug={item.slug} data-active={active ? "" : undefined}>
+  <Body class="work-row__body" href={item.href} id={item.href ? `row-${item.slug}` : undefined}>
+    {item.cover ? (
+      <Image class="work-row__thumb" src={item.cover} alt="" width={128} height={88} densities={[1, 2]} />
+    ) : (
+      <span class="work-row__thumb work-row__thumb--empty" aria-hidden="true" />
+    )}
+    <span class="work-row__company" translate="no">
+      {item.company}
+    </span>
+    <strong
+      class="work-row__title"
+      style={item.href ? `view-transition-name: case-title-${item.slug}` : undefined}
+    >
+      {item.title}
+      {item.status && <span class="work-row__status">{item.status}</span>}
+    </strong>
+    <span class="work-row__summary">{item.summary}</span>
+    {item.focus.length > 0 && <span class="work-row__focus">{item.focus.join(" · ")}</span>}
+    {item.href && (
+      <span class="work-row__arrow" aria-hidden="true">
+        →
+      </span>
+    )}
+  </Body>
+</li>
+
+<style>
+  .work-row {
+    border-bottom: 1px solid var(--color-border);
+  }
+  .work-row__body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 24px;
+    gap: 5px var(--space-3);
+    padding-block: var(--space-6);
+    color: var(--color-text);
+    text-decoration: none;
+    transition: opacity var(--duration-fast) var(--ease-out);
+  }
+  a.work-row__body {
+    border-radius: var(--radius-sm);
+  }
+  a.work-row__body:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+  }
+  .work-row__thumb {
+    display: none;
+  }
+  .work-row__company {
+    grid-column: 1;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-small);
+    line-height: 1.5;
+  }
+  /* Flex, so a tag that wraps starts its own line flush left. */
+  .work-row__title {
+    grid-column: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: clamp(22px, 2.2vw, 30px);
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+  }
+  .work-row__status {
+    padding: 4px 6px 3px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-muted);
+    font: 500 var(--font-size-label) / 1 var(--font-mono);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .work-row__summary {
+    grid-column: 1;
+    max-width: var(--measure-prose);
+    margin-top: var(--space-1);
+    color: var(--color-text-secondary);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .work-row__focus {
+    grid-column: 1;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-small);
+    line-height: var(--line-height-compact);
+  }
+  .work-row__arrow {
+    grid-column: 2;
+    grid-row: 1 / 5;
+    align-self: center;
+    color: var(--color-text-accent);
+    opacity: 0;
+    transform: translateX(-6px);
+    transition:
+      opacity var(--duration-fast) var(--ease-out),
+      transform var(--duration-fast) var(--ease-out);
+  }
+  a.work-row__body:hover .work-row__arrow,
+  a.work-row__body:focus-visible .work-row__arrow {
+    opacity: 1;
+    transform: none;
+  }
+  /* Touch and narrow screens: no preview beside the list, so each row shows its own thumbnail (v11). */
+  @media (hover: none), (max-width: 900px) {
+    .work-row__body {
+      grid-template-columns: 64px minmax(0, 1fr) 24px;
+      column-gap: var(--space-4);
+    }
+    .work-row__thumb {
+      display: block;
+      grid-column: 1;
+      grid-row: 1 / 5;
+      align-self: start;
+      width: 64px;
+      height: 44px;
+      margin-top: 2px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      background: var(--color-bg-subtle);
+      object-fit: cover;
+    }
+    /* No cover yet (a status page): an empty tile keeps the rows aligned; the status tag says the rest. */
+    .work-row__thumb--empty {
+      border-style: dashed;
+    }
+    .work-row__company,
+    .work-row__title,
+    .work-row__summary,
+    .work-row__focus {
+      grid-column: 2;
+    }
+    .work-row__arrow {
+      grid-column: 3;
+    }
+    .work-row__title {
+      font-size: 24px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .work-row__body,
+    .work-row__arrow {
+      transition: none;
+    }
+  }
+</style>

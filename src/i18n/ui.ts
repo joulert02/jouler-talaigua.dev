@@ -56,13 +56,14 @@ export const ui = {
     "dock.themeTooltip": "Theme",
     "dock.settings": "Settings",
     "nav.home": "Home",
-    "nav.projects": "Projects",
     "nav.writing": "Writing",
     "nav.about": "About",
     "home.title": "Jouler Talaigua | Senior Software Engineer",
-    "projects.status.published": "Published",
-    "projects.status.in-progress": "In progress",
-    "projects.status.idea": "Idea",
+    "work.title": "Work | Jouler Talaigua",
+    "work.description":
+      "Selected projects by Jouler Talaigua: product engineering, frontend architecture and observability.",
+    "work.heading": "Selected projects",
+    "work.coming": "Coming soon",
   },
   es: {
     "layout.skip": "Saltar al contenido",
@@ -117,13 +118,14 @@ export const ui = {
     "dock.themeTooltip": "Tema",
     "dock.settings": "Ajustes",
     "nav.home": "Inicio",
-    "nav.projects": "Proyectos",
     "nav.writing": "Artículos",
     "nav.about": "Sobre mí",
     "home.title": "Jouler Talaigua",
-    "projects.status.published": "Publicado",
-    "projects.status.in-progress": "En desarrollo",
-    "projects.status.idea": "Idea",
+    "work.title": "Proyectos | Jouler Talaigua",
+    "work.description":
+      "Proyectos seleccionados de Jouler Talaigua: ingeniería de producto, arquitectura frontend y observabilidad.",
+    "work.heading": "Proyectos seleccionados",
+    "work.coming": "Próximamente",
   },
 } as const satisfies Record<Lang, Record<string, string>>;
 

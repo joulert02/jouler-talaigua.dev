@@ -1,0 +1,18 @@
+---
+// Cases not built yet: no link, the status tag beside the title. The second one has no cover either.
+import WorkRow from "../WorkRow.astro";
+import { comingItem, statusItem } from "../../examples/items";
+---
+
+<ul class="work-row-coming-example">
+  <WorkRow item={comingItem} />
+  <WorkRow item={statusItem} />
+</ul>
+
+<style>
+  .work-row-coming-example {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>

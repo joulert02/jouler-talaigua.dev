@@ -111,7 +111,7 @@ export const footerColumns: readonly FooterColumn[] = [
   {
     heading: "layout.site",
     items: [
-      { kind: "link", link: { label: "layout.work", href: { en: "/projects/", es: "/es/projects/" } } },
+      { kind: "link", link: { label: "layout.work", href: { en: "/work/", es: "/es/work/" } } },
       { kind: "link", link: { label: "layout.notes", href: { en: "/notes/", es: "/es/notes/" } } },
       // Roadmap stays out for now, as in the Dock (navigation.ts).
       // { kind: "link", link: { label: "layout.roadmap", href: "#roadmap" } },

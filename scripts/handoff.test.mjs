@@ -59,12 +59,12 @@ test("scrolling down resets the upward travel", () => {
 const site = { homePaths: ["/", "/es/"], morphPaths: ["/more-about-me/", "/es/more-about-me/"] };
 
 test("a page opened from the Home goes back to it, in either language", () => {
-  assert.equal(returnsToHome({ ...site, previous: "/", current: "/projects/" }), true);
+  assert.equal(returnsToHome({ ...site, previous: "/", current: "/work/" }), true);
   assert.equal(returnsToHome({ ...site, previous: "/es/", current: "/es/notes/" }), true);
 });
 
 test("a page opened from another page, or as the first page, scrolls as usual", () => {
-  assert.equal(returnsToHome({ ...site, previous: "/projects/", current: "/notes/" }), false);
+  assert.equal(returnsToHome({ ...site, previous: "/work/", current: "/notes/" }), false);
   assert.equal(returnsToHome({ ...site, previous: undefined, current: "/notes/" }), false);
 });
 

@@ -1,0 +1,62 @@
+---
+// Work: the selected projects, with a preview on desktop (HU-03). A case that is not built yet is listed without a link.
+import Base from "@/layouts/Base.astro";
+import WorkList from "@/components/projects/WorkList/WorkList.astro";
+import type { WorkItem } from "@/components/projects/WorkList/types";
+import { getProjects, slugOf } from "@/lib/content";
+import { localePath, useTranslations, type Lang } from "@/i18n/ui";
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const items: WorkItem[] = (await getProjects(lang)).map(({ id, data }) => {
+  const slug = slugOf(id);
+  const live = data.case === "live";
+  return {
+    slug,
+    company: data.company,
+    title: data.title,
+    summary: data.summary,
+    focus: data.focus,
+    cover: data.cover,
+    href: live ? localePath(lang, `/work/${slug}/`) : undefined,
+    status: data.label ?? (live ? undefined : t("work.coming")),
+  };
+});
+---
+
+<Base title={t("work.title")} description={t("work.description")} lang={lang} ogSlug="work" altPath="/work/">
+  <div class="work-page">
+    <h1 class="work-page__heading">{t("work.heading")}</h1>
+    <WorkList items={items} />
+  </div>
+</Base>
+
+<style>
+  /* Out of `.wrap`'s 44rem column: the list and its preview take the layout container (v11). */
+  :global(html:has(.work-page)) {
+    overflow-x: clip;
+  }
+  .work-page {
+    --work-width: min(var(--layout-container), 100vw - 96px);
+    width: var(--work-width);
+    margin-inline: calc((100% - var(--work-width)) / 2);
+    padding-block: 80px 120px;
+  }
+  .work-page__heading {
+    margin: 0 0 56px;
+    font: 500 clamp(40px, 5vw, 68px) / 1.06 var(--font-sans);
+    letter-spacing: -0.045em;
+  }
+  @media (max-width: 900px) {
+    .work-page {
+      --work-width: calc(100vw - 40px);
+      padding-top: 48px;
+    }
+    .work-page__heading {
+      margin-bottom: 36px;
+      font-size: 44px;
+    }
+  }
+</style>

@@ -1,0 +1,83 @@
+---
+import WorkRow from "./WorkRow/WorkRow.astro";
+import WorkPreview from "./WorkPreview/WorkPreview.astro";
+import type { WorkItem } from "./types";
+interface Props {
+  /** The projects, in the order they are listed. The Work page builds them from the `projects` collection. */
+  items: readonly WorkItem[];
+}
+const { items } = Astro.props;
+---
+
+<div class="work-list">
+  <ul class="work-list__rows">
+    {items.map((item, index) => (
+      <WorkRow item={item} active={index === 0} />
+    ))}
+  </ul>
+  <div class="work-list__preview">
+    <WorkPreview items={items} />
+  </div>
+</div>
+
+<script>
+  // The preview follows the row last pointed at or focused, and stays on it when the pointer leaves (v11). Rows and
+  // preview slides share `data-work-slug`; the active one carries `data-active`.
+  for (const list of document.querySelectorAll<HTMLElement>(".work-list")) {
+    const show = (event: Event) => {
+      const row = (event.target as Element).closest<HTMLElement>(".work-row");
+      const slug = row?.dataset["workSlug"];
+      if (!slug) return;
+      for (const element of list.querySelectorAll<HTMLElement>("[data-work-slug]")) {
+        element.toggleAttribute("data-active", element.dataset["workSlug"] === slug);
+      }
+    };
+    list.addEventListener("pointerover", show);
+    list.addEventListener("focusin", show);
+  }
+</script>
+
+<style>
+  .work-list {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: 0 72px;
+    align-items: start;
+  }
+  .work-list__rows {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--color-border);
+  }
+  /* While the list is pointed at or focused, the other rows step back, so the one in the preview stands out; built
+     cases also bring in their arrow (WorkRow). */
+  .work-list__rows :global(.work-row) {
+    transition: opacity var(--duration-fast) var(--ease-out);
+  }
+  .work-list__rows:is(:hover, :focus-within) :global(.work-row:not([data-active])) {
+    opacity: 0.45;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .work-list__rows :global(.work-row) {
+      transition: none;
+    }
+  }
+  .work-list__preview {
+    position: sticky;
+    top: 104px;
+    padding-top: var(--space-6);
+  }
+  /* Touch and narrow screens: one column, thumbnails in the rows instead of the preview (v11). */
+  @media (hover: none), (max-width: 900px) {
+    .work-list {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .work-list__preview {
+      display: none;
+    }
+    .work-list__rows:is(:hover, :focus-within) :global(.work-row:not([data-active])) {
+      opacity: 1;
+    }
+  }
+</style>

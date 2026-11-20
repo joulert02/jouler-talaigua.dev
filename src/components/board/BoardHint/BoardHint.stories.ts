@@ -20,7 +20,7 @@ const meta = preview.meta({
 export default meta;
 
 export const Playground = meta.story({
-  args: { href: "/projects/" },
+  args: { href: "/work/" },
   parameters: {
     docs: { description: { story: "The resting pill. Widen the window past 900px if it does not show." } },
   },

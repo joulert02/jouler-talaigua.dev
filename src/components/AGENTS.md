@@ -20,7 +20,7 @@ src/components/
   ui/        # core: pure, knows no site content, would work in another project (Button, JotaMark, Desk, DeskObject)
   layout/    # site chrome on every page (SkipLink, Dock, Footer, LanguageSwitch)
   profile/   # recipes per content domain: who Jouler is (IdentityCard, CareerPath)
-  projects/  # (next) shows the `projects` collection: ProjectCard, ProjectHeader…
+  projects/  # shows the `projects` collection: WorkList (HU-03), case parts next
   articles/  # (next) shows the `articles` collection: ArticleCard, ArticleBody…
   board/     # (HU-02) the Home's board section (Board) and its own parts (FlipCard, objects/)
 src/pages/   # product: pages only compose; they own no components
