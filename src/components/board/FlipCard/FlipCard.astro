@@ -26,12 +26,17 @@ const backId = `${id}-back`;
 </button>
 
 <script>
-  // One listener for every card on the page.
-  document.addEventListener("click", (event) => {
-    const card = (event.target as Element).closest<HTMLButtonElement>(".flip-card");
-    if (!card) return;
-    card.setAttribute("aria-pressed", String(card.getAttribute("aria-pressed") !== "true"));
-  });
+  // One listener for every card on the page. Storybook runs this script once per rendered story (a docs page renders
+  // several), and two listeners would flip each card twice per click, so it is installed only once.
+  const scope = window as unknown as { flipCardReady?: boolean };
+  if (!scope.flipCardReady) {
+    scope.flipCardReady = true;
+    document.addEventListener("click", (event) => {
+      const card = (event.target as Element).closest<HTMLButtonElement>(".flip-card");
+      if (!card) return;
+      card.setAttribute("aria-pressed", String(card.getAttribute("aria-pressed") !== "true"));
+    });
+  }
 </script>
 
 <style>
