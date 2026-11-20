@@ -9,7 +9,7 @@
   "scripts": {
     "prepare": "husky",
     "dev": "astro dev",
-    "design": "echo 'Design v11 (sealed): http://127.0.0.1:4326/design/v11/' && python3 -m http.server 4326 --bind 0.0.0.0 --directory docs",
+    "design": "echo 'Design v11 (sealed): http://127.0.0.1:4326/design/' && python3 -m http.server 4326 --bind 0.0.0.0 --directory docs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build --output-dir dist/storybook",
     "build": "node scripts/check-placeholders.mjs && astro build && npm run build-storybook",
