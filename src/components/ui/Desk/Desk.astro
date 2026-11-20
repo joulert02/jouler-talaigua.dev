@@ -18,6 +18,9 @@ const style = `--desk-world-width: ${world.width}px; --desk-world-height: ${worl
   default slot takes DeskObjects, each placed in world coordinates. CSS alone lays out the resting view, so the
   first paint is final; the deferred camera script only adds an offset once the visitor moves. Below 901px the
   world is hidden and the `center` element flows as a normal page.
+  At the bottom edge the desk fires a bubbling `desk-edge` event, detail { armed, progress } (camera.ts, EdgeState):
+  armed once the camera reaches the edge, progress filling from 0 to 1 while a background drag is held there, back
+  to 0 when it is released. What a full hand-off does is up to the page (the Home opens Work).
 -->
 <desk-board class="desk" data-label={t("desk.label")} {style}>
   <div class="desk__viewport">
@@ -35,7 +38,7 @@ const style = `--desk-world-width: ${world.width}px; --desk-world-height: ${worl
 
 <script>
   // Astro ships this as a module script: deferred, it never blocks the HTML or CSS from rendering.
-  import { DeskCamera, type WheelMode } from "./camera";
+  import { DeskCamera, type EdgeState, type WheelMode } from "./camera";
 
   const desktop = matchMedia("(min-width: 901px)");
   // Experiment flag: `?wheel=page` lets the vertical wheel scroll the page instead of panning the desk.
@@ -67,12 +70,18 @@ const style = `--desk-world-width: ${world.width}px; --desk-world-height: ${worl
       viewport.tabIndex = 0;
       viewport.setAttribute("role", "region");
       viewport.setAttribute("aria-label", this.dataset["label"] ?? "");
-      this.camera = new DeskCamera(viewport, layer, world, wheelMode);
+      this.camera = new DeskCamera(viewport, layer, world, wheelMode, (state) => this.edge(state));
       this.resize = new ResizeObserver(() => this.camera?.refit());
       this.resize.observe(viewport);
     }
 
+    private edge(state: EdgeState) {
+      this.dispatchEvent(new CustomEvent<EdgeState>("desk-edge", { detail: state, bubbles: true }));
+    }
+
     private unmount() {
+      // Without a camera (below 901px) there is no edge to stand on.
+      if (this.camera) this.edge({ armed: false, progress: 0 });
       this.camera?.destroy();
       this.resize?.disconnect();
       this.camera = undefined;

@@ -14,6 +14,21 @@ const KEY_STEP = 64;
 export const DRAG_THRESHOLD = 5;
 /** Margin, in px, inside which a focused element counts as in view. */
 const FOCUS_MARGIN = 20;
+/**
+ * Holding a background drag at the bottom edge fills the hand-off over this long (v11); reduced motion halves it.
+ * Only a held pointer fills it: the wheel and trackpad can reach the edge and arm it, but browsers cannot tell when
+ * the fingers lift, so a scroll could never be cancelled by letting go.
+ */
+const EDGE_MS = 2600;
+const EDGE_MS_REDUCED = 1300;
+
+/** Where the desk stands at its bottom edge: `armed` once the camera reaches it, `progress` 0 to 1 while a drag is
+ *  held there; 1 means the visitor held it to the end. */
+export interface EdgeState {
+  armed: boolean;
+  progress: number;
+}
+
 /** Elements that keep their own pointer behaviour instead of panning the desk (objects drag themselves). */
 const INTERACTIVE = "button,a[href],input,textarea,select,desk-object";
 
@@ -31,6 +46,8 @@ interface Pan {
   x: number;
   y: number;
   moved: boolean;
+  /** Last vertical travel, to tell a drag that keeps pushing past the edge from one that pulls back. */
+  lastDy: number;
 }
 
 export class DeskCamera {
@@ -43,18 +60,21 @@ export class DeskCamera {
   private frame = 0;
   private pan: Pan | null = null;
   private suppressClick = false;
+  private readonly edge = { armed: false, frame: 0 };
   private readonly abort = new AbortController();
 
   /**
    * @param viewport the visible window of the desk; receives the input and the dot-grid offset.
    * @param layer the element the camera translates (card and world move together).
    * @param world the full desk area, used for the bounds.
+   * @param onEdge told whenever the bottom-edge state changes (see EdgeState).
    */
   constructor(
     private readonly viewport: HTMLElement,
     private readonly layer: HTMLElement,
     private readonly world: HTMLElement,
     private readonly wheelMode: WheelMode = "desk",
+    private readonly onEdge: (state: EdgeState) => void = () => {},
   ) {
     const signal = this.abort.signal;
     viewport.addEventListener("pointerdown", (event) => this.onPointerDown(event), { signal });
@@ -79,6 +99,9 @@ export class DeskCamera {
     viewport.addEventListener("focusin", (event) => this.onFocusIn(event), { signal });
     // Focus can make the browser scroll an overflow:hidden box; the camera owns that offset.
     viewport.addEventListener("scroll", () => this.resetScroll(), { signal });
+    // Leaving the page mid-drag (the hand-off opens Work) gets no pointerup: let go here, so a page restored from the
+    // back/forward cache starts with no drag held and an empty hand-off.
+    addEventListener("pagehide", () => this.release(), { signal });
     matchMedia("(prefers-reduced-motion: reduce)").addEventListener(
       "change",
       () => {
@@ -90,6 +113,7 @@ export class DeskCamera {
   }
 
   destroy() {
+    cancelAnimationFrame(this.edge.frame);
     this.stop();
     this.abort.abort();
     this.layer.style.removeProperty("translate");
@@ -137,6 +161,43 @@ export class DeskCamera {
     // The dot grid lives on the viewport and follows the camera through these.
     this.viewport.style.setProperty("--desk-camera-x", `${this.x}px`);
     this.viewport.style.setProperty("--desk-camera-y", `${this.y}px`);
+    this.syncEdge();
+  }
+
+  /** True when the camera cannot go further down the desk. */
+  private atBottom() {
+    const [, lowest] = this.bounds(this.x, -Infinity);
+    return (this.targetY ?? this.y) <= lowest + 1;
+  }
+
+  /** Reaching the bottom edge arms the hand-off; leaving it disarms and empties it. */
+  private syncEdge() {
+    const armed = this.atBottom();
+    if (armed === this.edge.armed) return;
+    this.edge.armed = armed;
+    this.resetEdge();
+  }
+
+  /** A drag held at the armed edge fills the hand-off; nothing happens if it is already filling. */
+  private startEdge() {
+    const edge = this.edge;
+    if (!edge.armed || edge.frame) return;
+    const duration = reducedMotion() ? EDGE_MS_REDUCED : EDGE_MS;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1);
+      // Full stays full (-1 blocks a restart) until the drag ends, so a last nudge cannot start it over.
+      edge.frame = progress < 1 ? requestAnimationFrame(tick) : -1;
+      this.onEdge({ armed: true, progress });
+    };
+    edge.frame = requestAnimationFrame(tick);
+  }
+
+  /** Empties the hand-off (the drag ended or left the edge) and reports whether the edge is still armed. */
+  private resetEdge() {
+    cancelAnimationFrame(this.edge.frame);
+    this.edge.frame = 0;
+    this.onEdge({ armed: this.edge.armed, progress: 0 });
   }
 
   /** Eases toward a target for wheel and keyboard steps; jumps when motion is reduced. */
@@ -181,6 +242,7 @@ export class DeskCamera {
       x: this.x,
       y: this.y,
       moved: false,
+      lastDy: 0,
     };
     this.viewport.setPointerCapture(event.pointerId);
     this.viewport.dataset["panning"] = "";
@@ -192,17 +254,27 @@ export class DeskCamera {
     const dx = event.clientX - pan.startX;
     const dy = event.clientY - pan.startY;
     if (Math.hypot(dx, dy) > DRAG_THRESHOLD) pan.moved = true;
+    const before = this.y;
     this.move(pan.x + dx, pan.y + dy);
+    // Still pushing the desk up past its bottom edge: the hand-off starts filling (no-op unless armed).
+    if (this.y < before || (this.y === before && dy < pan.lastDy)) this.startEdge();
+    pan.lastDy = dy;
   }
 
   private onPointerEnd(event: PointerEvent) {
     if (!this.pan || this.pan.id !== event.pointerId) return;
     this.suppressClick = this.pan.moved;
-    this.pan = null;
-    delete this.viewport.dataset["panning"];
+    this.release();
     setTimeout(() => {
       this.suppressClick = false;
     }, 0);
+  }
+
+  /** Ends the drag; letting go also cancels the hand-off. */
+  private release() {
+    this.pan = null;
+    delete this.viewport.dataset["panning"];
+    if (this.edge.frame) this.resetEdge();
   }
 
   private onWheel(event: WheelEvent) {

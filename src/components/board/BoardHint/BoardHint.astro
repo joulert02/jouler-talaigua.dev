@@ -1,0 +1,197 @@
+---
+import { getLang, useTranslations } from "../../../i18n/ui";
+interface Props {
+  /** Where a full hand-off leads: the Work page in the page's language, e.g. "/projects/". */
+  href: string;
+}
+const { href } = Astro.props;
+const t = useTranslations(getLang(Astro));
+---
+
+<!--
+  The board's hint pill (v11), above the Dock from 901px: "Drag to explore", with a short bounce. It follows the
+  desk's `desk-edge` events (ui/Desk): when the camera reaches the bottom edge it arms ("Keep dragging for Work ↓"),
+  a held drag fills it, and once full the page goes to `href`, sliding up as if it scrolled down to Work (global.css).
+  Releasing empties it; the wheel never fills it.
+  Below 901px it is hidden: the desk is not shown there.
+-->
+<board-hint
+  class="board-hint"
+  data-href={href}
+  data-explore={t("board.hint")}
+  data-edge={t("board.hintEdge")}
+>
+  <p class="board-hint__pill">
+    <svg
+      class="board-hint__icon"
+      viewBox="0 0 24 24"
+      width="20"
+      height="20"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"></path>
+    </svg>
+    <!-- Polite: arming the edge is announced once ("Keep dragging for Work"). -->
+    <span class="board-hint__text" aria-live="polite">
+      {t("board.hint")}
+    </span>
+    <span class="board-hint__arrow" aria-hidden="true">
+      ↓
+    </span>
+  </p>
+</board-hint>
+
+<script>
+  import type { EdgeState } from "../../ui/Desk/camera";
+
+  class BoardHint extends HTMLElement {
+    private abort: AbortController | undefined;
+
+    connectedCallback() {
+      this.abort = new AbortController();
+      const { signal } = this.abort;
+      document.addEventListener(
+        "desk-edge",
+        (event) => this.update((event as CustomEvent<EdgeState>).detail),
+        {
+          signal,
+        },
+      );
+      // Back from Work can restore this page from the back/forward cache with the pill still full.
+      addEventListener("pageshow", (event) => event.persisted && this.update({ armed: false, progress: 0 }), {
+        signal,
+      });
+    }
+
+    disconnectedCallback() {
+      this.abort?.abort();
+    }
+
+    private update({ armed, progress }: EdgeState) {
+      // The text only changes when the state does, so the live region speaks once per arming.
+      if (armed !== this.hasAttribute("data-armed")) {
+        this.toggleAttribute("data-armed", armed);
+        const text = this.querySelector(".board-hint__text");
+        if (text) text.textContent = (armed ? this.dataset["edge"] : this.dataset["explore"]) ?? "";
+        if (armed) this.prerender();
+      }
+      this.style.setProperty("--board-hint-push", String(progress));
+      if (progress >= 1) this.handOff();
+    }
+
+    /** Opens Work: it slides in from below, as every page the Home opens (Base.astro, global.css). */
+    private handOff() {
+      if (this.dataset["href"]) location.assign(this.dataset["href"]);
+    }
+
+    /** Once armed, browsers with speculation rules (Chromium) get Work ready, so the slide starts at once. */
+    private prerender() {
+      const href = this.dataset["href"];
+      if (!href || this.querySelector("script[type=speculationrules]")) return;
+      if (!HTMLScriptElement.supports?.("speculationrules")) return;
+      const rules = document.createElement("script");
+      rules.type = "speculationrules";
+      rules.textContent = JSON.stringify({ prerender: [{ urls: [href] }] });
+      this.append(rules);
+    }
+  }
+
+  if (!customElements.get("board-hint")) customElements.define("board-hint", BoardHint);
+</script>
+
+<style>
+  /* Below 901px there is no desk to drag. */
+  .board-hint {
+    display: none;
+  }
+  @media (min-width: 901px) {
+    /* Centered above the Dock: its 16px offset, its 58px height and 16px of air. */
+    .board-hint {
+      display: block;
+      position: absolute;
+      left: 50%;
+      bottom: calc(2 * var(--space-4) + 58px);
+      translate: -50% 0;
+      z-index: 5;
+      /* A hint, not a control: drags start on the desk underneath. */
+      pointer-events: none;
+    }
+  }
+  .board-hint__pill {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 10px 18px 10px 14px;
+    font: 500 var(--font-size-small) / 1 var(--font-sans);
+    color: var(--color-text);
+    white-space: nowrap;
+    background: color-mix(in srgb, var(--color-surface) 94%, transparent);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-lift);
+    animation: board-hint-bounce 2.2s var(--ease-out) infinite;
+  }
+  /* The fill: grows from the left as the drag is held at the edge. */
+  .board-hint__pill::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: color-mix(in srgb, var(--color-accent) 16%, var(--color-surface));
+    transform-origin: left;
+    scale: var(--board-hint-push, 0) 1;
+    transition: scale 0.12s linear;
+  }
+  .board-hint__icon {
+    flex: none;
+  }
+  .board-hint__arrow {
+    display: none;
+  }
+  .board-hint[data-armed] .board-hint__pill {
+    animation: none;
+  }
+  .board-hint[data-armed] .board-hint__arrow {
+    display: inline;
+  }
+
+  @keyframes board-hint-bounce {
+    0%,
+    60%,
+    100% {
+      translate: 0 0;
+    }
+    70% {
+      translate: 0 -9px;
+    }
+    80% {
+      translate: 0 0;
+    }
+    88% {
+      translate: 0 -4px;
+    }
+    94% {
+      translate: 0 0;
+    }
+  }
+
+  /* Reduced motion: no bounce, and the fill follows the hold without easing (the hold is also shorter, camera.ts). */
+  @media (prefers-reduced-motion: reduce) {
+    .board-hint__pill {
+      animation: none;
+    }
+    .board-hint__pill::before {
+      transition: none;
+    }
+  }
+</style>

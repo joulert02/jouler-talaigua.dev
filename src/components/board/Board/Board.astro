@@ -1,12 +1,14 @@
 ---
-// The Home's board section, exactly as the page renders it: the identity card at the center of the desk and the
-// personal objects around it. Its story renders this file as is, so changing the section changes the story.
+// The Home's board section, exactly as the page renders it: the identity card at the center of the desk, the
+// personal objects around it and the hint pill that hands off to Work. Its story renders this file as is, so
+// changing the section changes the story.
 // Each object is placed by hand at v11's resting spot (docs/design/v11/experience.js, desktop), in world pixels
 // from the desk's top-left corner, with v11's tilt. What the objects say lives in src/config/desk.ts.
 import { Image } from "astro:assets";
 import Desk from "../../ui/Desk/Desk.astro";
 import DeskObject from "../../ui/DeskObject/DeskObject.astro";
 import IdentityCard from "../../profile/IdentityCard/IdentityCard.astro";
+import BoardHint from "../BoardHint/BoardHint.astro";
 import FlipCard from "../FlipCard/FlipCard.astro";
 import DeskNote from "../objects/DeskNote/DeskNote.astro";
 import Envelope from "../objects/Envelope/Envelope.astro";
@@ -17,7 +19,7 @@ import Ticket from "../objects/Ticket/Ticket.astro";
 import Vinyl from "../objects/Vinyl/Vinyl.astro";
 import { desk } from "../../../config/desk";
 import type { LocalizedText } from "../../../config/profile";
-import { getLang } from "../../../i18n/ui";
+import { getLang, localePath } from "../../../i18n/ui";
 import moto from "../../../assets/photos/desk-moto.jpg";
 import talk from "../../../assets/photos/desk-talk.jpg";
 import frame from "../../../assets/photos/portrait-frame.jpg";
@@ -112,6 +114,8 @@ const { ticket } = desk;
       />
     </DeskObject>
   </Desk>
+  <!-- Holding a drag at the desk's bottom edge hands off to Work (HU-02, HU-03). -->
+  <BoardHint href={localePath(lang, "/projects/")} />
 </div>
 
 <style>
@@ -123,6 +127,7 @@ const { ticket } = desk;
   @media (min-width: 901px) {
     .board {
       display: block;
+      position: relative;
       height: 100svh;
     }
   }
