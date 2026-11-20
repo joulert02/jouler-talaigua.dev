@@ -1,13 +1,116 @@
 ---
-// The Home's board section, exactly as the page renders it: the identity card at the center of the desk.
-// Its story renders this file as is, so changing the section changes the story.
+// The Home's board section, exactly as the page renders it: the identity card at the center of the desk and the
+// personal objects around it. Its story renders this file as is, so changing the section changes the story.
+// Each object is placed by hand at v11's resting spot (docs/design/v11/experience.js, desktop), in world pixels
+// from the desk's top-left corner, with v11's tilt. What the objects say lives in src/config/desk.ts.
+import { Image } from "astro:assets";
 import Desk from "../../ui/Desk/Desk.astro";
+import DeskObject from "../../ui/DeskObject/DeskObject.astro";
 import IdentityCard from "../../profile/IdentityCard/IdentityCard.astro";
+import FlipCard from "../FlipCard/FlipCard.astro";
+import DeskNote from "../objects/DeskNote/DeskNote.astro";
+import Envelope from "../objects/Envelope/Envelope.astro";
+import ObjectCard from "../objects/ObjectCard/ObjectCard.astro";
+import PhotoPrint from "../objects/PhotoPrint/PhotoPrint.astro";
+import RocketCard from "../objects/RocketCard/RocketCard.astro";
+import Ticket from "../objects/Ticket/Ticket.astro";
+import Vinyl from "../objects/Vinyl/Vinyl.astro";
+import { desk } from "../../../config/desk";
+import type { LocalizedText } from "../../../config/profile";
+import { getLang } from "../../../i18n/ui";
+import moto from "../../../assets/photos/desk-moto.jpg";
+import talk from "../../../assets/photos/desk-talk.jpg";
+import frame from "../../../assets/photos/portrait-frame.jpg";
+import pole from "../../../assets/photos/desk-pole.jpg";
+import unicornio from "../../../assets/covers/unicornio.png";
+
+const lang = getLang(Astro);
+const l = (text: LocalizedText) => text[lang];
+const { ticket } = desk;
 ---
 
 <div class="board">
   <Desk>
     <IdentityCard slot="center" />
+
+    <DeskObject x={470} y={370} tilt={-3}>
+      <FlipCard id="desk-teach" label={l(desk.teach.label)}>
+        <PhotoPrint image={talk} alt={l(desk.teach.alt)} caption={l(desk.teach.caption)} />
+        <DeskNote slot="back" title={l(desk.teach.note.title)} text={l(desk.teach.note.text)} />
+      </FlipCard>
+    </DeskObject>
+
+    <DeskObject x={340} y={475} tilt={3}>
+      <FlipCard id="desk-moto" label={l(desk.moto.label)}>
+        <PhotoPrint image={moto} alt={l(desk.moto.alt)} caption={l(desk.moto.caption)} />
+        <DeskNote slot="back" title={l(desk.moto.note.title)} text={l(desk.moto.note.text)} />
+      </FlipCard>
+    </DeskObject>
+
+    <DeskObject x={1360} y={350} tilt={1.5}>
+      <FlipCard id="desk-portrait" label={l(desk.portrait.label)}>
+        <PhotoPrint image={frame} alt={l(desk.portrait.alt)} caption={l(desk.portrait.caption)} />
+        <DeskNote slot="back" title={l(desk.portrait.note.title)} text={l(desk.portrait.note.text)} />
+      </FlipCard>
+    </DeskObject>
+
+    <DeskObject x={1360} y={760} tilt={-1.5}>
+      <RocketCard title={l(desk.rocket.title)} text={l(desk.rocket.text)} />
+    </DeskObject>
+
+    <DeskObject x={420} y={920} tilt={-1.5}>
+      <FlipCard id="desk-ticket" label={l(ticket.label)}>
+        <Ticket
+          from={{ code: ticket.from.code, place: l(ticket.from.place), flag: "colombia" }}
+          to={{ code: ticket.to.code, place: l(ticket.to.place) }}
+          details={ticket.details.map(l)}
+        />
+        <DeskNote slot="back" title={l(ticket.note.title)} text={l(ticket.note.text)} />
+      </FlipCard>
+    </DeskObject>
+
+    <DeskObject x={1700} y={910} tilt={1.5}>
+      <FlipCard id="desk-lol" label={l(desk.lol.label)}>
+        <ObjectCard illustration="game" title={l(desk.lol.title)} text={l(desk.lol.text)} />
+        <DeskNote slot="back" title={l(desk.lol.note.title)} text={l(desk.lol.note.text)} />
+      </FlipCard>
+    </DeskObject>
+
+    <DeskObject x={1380} y={1040} tilt={3}>
+      <FlipCard id="desk-pole" label={l(desk.pole.label)}>
+        <ObjectCard illustration="pole" title={l(desk.pole.title)} text={l(desk.pole.text)} />
+        <Image
+          slot="back"
+          src={pole}
+          alt={l(desk.pole.alt)}
+          width={184}
+          height={184}
+          densities={[1, 2]}
+          fit="cover"
+        />
+      </FlipCard>
+    </DeskObject>
+
+    <DeskObject x={270} y={1110} tilt={-1.5}>
+      <FlipCard id="desk-naruto" label={l(desk.naruto.label)}>
+        <ObjectCard illustration="anime" title={l(desk.naruto.title)} text={l(desk.naruto.text)} />
+        <DeskNote slot="back" title={l(desk.naruto.note.title)} text={l(desk.naruto.note.text)} />
+      </FlipCard>
+    </DeskObject>
+
+    <DeskObject x={820} y={1190} tilt={1.5}>
+      <Envelope to={l(desk.envelope.to)} />
+    </DeskObject>
+
+    <DeskObject x={1460} y={1210} tilt={-3}>
+      <Vinyl
+        title={desk.vinyl.title}
+        artist={desk.vinyl.artist}
+        label={l(desk.vinyl.label)}
+        cover={unicornio}
+        spotify={desk.vinyl.spotify}
+      />
+    </DeskObject>
   </Desk>
 </div>
 
