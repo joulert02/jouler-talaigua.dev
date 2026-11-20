@@ -14,7 +14,7 @@ interface Props {
    *  source should be at least 368px square. */
   cover?: ImageMetadata;
   /** Spotify URI of what plays, e.g. "spotify:album:4Ff07AMyi4ZUOORYUZpN9c" (a track works too). When set, pressing
-   *  the record opens Spotify's player in the bottom-right corner, with a loading box of its size while it loads.
+   *  the record opens Spotify's player at the bottom left, left of the Dock from 901px, with a loading box of its size while it loads.
    *  Nothing loads from Spotify before that press: Spotify's script sets a tracking cookie. */
   spotify?: string;
 }
@@ -68,7 +68,9 @@ const customSleeve = Astro.slots.has("sleeve");
 
 <script>
   // One listener for every record on the page. On the desk, <desk-object> swallows the click after a drag.
-  // A record with a Spotify URI opens Spotify's own player (its iFrame API) in a panel in the bottom-right corner.
+  // A record with a Spotify URI opens Spotify's own player (its iFrame API) in a panel at the bottom left: from 901px
+  // centered in the space between the screen's left edge and the Dock, or above it where that space is too narrow;
+  // on phones, in the bottom-left corner.
   // The panel lives in <body>: on the desk the record sits inside rotated, translated boxes, where position: fixed
   // would follow the box instead of the screen.
   type Controller = {
@@ -113,6 +115,25 @@ const customSleeve = Astro.slots.has("sleeve");
     return state.api;
   }
 
+  const desktop = matchMedia("(min-width: 901px)");
+
+  /** Margin, in px, the panel keeps from the screen's edge and from the Dock (--space-4). */
+  const PLAYER_MARGIN = 16;
+
+  /**
+   * From 901px the panel centers in the space left of the Dock, whose width depends on the language; where that space
+   * is too narrow for it, it rests in the corner above the Dock and the board's hint pill instead (CSS).
+   */
+  function placePlayer(panel: HTMLElement) {
+    const dock = document.querySelector(".dock")?.getBoundingClientRect();
+    const onDesktop = desktop.matches && dock !== undefined && dock.width > 0;
+    const fits = onDesktop && dock.left >= panel.getBoundingClientRect().width + 2 * PLAYER_MARGIN;
+    panel.toggleAttribute("data-docked", fits);
+    panel.toggleAttribute("data-raised", onDesktop && !fits);
+    if (fits) panel.style.setProperty("--vinyl-player-gap", `${dock.left}px`);
+    else panel.style.removeProperty("--vinyl-player-gap");
+  }
+
   function setPlaying(vinyl: HTMLButtonElement, playing: boolean) {
     vinyl.setAttribute("aria-pressed", String(playing));
   }
@@ -153,6 +174,7 @@ const customSleeve = Astro.slots.has("sleeve");
     const embed = document.createElement("div");
     panel.append(close, loader, embed);
     document.body.append(panel);
+    placePlayer(panel);
 
     const controller = loadApi().then(
       (api) =>
@@ -203,6 +225,7 @@ const customSleeve = Astro.slots.has("sleeve");
       const uri = vinyl.dataset["spotify"];
       if (uri) void playOnSpotify(vinyl, uri);
     });
+    addEventListener("resize", () => state.player && placePlayer(state.player.panel), { passive: true });
   }
 </script>
 
@@ -409,15 +432,32 @@ const customSleeve = Astro.slots.has("sleeve");
     animation-play-state: running;
   }
 
-  /* Spotify's player, created in <body> by the script above (hence :global). The close button sits on its corner. */
+  /* Spotify's player, created in <body> by the script above (hence :global), in the bottom-left corner. The close
+     button sits on its inner corner, toward the page. */
   :global(.vinyl-player) {
+    /* 80% of Spotify's compact player (282 × 122 instead of 352 × 152): Spotify only lays it out well at 152px
+       tall, so the whole panel scales, from the corner that stays where it rests. Smaller, its text blurs. */
+    --vinyl-player-scale: 0.8;
     position: fixed;
-    right: var(--space-4);
+    left: var(--space-4);
     bottom: var(--space-4);
     z-index: 100;
     width: min(352px, calc(100vw - 2 * var(--space-4)));
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-rest);
+    scale: var(--vinyl-player-scale);
+    transform-origin: 0 100%;
+  }
+  /* From 901px (data-docked, set by the script): centered in the space between the screen's left edge and the Dock,
+     level with the Dock's bottom. The panel scales from its bottom center, so its 352px box centers there too. */
+  :global(.vinyl-player[data-docked]) {
+    left: calc(var(--vinyl-player-gap) / 2 - 176px);
+    transform-origin: 50% 100%;
+  }
+  /* From 901px where that space is too narrow (data-raised): in the corner, above the Dock and the hint pill
+     (Dock 16 + 58px, pill 16 + 42px, then 16px of air). */
+  :global(.vinyl-player[data-raised]) {
+    bottom: calc(4 * var(--space-4) + 58px + 42px);
   }
   /* Below 901px the Dock sits at the bottom of the screen: the player rests above its 80px. */
   @media (max-width: 900px) {
@@ -428,7 +468,7 @@ const customSleeve = Astro.slots.has("sleeve");
   :global(.vinyl-player__close) {
     position: absolute;
     top: calc(-1 * var(--space-3));
-    left: calc(-1 * var(--space-3));
+    right: calc(-1 * var(--space-3));
     z-index: 1;
     display: grid;
     place-items: center;
@@ -442,6 +482,8 @@ const customSleeve = Astro.slots.has("sleeve");
     color: var(--color-text);
     font: 600 12px / 1 var(--font-sans);
     cursor: pointer;
+    /* Undoes the panel's scale, so the close button keeps its full size. */
+    scale: calc(1 / var(--vinyl-player-scale));
   }
   :global(.vinyl-player__close:focus-visible) {
     outline: 2px solid var(--color-text-accent);

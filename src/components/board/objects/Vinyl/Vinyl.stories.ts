@@ -11,7 +11,7 @@ const meta = preview.meta({
     docs: {
       description: {
         component:
-          "A record in its sleeve (original abstract art with the song `title` and `artist`). It is a play toggle (`aria-pressed`, named \"Play {title} by {artist}\" unless `label` is given): pressing it slides the record out, spins it and shows a small equalizer; pressing again puts it back. Hover nudges the record out. `cover` swaps the abstract art for the record's real cover; the `sleeve` slot takes any other sleeve art (decorative, not interactive: it sits inside the button) and wins over both. With `spotify` (a Spotify URI) the press also opens Spotify's player in the bottom-right corner, loaded only then; the record follows the player's play and pause. Sleeve and record keep their own colors in both themes; reduced motion shows the playing state without movement.",
+          "A record in its sleeve (original abstract art with the song `title` and `artist`). It is a play toggle (`aria-pressed`, named \"Play {title} by {artist}\" unless `label` is given): pressing it slides the record out, spins it and shows a small equalizer; pressing again puts it back. Hover nudges the record out. `cover` swaps the abstract art for the record's real cover; the `sleeve` slot takes any other sleeve art (decorative, not interactive: it sits inside the button) and wins over both. With `spotify` (a Spotify URI) the press also opens Spotify's player at the bottom left (from 901px, centered between the screen's edge and the Dock), loaded only then; the record follows the player's play and pause. Sleeve and record keep their own colors in both themes; reduced motion shows the playing state without movement.",
       },
     },
   },
@@ -37,7 +37,7 @@ export const Unicornio = meta.story({
     docs: {
       description: {
         story:
-          "The real cover and the song Buena Energía on Spotify: press the record to open the player in the bottom-right corner.",
+          "The real cover and the song Buena Energía on Spotify: press the record to open the player at the bottom left.",
       },
     },
   },
