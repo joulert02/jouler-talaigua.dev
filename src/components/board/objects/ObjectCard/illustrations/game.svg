@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+  <!-- Game controller, from v11 (docs/design/v11/app.js, "lol"). -->
+  <rect x="5" y="9" width="30" height="22" rx="6" />
+  <path d="M13 16v8M9 20h8" />
+  <circle cx="26" cy="18" r="2" stroke="none" style="fill: var(--color-accent)" />
+  <circle cx="30" cy="22" r="2" stroke="none" fill="currentColor" />
+</svg>

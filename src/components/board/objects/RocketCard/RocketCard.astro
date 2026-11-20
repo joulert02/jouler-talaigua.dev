@@ -1,0 +1,100 @@
+---
+interface Props {
+  /** One word, in bold, under the rocket. */
+  title: string;
+  /** One line under the title. */
+  text: string;
+}
+const { title, text } = Astro.props;
+---
+
+<!-- The roadmap object: a rocket that lifts and fires on hover or when whatever wraps it has keyboard focus. -->
+<span class="rocket-card">
+  <svg class="rocket-card__rocket" viewBox="0 0 46 62" width="46" height="62" aria-hidden="true">
+    <g class="rocket-card__ship">
+      <path
+        d="M23 2c8 7 11 17 10 30H13C12 19 15 9 23 2Z"
+        fill="var(--color-surface)"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linejoin="round"
+      ></path>
+      <circle cx="23" cy="20" r="4.5" fill="var(--color-accent)"></circle>
+      <path
+        d="M13 26 6 36v6l8-5M33 26l7 10v6l-8-5"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linejoin="round"
+      ></path>
+      <path d="M17 38h12l-2 6H19Z" fill="currentColor"></path>
+      <path class="rocket-card__flame" d="M19 46c1 6 3 10 4 12 1-2 3-6 4-12Z"></path>
+    </g>
+  </svg>
+  <strong class="rocket-card__title">{title}</strong>
+  <span class="rocket-card__text">{text}</span>
+</span>
+
+<style>
+  .rocket-card {
+    box-sizing: border-box;
+    display: grid;
+    justify-items: start;
+    gap: 6px;
+    width: 184px;
+    padding: 14px 16px 16px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    box-shadow: var(--shadow-rest);
+    text-align: start;
+    /* Local illustration color: the flame is the one warm note on the desk (v11). */
+    --_flame: #ff8a3d;
+  }
+  .rocket-card__rocket {
+    color: var(--color-text);
+    overflow: visible;
+  }
+  .rocket-card__ship {
+    transition: transform var(--duration-medium) var(--ease-out);
+  }
+  .rocket-card__flame {
+    fill: var(--_flame);
+    opacity: 0;
+    transition: opacity var(--duration-fast) var(--ease-out);
+  }
+  .rocket-card__title {
+    font: 600 var(--font-size-body) / 1.2 var(--font-sans);
+    color: var(--color-text);
+  }
+  .rocket-card__text {
+    font: var(--font-size-small) / var(--line-height-compact) var(--font-sans);
+    color: var(--color-text-muted);
+  }
+  /* Hover, or keyboard focus on whatever wraps it (a link), lifts the rocket and lights the flame. */
+  :is(.rocket-card:hover, :focus-visible) .rocket-card__ship {
+    transform: translateY(-4px);
+  }
+  :is(.rocket-card:hover, :focus-visible) .rocket-card__flame {
+    opacity: 1;
+    animation: rocket-card-flicker 0.18s steps(2) infinite;
+  }
+  @keyframes rocket-card-flicker {
+    to {
+      transform: scaleY(0.82);
+      transform-origin: 23px 46px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .rocket-card__ship,
+    .rocket-card__flame {
+      transition: none;
+    }
+    :is(.rocket-card:hover, :focus-visible) .rocket-card__ship {
+      transform: none;
+    }
+    :is(.rocket-card:hover, :focus-visible) .rocket-card__flame {
+      animation: none;
+    }
+  }
+</style>

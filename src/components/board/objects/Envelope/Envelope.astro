@@ -1,0 +1,154 @@
+---
+interface Props {
+  /** Handwritten line on the envelope, e.g. "for you". */
+  to: string;
+}
+const { to } = Astro.props;
+---
+
+<!--
+  The letter object: a sealed envelope. On hover, or when whatever wraps it has keyboard focus, the flap
+  opens back from its top edge and a letter slides up and peeks out; both return on leave.
+  Layers, back to front: envelope back < letter < front pocket < flap (closed). An open flap drops behind the letter.
+-->
+<span class="envelope">
+  <span class="envelope__letter" aria-hidden="true"></span>
+  <span class="envelope__pocket" aria-hidden="true"></span>
+  <span class="envelope__flap" aria-hidden="true"></span>
+  <span class="envelope__seal" aria-hidden="true"></span>
+  <span class="envelope__to">{to}</span>
+</span>
+
+<style>
+  .envelope {
+    --envelope-paper: color-mix(in srgb, var(--color-surface) 90%, white);
+    --envelope-inside: color-mix(in srgb, var(--color-bg-subtle) 60%, var(--color-border));
+    --envelope-flap: color-mix(in srgb, var(--color-bg-subtle) 70%, var(--color-surface));
+    --envelope-ink: color-mix(in srgb, var(--color-text-muted) 60%, transparent);
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+    width: 200px;
+    height: 134px;
+    background: var(--envelope-inside);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-rest);
+  }
+  .envelope > * {
+    position: absolute;
+  }
+
+  /* The letter waits inside, hidden by the pocket and the closed flap. */
+  .envelope__letter {
+    z-index: 1;
+    inset: 8px 12px 6px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xs);
+    background:
+      linear-gradient(var(--envelope-ink), var(--envelope-ink)) 14px 16px / 46% 2px no-repeat,
+      repeating-linear-gradient(to bottom, transparent 0 13px, var(--color-border) 13px 14px) 0 26px / 100%
+        calc(100% - 26px) no-repeat,
+      var(--envelope-paper);
+    transition: transform var(--duration-medium) var(--ease-out);
+  }
+
+  /* The front pocket: the whole face but a V cut from the top, where the flap closes. */
+  .envelope__pocket,
+  .envelope__flap {
+    inset: -1px -1px auto;
+    filter: drop-shadow(0 0 0.5px color-mix(in srgb, var(--color-text) 35%, transparent));
+  }
+  .envelope__pocket {
+    z-index: 2;
+    bottom: -1px;
+  }
+  .envelope__pocket::before,
+  .envelope__flap::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-sm);
+  }
+  .envelope__pocket::before {
+    background: var(--color-surface);
+    clip-path: polygon(0 0, 50% 52%, 100% 0, 100% 100%, 0 100%);
+  }
+
+  /* The flap hinges on its top edge. Its z-index flips when it passes upright, so it lands behind the letter. */
+  .envelope__flap {
+    z-index: 3;
+    height: 76px;
+    transform-origin: top;
+    transform: perspective(500px) rotateX(0deg);
+    transition:
+      transform var(--duration-medium) var(--ease-out) var(--duration-fast),
+      z-index 0s linear calc(var(--duration-fast) + var(--duration-medium) / 3);
+  }
+  .envelope__flap::before {
+    background: var(--envelope-flap);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+  }
+
+  .envelope__seal {
+    z-index: 4;
+    left: 50%;
+    top: 58px;
+    width: 22px;
+    height: 22px;
+    margin-left: -11px;
+    border-radius: var(--radius-round);
+    background: var(--color-accent);
+    transition: opacity var(--duration-fast) var(--ease-out) var(--duration-medium);
+  }
+  .envelope__to {
+    z-index: 4;
+    left: 18px;
+    bottom: 12px;
+    font: 600 1.5rem / 1 var(--font-hand);
+    color: var(--color-text-secondary);
+  }
+
+  /* Answers its own hover and the keyboard focus of whatever wraps it (a link, a flip card). */
+  .envelope:hover .envelope__flap,
+  :focus-visible .envelope__flap {
+    z-index: 0;
+    transform: perspective(500px) rotateX(180deg);
+    transition:
+      transform var(--duration-medium) var(--ease-out),
+      z-index 0s linear calc(var(--duration-medium) / 3);
+  }
+  .envelope:hover .envelope__seal,
+  :focus-visible .envelope__seal {
+    opacity: 0;
+    transition-delay: 0s;
+  }
+  .envelope:hover .envelope__letter,
+  :focus-visible .envelope__letter {
+    transform: translateY(-58px);
+    transition-delay: calc(var(--duration-medium) * 0.6);
+  }
+
+  /* Reduced motion: the envelope stays sealed. */
+  @media (prefers-reduced-motion: reduce) {
+    .envelope__letter,
+    .envelope__flap,
+    .envelope__seal {
+      transition: none;
+    }
+    .envelope:hover .envelope__flap,
+    :focus-visible .envelope__flap {
+      z-index: 3;
+      transform: none;
+      transition: none;
+    }
+    .envelope:hover .envelope__seal,
+    :focus-visible .envelope__seal {
+      opacity: 1;
+    }
+    .envelope:hover .envelope__letter,
+    :focus-visible .envelope__letter {
+      transform: none;
+    }
+  }
+</style>

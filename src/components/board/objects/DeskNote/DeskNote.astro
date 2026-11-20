@@ -1,0 +1,46 @@
+---
+interface Props {
+  /** The note's first line, in bold. */
+  title: string;
+  /** One or two short sentences. */
+  text: string;
+}
+const { title, text } = Astro.props;
+---
+
+<!--
+  The back of a desk object: a short handwritten-style note on a card. On its own it is a card the size
+  of the desk objects; inside a flip card's back it fills that face.
+-->
+<span class="desk-note">
+  <strong class="desk-note__title">{title}</strong> <span class="desk-note__text">{text}</span>
+</span>
+
+<style>
+  .desk-note {
+    box-sizing: border-box;
+    display: grid;
+    align-content: center;
+    gap: 6px;
+    width: 184px;
+    min-height: 120px;
+    padding: var(--space-4);
+    background: color-mix(in srgb, var(--color-surface) 95%, var(--color-flag-yellow));
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    box-shadow: var(--shadow-rest);
+    font: var(--font-size-small) / var(--line-height-compact) var(--font-sans);
+    color: var(--color-text-secondary);
+    text-align: start;
+  }
+  .desk-note__title {
+    font: 600 1.375rem / 1.1 var(--font-hand);
+    color: var(--color-text);
+  }
+  /* Inside a flip card the note takes the whole back face. */
+  :global(.flip-card__back) > .desk-note {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+  }
+</style>

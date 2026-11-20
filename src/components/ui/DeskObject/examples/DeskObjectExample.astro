@@ -1,0 +1,30 @@
+---
+// One object on a small desk with no center element: drag it around; a click without moving flips it.
+import Desk from "../../Desk/Desk.astro";
+import DeskObject from "../DeskObject.astro";
+import FlipCard from "../../../board/FlipCard/FlipCard.astro";
+import DeskNote from "../../../board/objects/DeskNote/DeskNote.astro";
+import PhotoPrint from "../../../board/objects/PhotoPrint/PhotoPrint.astro";
+import moto from "@/assets/photos/desk-moto.jpg";
+---
+
+<div class="desk-object-example">
+  <Desk world={{ width: 880, height: 440 }} origin={{ x: 440, y: 220 }}>
+    <DeskObject x={340} y={90} tilt={-8}>
+      <FlipCard id="moto" label="Photo: on a motorbike trip in the Colombian mountains">
+        <PhotoPrint
+          image={moto}
+          alt="Jouler in riding gear next to his motorbike on a wet mountain road"
+          caption="Road trip · Colombia"
+        />
+        <DeskNote slot="back" title="Two wheels, long roads." text="Riding is how I reset. Rain included." />
+      </FlipCard>
+    </DeskObject>
+  </Desk>
+</div>
+
+<style>
+  .desk-object-example {
+    height: 560px;
+  }
+</style>

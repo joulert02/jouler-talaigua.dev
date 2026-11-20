@@ -1,10 +1,12 @@
 import preview from "../../../../.storybook/preview";
-import CareerRowStory from "./stories/CareerRowStory.astro";
-import { careerItems } from "../../../config/profile";
+import CareerRow from "./CareerRow.astro";
+import Example from "../../../../.storybook/Example.astro";
+import { exampleMeta } from "../../../../.storybook/example";
 
 const meta = preview.meta({
   title: "Components/Profile/CareerRow",
-  component: CareerRowStory,
+  component: Example,
+  ...exampleMeta(CareerRow),
   tags: ["autodocs"],
   parameters: {
     docs: {
@@ -18,6 +20,10 @@ const meta = preview.meta({
 export default meta;
 
 export const Playground = meta.story({
-  args: { item: careerItems[0] },
-  parameters: { docs: { description: { story: "Edit `item` to try long names or roles." } } },
+  args: { example: "profile/CareerRow/examples/CareerRowExample.astro" },
+  parameters: {
+    docs: {
+      description: { story: "The first entry of `careerItems` in `src/config/profile.ts`, inside its list." },
+    },
+  },
 });

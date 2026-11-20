@@ -10,13 +10,28 @@ interface Props {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- any Astro component
   component: any;
   props: Record<string, unknown>;
+  /** Names of the story's slots (its `slots` arg), which arrive here as StoryRoot's own slots. */
+  slotNames?: string[];
 }
-const { lang, component: Component, props } = Astro.props;
+const { lang, component: Component, props, slotNames = [] } = Astro.props;
 Astro.locals.lang = lang;
+// The story's slot (its `slots` arg), handed to the component under the same name, e.g. Vinyl's `sleeve`. One only:
+// Astro needs each slot name written out in the template (a name from a loop is out of scope there).
+if (slotNames.length > 1) {
+  throw new Error(`StoryRoot hands on one slot per story; this one has ${slotNames.join(", ")}.`);
+}
+const [slot] = slotNames;
+const slotHtml = slot ? await Astro.slots.render(slot) : "";
 ---
 
 <story-root>
-  <Component {...props} />
+  {slot ? (
+    <Component {...props}>
+      <Fragment slot={slot} set:html={slotHtml} />
+    </Component>
+  ) : (
+    <Component {...props} />
+  )}
 </story-root>
 <script>
   class StoryRoot extends HTMLElement {

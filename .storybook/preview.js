@@ -5,6 +5,7 @@ import { getPreferredColorScheme, themes } from "storybook/theming";
 import { THEMES, effectiveTheme } from "../src/lib/theme.js";
 import { defaultLang } from "../src/i18n/ui";
 import StoryRoot from "./StoryRoot.astro";
+import { astroSource } from "./source.js";
 import { GLOBALS_UPDATED } from "storybook/internal/core-events";
 import { createElement as h, Fragment, Suspense, lazy, useEffect, useState } from "react";
 
@@ -77,12 +78,15 @@ export default definePreview({
   },
   initialGlobals: { theme: osTheme },
   // Every story renders through StoryRoot: the page language (the `locale` arg from withLocale, else the default) and
-  // links that stay in the story.
-  render: ({ locale = defaultLang, ...props }, context) => ({
+  // links that stay in the story. A story's `slots` arg goes to StoryRoot as its own slots, which it hands on by name.
+  render: ({ locale = defaultLang, slots = {}, ...props }, context) => ({
     component: StoryRoot,
-    props: { lang: locale, component: context.component, props },
+    props: { lang: locale, component: context.component, props, slotNames: Object.keys(slots) },
+    slots,
   }),
   decorators: [
+    // "Show code": generated from the args, or the example file a composition story renders (see source.js).
+    astroSource,
     (Story, context) => {
       if (context.viewMode === "story" && globalThis.document) {
         // The toolbar choice wins over the OS preference; an unknown value falls back to light.
