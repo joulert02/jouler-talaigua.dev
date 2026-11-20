@@ -12,7 +12,6 @@ import IdentityCard from "../../profile/IdentityCard/IdentityCard.astro";
 import BoardHint from "../BoardHint/BoardHint.astro";
 import DeskEntry from "../DeskEntry/DeskEntry.astro";
 import FlipCard from "../FlipCard/FlipCard.astro";
-import DeskNote from "../objects/DeskNote/DeskNote.astro";
 import Envelope from "../objects/Envelope/Envelope.astro";
 import ObjectCard from "../objects/ObjectCard/ObjectCard.astro";
 import PhotoPrint from "../objects/PhotoPrint/PhotoPrint.astro";
@@ -48,24 +47,15 @@ const { ticket } = desk;
     />
 
     <DeskObject x={470} y={370} compact={{ x: 460, y: 310 }} tilt={-3}>
-      <FlipCard id="desk-teach" label={l(desk.teach.label)}>
-        <PhotoPrint image={talk} alt={l(desk.teach.alt)} caption={l(desk.teach.caption)} />
-        <DeskNote slot="back" title={l(desk.teach.note.title)} text={l(desk.teach.note.text)} />
-      </FlipCard>
+      <PhotoPrint image={talk} alt={l(desk.teach.alt)} caption={l(desk.teach.caption)} />
     </DeskObject>
 
     <DeskObject x={340} y={475} compact={{ x: 270, y: 420 }} tilt={3}>
-      <FlipCard id="desk-moto" label={l(desk.moto.label)}>
-        <PhotoPrint image={moto} alt={l(desk.moto.alt)} caption={l(desk.moto.caption)} />
-        <DeskNote slot="back" title={l(desk.moto.note.title)} text={l(desk.moto.note.text)} />
-      </FlipCard>
+      <PhotoPrint image={moto} alt={l(desk.moto.alt)} caption={l(desk.moto.caption)} />
     </DeskObject>
 
     <DeskObject x={1360} y={350} compact={{ x: 775, y: 325 }} tilt={1.5}>
-      <FlipCard id="desk-portrait" label={l(desk.portrait.label)}>
-        <PhotoPrint image={frame} alt={l(desk.portrait.alt)} caption={l(desk.portrait.caption)} />
-        <DeskNote slot="back" title={l(desk.portrait.note.title)} text={l(desk.portrait.note.text)} />
-      </FlipCard>
+      <PhotoPrint image={frame} alt={l(desk.portrait.alt)} caption={l(desk.portrait.caption)} />
     </DeskObject>
 
     <DeskObject x={1360} y={760} compact={{ x: 850, y: 650 }} tilt={-1.5}>
@@ -73,21 +63,15 @@ const { ticket } = desk;
     </DeskObject>
 
     <DeskObject x={420} y={920} compact={{ x: 445, y: 865 }} tilt={-1.5}>
-      <FlipCard id="desk-ticket" label={l(ticket.label)}>
-        <Ticket
-          from={{ code: ticket.from.code, place: l(ticket.from.place), flag: "colombia" }}
-          to={{ code: ticket.to.code, place: l(ticket.to.place) }}
-          details={ticket.details.map(l)}
-        />
-        <DeskNote slot="back" title={l(ticket.note.title)} text={l(ticket.note.text)} />
-      </FlipCard>
+      <Ticket
+        from={{ code: ticket.from.code, place: l(ticket.from.place), flag: "colombia" }}
+        to={{ code: ticket.to.code, place: l(ticket.to.place) }}
+        details={ticket.details.map(l)}
+      />
     </DeskObject>
 
     <DeskObject x={1700} y={910} compact={{ x: 1040, y: 1180 }} tilt={1.5}>
-      <FlipCard id="desk-lol" label={l(desk.lol.label)}>
-        <ObjectCard illustration="game" title={l(desk.lol.title)} text={l(desk.lol.text)} />
-        <DeskNote slot="back" title={l(desk.lol.note.title)} text={l(desk.lol.note.text)} />
-      </FlipCard>
+      <ObjectCard illustration="game" title={l(desk.lol.title)} text={l(desk.lol.text)} />
     </DeskObject>
 
     <DeskObject x={1380} y={1040} compact={{ x: 650, y: 1140 }} tilt={3}>
@@ -106,10 +90,7 @@ const { ticket } = desk;
     </DeskObject>
 
     <DeskObject x={270} y={1110} compact={{ x: 220, y: 1100 }} tilt={-1.5}>
-      <FlipCard id="desk-naruto" label={l(desk.naruto.label)}>
-        <ObjectCard illustration="anime" title={l(desk.naruto.title)} text={l(desk.naruto.text)} />
-        <DeskNote slot="back" title={l(desk.naruto.note.title)} text={l(desk.naruto.note.text)} />
-      </FlipCard>
+      <ObjectCard illustration="anime" title={l(desk.naruto.title)} text={l(desk.naruto.text)} />
     </DeskObject>
 
     <DeskObject x={820} y={1190} compact={{ x: 695, y: 895 }} tilt={1.5}>

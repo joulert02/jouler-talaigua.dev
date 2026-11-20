@@ -352,8 +352,13 @@ const style = [
       if (count) count.textContent = `${index} / ${total}`;
       const name =
         item.querySelector("[aria-label]")?.getAttribute("aria-label") ??
-        item.textContent?.trim().slice(0, 80) ??
-        "";
+        // A photo without a flip card is named by its description.
+        item.querySelector("img")?.alt ??
+        // Rendered text, one line per block, so a title and its text are not read as one word.
+        item.innerText
+          .trim()
+          .replace(/\s*\n\s*/g, ", ")
+          .slice(0, 80);
       const position = (this.dataset["position"] ?? "").replace("{i}", index).replace("{n}", total);
       if (live) live.textContent = `${position}: ${name}`;
     }
