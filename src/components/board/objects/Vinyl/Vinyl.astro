@@ -9,14 +9,20 @@ interface Props {
   artist: string;
   /** Accessible name of the toggle; defaults to "Play {title} by {artist}". Pass a translated one on Spanish pages. */
   label?: string;
-  /** The record's real cover. It replaces the abstract art and the printed title, which the cover already carries. */
+  /** The record's real cover. It replaces the abstract art and the printed title, which the cover already carries.
+   *  For a sleeve that is not a plain image, use the `sleeve` slot instead. */
   cover?: ImageMetadata;
   /** Spotify URI of what plays, e.g. "spotify:album:4Ff07AMyi4ZUOORYUZpN9c" (a track works too). When set, pressing
-   *  the record opens Spotify's player in the bottom-right corner; nothing loads from Spotify before that press. */
+   *  the record opens Spotify's player in the bottom-right corner, with a loading box of its size while it loads.
+   *  Nothing loads from Spotify before that press: Spotify's script sets a tracking cookie. */
   spotify?: string;
 }
 const { title, artist, label = `Play ${title} by ${artist}`, cover, spotify } = Astro.props;
 const t = useTranslations(getLang(Astro));
+// The `sleeve` slot: a record's own sleeve art (e.g. <Image slot="sleeve" src={…} alt="" />), which fills the sleeve
+// and wins over `cover` and the abstract art. It sits inside the button, so it must be decorative and not interactive:
+// no links or buttons, and alt="" on images, since the button is already named.
+const customSleeve = Astro.slots.has("sleeve");
 ---
 
 <!--
@@ -32,11 +38,16 @@ const t = useTranslations(getLang(Astro));
   data-spotify={spotify}
   data-player-label={spotify && t("vinyl.player")}
   data-close-label={spotify && t("vinyl.close")}
+  data-loading-label={spotify && t("vinyl.loading")}
 >
   <span class="vinyl__stage">
     <span class="vinyl__record" aria-hidden="true"></span>
     <span class="vinyl__sleeve">
-      {cover ? (
+      {customSleeve ? (
+        <span class="vinyl__custom">
+          <slot name="sleeve" />
+        </span>
+      ) : cover ? (
         <Image class="vinyl__cover" src={cover} alt="" width={184} height={184} />
       ) : (
         <>
@@ -120,6 +131,18 @@ const t = useTranslations(getLang(Astro));
     const panel = document.createElement("aside");
     panel.className = "vinyl-player";
     panel.setAttribute("aria-label", vinyl.dataset["playerLabel"] ?? "");
+    panel.setAttribute("aria-busy", "true");
+    // A loading box the size of Spotify's player: it keeps the panel's size, so the player fades in over it
+    // without moving anything.
+    const loader = document.createElement("div");
+    loader.className = "vinyl-player__loader";
+    const spinner = document.createElement("span");
+    spinner.className = "vinyl-player__spinner";
+    spinner.setAttribute("aria-hidden", "true");
+    const status = document.createElement("span");
+    status.className = "vinyl-player__status";
+    status.textContent = vinyl.dataset["loadingLabel"] ?? "";
+    loader.append(spinner, status);
     const close = document.createElement("button");
     close.type = "button";
     close.className = "vinyl-player__close";
@@ -127,14 +150,19 @@ const t = useTranslations(getLang(Astro));
     close.textContent = "✕";
     close.addEventListener("click", closePlayer);
     const embed = document.createElement("div");
-    panel.append(close, embed);
+    panel.append(close, loader, embed);
     document.body.append(panel);
 
     const controller = loadApi().then(
       (api) =>
         new Promise<Controller>((resolve) => {
           api.createController(embed, { uri, width: "100%", height: 152 }, (created) => {
-            created.addListener("ready", () => created.play());
+            created.addListener("ready", () => {
+              // Spotify's player is drawn: it fades in over the loading box (CSS).
+              panel.removeAttribute("aria-busy");
+              panel.dataset["ready"] = "";
+              created.play();
+            });
             // The record follows the player, also when the visitor pauses inside it.
             created.addListener("playback_update", ({ data }) => {
               if (state.player?.controller === controller) setPlaying(state.player.vinyl, !data.isPaused);
@@ -295,6 +323,18 @@ const t = useTranslations(getLang(Astro));
     height: 100%;
     object-fit: cover;
   }
+  /* The `sleeve` slot fills the sleeve too: whatever it holds is stretched to the square and cropped. */
+  .vinyl__custom {
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
+  .vinyl__custom > :global(*) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
   /* A cream sun rising behind a coral wave, plus faint horizon lines. */
   .vinyl__art {
     position: absolute;
@@ -411,6 +451,43 @@ const t = useTranslations(getLang(Astro));
     border: 0;
     border-radius: var(--radius-lg);
   }
+  /* The loading box keeps the player's size for good; Spotify's iframe sits over it and fades in once it is drawn. */
+  :global(.vinyl-player__loader) {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    height: 152px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    transition: visibility 0s linear var(--duration-slow);
+  }
+  /* data-ready rather than :not([aria-busy]): Astro's :global() mangles a :not() followed by a descendant. */
+  :global(.vinyl-player[data-ready] .vinyl-player__loader) {
+    visibility: hidden;
+  }
+  :global(.vinyl-player__spinner) {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--color-border);
+    border-top-color: var(--color-text-secondary);
+    border-radius: var(--radius-round);
+    animation: vinyl-spin 0.8s linear infinite;
+  }
+  :global(.vinyl-player__status) {
+    font: 500 var(--font-size-small) / var(--line-height-compact) var(--font-mono);
+    color: var(--color-text-muted);
+  }
+  :global(.vinyl-player iframe) {
+    position: absolute;
+    inset: 0;
+    transition: opacity var(--duration-slow) var(--ease-out);
+  }
+  :global(.vinyl-player[aria-busy] iframe) {
+    opacity: 0;
+  }
 
   @keyframes vinyl-spin {
     to {
@@ -430,7 +507,9 @@ const t = useTranslations(getLang(Astro));
   @media (prefers-reduced-motion: reduce) {
     .vinyl__record,
     .vinyl__bars,
-    .vinyl__bar {
+    .vinyl__bar,
+    :global(.vinyl-player__spinner),
+    :global(.vinyl-player iframe) {
       transition: none;
       animation: none;
     }
