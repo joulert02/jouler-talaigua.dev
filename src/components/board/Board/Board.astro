@@ -111,6 +111,56 @@ const { ticket } = desk;
   <BoardHint href={localePath(lang, "/projects/")} />
 </div>
 
+<script>
+  // Tab order on the Home: the card, then the menu (the Dock), then the board's objects, then the footer. In the
+  // document the desk wraps the card and the Dock comes after the board, so Tab is routed by groups (lib/tab-order).
+  // From an object, Escape goes back to the menu. The desk opened full screen on a phone keeps its own order.
+  import { nextStop } from "@/lib/tab-order.js";
+
+  const TABBABLE = "a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]";
+  /** The skip link and the language pill (0), the card (1), the Dock (2), the board (3), the footer (4). */
+  const rank = (element: Element) =>
+    element.closest(".identity-card")
+      ? 1
+      : element.closest(".dock")
+        ? 2
+        : element.closest(".board")
+          ? 3
+          : element.closest("footer")
+            ? 4
+            : 0;
+  const stops = () =>
+    [...document.querySelectorAll<HTMLElement>(TABBABLE)].filter(
+      (element) => element.tabIndex >= 0 && !element.closest("[inert]") && element.checkVisibility(),
+    );
+
+  addEventListener("keydown", (event) => {
+    const current = document.activeElement;
+    if (!(current instanceof HTMLElement) || document.querySelector(".desk[data-open]")) return;
+    if (event.key === "Escape" && rank(current) === 3) {
+      // The menu's current page (Home), or its first stop.
+      const menu =
+        document.querySelector<HTMLElement>('.dock [aria-current="page"]') ??
+        stops().find((stop) => rank(stop) === 2);
+      menu?.focus();
+      return;
+    }
+    if (event.key !== "Tab" || event.altKey || event.ctrlKey || event.metaKey) return;
+    const next = nextStop(
+      stops(),
+      rank,
+      current,
+      event.shiftKey,
+      (stop) =>
+        current.contains(stop) ||
+        !!(current.compareDocumentPosition(stop) & Node.DOCUMENT_POSITION_FOLLOWING),
+    );
+    if (!next) return;
+    event.preventDefault();
+    next.focus();
+  });
+</script>
+
 <style>
   /* Below 901px the board adds no box: the card flows with the page. */
   .board {

@@ -118,9 +118,8 @@ const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
         <slot />
       </main>
     </div>
-    <Footer>
-      <CopyEmail variant="text" slot="copy-email" />
-    </Footer>
+    <!-- The Dock before the footer: it is fixed on screen, so only the Tab order follows, and after the footer the
+         page ends. -->
     <Dock items={dockItems} label={t("dock.main")} {current} variant="labels" mobileVariant="active-label">
       <Fragment slot="actions">
         <DockSeparator />
@@ -134,6 +133,9 @@ const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
         </span>
       </Fragment>
     </Dock>
+    <Footer>
+      <CopyEmail variant="text" slot="copy-email" />
+    </Footer>
   </body>
 </html>
 <script>

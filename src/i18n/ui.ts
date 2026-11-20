@@ -28,7 +28,7 @@ export const ui = {
     "layout.mainContent": "Main content",
     "dock.main": "Main",
     "desk.label":
-      "Personal desk. Drag, scroll or use the arrow keys to explore; 0 or Home recenters. Tab moves to each item and brings it into view.",
+      "Personal desk. Drag, scroll or use the arrow keys to explore; 0 or Home recenters. Tab moves to each item and brings it into view; Escape goes back to the menu.",
     "desk.dialog": "My desk",
     "desk.count": "{n} objects",
     "desk.position": "{i} of {n}",
@@ -89,7 +89,7 @@ export const ui = {
     "layout.mainContent": "Contenido principal",
     "dock.main": "Principal",
     "desk.label":
-      "Escritorio personal. Arrastra, desplázate o usa las flechas para explorar; 0 o Inicio vuelve al centro. Tab pasa a cada elemento y lo trae a la vista.",
+      "Escritorio personal. Arrastra, desplázate o usa las flechas para explorar; 0 o Inicio vuelve al centro. Tab pasa a cada elemento y lo trae a la vista; Escape vuelve al menú.",
     "desk.dialog": "Mi escritorio",
     "desk.count": "{n} objetos",
     "desk.position": "{i} de {n}",
