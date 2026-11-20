@@ -21,6 +21,12 @@ const FOCUS_MARGIN = 20;
  */
 const EDGE_MS = 2600;
 const EDGE_MS_REDUCED = 1300;
+/** A touch drag released faster than this, in px/ms, keeps gliding (inertia). */
+const FLING_MIN_SPEED = 0.25;
+/** How long, in ms, the last finger moves count toward the release speed. */
+const FLING_WINDOW = 90;
+/** Decay time constant of that glide, in ms: higher glides further. */
+const FLING_DECAY = 325;
 
 /** Where the desk stands at its bottom edge: `armed` once the camera reaches it, `progress` 0 to 1 while a drag is
  *  held there; 1 means the visitor held it to the end. */
@@ -39,6 +45,18 @@ const INTERACTIVE = "button,a[href],input,textarea,select,desk-object";
  */
 export type WheelMode = "desk" | "page";
 
+export interface CameraOptions {
+  /** What the vertical wheel does over the desk (default `desk`). */
+  wheelMode?: WheelMode;
+  /** Told whenever the bottom-edge state changes (see EdgeState). */
+  onEdge?: (state: EdgeState) => void;
+  /**
+   * Drags that start on an object or a control pan the desk too, and a press that does not travel stays a normal
+   * click. For phones, where a finger cannot tell an object apart from the background and objects do not move.
+   */
+  panFromItems?: boolean;
+}
+
 interface Pan {
   id: number;
   startX: number;
@@ -48,6 +66,10 @@ interface Pan {
   moved: boolean;
   /** Last vertical travel, to tell a drag that keeps pushing past the edge from one that pulls back. */
   lastDy: number;
+  /** The press started on an object or control: it pans only once it travels past DRAG_THRESHOLD. */
+  fromItem: boolean;
+  /** Recent finger positions, for the release speed. */
+  samples: { t: number; x: number; y: number }[];
 }
 
 export class DeskCamera {
@@ -58,24 +80,30 @@ export class DeskCamera {
   private targetX: number | null = null;
   private targetY: number | null = null;
   private frame = 0;
+  private flinging = false;
   private pan: Pan | null = null;
   private suppressClick = false;
   private readonly edge = { armed: false, frame: 0 };
   private readonly abort = new AbortController();
 
+  private readonly wheelMode: WheelMode;
+  private readonly onEdge: (state: EdgeState) => void;
+  private readonly panFromItems: boolean;
+
   /**
    * @param viewport the visible window of the desk; receives the input and the dot-grid offset.
    * @param layer the element the camera translates (card and world move together).
    * @param world the full desk area, used for the bounds.
-   * @param onEdge told whenever the bottom-edge state changes (see EdgeState).
    */
   constructor(
     private readonly viewport: HTMLElement,
     private readonly layer: HTMLElement,
     private readonly world: HTMLElement,
-    private readonly wheelMode: WheelMode = "desk",
-    private readonly onEdge: (state: EdgeState) => void = () => {},
+    { wheelMode = "desk", onEdge = () => {}, panFromItems = false }: CameraOptions = {},
   ) {
+    this.wheelMode = wheelMode;
+    this.onEdge = onEdge;
+    this.panFromItems = panFromItems;
     const signal = this.abort.signal;
     viewport.addEventListener("pointerdown", (event) => this.onPointerDown(event), { signal });
     viewport.addEventListener("pointermove", (event) => this.onPointerMove(event), { signal });
@@ -137,7 +165,22 @@ export class DeskCamera {
   stop() {
     cancelAnimationFrame(this.frame);
     this.frame = 0;
+    this.flinging = false;
     this.targetX = this.targetY = null;
+  }
+
+  /** Glides until `element` sits in the middle of the view, above the `bottom` px a floating bar covers. */
+  reveal(element: Element, bottom = 0) {
+    const box = element.getBoundingClientRect();
+    const view = this.viewport.getBoundingClientRect();
+    const middle = view.top + (view.height - bottom) / 2;
+    this.touched = true;
+    this.glide(
+      this.x + view.left + view.width / 2 - (box.left + box.width / 2),
+      this.y + middle - (box.top + box.height / 2),
+      true,
+      110,
+    );
   }
 
   /** Clamps an offset so the world never leaves more than OVERSCROLL of empty desk at an edge. */
@@ -200,8 +243,9 @@ export class DeskCamera {
     this.onEdge({ armed: this.edge.armed, progress: 0 });
   }
 
-  /** Eases toward a target for wheel and keyboard steps; jumps when motion is reduced. */
-  private glide(x: number, y: number, smooth: boolean) {
+  /** Eases toward a target for wheel and keyboard steps; jumps when motion is reduced. `tau` (ms) sets the pace. */
+  private glide(x: number, y: number, smooth: boolean, tau = 48) {
+    if (this.flinging) this.stop();
     if (!smooth || reducedMotion()) {
       this.stop();
       this.move(x, y);
@@ -212,7 +256,7 @@ export class DeskCamera {
     let last = performance.now();
     const tick = (now: number) => {
       if (this.targetX === null || this.targetY === null) return;
-      const mix = 1 - Math.exp(-(now - last) / 48);
+      const mix = 1 - Math.exp(-(now - last) / tau);
       last = now;
       this.move(this.x + (this.targetX - this.x) * mix, this.y + (this.targetY - this.y) * mix);
       if (Math.hypot(this.targetX - this.x, this.targetY - this.y) < 0.35) {
@@ -232,8 +276,9 @@ export class DeskCamera {
   }
 
   private onPointerDown(event: PointerEvent) {
-    if (event.button !== 0 || (event.target as Element).closest(INTERACTIVE)) return;
-    this.touched = true;
+    if (event.button !== 0) return;
+    const fromItem = (event.target as Element).closest(INTERACTIVE) !== null;
+    if (fromItem && !this.panFromItems) return;
     this.stop();
     this.pan = {
       id: event.pointerId,
@@ -243,8 +288,18 @@ export class DeskCamera {
       y: this.y,
       moved: false,
       lastDy: 0,
+      fromItem,
+      samples: [{ t: event.timeStamp, x: event.clientX, y: event.clientY }],
     };
-    this.viewport.setPointerCapture(event.pointerId);
+    // A press on an object waits until it travels: capturing now would take its click away.
+    if (!fromItem) this.grab(event.pointerId);
+  }
+
+  /** The press becomes a pan: the viewport keeps the pointer even if it leaves the desk. */
+  private grab(pointerId: number) {
+    this.touched = true;
+    if (this.viewport.hasPointerCapture(pointerId)) return;
+    this.viewport.setPointerCapture(pointerId);
     this.viewport.dataset["panning"] = "";
   }
 
@@ -254,6 +309,11 @@ export class DeskCamera {
     const dx = event.clientX - pan.startX;
     const dy = event.clientY - pan.startY;
     if (Math.hypot(dx, dy) > DRAG_THRESHOLD) pan.moved = true;
+    if (pan.fromItem && !pan.moved) return;
+    if (pan.fromItem) this.grab(pan.id);
+    pan.samples.push({ t: event.timeStamp, x: event.clientX, y: event.clientY });
+    while (pan.samples.length > 2 && event.timeStamp - (pan.samples[0]?.t ?? 0) > FLING_WINDOW)
+      pan.samples.shift();
     const before = this.y;
     this.move(pan.x + dx, pan.y + dy);
     // Still pushing the desk up past its bottom edge: the hand-off starts filling (no-op unless armed).
@@ -262,12 +322,50 @@ export class DeskCamera {
   }
 
   private onPointerEnd(event: PointerEvent) {
-    if (!this.pan || this.pan.id !== event.pointerId) return;
-    this.suppressClick = this.pan.moved;
+    const pan = this.pan;
+    if (!pan || pan.id !== event.pointerId) return;
+    // An object losing its implicit touch capture to the viewport (grab) is not the end of the drag.
+    if (event.type === "lostpointercapture" && event.target !== this.viewport) return;
+    this.suppressClick = pan.moved;
     this.release();
     setTimeout(() => {
       this.suppressClick = false;
     }, 0);
+    // A finger that lets go while moving keeps the desk gliding, as native scrolling does.
+    if (event.type === "pointerup" && event.pointerType === "touch" && pan.moved)
+      this.fling(pan, event.timeStamp);
+  }
+
+  /** Inertia after a touch drag: the desk keeps the release speed and slows down until it stops or hits a bound. */
+  private fling(pan: Pan, releasedAt: number) {
+    const first = pan.samples[0];
+    const last = pan.samples[pan.samples.length - 1];
+    if (!first || !last || reducedMotion() || releasedAt - last.t > FLING_WINDOW) return;
+    const elapsed = Math.max(last.t - first.t, 1);
+    let vx = (last.x - first.x) / elapsed;
+    let vy = (last.y - first.y) / elapsed;
+    if (Math.hypot(vx, vy) < FLING_MIN_SPEED) return;
+    this.stop();
+    this.flinging = true;
+    let previous = performance.now();
+    const tick = (now: number) => {
+      const dt = Math.min(now - previous, 32);
+      previous = now;
+      const [x, y] = [this.x + vx * dt, this.y + vy * dt];
+      this.move(x, y);
+      // A bound stops that axis instead of letting the glide push against it.
+      if (Math.abs(this.x - x) > 0.5) vx = 0;
+      if (Math.abs(this.y - y) > 0.5) vy = 0;
+      const decay = Math.exp(-dt / FLING_DECAY);
+      vx *= decay;
+      vy *= decay;
+      if (Math.hypot(vx, vy) < 0.02) {
+        this.stop();
+        return;
+      }
+      this.frame = requestAnimationFrame(tick);
+    };
+    this.frame = requestAnimationFrame(tick);
   }
 
   /** Ends the drag; letting go also cancels the hand-off. */

@@ -5,19 +5,26 @@ interface Props {
   y: number;
   /** Resting rotation in degrees; reduced motion lays every object straight. */
   tilt?: number;
+  /** Where it rests on the desk opened full screen below 901px (the Desk's `compact` world). Default: `x`, `y`. */
+  compact?: { x: number; y: number };
 }
-const { x, y, tilt = 0 } = Astro.props;
+const { x, y, tilt = 0, compact = { x, y } } = Astro.props;
+const style = [
+  `--desk-object-x: ${x}px`,
+  `--desk-object-y: ${y}px`,
+  `--desk-object-compact-x: ${compact.x}px`,
+  `--desk-object-compact-y: ${compact.y}px`,
+  `--desk-object-tilt: ${tilt}deg`,
+].join("; ");
 ---
 
 <!--
-  Places one child on the desk and lets the visitor drag it around (901px and up). The child is the object
+  Places one child on the desk and lets the visitor drag it around (901px and up; on a phone's open desk it stays put
+  and a drag walks the desk). The child is the object
   itself and owns its behaviour: a FlipCard, a link, or anything static. A press that does not travel is a
   normal click on the child; a drag moves the object and swallows that click. Positions reset on reload.
 -->
-<desk-object
-  class="desk-object"
-  style={`--desk-object-x: ${x}px; --desk-object-y: ${y}px; --desk-object-tilt: ${tilt}deg`}
->
+<desk-object class="desk-object" {style}>
   <slot />
 </desk-object>
 
@@ -109,6 +116,14 @@ const { x, y, tilt = 0 } = Astro.props;
     top: var(--desk-object-y);
     cursor: grab;
     touch-action: none;
+  }
+  /* The phone's open desk is smaller (Desk `compact`). */
+  @media (max-width: 900px) {
+    :global(.desk__world) > .desk-object {
+      left: var(--desk-object-compact-x);
+      top: var(--desk-object-compact-y);
+      cursor: pointer;
+    }
   }
   :global(.desk__world) > .desk-object[data-dragging] {
     cursor: grabbing;

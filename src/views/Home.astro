@@ -16,21 +16,24 @@ const t = useTranslations(lang);
   </div>
 </Base>
 <style>
-  /* Mobile first: on phones the card sits at the top of the page. */
+  /*
+   * Mobile first: the card and the desk's way in (DeskEntry) center together in the screen above the Dock (80px); on a
+   * short screen, taller than that space, they start at the top.
+   */
   .home {
     display: grid;
     justify-items: center;
     align-items: start;
-    padding-top: var(--space-4);
+    align-content: safe center;
+    padding-block: var(--space-4) 80px;
     /* Temporary, until the Work section lands: keeps the footer below the first screen, so the Dock shows on load. */
     /* Compensate for `.wrap`'s 1.5rem block padding. */
     min-height: calc(100svh - 3rem);
   }
-  /* Tablet (561px to 900px): the card centers in the viewport minus 80px at the bottom for the Dock. */
+  /* Tablet (561px to 900px): no top padding, as before. */
   @media (min-width: 561px) {
     .home {
-      align-items: center;
-      padding-block: 0 80px;
+      padding-top: 0;
     }
   }
   /* Desktop (901px and up): the desk fills the first screen, edge to edge (v11). */

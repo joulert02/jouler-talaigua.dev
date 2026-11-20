@@ -1,0 +1,273 @@
+---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+interface Props {
+  /** The id of the Desk it opens full screen. */
+  desk: string;
+  /** What the button says, e.g. "Explore my desk". */
+  title: string;
+  /** What waits there, for screen readers, e.g. "Photos, a ticket, a record… tap to flip them". */
+  meta: string;
+  /** Three or four photos from the desk, imported from `src/assets/`; they peek out from under the card above. */
+  photos: ImageMetadata[];
+  /** A selector for the element that keeps the entry tucked away while it is on screen (the card's name). When the
+   *  page has no such element, the entry simply shows. */
+  revealPast?: string;
+}
+const { desk, title, meta, photos, revealPast } = Astro.props;
+---
+
+<!--
+  The way into the desk on phones (below 901px), right under the identity card: the card comes first (recruiters and
+  companies), the desk is a secondary, optional layer. A few prints from the desk peek out from beneath the card, as if
+  it lay on top of them, over a button that opens the desk full screen (ui/Desk, `data-desk-open`). On load both wait
+  tucked under the card, so nothing crowds the Dock and the browser's bottom bar on the first screen. Once the element
+  in `revealPast` (the card's name) scrolls out of view, the prints slide out one by one and the button in; when it
+  comes back into view, well before the top where phones pull to reload, they tuck away playing it backwards. On a
+  tall screen, where card and entry fit together above the Dock, they show from the start; on a shorter one the entry
+  hangs under the card without taking room, so the card centers alone. Focus shows them too; without
+  that element they simply show, and without JavaScript, which the desk needs, the entry is hidden. Pressing pulls the prints a little further. From 901px, and
+  while the desk is open, it is hidden: the desk is on screen.
+-->
+<button
+  class="desk-entry"
+  type="button"
+  data-desk-open={desk}
+  aria-controls={desk}
+  aria-haspopup="dialog"
+  data-reveal-past={revealPast}
+  style={`--desk-entry-count: ${photos.length}`}
+>
+  <span class="desk-entry__peek" aria-hidden="true">
+    {photos.map((photo, index) => (
+      <span class="desk-entry__print" style={`--desk-entry-index: ${index}`}>
+        <Image
+          class="desk-entry__photo"
+          src={photo}
+          alt=""
+          width={64}
+          height={76}
+          densities={[1, 2]}
+          fit="cover"
+          draggable="false"
+        />
+      </span>
+    ))}
+  </span>
+  <span class="desk-entry__title">
+    {title}
+    <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true">
+      <path
+        d="M4 10h12m-4.5-4.5L16 10l-4.5 4.5"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      ></path>
+    </svg>
+  </span>
+  <!-- Read with the button's name; on screen the prints say it. -->
+  <span class="desk-entry__meta">{meta}</span>
+</button>
+
+<script>
+  /** Room the Dock takes at the bottom of the screen, in px: its 16px offset, its 58px height and 16px of air. */
+  const DOCK_ROOM = 90;
+  // Once per entry: Storybook runs this script again for every story.
+  for (const entry of document.querySelectorAll<HTMLElement>(".desk-entry:not([data-watched])")) {
+    entry.toggleAttribute("data-watched", true);
+    let settle = 0;
+    const show = (on: boolean) => {
+      if (on === entry.hasAttribute("data-revealed")) return;
+      entry.toggleAttribute("data-revealed", on);
+      clearTimeout(settle);
+      entry.removeAttribute("data-settled");
+      // Once out, hover and press no longer wait for the staggered entrance.
+      if (on) settle = window.setTimeout(() => entry.toggleAttribute("data-settled", true), 800);
+    };
+    const selector = entry.dataset["revealPast"];
+    const anchor = selector ? document.querySelector(selector) : null;
+    if (!anchor) {
+      show(true);
+      continue;
+    }
+    // While the card's name is on screen the visitor is reading the card: the entry waits. Once it scrolls out,
+    // the visitor has gone past the card and the entry comes out; scrolling back to it tucks the entry away.
+    let past = false;
+    let roomy = false;
+    // On a tall screen, where card and entry fit together above the Dock on load, the entry takes its place under the
+    // card and shows from the start (data-roomy). Elsewhere it hangs under the card without taking room, so the card
+    // centers alone, and it comes out with the scroll without moving anything. Measured with the entry in place; the
+    // first screen's height (clientHeight) does not change as phone toolbars collapse, so scrolling never flips it.
+    const measure = () => {
+      entry.toggleAttribute("data-roomy", true);
+      const bottom = entry.getBoundingClientRect().bottom + scrollY;
+      roomy = bottom <= document.documentElement.clientHeight - DOCK_ROOM;
+      entry.toggleAttribute("data-roomy", roomy);
+      show(past || roomy);
+    };
+    measure();
+    addEventListener("resize", measure, { passive: true });
+    // The site fonts can change the card's height once they load.
+    void document.fonts.ready.then(measure);
+    new IntersectionObserver(([record]) => {
+      past = record ? !record.isIntersecting : past;
+      show(past || roomy);
+    }).observe(anchor);
+  }
+</script>
+
+<style>
+  .desk-entry {
+    all: unset;
+    box-sizing: border-box;
+    display: grid;
+    justify-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    max-width: 540px;
+    /* The prints start under the card's bottom edge: the card covers their top. */
+    margin-top: -44px;
+    text-align: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .desk-entry__peek {
+    display: flex;
+    justify-content: center;
+  }
+  /* A small print: white border, a tilt each, overlapping its neighbours. */
+  .desk-entry__print {
+    --_tilt: calc((var(--desk-entry-index) - 1.5) * 6deg);
+    display: block;
+    margin-inline: -5px;
+    padding: 5px 5px 14px;
+    background: var(--color-surface);
+    border-radius: 3px;
+    box-shadow: var(--shadow-rest);
+    rotate: var(--_tilt);
+    transition: translate var(--duration-medium) var(--ease-spring);
+  }
+  .desk-entry__print:nth-child(even) {
+    translate: 0 6px;
+  }
+  .desk-entry__photo {
+    display: block;
+    width: 64px;
+    height: 76px;
+    object-fit: cover;
+    border-radius: 1px;
+  }
+  .desk-entry__title {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 44px;
+    padding: 0 var(--space-5);
+    font: 600 var(--font-size-body) / 1 var(--font-sans);
+    color: var(--color-text);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-rest);
+    transition:
+      background-color var(--duration-fast) var(--ease-out),
+      scale var(--duration-fast) var(--ease-out),
+      opacity var(--duration-medium) var(--ease-out),
+      translate var(--duration-medium) var(--ease-out);
+  }
+  .desk-entry__title svg {
+    color: var(--color-text-accent);
+  }
+  .desk-entry__meta {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  /* Pressing pulls the prints out a little further. */
+  .desk-entry:active .desk-entry__print {
+    translate: 0 10px;
+  }
+  .desk-entry:active .desk-entry__title {
+    background: var(--color-surface-hover);
+    scale: 0.97;
+  }
+  .desk-entry:focus-visible .desk-entry__title {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 3px;
+  }
+  @media (hover: hover) {
+    .desk-entry:hover .desk-entry__print {
+      translate: 0 8px;
+    }
+    .desk-entry:hover .desk-entry__title {
+      background: var(--color-surface-hover);
+    }
+  }
+  /* From 901px, and on the open desk, the desk is already on screen. */
+  :global(.desk[data-open]) .desk-entry {
+    display: none;
+  }
+  @media (min-width: 901px) {
+    .desk-entry {
+      display: none;
+    }
+  }
+
+  /*
+   * Waiting for the first scroll (the script sets data-revealed): the prints hide under the card and the button is
+   * invisible. Focus shows them too.
+   */
+  /* Without JavaScript the desk cannot open: no button that does nothing. */
+  @media (scripting: none) {
+    .desk-entry {
+      display: none;
+    }
+  }
+  @media (scripting: enabled) {
+    /* Without room (see the script) it hangs under the card from a zero-height row: the card centers alone. */
+    :global(.desk__layer:has(> .desk-entry:not([data-roomy]))) {
+      grid-template-rows: auto 0;
+    }
+    .desk-entry {
+      align-self: start;
+    }
+    .desk-entry:not([data-revealed], :focus-visible) {
+      pointer-events: none;
+    }
+    .desk-entry:not([data-revealed], :focus-visible) .desk-entry__print {
+      translate: 0 -76px;
+      /* Tucking away plays the entrance backwards: the button leaves first, then the last print out goes in first. */
+      transition-timing-function: var(--ease-out);
+      transition-delay: calc(160ms + (var(--desk-entry-count) - 1 - var(--desk-entry-index)) * 60ms);
+    }
+    .desk-entry:not([data-revealed], :focus-visible) .desk-entry__title {
+      opacity: 0;
+      translate: 0 -12px;
+    }
+    /* On the way out the prints follow one another, then the button comes in. */
+    .desk-entry[data-revealed] .desk-entry__print {
+      transition-delay: calc(var(--desk-entry-index) * 60ms);
+    }
+    .desk-entry[data-revealed] .desk-entry__title {
+      transition-delay: 0ms, 0ms, 220ms, 220ms;
+    }
+    /* After the reveal, hover and press respond at once. */
+    .desk-entry[data-settled] .desk-entry__print,
+    .desk-entry[data-settled] .desk-entry__title {
+      transition-delay: 0ms;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .desk-entry__print,
+    .desk-entry__title {
+      transition: none;
+      animation: none;
+    }
+  }
+</style>

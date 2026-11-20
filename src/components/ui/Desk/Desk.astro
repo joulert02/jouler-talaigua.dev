@@ -1,28 +1,65 @@
 ---
 import { getLang, useTranslations } from "../../../i18n/ui";
 interface Props {
+  /** Names the desk: a `[data-desk-open="{id}"]` element opens it full screen on phones, at `#{id}`. Without it the
+   *  desk stays desktop-only. */
+  id?: string;
   /** Size of the world the visitor walks across, in px. Default: v11's 1960 × 1460. */
   world?: { width: number; height: number };
   /** Where the `center` element's top-left corner sits in the world, in px. Default: v11's (710, 350). */
   origin?: { x: number; y: number };
+  /**
+   * The desk opened full screen below 901px (v11 mobile): a smaller world, and where the `center` element sits in it,
+   * by its horizontal middle (`x`) and its top (`y`), since its width follows the phone. Default: v11's 1280 × 1480,
+   * (640, 600). DeskObjects take their own `compact` positions.
+   */
+  compact?: { world: { width: number; height: number }; center: { x: number; y: number } };
+  /** A short line shown at the top when the desk opens on a phone, e.g. "Drag to explore · tap to flip". */
+  hint?: string;
 }
-const { world = { width: 1960, height: 1460 }, origin = { x: 710, y: 350 } } = Astro.props;
+const {
+  id,
+  world = { width: 1960, height: 1460 },
+  origin = { x: 710, y: 350 },
+  compact = { world: { width: 1280, height: 1480 }, center: { x: 640, y: 600 } },
+  hint,
+} = Astro.props;
 const t = useTranslations(getLang(Astro));
-const style = `--desk-world-width: ${world.width}px; --desk-world-height: ${world.height}px; --desk-origin-x: ${origin.x}px; --desk-origin-y: ${origin.y}px`;
+const style = [
+  `--desk-world-width: ${world.width}px`,
+  `--desk-world-height: ${world.height}px`,
+  `--desk-origin-x: ${origin.x}px`,
+  `--desk-origin-y: ${origin.y}px`,
+  `--desk-compact-width: ${compact.world.width}px`,
+  `--desk-compact-height: ${compact.world.height}px`,
+  `--desk-compact-x: ${compact.center.x}px`,
+  `--desk-compact-y: ${compact.center.y}px`,
+].join("; ");
 ---
 
 <!--
-  A desk (v11, docs/design/v11/canvas.js): on desktop (901px and up) a world larger than the screen that the
-  visitor walks across by dragging, with the wheel or trackpad, or with the keyboard. It knows nothing of what
-  it holds: the `center` slot is the element the resting view centers on (the Home's identity card), and the
-  default slot takes DeskObjects, each placed in world coordinates. CSS alone lays out the resting view, so the
-  first paint is final; the deferred camera script only adds an offset once the visitor moves. Below 901px the
-  world is hidden and the `center` element flows as a normal page.
-  At the bottom edge the desk fires a bubbling `desk-edge` event, detail { armed, progress } (camera.ts, EdgeState):
-  armed once the camera reaches the edge, progress filling from 0 to 1 while a background drag is held there, back
-  to 0 when it is released. What a full hand-off does is up to the page (the Home opens Work).
+  A desk (v11, docs/design/v11/canvas.js): a world larger than the screen that the visitor walks across by dragging,
+  with the wheel or trackpad, or with the keyboard. It knows nothing of what it holds: the `center` slot is the element
+  the resting view centers on (the Home's identity card), and the default slot takes DeskObjects, each placed in world
+  coordinates. CSS alone lays out the resting view, so the first paint is final; the deferred camera script only adds an
+  offset once the visitor moves.
+  From 901px the desk is part of the page. Below, the world is hidden and the `center` element flows as a normal page,
+  until a `[data-desk-open="{id}"]` element opens the desk full screen (v11 mobile): a modal layer at `#{id}` where one
+  finger walks the desk, also from an object, a tap still flips or plays it, and a bar at the thumb steps from object
+  to object (‹ ›) and closes it. Back, Escape and the close button leave it; focus returns to the opener.
+  At the bottom edge the desktop desk fires a bubbling `desk-edge` event, detail { armed, progress } (camera.ts,
+  EdgeState): armed once the camera reaches the edge, progress filling from 0 to 1 while a background drag is held
+  there, back to 0 when it is released. What a full hand-off does is up to the page (the Home opens Work).
 -->
-<desk-board class="desk" data-label={t("desk.label")} {style}>
+<desk-board
+  class="desk"
+  id={id}
+  data-label={t("desk.label")}
+  data-dialog-label={t("desk.dialog")}
+  data-count={t("desk.count")}
+  data-position={t("desk.position")}
+  {style}
+>
   <div class="desk__viewport">
     <div class="desk__stage">
       <div class="desk__layer">
@@ -34,6 +71,48 @@ const style = `--desk-world-width: ${world.width}px; --desk-world-height: ${worl
       </div>
     </div>
   </div>
+  {hint && <p class="desk__hint">{hint}</p>}
+  <div class="desk__bar">
+    <button class="desk__button" type="button" data-desk-step="-1" aria-label={t("desk.previous")}>
+      <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
+        <path
+          d="M12.5 4.5 7 10l5.5 5.5"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        ></path>
+      </svg>
+    </button>
+    <span class="desk__count" aria-hidden="true"></span>
+    <button class="desk__button" type="button" data-desk-step="1" aria-label={t("desk.next")}>
+      <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
+        <path
+          d="M7.5 4.5 13 10l-5.5 5.5"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        ></path>
+      </svg>
+    </button>
+    <span class="desk__separator" aria-hidden="true"></span>
+    <button class="desk__button desk__close" type="button" aria-label={t("desk.close")}>
+      <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
+        <path
+          d="m5.5 5.5 9 9m0-9-9 9"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+        ></path>
+      </svg>
+    </button>
+    <!-- Polite: each step announces where it landed ("3 of 10: Photo…"). -->
+    <span class="desk__live" aria-live="polite"></span>
+  </div>
 </desk-board>
 
 <script>
@@ -41,27 +120,261 @@ const style = `--desk-world-width: ${world.width}px; --desk-world-height: ${worl
   import { DeskCamera, type EdgeState, type WheelMode } from "./camera";
 
   const desktop = matchMedia("(min-width: 901px)");
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
   // Experiment flag: `?wheel=page` lets the vertical wheel scroll the page instead of panning the desk.
   const wheelMode: WheelMode = new URLSearchParams(location.search).get("wheel") === "page" ? "page" : "desk";
+  /** How long the phone hint stays before it fades on its own, in ms. */
+  const HINT_MS = 4000;
 
   class DeskBoard extends HTMLElement {
     private camera: DeskCamera | undefined;
     private resize: ResizeObserver | undefined;
-    private readonly sync = () => this.mount();
+    private abort: AbortController | undefined;
+    /** What opened the desk on a phone; focus goes back to it on close. */
+    private opener: HTMLElement | null = null;
+    /** Everything outside the desk made inert while it is open. */
+    private inerted: HTMLElement[] = [];
+    /** The objects in the order ‹ › visits them, and the one the camera last stepped to (-1: none yet). */
+    private tour: HTMLElement[] = [];
+    private at = -1;
+    private hintTimer = 0;
+
+    private get isOpen() {
+      return this.hasAttribute("data-open");
+    }
+
+    private get hash() {
+      return this.id ? `#${this.id}` : "";
+    }
 
     connectedCallback() {
-      desktop.addEventListener("change", this.sync);
+      this.abort = new AbortController();
+      const { signal } = this.abort;
+      desktop.addEventListener("change", () => this.onBreakpoint(), { signal });
+      document.addEventListener("click", (event) => this.onOpenerClick(event), { signal });
+      this.querySelector(".desk__close")?.addEventListener("click", () => this.leave(), { signal });
+      for (const button of this.querySelectorAll<HTMLElement>("[data-desk-step]")) {
+        button.addEventListener("click", () => this.step(Number(button.dataset["deskStep"])), { signal });
+      }
+      this.addEventListener(
+        "keydown",
+        (event) => {
+          if (event.key !== "Escape" || !this.isOpen) return;
+          event.preventDefault();
+          this.leave();
+        },
+        { signal },
+      );
+      // The first touch on the desk shows the visitor got it: the hint goes.
+      this.querySelector(".desk__viewport")?.addEventListener("pointerdown", () => this.hideHint(), {
+        signal,
+      });
+      // The phone's back gesture closes the open desk; Forward opens it again.
+      addEventListener("popstate", () => this.syncWithUrl(), { signal });
       this.mount();
+      if (this.hash && location.hash === this.hash) this.open(null, false);
     }
 
     disconnectedCallback() {
-      desktop.removeEventListener("change", this.sync);
+      this.abort?.abort();
       this.unmount();
+      this.inertOutside(false);
+    }
+
+    private onOpenerClick(event: MouseEvent) {
+      if (!this.id || desktop.matches) return;
+      const opener = (event.target as Element).closest<HTMLElement>("[data-desk-open]");
+      if (opener?.dataset["deskOpen"] !== this.id) return;
+      event.preventDefault();
+      this.open(opener);
+    }
+
+    private syncWithUrl() {
+      const here = this.hash !== "" && location.hash === this.hash;
+      if (this.isOpen && !here) this.close();
+      else if (!this.isOpen && here) this.open(null, false);
+    }
+
+    /** Opens the desk full screen (phones only); `push` adds the `#id` history entry that Back closes. */
+    open(opener: HTMLElement | null, push = true) {
+      if (this.isOpen || desktop.matches) return;
+      this.opener = opener;
+      void this.transition("open", () => {
+        this.setAttribute("data-open", "");
+        this.setAttribute("role", "dialog");
+        this.setAttribute("aria-modal", "true");
+        this.setAttribute("aria-label", this.dataset["dialogLabel"] ?? "");
+        this.inertOutside(true);
+        this.mount();
+        this.collectTour();
+        this.at = -1;
+        this.updateCount();
+      }).then(() => {
+        this.querySelector<HTMLElement>(".desk__viewport")?.focus({ preventScroll: true });
+        this.showHint();
+      });
+      // The mark in the entry survives a reload and Back/Forward, so `leave` knows the entry is the desk's own.
+      if (push) history.pushState({ ...history.state, desk: true }, "", this.hash);
+    }
+
+    /** Closes it in place; `leave` is the visitor's way out, through history when the desk added an entry. */
+    close() {
+      if (!this.isOpen) return;
+      const opener = this.opener;
+      void this.transition("close", () => this.reset()).then(() => opener?.focus({ preventScroll: true }));
+    }
+
+    private leave() {
+      if (location.hash !== this.hash) return this.close();
+      // Our own entry: going back removes it and popstate closes the desk.
+      if ((history.state as { desk?: boolean } | null)?.desk) return history.back();
+      // Opened from a link to `#id`: there is no entry of ours to go back to.
+      history.replaceState(history.state, "", location.pathname + location.search);
+      this.close();
+    }
+
+    /** Back to the page, without animation: also used when the window grows past 900px. */
+    private reset() {
+      this.removeAttribute("data-open");
+      this.removeAttribute("role");
+      this.removeAttribute("aria-modal");
+      this.removeAttribute("aria-label");
+      this.hideHint();
+      this.inertOutside(false);
+      this.mount();
+    }
+
+    private onBreakpoint() {
+      if (desktop.matches && this.isOpen) {
+        if (location.hash === this.hash)
+          history.replaceState(history.state, "", location.pathname + location.search);
+        this.reset();
+      } else this.mount();
+    }
+
+    /** Runs a DOM change as a view transition where there is one: the center element morphs between page and desk. */
+    private transition(kind: "open" | "close", update: () => void): Promise<void> {
+      if (reducedMotion.matches || !document.startViewTransition) {
+        update();
+        return Promise.resolve();
+      }
+      const root = document.documentElement;
+      root.dataset["deskTransition"] = kind;
+      const transition = document.startViewTransition(update);
+      void transition.finished.finally(() => delete root.dataset["deskTransition"]);
+      return transition.updateCallbackDone;
+    }
+
+    /** Makes everything outside the desk inert while it is open, except layers marked `data-desk-above`. */
+    private inertOutside(on: boolean) {
+      for (const element of this.inerted) element.inert = false;
+      this.inerted = [];
+      if (!on) return;
+      // Each ancestor up to <body>: its children that do not hold the desk become inert.
+      for (
+        let node = this.parentElement;
+        node && node !== document.documentElement;
+        node = node.parentElement
+      ) {
+        for (const sibling of node.children) {
+          if (sibling.contains(this) || !(sibling instanceof HTMLElement) || sibling.inert) continue;
+          if (sibling.matches("head, script, style, [data-desk-above]")) continue;
+          sibling.inert = true;
+          this.inerted.push(sibling);
+        }
+      }
+    }
+
+    /** The objects in reading order on the open desk: rows from the top, each from the left. */
+    private collectTour() {
+      const world = this.querySelector(".desk__world");
+      const items = [...(world?.children ?? [])].filter(
+        (item): item is HTMLElement => item instanceof HTMLElement,
+      );
+      const row = (item: HTMLElement) => Math.round(item.offsetTop / 200);
+      this.tour = items.sort((a, b) => row(a) - row(b) || a.offsetLeft - b.offsetLeft);
+      if (reducedMotion.matches) return;
+      // They land on the desk one after another, in that order.
+      this.tour.forEach((item, index) =>
+        item.animate([{ opacity: 0, transform: "translateY(16px) scale(0.94)" }, {}], {
+          duration: 420,
+          delay: 120 + index * 45,
+          easing: "cubic-bezier(0.2, 0.8, 0.2, 1)",
+          fill: "backwards",
+        }),
+      );
+    }
+
+    private step(direction: number) {
+      const total = this.tour.length;
+      if (!total) return;
+      this.at = this.at < 0 ? (direction > 0 ? 0 : total - 1) : (this.at + direction + total) % total;
+      const item = this.tour[this.at];
+      if (!item) return;
+      this.camera?.reveal(item, this.barRoom());
+      // The object it lands on lifts for a moment.
+      if (!reducedMotion.matches) {
+        item.animate(
+          [
+            {},
+            {
+              offset: 0.4,
+              transform: "translateY(-10px) scale(1.05)",
+              filter: "drop-shadow(0 18px 24px rgb(0 0 0 / 0.18))",
+            },
+            {},
+          ],
+          { duration: 900, easing: "cubic-bezier(0.2, 0.8, 0.2, 1)" },
+        );
+      }
+      this.updateCount(item);
+      this.hideHint();
+    }
+
+    /** What the bar covers at the bottom, so a step centers the object in the desk that stays visible (a step also
+     *  hides the hint at the top). */
+    private barRoom() {
+      const viewport = this.querySelector(".desk__viewport")?.getBoundingClientRect();
+      const bar = this.querySelector(".desk__bar")?.getBoundingClientRect();
+      return viewport && bar ? Math.max(0, viewport.bottom - bar.top) : 0;
+    }
+
+    private updateCount(item?: HTMLElement) {
+      const total = String(this.tour.length);
+      const count = this.querySelector(".desk__count");
+      const live = this.querySelector(".desk__live");
+      if (!item) {
+        if (count) count.textContent = (this.dataset["count"] ?? "").replace("{n}", total);
+        if (live) live.textContent = "";
+        return;
+      }
+      const index = String(this.at + 1);
+      if (count) count.textContent = `${index} / ${total}`;
+      const name =
+        item.querySelector("[aria-label]")?.getAttribute("aria-label") ??
+        item.textContent?.trim().slice(0, 80) ??
+        "";
+      const position = (this.dataset["position"] ?? "").replace("{i}", index).replace("{n}", total);
+      if (live) live.textContent = `${position}: ${name}`;
+    }
+
+    private showHint() {
+      const hint = this.querySelector(".desk__hint");
+      if (!hint) return;
+      hint.toggleAttribute("data-visible", true);
+      clearTimeout(this.hintTimer);
+      this.hintTimer = window.setTimeout(() => this.hideHint(), HINT_MS);
+    }
+
+    private hideHint() {
+      clearTimeout(this.hintTimer);
+      this.querySelector(".desk__hint")?.removeAttribute("data-visible");
     }
 
     private mount() {
       this.unmount();
-      if (!desktop.matches) return;
+      const phone = !desktop.matches;
+      if (phone && !this.isOpen) return;
       const viewport = this.querySelector<HTMLElement>(".desk__viewport");
       const layer = this.querySelector<HTMLElement>(".desk__layer");
       const world = this.querySelector<HTMLElement>(".desk__world");
@@ -70,7 +383,13 @@ const style = `--desk-world-width: ${world.width}px; --desk-world-height: ${worl
       viewport.tabIndex = 0;
       viewport.setAttribute("role", "region");
       viewport.setAttribute("aria-label", this.dataset["label"] ?? "");
-      this.camera = new DeskCamera(viewport, layer, world, wheelMode, (state) => this.edge(state));
+      this.camera = new DeskCamera(viewport, layer, world, {
+        wheelMode,
+        // On a phone a finger cannot aim at the background between objects, and objects do not move: every drag pans.
+        panFromItems: phone,
+        // The hand-off to Work belongs to the desktop desk.
+        onEdge: (state) => !phone && this.edge(state),
+      });
       this.resize = new ResizeObserver(() => this.camera?.refit());
       this.resize.observe(viewport);
     }
@@ -80,7 +399,7 @@ const style = `--desk-world-width: ${world.width}px; --desk-world-height: ${worl
     }
 
     private unmount() {
-      // Without a camera (below 901px) there is no edge to stand on.
+      // Without a camera there is no edge to stand on.
       if (this.camera) this.edge({ armed: false, progress: 0 });
       this.camera?.destroy();
       this.resize?.disconnect();
@@ -96,77 +415,222 @@ const style = `--desk-world-width: ${world.width}px; --desk-world-height: ${worl
 </script>
 
 <style>
-  /* Mobile first: below 901px the desk is a plain wrapper and the center element flows with the page. */
-  .desk,
-  .desk__viewport,
+  /*
+   * The desk at work: always from 901px, and below only while open full screen. Below 901px and closed, the media query
+   * at the end turns it back into a plain wrapper where the center element flows as a normal page.
+   */
+  .desk {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  .desk__viewport {
+    display: block;
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    touch-action: none;
+    cursor: grab;
+    background-color: var(--color-bg-subtle);
+    /* One dot grid that moves with the camera (v11); at rest the offsets are 0. */
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      color-mix(in srgb, var(--color-text-muted) 20%, transparent) 1px,
+      transparent 0
+    );
+    background-size: 22px 22px;
+    background-position: var(--desk-camera-x, 0px) var(--desk-camera-y, 0px);
+    outline-offset: -4px;
+  }
+  .desk__viewport[data-panning] {
+    cursor: grabbing;
+    user-select: none;
+  }
+  /* The resting view: the center element centered in the screen above the Dock (80px), from the top when it is taller. */
   .desk__stage {
-    display: contents;
-  }
-  .desk__layer {
     display: grid;
+    position: absolute;
+    inset: 0;
     justify-items: center;
+    align-items: safe center;
+    padding: 24px 0 80px;
   }
+  /* The camera translates this layer: the center element and the world move together. It shrinks to the
+     center element, so the world can hang off that element's corner. */
+  .desk__layer {
+    display: block;
+    position: relative;
+    width: max-content;
+    max-width: 100%;
+    will-change: translate;
+  }
+  /* The world hangs off the center element: its top-left corner lands at the origin. */
   .desk__world {
+    display: block;
+    position: absolute;
+    left: calc(-1 * var(--desk-origin-x));
+    top: calc(-1 * var(--desk-origin-y));
+    width: var(--desk-world-width);
+    height: var(--desk-world-height);
+    /* Behind the card, inside the layer's stacking context (will-change creates it). */
+    z-index: -1;
+  }
+  /* The phone controls exist only on the open desk. */
+  .desk__hint,
+  .desk__bar {
     display: none;
   }
 
-  @media (min-width: 901px) {
-    .desk {
-      display: block;
-      position: relative;
-      width: 100%;
-      height: 100%;
+  @media (max-width: 900px) {
+    /* Closed: no box, the center element flows with the page and the world is hidden. */
+    .desk:not([data-open]),
+    .desk:not([data-open]) .desk__viewport,
+    .desk:not([data-open]) .desk__stage {
+      display: contents;
     }
-    .desk__viewport {
-      display: block;
-      position: absolute;
-      inset: 0;
-      overflow: hidden;
-      touch-action: none;
-      cursor: grab;
-      background-color: var(--color-bg-subtle);
-      /* One dot grid that moves with the camera (v11); at rest the offsets are 0. */
-      background-image: radial-gradient(
-        circle at 1px 1px,
-        color-mix(in srgb, var(--color-text-muted) 20%, transparent) 1px,
-        transparent 0
-      );
-      background-size: 22px 22px;
-      background-position: var(--desk-camera-x, 0px) var(--desk-camera-y, 0px);
-      outline-offset: -4px;
+    /* Safari applies touch-action even to a box-less (display: contents) element: the page must keep scrolling. */
+    .desk:not([data-open]) .desk__viewport {
+      touch-action: auto;
+      cursor: auto;
     }
-    .desk__viewport[data-panning] {
-      cursor: grabbing;
-      user-select: none;
-    }
-    /* The resting view: the center element centered in the screen above the Dock (80px), from the top when it is taller. */
-    .desk__stage {
+    .desk:not([data-open]) .desk__layer {
       display: grid;
-      position: absolute;
-      inset: 0;
       justify-items: center;
-      align-items: safe center;
-      padding: 24px 0 80px;
+      width: auto;
+      max-width: none;
+      will-change: auto;
     }
-    /* The camera translates this layer: the center element and the world move together. It shrinks to the
-       center element, so the world can hang off that element's corner. */
-    .desk__layer {
-      display: block;
-      position: relative;
-      width: max-content;
-      max-width: 100%;
-      will-change: translate;
+    .desk:not([data-open]) .desk__world {
+      display: none;
     }
-    /* The world hangs off the center element: its top-left corner lands at the origin. */
-    .desk__world {
+
+    /* Open: a full-screen layer over the page, above the Dock. */
+    .desk[data-open] {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      height: 100dvh;
+      background: var(--color-bg-subtle);
+    }
+    :global(html:has(.desk[data-open])) {
+      overflow: hidden;
+    }
+    /* The center element sits a little above the middle, clear of the bar at the bottom. */
+    .desk[data-open] .desk__stage {
+      padding: max(24px, env(safe-area-inset-top)) 24px calc(96px + env(safe-area-inset-bottom, 0px));
+    }
+    /* The compact world hangs off the center element's horizontal middle and its top, as its width follows the phone. */
+    .desk[data-open] .desk__world {
+      left: calc(50% - var(--desk-compact-x));
+      top: calc(-1 * var(--desk-compact-y));
+      width: var(--desk-compact-width);
+      height: var(--desk-compact-height);
+    }
+    .desk[data-open] .desk__hint {
       display: block;
       position: absolute;
-      left: calc(-1 * var(--desk-origin-x));
-      top: calc(-1 * var(--desk-origin-y));
-      width: var(--desk-world-width);
-      height: var(--desk-world-height);
-      /* Behind the card, inside the layer's stacking context (will-change creates it). */
-      z-index: -1;
+      top: max(var(--space-4), env(safe-area-inset-top));
+      left: 50%;
+      z-index: 2;
+      margin: 0;
+      padding: 10px 16px;
+      translate: -50% -8px;
+      opacity: 0;
+      font: 500 var(--font-size-small) / 1 var(--font-sans);
+      color: var(--color-text);
+      white-space: nowrap;
+      background: color-mix(in srgb, var(--color-surface) 94%, transparent);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-pill);
+      box-shadow: var(--shadow-rest);
+      pointer-events: none;
+      transition:
+        opacity var(--duration-medium) var(--ease-out),
+        translate var(--duration-medium) var(--ease-out);
+    }
+    .desk[data-open] .desk__hint[data-visible] {
+      opacity: 1;
+      translate: -50% 0;
+    }
+
+    /* The bar sits where the thumb rests, as the Dock does on the page. */
+    .desk[data-open] .desk__bar {
+      display: flex;
+      position: absolute;
+      left: 50%;
+      bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+      translate: -50% 0;
+      z-index: 2;
+      align-items: center;
+      gap: var(--space-1);
+      padding: 6px;
+      background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--color-border);
+      border-radius: 18px;
+      box-shadow: var(--shadow-rest);
+    }
+  }
+
+  .desk__button {
+    all: unset;
+    box-sizing: border-box;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    color: var(--color-text);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      background-color var(--duration-fast) var(--ease-out),
+      scale var(--duration-fast) var(--ease-out);
+  }
+  .desk__button:active {
+    background: var(--color-surface-hover);
+    scale: 0.94;
+  }
+  .desk__button:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 2px;
+  }
+  .desk__close {
+    background: var(--color-text);
+    color: var(--color-surface);
+  }
+  .desk__close:active {
+    background: var(--color-text-secondary);
+  }
+  .desk__count {
+    min-width: 88px;
+    text-align: center;
+    font: 500 var(--font-size-small) / 1 var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+  .desk__separator {
+    width: 1px;
+    height: 24px;
+    margin-inline: var(--space-1);
+    background: var(--color-border);
+  }
+  .desk__live {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .desk__hint,
+    .desk__button {
+      transition: none !important;
     }
   }
 </style>

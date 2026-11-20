@@ -119,6 +119,20 @@ main[tabindex="-1"]:focus {
   object-position: top;
 }
 /*
+ * The phone desk opening or closing full screen (ui/Desk sets data-desk-transition): the identity card morphs between
+ * the page and the desk's compact card, clipped to its own box, and the Dock, which the open desk covers, fades with it.
+ */
+:root[data-desk-transition]::view-transition-group(profile-card) {
+  overflow: clip;
+  border-radius: 18px;
+  animation-duration: var(--duration-slow);
+}
+:root[data-desk-transition="open"]::view-transition-new(dock),
+:root[data-desk-transition="close"]::view-transition-old(dock) {
+  animation: none;
+  opacity: 0;
+}
+/*
  * Home ↔ pages (HU-02, v11): every page sits "below" the Home. Going to a page, the Home leaves upward while the page
  * enters from below, like scrolling one screen down; coming back to the Home plays it the other way. The types come
  * from the pagereveal script in Base.astro. The identity card (`profile-card`) has no partner on those pages, so it

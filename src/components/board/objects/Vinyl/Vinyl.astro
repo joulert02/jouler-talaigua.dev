@@ -152,6 +152,8 @@ const customSleeve = Astro.slots.has("sleeve");
   function openPlayer(vinyl: HTMLButtonElement, uri: string): Player {
     const panel = document.createElement("aside");
     panel.className = "vinyl-player";
+    // It plays over the phone's open desk too, which makes the rest of the page inert (ui/Desk).
+    panel.dataset["deskAbove"] = "";
     panel.setAttribute("aria-label", vinyl.dataset["playerLabel"] ?? "");
     panel.setAttribute("aria-busy", "true");
     // A loading box the size of Spotify's player: it keeps the panel's size, so the player fades in over it
@@ -459,7 +461,7 @@ const customSleeve = Astro.slots.has("sleeve");
   :global(.vinyl-player[data-raised]) {
     bottom: calc(4 * var(--space-4) + 58px + 42px);
   }
-  /* Below 901px the Dock sits at the bottom of the screen: the player rests above its 80px. */
+  /* Below 901px the Dock, or the open desk's bar, sits at the bottom of the screen: the player rests above its 80px. */
   @media (max-width: 900px) {
     :global(.vinyl-player) {
       bottom: 80px;
