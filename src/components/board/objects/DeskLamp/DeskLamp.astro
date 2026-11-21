@@ -1,0 +1,170 @@
+---
+import ObjectReveal from "../ObjectReveal/ObjectReveal.astro";
+interface Props {
+  /** Accessible name of the cord, e.g. "Pull the cord to switch between light and dark". */
+  label: string;
+  /** First line of the note shown while the lights are off. */
+  title: string;
+  /** The note under the title. */
+  text: string;
+}
+const { label, title, text } = Astro.props;
+---
+
+<!--
+  A desk lamp whose cord switches the whole site between light and dark, like the Dock's theme toggle (same
+  cookie). Only the cord is a button, so the lamp itself can be dragged. Whenever the lights change, by the cord,
+  the Dock's toggle or the system, it announces them on the window (lights.ts) for anything on the desk that
+  wants to react. The note that explains the dark theme shows from 901px only: on a phone's desk it would cover
+  what lies under the lamp, and the whole screen turning dark already says it.
+-->
+<desk-lamp class="desk-lamp">
+  <svg
+    class="desk-lamp__art"
+    viewBox="0 0 140 170"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="3"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <path class="desk-lamp__light" d="M18 62 -30 170h150L74 62Z" fill="var(--_glow)" stroke="none"></path>
+    <path d="M12 62 34 22h26l22 40Z" fill="var(--color-surface)"></path>
+    <path d="M58 30 104 70 92 156"></path>
+    <ellipse cx="92" cy="160" rx="30" ry="7" fill="var(--color-surface)"></ellipse>
+  </svg>
+  <button type="button" class="desk-lamp__cord" aria-pressed="false" aria-label={label}></button>
+  <ObjectReveal title={title} text={text} />
+</desk-lamp>
+
+<script>
+  import { effectiveTheme, switchTheme } from "@/lib/theme.js";
+  import { LIGHTS_EVENT, type LightsDetail } from "../lights";
+  import { setReveal } from "../reveal";
+
+  class DeskLampElement extends HTMLElement {
+    private root: MutationObserver | undefined;
+    private os: AbortController | undefined;
+
+    connectedCallback() {
+      const cord = this.querySelector<HTMLButtonElement>(".desk-lamp__cord");
+      const root = document.documentElement;
+      const darkQuery = matchMedia("(prefers-color-scheme: dark)");
+      const isDark = () => effectiveTheme(root.dataset["theme"], darkQuery.matches) === "dark";
+      const show = () => {
+        this.toggleAttribute("data-lit", isDark());
+        cord?.setAttribute("aria-pressed", String(isDark()));
+      };
+      show();
+      // The lamp follows the root and the system, so it also lights up when the Dock's toggle or the OS changes
+      // the theme, and it tells the desk every time.
+      const sync = () => {
+        if (this.hasAttribute("data-lit") === isDark()) return;
+        show();
+        window.dispatchEvent(new CustomEvent<LightsDetail>(LIGHTS_EVENT, { detail: { on: !isDark() } }));
+      };
+      this.root = new MutationObserver(sync);
+      this.root.observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+      this.os = new AbortController();
+      darkQuery.addEventListener("change", sync, { signal: this.os.signal });
+
+      cord?.addEventListener("click", () => {
+        setReveal(this, switchTheme() === "dark");
+        // Restart the tug even when the cord is pulled twice in a row.
+        cord.classList.remove("desk-lamp__cord--pulled");
+        void cord.offsetWidth;
+        cord.classList.add("desk-lamp__cord--pulled");
+      });
+    }
+
+    disconnectedCallback() {
+      this.root?.disconnect();
+      this.os?.abort();
+    }
+  }
+
+  if (!customElements.get("desk-lamp")) customElements.define("desk-lamp", DeskLampElement);
+</script>
+
+<style>
+  .desk-lamp {
+    position: relative;
+    display: inline-block;
+    width: 140px;
+    height: 170px;
+    /* Local illustration color: the warm cone of light, the same in both themes. */
+    --_glow: #ffd866;
+  }
+  @media (max-width: 900px) {
+    .desk-lamp :global(.object-reveal) {
+      display: none;
+    }
+  }
+  .desk-lamp__art {
+    display: block;
+    width: 100%;
+    height: 100%;
+    color: var(--color-text);
+    overflow: visible;
+  }
+  .desk-lamp__light {
+    opacity: 0;
+    transition: opacity var(--duration-medium) var(--ease-out);
+  }
+  .desk-lamp[data-lit] .desk-lamp__light {
+    opacity: 0.28;
+  }
+  /* The cord: a thin line with a bead, inside a 24px-wide target under the shade. */
+  .desk-lamp__cord {
+    all: unset;
+    position: absolute;
+    left: 28px;
+    top: 62px;
+    width: 24px;
+    height: 54px;
+    cursor: pointer;
+    transform-origin: top;
+  }
+  .desk-lamp__cord::before {
+    content: "";
+    position: absolute;
+    left: 11px;
+    top: 0;
+    width: 2px;
+    height: 40px;
+    background: var(--color-text-secondary);
+  }
+  .desk-lamp__cord::after {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 38px;
+    width: 12px;
+    height: 12px;
+    border-radius: var(--radius-round);
+    background: var(--color-accent);
+  }
+  .desk-lamp__cord:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+  .desk-lamp__cord--pulled {
+    animation: desk-lamp-pull 0.35s var(--ease-spring);
+  }
+  @keyframes desk-lamp-pull {
+    40% {
+      transform: scaleY(1.35);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .desk-lamp__light {
+      transition: none;
+    }
+    .desk-lamp__cord--pulled {
+      animation: none;
+    }
+  }
+</style>

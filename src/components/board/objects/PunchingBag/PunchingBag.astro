@@ -1,0 +1,239 @@
+---
+import ObjectReveal from "../ObjectReveal/ObjectReveal.astro";
+interface Props {
+  /** Accessible name of the bag, e.g. "Punching bag: hit it". */
+  label: string;
+  /** What the scoreboard says, with {score}, {streak} and {best} replaced. */
+  board: {
+    /** Before the first hit, e.g. "Hit the bag to start". */
+    start: string;
+    /** During the round, e.g. "{score} pts". */
+    score: string;
+    /** During a combo, e.g. "{score} pts · combo ×{streak}". */
+    combo: string;
+    /** When the round ends: the title of the note, e.g. "{score} points · best {best}". */
+    result: string;
+  };
+  /** The note under the result. */
+  text: string;
+}
+const { label, board, text } = Astro.props;
+---
+
+<!--
+  A hanging punching bag with a ten-second round. The first hit starts the clock; every hit scores a point and
+  swings the bag away from the side that was hit, and three quick hits in a row start a combo worth double.
+  When the time runs out the note shows the score and the best one of this visit, and the next hit starts a new
+  round. The best score lives in the page only: nothing is saved.
+-->
+<punching-bag
+  class="punching-bag"
+  data-start={board.start}
+  data-score={board.score}
+  data-combo={board.combo}
+  data-result={board.result}
+  data-text={text}
+>
+  <button type="button" class="punching-bag__bag" aria-label={label}>
+    <svg class="punching-bag__art" width="110" height="250" viewBox="0 0 110 250" aria-hidden="true">
+      <path d="M55 0v52M30 66 55 44l25 22" stroke="var(--_chain)" stroke-width="4" fill="none"></path>
+      <rect x="22" y="62" width="66" height="176" rx="26" fill="var(--_red)"></rect>
+      <rect x="22" y="62" width="66" height="26" rx="13" fill="var(--_deep)"></rect>
+      <rect x="22" y="196" width="66" height="14" fill="var(--_deep)"></rect>
+      <path
+        d="M36 100q-6 50 0 86"
+        stroke="#fff"
+        stroke-width="5"
+        stroke-linecap="round"
+        opacity=".3"
+        fill="none"
+      ></path>
+    </svg>
+  </button>
+  <span class="punching-bag__board">
+    <span class="punching-bag__score" role="status">
+      {board.start}
+    </span>
+    <span class="punching-bag__clock" aria-hidden="true">
+      <span class="punching-bag__time"></span>
+    </span>
+  </span>
+  <ObjectReveal text={text} />
+</punching-bag>
+
+<script>
+  import { setReveal } from "../reveal";
+
+  /** The round, in milliseconds. */
+  const ROUND = 10_000;
+  /** Hits closer together than this, in milliseconds, keep a streak going. */
+  const QUICK = 420;
+  /** A streak this long is a combo: its hits are worth double. */
+  const COMBO = 3;
+  /** After a round, hits are ignored this long, so the last flurry does not start the next one. */
+  const BREATHER = 900;
+
+  class PunchingBagElement extends HTMLElement {
+    private frame = 0;
+
+    connectedCallback() {
+      const bag = this.querySelector<HTMLButtonElement>(".punching-bag__bag");
+      const score = this.querySelector<HTMLElement>(".punching-bag__score");
+      const time = this.querySelector<HTMLElement>(".punching-bag__time");
+      if (!bag || !score || !time) return;
+      const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const fill = (text: string | undefined, values: Record<string, number>) =>
+        Object.entries(values).reduce(
+          (out, [name, value]) => out.replace(`{${name}}`, String(value)),
+          text ?? "",
+        );
+      let started = 0;
+      let ended = 0;
+      let points = 0;
+      let streak = 0;
+      let lastHit = 0;
+      let best = 0;
+      // The bag is a damped spring around its hook.
+      let angle = 0;
+      let velocity = 0;
+
+      const finish = () => {
+        started = 0;
+        ended = performance.now();
+        best = Math.max(best, points);
+        score.textContent = this.dataset["start"] ?? "";
+        setReveal(this, true, {
+          title: fill(this.dataset["result"], { score: points, best }),
+          text: this.dataset["text"] ?? "",
+        });
+      };
+      const tick = (now: number) => {
+        velocity += -angle * 0.06;
+        velocity *= 0.93;
+        angle += velocity;
+        if (!still) bag.style.rotate = `${angle.toFixed(2)}deg`;
+        if (started) {
+          const left = Math.max(0, 1 - (now - started) / ROUND);
+          time.style.scale = `${left.toFixed(3)} 1`;
+          if (left === 0) finish();
+        }
+        const moving = Math.abs(angle) > 0.05 || Math.abs(velocity) > 0.05;
+        this.frame = started || moving ? requestAnimationFrame(tick) : 0;
+      };
+      bag.addEventListener("click", (event) => {
+        const now = performance.now();
+        if (now - ended < BREATHER) return;
+        if (!started) {
+          started = now;
+          points = streak = 0;
+          setReveal(this, false);
+        }
+        streak = now - lastHit < QUICK ? streak + 1 : 1;
+        lastHit = now;
+        const worth = streak >= COMBO ? 2 : 1;
+        points += worth;
+        score.textContent = fill(streak >= COMBO ? this.dataset["combo"] : this.dataset["score"], {
+          score: points,
+          streak,
+        });
+        // A hit on the left half pushes the bag to the right, and the other way round. A key press has no side.
+        const side =
+          event.detail === 0 ? (streak % 2 ? 1 : -1) : event.offsetX < bag.offsetWidth / 2 ? 1 : -1;
+        velocity += -side * (5 + Math.min(streak, 6));
+        const pop = document.createElement("span");
+        pop.className = "punching-bag__pop";
+        pop.textContent = `+${worth}`;
+        pop.style.left = `${30 + Math.random() * 50}px`;
+        this.append(pop);
+        setTimeout(() => pop.remove(), 600);
+        if (!this.frame) this.frame = requestAnimationFrame(tick);
+      });
+    }
+
+    disconnectedCallback() {
+      cancelAnimationFrame(this.frame);
+    }
+  }
+
+  if (!customElements.get("punching-bag")) customElements.define("punching-bag", PunchingBagElement);
+</script>
+
+<style>
+  .punching-bag {
+    position: relative;
+    display: inline-grid;
+    justify-items: center;
+    /* Local illustration colors, the same in both themes. */
+    --_red: #d9453a;
+    --_deep: #b3261e;
+    --_chain: #5b616a;
+  }
+  /* The bag swings from its hook, at the top of the chain. */
+  .punching-bag__bag {
+    all: unset;
+    box-sizing: border-box;
+    display: block;
+    transform-origin: 50% 0;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .punching-bag__bag:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
+  }
+  .punching-bag__art {
+    display: block;
+    filter: drop-shadow(0 16px 14px rgb(20 21 23 / 0.3));
+  }
+  .punching-bag__board {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+    padding: 8px 14px;
+    white-space: nowrap;
+    font: 500 var(--font-size-small) / 1.3 var(--font-mono);
+    color: var(--color-text);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-rest);
+  }
+  .punching-bag__clock {
+    width: 120px;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--color-border);
+    overflow: hidden;
+  }
+  .punching-bag__time {
+    display: block;
+    height: 100%;
+    background: var(--color-accent);
+    transform-origin: left;
+  }
+  /* The "+1" that floats up from each hit is added by the script, so its rule is global: a scoped selector
+     would never match it. */
+  :global(.punching-bag__pop) {
+    position: absolute;
+    top: 150px;
+    font: 600 1.375rem / 1 var(--font-sans);
+    color: var(--color-text-accent);
+    pointer-events: none;
+    animation: punching-bag-pop 0.6s var(--ease-out) forwards;
+  }
+  @keyframes punching-bag-pop {
+    to {
+      transform: translateY(-46px);
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.punching-bag__pop) {
+      animation: none;
+      opacity: 0;
+    }
+  }
+</style>

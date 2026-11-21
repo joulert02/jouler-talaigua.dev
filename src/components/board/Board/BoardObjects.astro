@@ -1,0 +1,284 @@
+---
+// Every object of the Home's desk, each placed by its id in layout.ts. Board.astro renders them on the Desk and the
+// layout editor on a zoomable sheet, so both always show the same objects. What they say lives in src/config/desk.ts.
+import { Image } from "astro:assets";
+import FlipCard from "../FlipCard/FlipCard.astro";
+import AerialSilks from "../objects/AerialSilks/AerialSilks.astro";
+import BinaryBonsai from "../objects/BinaryBonsai/BinaryBonsai.astro";
+import BookShelf from "../objects/BookShelf/BookShelf.astro";
+import BoxingGlove from "../objects/BoxingGlove/BoxingGlove.astro";
+import BugJar from "../objects/BugJar/BugJar.astro";
+import CoAuthorMascot from "../objects/CoAuthorMascot/CoAuthorMascot.astro";
+import CoffeeBeans from "../objects/CoffeeBeans/CoffeeBeans.astro";
+import CoffeeGrinder from "../objects/CoffeeGrinder/CoffeeGrinder.astro";
+import ColombiaParade from "../objects/ColombiaParade/ColombiaParade.astro";
+import DeskLamp from "../objects/DeskLamp/DeskLamp.astro";
+import DeskNote from "../objects/DeskNote/DeskNote.astro";
+import Envelope from "../objects/Envelope/Envelope.astro";
+import JotaPet from "../objects/JotaPet/JotaPet.astro";
+import NarutoSticker from "../objects/NarutoSticker/NarutoSticker.astro";
+import NowNotes from "../objects/NowNotes/NowNotes.astro";
+import ObjectCard from "../objects/ObjectCard/ObjectCard.astro";
+import Passport from "../objects/Passport/Passport.astro";
+import PhotoPrint from "../objects/PhotoPrint/PhotoPrint.astro";
+import PourOver from "../objects/PourOver/PourOver.astro";
+import PunchingBag from "../objects/PunchingBag/PunchingBag.astro";
+import RamenBowl from "../objects/RamenBowl/RamenBowl.astro";
+import RocketCard from "../objects/RocketCard/RocketCard.astro";
+import Sketchbook from "../objects/Sketchbook/Sketchbook.astro";
+import TalksStack from "../objects/TalksStack/TalksStack.astro";
+import TechSticker from "../objects/TechSticker/TechSticker.astro";
+import Ticket from "../objects/Ticket/Ticket.astro";
+import Vinyl from "../objects/Vinyl/Vinyl.astro";
+import { covers } from "../objects/Book/covers";
+import Placed from "./Placed.astro";
+import { desk, localized } from "../../../config/desk";
+import { getLang } from "../../../i18n/ui";
+import moto from "../../../assets/photos/desk-moto.jpg";
+import smile from "../../../assets/photos/portrait-smile.jpg";
+import pole from "../../../assets/photos/desk-pole.jpg";
+import unicornio from "../../../assets/covers/unicornio.jpg";
+import greenPrint from "../../../assets/covers/el-green-print.jpg";
+import jazz from "../../../assets/covers/jazz.jpg";
+import piex from "../../../assets/covers/50-mil-piex.jpg";
+import impulsos from "../../../assets/covers/impulsos.jpg";
+import teaching1 from "../../../assets/talks/teaching-01.jpg";
+import teaching2 from "../../../assets/talks/teaching-02.jpg";
+import teaching3 from "../../../assets/talks/teaching-03.jpg";
+import teaching4 from "../../../assets/talks/teaching-04.jpg";
+
+const copy = localized(desk, getLang(Astro));
+const { ticket, coffee, boxing } = copy;
+/** Fills the {slots} of a text. */
+const fill = (text: string, values: Record<string, string | number>) =>
+  text.replace(/\{(\w+)\}/g, (slot, name: string) => String(values[name] ?? slot));
+
+const teaching = [teaching1, teaching2, teaching3, teaching4];
+const books = [
+  {
+    title: "How to Know a Person",
+    pages: 320,
+    author: "David Brooks",
+    color: "#b0294f",
+    cover: covers.howToKnowAPerson,
+    review: copy.bookShelf.reviews.howToKnowAPerson,
+  },
+  {
+    title: "El Principito",
+    pages: 128,
+    author: "Antoine de Saint-Exupéry",
+    color: "#16407a",
+    cover: covers.elPrincipito,
+    review: copy.bookShelf.reviews.elPrincipito,
+  },
+  {
+    title: "Cómo ganar amigos e influir sobre las personas",
+    spine: "Cómo ganar amigos",
+    pages: 372,
+    author: "Dale Carnegie",
+    color: "#0f5e6e",
+    cover: covers.comoGanarAmigos,
+    review: copy.bookShelf.reviews.comoGanarAmigos,
+  },
+  {
+    title: "El Kybalión",
+    pages: 160,
+    author: "Tres Iniciados",
+    color: "#8a6a3c",
+    cover: covers.elKybalion,
+    review: copy.bookShelf.reviews.elKybalion,
+  },
+  {
+    title: "Sumérgete en los patrones de diseño",
+    spine: "Patrones de diseño",
+    pages: 436,
+    author: "Alexander Shvets",
+    color: "#1b2150",
+    cover: covers.patronesDeDiseno,
+    review: copy.bookShelf.reviews.patronesDeDiseno,
+  },
+];
+const stamps = copy.passport.stamps.map((code, index) => ({ code, found: index < copy.passport.found }));
+const records = [
+  { id: "vinylGreenPrint", ...copy.records.greenPrint, cover: greenPrint },
+  { id: "vinylJazz", ...copy.records.jazz, cover: jazz },
+  { id: "vinylPiex", ...copy.records.piex, cover: piex },
+  { id: "vinylImpulsos", ...copy.records.impulsos, cover: impulsos },
+] as const;
+const stickers = [
+  { id: "stickerAstro", logo: "astro", name: "Astro" },
+  { id: "stickerReact", logo: "react", name: "React" },
+  { id: "stickerTypescript", logo: "typescript", name: "TypeScript" },
+  { id: "stickerClaude", logo: "claude", name: "Claude" },
+] as const;
+---
+
+<!-- In view at rest. Left of the card: the teaching prints, the ticket, the anime card and the pet. -->
+<Placed id="talks">
+  <TalksStack
+    label={copy.talks.label}
+    photos={teaching.map((image, index) => ({
+      image,
+      caption: fill(copy.talks.caption, { n: index + 1, total: teaching.length }),
+    }))}
+  />
+</Placed>
+<Placed id="ticket">
+  <Ticket
+    from={{ code: ticket.from.code, place: ticket.from.place, flag: "colombia" }}
+    to={{ code: ticket.to.code, place: ticket.to.place }}
+    details={ticket.details}
+  />
+</Placed>
+<Placed id="narutoCard">
+  <FlipCard id="desk-naruto" label={copy.naruto.label}>
+    <ObjectCard illustration="anime" title={copy.naruto.title} text={copy.naruto.text} />
+    <DeskNote slot="back" title={copy.naruto.note.title} text={copy.naruto.note.text} />
+  </FlipCard>
+</Placed>
+<Placed id="pet">
+  <JotaPet label={copy.pet.label} lines={copy.pet.lines} />
+</Placed>
+
+<!-- Right of the card: the portrait, one tool, the roadmap, the games card cut by the screen's edge, pole, Claude. -->
+<Placed id="portrait">
+  <FlipCard id="desk-portrait" label={copy.portrait.label}>
+    <PhotoPrint image={smile} alt={copy.portrait.alt} caption={copy.portrait.caption} />
+    <DeskNote slot="back" title={copy.portrait.note.title} text={copy.portrait.note.text} />
+  </FlipCard>
+</Placed>
+<Placed id="roadmap">
+  <RocketCard title={copy.rocket.title} text={copy.rocket.text} />
+</Placed>
+<Placed id="lol">
+  <FlipCard id="desk-lol" label={copy.lol.label}>
+    <ObjectCard illustration="game" title={copy.lol.title} text={copy.lol.text} />
+    <DeskNote slot="back" title={copy.lol.note.title} text={copy.lol.note.text} />
+  </FlipCard>
+</Placed>
+<Placed id="pole">
+  <FlipCard id="desk-pole" label={copy.pole.label}>
+    <ObjectCard illustration="pole" title={copy.pole.title} text={copy.pole.text} />
+    <Image
+      slot="back"
+      src={pole}
+      alt={copy.pole.alt}
+      width={184}
+      height={184}
+      densities={[1, 2]}
+      fit="cover"
+    />
+  </FlipCard>
+</Placed>
+<Placed id="mascot">
+  <CoAuthorMascot label={copy.mascot.label} role={copy.mascot.role} lines={copy.mascot.lines} />
+</Placed>
+
+<!-- Under the card: the letter. -->
+<Placed id="envelope">
+  <Envelope to={copy.envelope.to} label={copy.envelope.label} />
+</Placed>
+
+<!-- One step away: a record below, the lamp above, the bug jar to the left. -->
+<Placed id="vinylUnicornio">
+  <Vinyl
+    title={copy.vinyl.title}
+    artist={copy.vinyl.artist}
+    label={copy.vinyl.label}
+    cover={unicornio}
+    spotify={copy.vinyl.spotify}
+  />
+</Placed>
+<Placed id="lamp">
+  <DeskLamp label={copy.lamp.label} title={copy.lamp.title} text={copy.lamp.text} />
+</Placed>
+<Placed id="bugJar">
+  <BugJar {...copy.bugJar} />
+</Placed>
+
+<!-- Found while walking. The tools and the records are spread out, one per corner of the walk. -->
+{stickers.map((sticker) => (
+  <Placed id={sticker.id}>
+    <TechSticker logo={sticker.logo} label={fill(copy.sticker.label, sticker)} />
+  </Placed>
+))}
+{records.map((record) => (
+  <Placed id={record.id}>
+    <Vinyl
+      title={record.title}
+      artist={record.artist}
+      label={fill(copy.records.label, { title: record.title, artist: record.artist })}
+      cover={record.cover}
+      spotify={record.spotify}
+    />
+  </Placed>
+))}
+
+<!-- North: the journey's passport, books (with room beside the shelf for the one taken out), drawing, learning. -->
+<Placed id="passport">
+  <Passport label={copy.passport.label} cover={copy.passport.cover} route={copy.passport.route} {stamps} />
+</Placed>
+<Placed id="bookShelf">
+  <BookShelf
+    {books}
+    heading={copy.bookShelf.heading}
+    bookplate={copy.bookShelf.bookplate}
+    takeLabel={copy.bookShelf.takeLabel}
+    returnLabel={copy.bookShelf.returnLabel}
+    bookLabel={copy.bookShelf.bookLabel}
+  />
+</Placed>
+<Placed id="sketchbook">
+  <Sketchbook {...copy.sketchbook} />
+</Placed>
+<Placed id="nowNotes">
+  <NowNotes
+    label={copy.nowNotes.label}
+    notes={copy.nowNotes.notes.map((text, index, notes) => ({
+      text,
+      tag: fill(copy.nowNotes.tag, { n: index + 1, total: notes.length }),
+    }))}
+  />
+</Placed>
+<Placed id="bonsai">
+  <BinaryBonsai {...copy.bonsai} />
+</Placed>
+
+<!-- West: the road trip and coffee, in the order it is made. -->
+<Placed id="moto">
+  <FlipCard id="desk-moto" label={copy.moto.label}>
+    <PhotoPrint image={moto} alt={copy.moto.alt} caption={copy.moto.caption} />
+    <DeskNote slot="back" title={copy.moto.note.title} text={copy.moto.note.text} />
+  </FlipCard>
+</Placed>
+<Placed id="coffeeBeans">
+  <CoffeeBeans label={coffee.beans.label} />
+</Placed>
+<Placed id="coffeeGrinder">
+  <CoffeeGrinder label={coffee.grinder.label} notes={coffee.grinder.notes} />
+</Placed>
+<Placed id="pourOver">
+  <PourOver pour="hold" {...coffee.pourOver} />
+</Placed>
+
+<!-- East: anime and movement. -->
+<Placed id="narutoSticker">
+  <NarutoSticker {...copy.narutoSticker} />
+</Placed>
+<Placed id="ramen">
+  <RamenBowl {...copy.ramen} />
+</Placed>
+<Placed id="silks">
+  <AerialSilks {...copy.silks} />
+</Placed>
+
+<!-- South: boxing, and the flag that unrolls 1000px to the right with its parade 320px above; that lane stays empty. -->
+<Placed id="punchingBag">
+  <PunchingBag label={boxing.bagLabel} board={boxing.board} text={boxing.text} />
+</Placed>
+<Placed id="boxingGlove">
+  <BoxingGlove label={boxing.gloveLabel} hits={boxing.hits} text={boxing.text} />
+</Placed>
+<Placed id="parade">
+  <ColombiaParade label={copy.parade.label} scenes={desk.parade.scenes} sound={copy.parade.sound} />
+</Placed>

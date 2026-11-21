@@ -1,0 +1,181 @@
+---
+import ObjectReveal from "../ObjectReveal/ObjectReveal.astro";
+interface Props {
+  /** Accessible name of the button, e.g. "Talk to JOTA Pet". */
+  label: string;
+  /** What the pet says, one line per press, in a loop. */
+  lines: readonly string[];
+}
+const { label, lines } = Astro.props;
+---
+
+<!--
+  JOTA Pet: a small blob whose eyes follow the pointer. Each press makes it say the next line in a speech
+  bubble; left alone for a while it closes its eyes and naps, and wakes when the pointer comes near.
+-->
+<jota-pet class="jota-pet" data-lines={JSON.stringify(lines)}>
+  <button type="button" class="jota-pet__face" aria-label={label}>
+    <span class="jota-pet__eye">
+      <span class="jota-pet__pupil"></span>
+    </span>
+    <span class="jota-pet__eye jota-pet__eye--right">
+      <span class="jota-pet__pupil"></span>
+    </span>
+    <span class="jota-pet__zzz" aria-hidden="true">
+      z z
+    </span>
+  </button>
+  <ObjectReveal />
+</jota-pet>
+
+<script>
+  import { readList, setReveal } from "../reveal";
+
+  /** Left alone this long, the pet naps. */
+  const NAP_AFTER = 9000;
+  /** The pointer wakes it from this far away, in pixels. */
+  const NEAR = 260;
+
+  class JotaPetElement extends HTMLElement {
+    private abort: AbortController | undefined;
+    private nap: ReturnType<typeof setTimeout> | undefined;
+
+    connectedCallback() {
+      const face = this.querySelector<HTMLButtonElement>(".jota-pet__face");
+      if (!face) return;
+      const pupils = this.querySelectorAll<HTMLElement>(".jota-pet__pupil");
+      const lines = readList<string>(this, "lines");
+      let line = -1;
+      this.abort = new AbortController();
+      const signal = this.abort.signal;
+
+      const wake = () => {
+        this.removeAttribute("data-asleep");
+        clearTimeout(this.nap);
+        this.nap = setTimeout(() => {
+          this.setAttribute("data-asleep", "");
+          setReveal(this, false);
+        }, NAP_AFTER);
+      };
+      wake();
+
+      face.addEventListener(
+        "click",
+        () => {
+          wake();
+          if (!lines.length) return;
+          line = (line + 1) % lines.length;
+          setReveal(this, true, { title: "", text: lines[line] ?? "" });
+        },
+        { signal },
+      );
+      window.addEventListener(
+        "pointermove",
+        (event) => {
+          const box = face.getBoundingClientRect();
+          const dx = event.clientX - (box.left + box.width / 2);
+          const dy = event.clientY - (box.top + box.height / 2);
+          if (Math.hypot(dx, dy) < NEAR) wake();
+          const angle = Math.atan2(dy, dx);
+          for (const pupil of pupils) {
+            pupil.style.translate = `${Math.cos(angle) * 4}px ${Math.sin(angle) * 5}px`;
+          }
+        },
+        { signal },
+      );
+    }
+
+    disconnectedCallback() {
+      this.abort?.abort();
+      clearTimeout(this.nap);
+    }
+  }
+
+  if (!customElements.get("jota-pet")) customElements.define("jota-pet", JotaPetElement);
+</script>
+
+<style>
+  .jota-pet {
+    position: relative;
+    display: inline-block;
+  }
+  .jota-pet__face {
+    all: unset;
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+    width: 84px;
+    height: 76px;
+    border-radius: 46% 46% 40% 40% / 56% 56% 44% 44%;
+    background: var(--color-accent);
+    box-shadow: var(--shadow-rest);
+    cursor: pointer;
+    animation: jota-pet-breathe 3s ease-in-out infinite alternate;
+  }
+  .jota-pet__face:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 4px;
+  }
+  @keyframes jota-pet-breathe {
+    to {
+      transform: scale(1.04, 0.97);
+    }
+  }
+  /* Eyes keep their own colors in both themes: white with a near-black pupil. */
+  .jota-pet__eye {
+    position: absolute;
+    top: 24px;
+    left: 18px;
+    width: 20px;
+    height: 22px;
+    border-radius: var(--radius-round);
+    background: #fff;
+    transition: scale var(--duration-fast) var(--ease-out);
+  }
+  .jota-pet__eye--right {
+    left: auto;
+    right: 18px;
+  }
+  .jota-pet__pupil {
+    position: absolute;
+    left: 6px;
+    top: 7px;
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-round);
+    background: #141517;
+  }
+  .jota-pet[data-asleep] .jota-pet__eye {
+    scale: 1 0.12;
+  }
+  .jota-pet__zzz {
+    position: absolute;
+    right: -14px;
+    top: -18px;
+    font: 600 1.25rem / 1 var(--font-hand);
+    color: var(--color-text-muted);
+    opacity: 0;
+    transition: opacity var(--duration-fast) var(--ease-out);
+  }
+  .jota-pet[data-asleep] .jota-pet__zzz {
+    opacity: 1;
+  }
+  /* Its note is a speech bubble above and to the right, not a card underneath. */
+  .jota-pet > :global(.object-reveal) {
+    top: auto;
+    bottom: calc(100% + 14px);
+    left: 60px;
+    width: 220px;
+    border-radius: 12px 12px 12px 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .jota-pet__face {
+      animation: none;
+    }
+    .jota-pet__eye,
+    .jota-pet__zzz {
+      transition: none;
+    }
+  }
+</style>

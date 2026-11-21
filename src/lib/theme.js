@@ -1,3 +1,4 @@
+/* global document, matchMedia */
 // Theme the visitor sees: the saved or applied choice, else the OS preference (as tokens.css does).
 
 /** Theme names, as tokens.css reads them from `data-theme`. */
@@ -26,4 +27,17 @@ export function effectiveTheme(current, prefersDark) {
  */
 export function nextTheme(current, prefersDark) {
   return effectiveTheme(current, prefersDark) === THEMES.dark ? THEMES.light : THEMES.dark;
+}
+
+/**
+ * Switches the page to the other theme and remembers the choice. For the browser: the Dock's toggle and the desk
+ * lamp both switch through here, and each follows the root's `data-theme` to show it.
+ * @returns {"light" | "dark"} the theme now applied
+ */
+export function switchTheme() {
+  const root = document.documentElement;
+  const next = nextTheme(root.dataset["theme"], matchMedia("(prefers-color-scheme: dark)").matches);
+  root.dataset["theme"] = next;
+  document.cookie = `${THEME_COOKIE}=${next}; path=/; SameSite=Lax`;
+  return next;
 }

@@ -2,7 +2,7 @@
 interface Props {
   /** One word, in bold, under the rocket. */
   title: string;
-  /** One line under the title. */
+  /** One or two short lines under the title; a line break ("\n") in the text starts the second one. */
   text: string;
 }
 const { title, text } = Astro.props;
@@ -68,6 +68,8 @@ const { title, text } = Astro.props;
     color: var(--color-text);
   }
   .rocket-card__text {
+    /* The copy decides where the line breaks, so a phrase is not cut in half. */
+    white-space: pre-line;
     font: var(--font-size-small) / var(--line-height-compact) var(--font-sans);
     color: var(--color-text-muted);
   }

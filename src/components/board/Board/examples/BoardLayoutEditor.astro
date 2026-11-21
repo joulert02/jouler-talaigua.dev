@@ -1,0 +1,677 @@
+---
+// A tool, not part of the site: a sheet to arrange the Home's desk. It shows the whole desk with the real objects,
+// zooms, and lets every object be dragged; "Copy layout" gives the layout in the shape of ../layout.ts.
+// "Desktop" and "Phone" switch between the two desks the layout holds: the one on the page and the smaller one a
+// phone opens full screen, where the card is the compact one (drawn here as a box of its size).
+// Positions are kept in this browser until "Reset", and in development the Board shows them.
+import IdentityCard from "../../../profile/IdentityCard/IdentityCard.astro";
+import BoardObjects from "../BoardObjects.astro";
+import { layout } from "../layout";
+
+const { world, origin, compact } = layout;
+// The screens whose resting view is outlined on the sheet: what a visitor sees before moving.
+const screens = {
+  desktop: [
+    { width: 1440, height: 800 },
+    { width: 1536, height: 890 },
+    { width: 1920, height: 1080 },
+  ],
+  phone: [
+    { width: 360, height: 780 },
+    { width: 390, height: 844 },
+    { width: 430, height: 932 },
+  ],
+};
+---
+
+<div
+  class="layout-editor"
+  data-world-width={world.width}
+  data-world-height={world.height}
+  data-origin-x={origin.x}
+  data-origin-y={origin.y}
+  data-compact={JSON.stringify({ world: compact.world, center: compact.center })}
+  data-mode="desktop"
+  data-screens={JSON.stringify(screens)}
+  data-labels
+  data-frames
+>
+  <div class="layout-editor__viewport">
+    <div class="layout-editor__sheet" style={`width: ${world.width}px; height: ${world.height}px`}>
+      <div class="layout-editor__card" style={`left: ${origin.x}px; top: ${origin.y}px`}>
+        <IdentityCard />
+      </div>
+      <!-- The compact card of the phone's desk: only its box, where the layout centers it. -->
+      <div class="layout-editor__phone-card">Card</div>
+      <!-- Named like the Desk's world so DeskObject places its objects the same way. -->
+      <div class="desk__world layout-editor__world">
+        <BoardObjects />
+      </div>
+      <div class="layout-editor__frames" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <form class="layout-editor__bar" aria-label="Layout tools">
+    <div class="layout-editor__group">
+      <button type="button" data-action="desktop" aria-pressed="true">
+        Desktop
+      </button>
+      <button type="button" data-action="phone" aria-pressed="false">
+        Phone
+      </button>
+    </div>
+    <div class="layout-editor__group">
+      <button type="button" data-action="zoom-out" aria-label="Zoom out">
+        −
+      </button>
+      <output class="layout-editor__zoom" aria-label="Zoom">
+        100%
+      </output>
+      <button type="button" data-action="zoom-in" aria-label="Zoom in">
+        +
+      </button>
+      <button type="button" data-action="fit">
+        Whole desk
+      </button>
+      <button type="button" data-action="rest">
+        Visitor's view
+      </button>
+    </div>
+    <div class="layout-editor__group">
+      <label>
+        <input type="checkbox" name="frames" checked /> Screens
+      </label>
+      <label>
+        <input type="checkbox" name="labels" checked /> Names
+      </label>
+    </div>
+    <div class="layout-editor__group">
+      <label>
+        Object <input name="id" readonly placeholder="none" size="14" />
+      </label>
+      <label>
+        X <input name="x" type="number" step="1" disabled />
+      </label>
+      <label>
+        Y <input name="y" type="number" step="1" disabled />
+      </label>
+      <label>
+        Tilt <input name="tilt" type="number" step="0.5" min="-45" max="45" disabled />
+      </label>
+    </div>
+    <div class="layout-editor__group">
+      <button type="button" data-action="copy">
+        Copy layout
+      </button>
+      <button type="button" data-action="json">
+        Paste layout
+      </button>
+      <button type="button" data-action="reset">
+        Reset
+      </button>
+      <output class="layout-editor__status" aria-live="polite"></output>
+    </div>
+  </form>
+
+  <dialog class="layout-editor__dialog" aria-label="Layout as text">
+    <textarea name="json" rows="18" cols="56" spellcheck="false" aria-label="Layout"></textarea>
+    <div class="layout-editor__group">
+      <button type="button" data-action="apply">
+        Apply
+      </button>
+      <button type="button" data-action="close">
+        Close
+      </button>
+    </div>
+  </dialog>
+</div>
+
+<script>
+  import {
+    loadDraft,
+    placedObjects,
+    readAll,
+    readPosition,
+    saveDraft,
+    writeAll,
+    writePosition,
+    type Kind,
+    type Positions,
+  } from "../draft";
+
+  const DRAG_THRESHOLD = 4;
+  const root = document.querySelector<HTMLElement>(".layout-editor");
+  const viewport = root?.querySelector<HTMLElement>(".layout-editor__viewport");
+  const sheet = root?.querySelector<HTMLElement>(".layout-editor__sheet");
+  const worldEl = root?.querySelector<HTMLElement>(".layout-editor__world");
+  const card = root?.querySelector<HTMLElement>(".layout-editor__card");
+  const phoneCard = root?.querySelector<HTMLElement>(".layout-editor__phone-card");
+  const framesEl = root?.querySelector<HTMLElement>(".layout-editor__frames");
+  const bar = root?.querySelector<HTMLFormElement>(".layout-editor__bar");
+  const dialog = root?.querySelector<HTMLDialogElement>(".layout-editor__dialog");
+  const zoomOut = bar?.querySelector<HTMLOutputElement>(".layout-editor__zoom");
+  const status = bar?.querySelector<HTMLOutputElement>(".layout-editor__status");
+  const textarea = dialog?.querySelector("textarea");
+  const parts = root && viewport && sheet && worldEl && card && phoneCard && framesEl && bar && dialog;
+
+  if (parts && zoomOut && status && textarea) {
+    const desktop = {
+      width: Number(root.dataset["worldWidth"]),
+      height: Number(root.dataset["worldHeight"]),
+    };
+    const origin = { x: Number(root.dataset["originX"]), y: Number(root.dataset["originY"]) };
+    const compact = JSON.parse(root.dataset["compact"] ?? "{}") as {
+      world: { width: number; height: number };
+      center: { x: number; y: number };
+    };
+    const kinds: Kind[] = ["desktop", "phone"];
+    /** Which of the two desks is on the sheet. */
+    let mode: Kind = "desktop";
+    let world = desktop;
+    const items = placedObjects(worldEl);
+    for (const [id, item] of items) item.dataset["name"] = id;
+    const base = { desktop: readAll(items, "desktop"), phone: readAll(items, "phone") };
+    for (const kind of kinds) {
+      const draft = loadDraft(base[kind], kind);
+      if (draft) writeAll(items, draft, kind);
+    }
+
+    const field = (name: string) => bar.elements.namedItem(name) as HTMLInputElement;
+
+    // The camera: the sheet is scaled and moved inside the viewport.
+    const view = { scale: 1, x: 0, y: 0 };
+    const paint = () => {
+      sheet.style.transform = `translate(${view.x}px, ${view.y}px) scale(${view.scale})`;
+      root.style.setProperty("--layout-scale", String(view.scale));
+      zoomOut.value = `${Math.round(view.scale * 100)}%`;
+    };
+    const zoomAt = (scale: number, clientX: number, clientY: number) => {
+      const box = viewport.getBoundingClientRect();
+      const next = Math.min(2, Math.max(0.1, scale));
+      const px = clientX - box.left;
+      const py = clientY - box.top;
+      view.x = px - ((px - view.x) / view.scale) * next;
+      view.y = py - ((py - view.y) / view.scale) * next;
+      view.scale = next;
+      paint();
+    };
+    const zoomBy = (factor: number) => {
+      const box = viewport.getBoundingClientRect();
+      zoomAt(view.scale * factor, box.left + box.width / 2, box.top + box.height / 2);
+    };
+    const fit = () => {
+      const box = viewport.getBoundingClientRect();
+      // The toolbar covers the top of the viewport: the desk fits under it.
+      const top = bar.offsetHeight + 24;
+      view.scale = Math.min(box.width / world.width, (box.height - top) / world.height) * 0.97;
+      view.x = (box.width - world.width * view.scale) / 2;
+      view.y = top + (box.height - top - world.height * view.scale) / 2;
+      paint();
+    };
+    /** The card on the sheet, and where the site rests it on a screen that tall (Desk.astro): centered above the
+     *  Dock's 80px and 24px from the top at least on desktop, above the phone desk's bar (96px) on a phone. */
+    const cardBox = () =>
+      mode === "phone"
+        ? {
+            x: compact.center.x - phoneCard.offsetWidth / 2,
+            y: compact.center.y,
+            width: phoneCard.offsetWidth,
+            height: phoneCard.offsetHeight,
+          }
+        : { x: origin.x, y: origin.y, width: card.offsetWidth, height: card.offsetHeight };
+    const restTop = (height: number) =>
+      24 + Math.max(0, (height - (mode === "phone" ? 120 : 104) - cardBox().height) / 2);
+    const rest = () => {
+      const box = viewport.getBoundingClientRect();
+      const at = cardBox();
+      view.scale = 1;
+      view.x = box.width / 2 - (at.x + at.width / 2);
+      view.y =
+        restTop(mode === "phone" ? 844 : box.height) - at.y + (mode === "phone" ? bar.offsetHeight + 24 : 0);
+      paint();
+    };
+
+    // What each screen shows before the visitor moves.
+    const screens = JSON.parse(root.dataset["screens"] ?? "{}") as Record<
+      Kind,
+      { width: number; height: number }[]
+    >;
+    const frames = () => {
+      const at = cardBox();
+      framesEl.replaceChildren(
+        ...screens[mode].map((screen) => {
+          const frame = document.createElement("div");
+          frame.className = "layout-editor__frame";
+          frame.dataset["name"] = `${screen.width} × ${screen.height}`;
+          frame.style.left = `${at.x + at.width / 2 - screen.width / 2}px`;
+          frame.style.top = `${at.y - restTop(screen.height)}px`;
+          frame.style.width = `${screen.width}px`;
+          frame.style.height = `${screen.height}px`;
+          return frame;
+        }),
+      );
+    };
+
+    // Selection and the fields that edit it.
+    let selected: HTMLElement | undefined;
+    const save = () => saveDraft(base[mode], readAll(items, mode), mode);
+    const show = () => {
+      const at = selected && readPosition(selected, mode);
+      field("id").value = selected?.dataset["name"] ?? "";
+      for (const name of ["x", "y", "tilt"] as const) {
+        // The tilt is the same on both desks: it is set on the desktop one.
+        field(name).disabled = !at || (name === "tilt" && mode === "phone");
+        field(name).value = at ? String(at[name]) : "";
+      }
+    };
+    const select = (item: HTMLElement | undefined) => {
+      selected?.removeAttribute("data-selected");
+      selected = item;
+      selected?.setAttribute("data-selected", "");
+      show();
+    };
+    const place = (item: HTMLElement, x: number, y: number, tilt = readPosition(item).tilt) => {
+      writePosition(
+        item,
+        {
+          x: Math.round(Math.max(0, Math.min(world.width - item.offsetWidth, x))),
+          y: Math.round(Math.max(0, Math.min(world.height - item.offsetHeight, y))),
+          tilt,
+        },
+        mode,
+      );
+      if (item === selected) show();
+      save();
+    };
+
+    // One press: on an object it selects and drags it, on the sheet it pans. Captured, so the object's own desk
+    // drag and press-and-hold gestures never start; a press that does not travel is still a normal click.
+    viewport.addEventListener(
+      "pointerdown",
+      (down) => {
+        if (down.button !== 0) return;
+        const item = (down.target as Element).closest<HTMLElement>(".layout-editor__world > .desk-object");
+        down.stopPropagation();
+        if (item) select(item);
+        const start = item ? readPosition(item, mode) : { x: view.x, y: view.y };
+        let dragging = false;
+        const moves = new AbortController();
+        const move = (event: PointerEvent) => {
+          if (event.pointerId !== down.pointerId) return;
+          const dx = event.clientX - down.clientX;
+          const dy = event.clientY - down.clientY;
+          if (!dragging) {
+            if (Math.hypot(dx, dy) <= DRAG_THRESHOLD) return;
+            dragging = true;
+            root.dataset["dragging"] = "";
+            getSelection()?.removeAllRanges();
+          }
+          if (item) place(item, start.x + dx / view.scale, start.y + dy / view.scale);
+          else {
+            view.x = start.x + dx;
+            view.y = start.y + dy;
+            paint();
+          }
+        };
+        const end = (event: PointerEvent) => {
+          if (event.pointerId !== down.pointerId) return;
+          moves.abort();
+          delete root.dataset["dragging"];
+          if (!dragging) {
+            if (!item) select(undefined);
+            return;
+          }
+          const swallow = (click: Event) => {
+            click.preventDefault();
+            click.stopPropagation();
+          };
+          viewport.addEventListener("click", swallow, { capture: true, once: true });
+          setTimeout(() => viewport.removeEventListener("click", swallow, { capture: true }), 0);
+        };
+        window.addEventListener("pointermove", move, { signal: moves.signal });
+        window.addEventListener("pointerup", end, { signal: moves.signal });
+        window.addEventListener("pointercancel", end, { signal: moves.signal });
+      },
+      { capture: true },
+    );
+    viewport.addEventListener("dragstart", (event) => event.preventDefault());
+
+    // The wheel pans; with Ctrl or Cmd (or a trackpad pinch) it zooms on the pointer.
+    viewport.addEventListener(
+      "wheel",
+      (event) => {
+        event.preventDefault();
+        if (event.ctrlKey || event.metaKey)
+          zoomAt(view.scale * Math.exp(-event.deltaY * 0.01), event.clientX, event.clientY);
+        else {
+          view.x -= event.deltaX;
+          view.y -= event.deltaY;
+          paint();
+        }
+      },
+      { passive: false },
+    );
+
+    // Arrow keys nudge the selected object: 1px, or 10px with Shift.
+    window.addEventListener("keydown", (event) => {
+      const typing = (event.target as Element).closest("input, textarea");
+      if (event.key === "Escape" && !dialog.open) select(undefined);
+      const steps: Record<string, [number, number]> = {
+        ArrowLeft: [-1, 0],
+        ArrowRight: [1, 0],
+        ArrowUp: [0, -1],
+        ArrowDown: [0, 1],
+      };
+      const step = steps[event.key];
+      if (!step || !selected || typing) return;
+      event.preventDefault();
+      const size = event.shiftKey ? 10 : 1;
+      const at = readPosition(selected, mode);
+      place(selected, at.x + step[0] * size, at.y + step[1] * size);
+    });
+
+    // Written the way layout.ts is formatted, one object per line with bare keys, so it pastes over the value of
+    // `layout` without a reformat. Strict JSON it is not: `parse` reads this and JSON alike.
+    const toJson = () => {
+      const line = (value: object) =>
+        JSON.stringify(value)
+          .replace(/"(\w+)":/g, " $1: ")
+          .replace(/}$/, " }");
+      const objects = Object.entries(readAll(items)).map(([id, at]) => `    ${id}: ${line(at)},`);
+      const phone = Object.entries(readAll(items, "phone")).map(
+        ([id, at]) => `      ${id}: ${line({ x: at.x, y: at.y })},`,
+      );
+      return [
+        `{\n  world: ${line(desktop)},\n  origin: ${line(origin)},\n  objects: {\n${objects.join("\n")}\n  },`,
+        `  compact: {\n    world: ${line(compact.world)},\n    center: ${line(compact.center)},`,
+        `    objects: {\n${phone.join("\n")}\n    },\n  },\n}`,
+      ].join("\n");
+    };
+    const parse = (text: string) =>
+      JSON.parse(
+        text
+          .trim()
+          .replace(/;$/, "")
+          .replace(/([{,]\s*)(\w+)\s*:/g, '$1"$2":')
+          .replace(/,(\s*})/g, "$1"),
+      ) as { objects?: Positions; compact?: { objects?: Positions } };
+    const say = (text: string) => {
+      status.value = text;
+      setTimeout(() => status.value === text && (status.value = ""), 2500);
+    };
+    const openJson = (text: string) => {
+      textarea.value = text;
+      dialog.showModal();
+      textarea.select();
+    };
+    const actions: Record<string, () => void> = {
+      "zoom-in": () => zoomBy(1.25),
+      "zoom-out": () => zoomBy(0.8),
+      fit,
+      rest,
+      desktop: () => showDesk("desktop"),
+      phone: () => showDesk("phone"),
+      copy: () => {
+        // Without clipboard access (an insecure origin, a denied permission) the JSON is shown to copy by hand.
+        navigator.clipboard.writeText(toJson()).then(
+          () => say("Copied"),
+          () => openJson(toJson()),
+        );
+      },
+      json: () => openJson(""),
+      apply: () => {
+        try {
+          const pasted = parse(textarea.value);
+          writeAll(items, pasted.objects ?? (pasted as Positions));
+          if (pasted.compact?.objects) writeAll(items, pasted.compact.objects, "phone");
+          for (const kind of kinds) saveDraft(base[kind], readAll(items, kind), kind);
+          show();
+          dialog.close();
+          say("Applied");
+        } catch {
+          say("That is not a layout");
+        }
+      },
+      close: () => dialog.close(),
+      reset: () => {
+        for (const kind of kinds) {
+          writeAll(items, base[kind], kind);
+          saveDraft(base[kind], undefined, kind);
+        }
+        show();
+        say("Back to layout.ts");
+      },
+    };
+    root.addEventListener("click", (event) => {
+      const action = (event.target as Element).closest<HTMLElement>("[data-action]")?.dataset["action"];
+      if (action) actions[action]?.();
+    });
+    bar.addEventListener("submit", (event) => event.preventDefault());
+    bar.addEventListener("input", (event) => {
+      const input = event.target as HTMLInputElement;
+      if (input.name === "frames" || input.name === "labels")
+        root.toggleAttribute(`data-${input.name}`, input.checked);
+      else if (selected && ["x", "y", "tilt"].includes(input.name) && input.value !== "")
+        place(
+          selected,
+          field("x").valueAsNumber || 0,
+          field("y").valueAsNumber || 0,
+          field("tilt").valueAsNumber || 0,
+        );
+    });
+
+    /** Puts one of the two desks on the sheet: its world, its card and its screens. */
+    const showDesk = (kind: Kind) => {
+      mode = kind;
+      world = kind === "phone" ? compact.world : desktop;
+      root.dataset["mode"] = kind;
+      sheet.style.width = `${world.width}px`;
+      sheet.style.height = `${world.height}px`;
+      phoneCard.style.left = `${compact.center.x - phoneCard.offsetWidth / 2}px`;
+      phoneCard.style.top = `${compact.center.y}px`;
+      for (const button of bar.querySelectorAll<HTMLElement>("[aria-pressed]"))
+        button.setAttribute("aria-pressed", String(button.dataset["action"] === kind));
+      show();
+      frames();
+      fit();
+    };
+
+    frames();
+    fit();
+    // The card's height settles with its fonts, and the screens hang from it.
+    new ResizeObserver(frames).observe(card);
+  }
+</script>
+
+<style>
+  .layout-editor {
+    position: relative;
+    height: 100svh;
+    min-height: 480px;
+    overflow: hidden;
+    background: var(--color-bg);
+    font: 500 var(--font-size-small) / var(--line-height-compact) var(--font-sans);
+    color: var(--color-text);
+    --layout-scale: 1;
+  }
+  .layout-editor__viewport {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    touch-action: none;
+    cursor: grab;
+  }
+  .layout-editor[data-dragging] .layout-editor__viewport {
+    cursor: grabbing;
+    user-select: none;
+  }
+  /* The whole desk, drawn at its real size and scaled by the camera. */
+  .layout-editor__sheet {
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform-origin: 0 0;
+    background-color: var(--color-bg-subtle);
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      color-mix(in srgb, var(--color-text-muted) 20%, transparent) 1px,
+      transparent 0
+    );
+    background-size: 22px 22px;
+    outline: calc(2px / var(--layout-scale)) solid var(--color-border);
+  }
+  .layout-editor__card {
+    position: absolute;
+    width: 540px;
+  }
+  /* The phone desk's compact card (ui/Desk on a phone): 342 × 152 on a 390px screen. */
+  .layout-editor__phone-card {
+    position: absolute;
+    display: none;
+    place-items: center;
+    width: 342px;
+    height: 152px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    color: var(--color-text-muted);
+  }
+  .layout-editor[data-mode="phone"] .layout-editor__phone-card {
+    display: grid;
+  }
+  .layout-editor[data-mode="phone"] .layout-editor__card {
+    display: none;
+  }
+  /* On the phone's desk every object rests at its compact spot (DeskObject does this below 901px). */
+  .layout-editor[data-mode="phone"] .layout-editor__world > :global(.desk-object) {
+    left: var(--desk-object-compact-x);
+    top: var(--desk-object-compact-y);
+  }
+  .layout-editor__world,
+  .layout-editor__frames {
+    position: absolute;
+    inset: 0;
+  }
+  .layout-editor__frames {
+    pointer-events: none;
+  }
+  .layout-editor:not([data-frames]) .layout-editor__frames {
+    display: none;
+  }
+  /* Created by the script, hence :global. */
+  .layout-editor :global(.layout-editor__frame) {
+    position: absolute;
+    outline: calc(1.5px / var(--layout-scale)) dashed var(--color-text-accent);
+  }
+  .layout-editor :global(.layout-editor__frame)::before {
+    content: attr(data-name);
+    position: absolute;
+    left: 0;
+    bottom: 100%;
+    padding: 0.2em 0.5em;
+    font-size: calc(12px / var(--layout-scale));
+    white-space: nowrap;
+    color: var(--color-text-accent);
+  }
+  /* Objects are moved, not lifted: the desk's hover tilt would shift them under the pointer. */
+  .layout-editor__world > :global(.desk-object) {
+    translate: none;
+    rotate: var(--desk-object-tilt);
+    transition: none;
+  }
+  .layout-editor__world > :global(.desk-object[data-selected]) {
+    outline: calc(2px / var(--layout-scale)) solid var(--color-accent);
+    outline-offset: calc(4px / var(--layout-scale));
+    z-index: 1;
+  }
+  .layout-editor[data-labels] .layout-editor__world > :global(.desk-object)::before {
+    content: attr(data-name);
+    position: absolute;
+    left: 0;
+    bottom: calc(100% + 2px / var(--layout-scale));
+    font: 500 calc(11px / var(--layout-scale)) / 1.2 var(--font-mono);
+    white-space: nowrap;
+    color: var(--color-text-muted);
+    pointer-events: none;
+  }
+
+  .layout-editor__bar {
+    position: absolute;
+    left: var(--space-3);
+    top: var(--space-3);
+    right: var(--space-3);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-5);
+    width: fit-content;
+    max-width: calc(100% - 2 * var(--space-3));
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-rest);
+  }
+  .layout-editor__group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .layout-editor__group label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+  /* Only the tool's own controls: the objects on the sheet are full of buttons too. */
+  .layout-editor
+    :is(.layout-editor__bar, .layout-editor__dialog)
+    :is(button, input:not([type="checkbox"]), textarea) {
+    font: inherit;
+    color: inherit;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: var(--space-1) var(--space-2);
+  }
+  .layout-editor__group button {
+    min-height: 32px;
+    cursor: pointer;
+  }
+  .layout-editor__group button:hover {
+    background: var(--color-surface-hover);
+  }
+  .layout-editor .layout-editor__bar .layout-editor__group button[aria-pressed="true"] {
+    background: var(--color-text);
+    color: var(--color-bg);
+  }
+  .layout-editor :is(.layout-editor__bar, .layout-editor__dialog) :is(button, input, textarea):focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 2px;
+  }
+  .layout-editor__group input[type="number"] {
+    width: 5.5em;
+  }
+  .layout-editor__zoom {
+    min-width: 3.2em;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+  .layout-editor__status {
+    color: var(--color-text-accent);
+  }
+  .layout-editor__dialog {
+    padding: var(--space-4);
+    background: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+  .layout-editor__dialog[open] {
+    display: grid;
+    gap: var(--space-3);
+  }
+  .layout-editor__dialog textarea {
+    font-family: var(--font-mono);
+    max-width: 100%;
+  }
+</style>

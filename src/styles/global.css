@@ -134,6 +134,14 @@ main[tabindex="-1"]:focus {
   border-radius: 18px;
   animation-duration: var(--duration-slow);
 }
+/* The entry's prints travel to their objects on the desk, and back (board/Board names the pairs). */
+:root[data-desk-transition]::view-transition-group(desk-print-1),
+:root[data-desk-transition]::view-transition-group(desk-print-2),
+:root[data-desk-transition]::view-transition-group(desk-print-3),
+:root[data-desk-transition]::view-transition-group(desk-print-4) {
+  animation-duration: var(--duration-slow);
+  animation-timing-function: var(--ease-out);
+}
 :root[data-desk-transition="open"]::view-transition-new(dock),
 :root[data-desk-transition="close"]::view-transition-old(dock) {
   animation: none;

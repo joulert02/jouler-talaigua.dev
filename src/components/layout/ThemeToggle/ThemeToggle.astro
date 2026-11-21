@@ -18,7 +18,7 @@ const t = useTranslations(lang);
   </button>
 </dock-theme>
 <script>
-  import { THEME_COOKIE, effectiveTheme, nextTheme } from "@/lib/theme.js";
+  import { effectiveTheme, switchTheme } from "@/lib/theme.js";
   class DockTheme extends HTMLElement {
     private os?: AbortController;
     private root?: MutationObserver;
@@ -39,11 +39,7 @@ const t = useTranslations(lang);
       // Several toggles can share a page (the Dock and the settings panel): each follows the root, not its own clicks.
       this.root = new MutationObserver(sync);
       this.root.observe(root, { attributes: true, attributeFilter: ["data-theme"] });
-      button?.addEventListener("click", () => {
-        const next = nextTheme(root.dataset["theme"], prefersDark());
-        root.dataset["theme"] = next;
-        document.cookie = `${THEME_COOKIE}=${next}; path=/; SameSite=Lax`;
-      });
+      button?.addEventListener("click", switchTheme);
     }
     disconnectedCallback() {
       this.os?.abort();

@@ -12,7 +12,7 @@ const meta = preview.meta({
     docs: {
       description: {
         component:
-          "The Home's board section as the portfolio renders it: a Desk with the IdentityCard in its center and the ten v11 objects around it (photos, ticket, cards and the record flip or play; the rocket and the envelope only rest until the roadmap and the letter exist). The story renders the component itself, so it always matches the page; the copy lives in src/config/desk.ts. In a window at least 901px wide, drag the dotted background to walk the desk and drag any object to move it; narrow it to see the card flow alone.",
+          "The Home's board section as the portfolio renders it: a Desk with the IdentityCard in its center and the personal objects around it. The prints and cards that share one look rest beside the card; a record, the lamp and the bug jar wait one step away, and the rest is found by walking. The story renders the component itself, so it always matches the page; the objects are in `BoardObjects.astro`, their places in `layout.ts` (arranged with the BoardLayout story) and their copy in `src/config/desk.ts`. In a window at least 901px wide, drag the dotted background to walk the desk and drag any object to move it; narrow it to see the card flow alone.",
       },
     },
   },

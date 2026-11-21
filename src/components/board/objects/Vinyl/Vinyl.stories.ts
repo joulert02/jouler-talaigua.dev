@@ -30,14 +30,14 @@ export const Unicornio = meta.story({
     title: "Unicornio",
     artist: "Nanpa Básico",
     cover: unicornio,
-    // "Buena Energía", from the album Unicornio.
-    spotify: "spotify:track:4v0QUhYPnfCgQXCGGQv7bW",
+    // The whole album Unicornio.
+    spotify: "spotify:album:4Ff07AMyi4ZUOORYUZpN9c",
   },
   parameters: {
     docs: {
       description: {
         story:
-          "The real cover and the song Buena Energía on Spotify: press the record to open the player at the bottom left.",
+          "The real cover and the album Unicornio on Spotify: press the record to open the player at the bottom left.",
       },
     },
   },
