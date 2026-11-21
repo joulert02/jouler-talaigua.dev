@@ -15,7 +15,8 @@ const { label, title, text } = Astro.props;
   A desk lamp whose cord switches the whole site between light and dark, like the Dock's theme toggle (same
   cookie). Only the cord is a button, so the lamp itself can be dragged. Whenever the lights change, by the cord,
   the Dock's toggle or the system, it announces them on the window (lights.ts) for anything on the desk that
-  wants to react.
+  wants to react. The note that explains the dark theme shows from 901px only: on a phone's desk it would cover
+  what lies under the lamp, and the whole screen turning dark already says it.
 -->
 <desk-lamp class="desk-lamp">
   <svg
@@ -94,6 +95,11 @@ const { label, title, text } = Astro.props;
     height: 170px;
     /* Local illustration color: the warm cone of light, the same in both themes. */
     --_glow: #ffd866;
+  }
+  @media (max-width: 900px) {
+    .desk-lamp :global(.object-reveal) {
+      display: none;
+    }
   }
   .desk-lamp__art {
     display: block;

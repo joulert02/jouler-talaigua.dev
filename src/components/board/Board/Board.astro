@@ -19,10 +19,19 @@ import unicornio from "../../../assets/covers/unicornio.jpg";
 
 const lang = getLang(Astro);
 const t = useTranslations(lang);
+// The prints that peek out under the card on a phone, and the object each one is on the desk: when the desk opens
+// the print travels to it, and back when it closes (the styles below name both for that transition).
+const prints = [teaching, unicornio, moto, portrait];
 ---
 
 <div class="board">
-  <Desk id="desk" world={layout.world} origin={layout.origin} hint={t("board.touchHint")}>
+  <Desk
+    id="desk"
+    world={layout.world}
+    origin={layout.origin}
+    compact={{ world: layout.compact.world, center: layout.compact.center }}
+    hint={t("board.touchHint")}
+  >
     <IdentityCard slot="center" />
     <!-- Phones only: the way into the desk, under the card (secondary to it). -->
     <DeskEntry
@@ -30,7 +39,7 @@ const t = useTranslations(lang);
       desk="desk"
       title={t("board.open")}
       meta={t("board.openMeta")}
-      photos={[teaching, unicornio, moto, portrait]}
+      photos={prints}
       revealPast=".identity-card__name"
     />
     <BoardObjects />
@@ -88,12 +97,25 @@ const t = useTranslations(lang);
     event.preventDefault();
     next.focus();
   });
+  // On a phone the four objects the entry's prints travel to load their photos with the page, not when the desk
+  // opens: a print must not land on an empty frame.
+  if (matchMedia("(max-width: 900px)").matches) {
+    const travelling = ["talks", "vinylUnicornio", "moto", "portrait"];
+    for (const [id, item] of placedObjects(document.querySelector(".board") ?? document)) {
+      if (!travelling.includes(id)) continue;
+      item.dataset["near"] = "";
+      for (const image of item.querySelectorAll("img")) image.loading = "eager";
+    }
+  }
+
   // While developing, the layout editor's unsaved positions are shown here too, so an arrangement can be walked
   // on the real desk before it is copied into layout.ts. The built site only knows layout.ts.
   if (import.meta.env.DEV) {
     const items = placedObjects(document.querySelector(".board") ?? document);
-    const draft = loadDraft(readAll(items));
-    if (draft) writeAll(items, draft);
+    for (const kind of ["desktop", "phone"] as const) {
+      const draft = loadDraft(readAll(items, kind), kind);
+      if (draft) writeAll(items, draft, kind);
+    }
   }
 </script>
 
@@ -107,6 +129,29 @@ const t = useTranslations(lang);
     .board :global(.identity-card) {
       position: relative;
       z-index: 1;
+    }
+  }
+  /* While the phone's desk opens or closes (ui/Desk sets data-desk-transition), each print of the entry and its
+     object on the desk share a name, so the print travels between the two (timing in global.css). Only one of each
+     pair is on screen at a time: the entry hides while the desk is open. */
+  @media (max-width: 900px) {
+    :global(:root[data-desk-transition]) .board :global(.desk-entry__print:nth-child(1)),
+    :global(:root[data-desk-transition]) .board :global(.desk-object:has(> [data-layout-id="talks"])) {
+      view-transition-name: desk-print-1;
+    }
+    :global(:root[data-desk-transition]) .board :global(.desk-entry__print:nth-child(2)),
+    :global(:root[data-desk-transition])
+      .board
+      :global(.desk-object:has(> [data-layout-id="vinylUnicornio"])) {
+      view-transition-name: desk-print-2;
+    }
+    :global(:root[data-desk-transition]) .board :global(.desk-entry__print:nth-child(3)),
+    :global(:root[data-desk-transition]) .board :global(.desk-object:has(> [data-layout-id="moto"])) {
+      view-transition-name: desk-print-3;
+    }
+    :global(:root[data-desk-transition]) .board :global(.desk-entry__print:nth-child(4)),
+    :global(:root[data-desk-transition]) .board :global(.desk-object:has(> [data-layout-id="portrait"])) {
+      view-transition-name: desk-print-4;
     }
   }
   /* From 901px the desk fills the first screen. */

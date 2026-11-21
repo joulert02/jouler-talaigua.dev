@@ -55,7 +55,9 @@ const style = [
   paint (DeskObject owns the styles), so without scripts they are simply there; the camera script marks each one
   `data-revealed` as it comes into view. Their images wait too: an object is marked `data-near` a little before it
   can be seen, and only then do its lazy images load, so the page opens with what the first screen needs and fetches
-  the rest as the visitor walks.
+  the rest as the visitor walks. On a phone the entrance waits for the opening transition to end, so it is seen.
+  An object that carries a `view-transition-name` while the phone's desk opens is not part of that entrance: it is
+  there from the first frame, so the page can make something of its own travel to it (the Home's entry prints).
 -->
 <desk-board
   class="desk"
@@ -146,6 +148,8 @@ const style = [
     private resize: ResizeObserver | undefined;
     private entrance: IntersectionObserver | undefined;
     private nearby: IntersectionObserver | undefined;
+    /** While the phone's desk is still opening, no object comes in. */
+    private held = false;
     private abort: AbortController | undefined;
     /** What opened the desk on a phone; focus goes back to it on close. */
     private opener: HTMLElement | null = null;
@@ -216,24 +220,32 @@ const style = [
     open(opener: HTMLElement | null, push = true) {
       if (this.isOpen || desktop.matches) return;
       this.opener = opener;
-      void this.transition("open", () => {
+      this.held = true;
+      const opening = this.transition("open", () => {
         this.setAttribute("data-open", "");
         this.setAttribute("role", "dialog");
         this.setAttribute("aria-modal", "true");
         this.setAttribute("aria-label", this.dataset["dialogLabel"] ?? "");
         this.inertOutside(true);
         // Every time the desk opens its objects come in again.
-        for (const object of this.querySelectorAll(".desk-object[data-revealed]")) {
-          object.removeAttribute("data-revealed");
+        for (const object of this.querySelectorAll<HTMLElement>(".desk__world > .desk-object")) {
+          // One the page names for this transition travels here from somewhere else: it has already arrived.
+          const travels = getComputedStyle(object).getPropertyValue("view-transition-name") !== "none";
+          if (travels) object.dataset["revealed"] = "moved";
+          else object.removeAttribute("data-revealed");
+          object.toggleAttribute("data-near", travels || object.hasAttribute("data-near"));
         }
         this.mount();
         this.collectTour();
         this.at = -1;
         this.updateCount();
-      }).then(() => {
+      });
+      void opening.updated.then(() => {
         this.querySelector<HTMLElement>(".desk__viewport")?.focus({ preventScroll: true });
         this.showHint();
       });
+      // The objects come in once the desk is fully there, not under the transition's crossfade.
+      void opening.finished.then(() => this.releaseEntrances());
       // The mark in the entry survives a reload and Back/Forward, so `leave` knows the entry is the desk's own.
       if (push) history.pushState({ ...history.state, desk: true }, "", this.hash);
     }
@@ -242,7 +254,9 @@ const style = [
     close() {
       if (!this.isOpen) return;
       const opener = this.opener;
-      void this.transition("close", () => this.reset()).then(() => opener?.focus({ preventScroll: true }));
+      void this.transition("close", () => this.reset()).updated.then(() =>
+        opener?.focus({ preventScroll: true }),
+      );
     }
 
     private leave() {
@@ -274,16 +288,18 @@ const style = [
     }
 
     /** Runs a DOM change as a view transition where there is one: the center element morphs between page and desk. */
-    private transition(kind: "open" | "close", update: () => void): Promise<void> {
+    private transition(kind: "open" | "close", update: () => void) {
       if (reducedMotion.matches || !document.startViewTransition) {
         update();
-        return Promise.resolve();
+        return { updated: Promise.resolve(), finished: Promise.resolve() };
       }
       const root = document.documentElement;
       root.dataset["deskTransition"] = kind;
       const transition = document.startViewTransition(update);
-      void transition.finished.finally(() => delete root.dataset["deskTransition"]);
-      return transition.updateCallbackDone;
+      // A skipped transition rejects `finished`: what waits for it goes on all the same.
+      const finished = transition.finished.catch(() => undefined);
+      void finished.then(() => delete root.dataset["deskTransition"]);
+      return { updated: transition.updateCallbackDone, finished };
     }
 
     /** Makes everything outside the desk inert while it is open, except layers marked `data-desk-above`. */
@@ -452,7 +468,17 @@ const style = [
       );
       for (const object of world.querySelectorAll(":scope > .desk-object")) {
         if (!object.hasAttribute("data-near")) this.nearby.observe(object);
-        if (!object.hasAttribute("data-revealed")) this.entrance.observe(object);
+        if (!this.held && !object.hasAttribute("data-revealed")) this.entrance.observe(object);
+      }
+    }
+
+    /** Lets the objects of an open desk start coming in. */
+    private releaseEntrances() {
+      this.held = false;
+      // Closed again before it finished opening: there is nothing to bring in.
+      if (!this.camera) return;
+      for (const object of this.querySelectorAll(".desk__world > .desk-object:not([data-revealed])")) {
+        this.entrance?.observe(object);
       }
     }
 
@@ -590,6 +616,14 @@ const style = [
       top: calc(-1 * var(--desk-compact-y));
       width: var(--desk-compact-width);
       height: var(--desk-compact-height);
+    }
+    /* While the desk opens or closes, the hint and the bar are layers of their own in the transition, above
+       anything the page sends travelling across the desk (the Home's prints). */
+    :global(:root[data-desk-transition]) .desk__hint {
+      view-transition-name: desk-hint;
+    }
+    :global(:root[data-desk-transition]) .desk__bar {
+      view-transition-name: desk-bar;
     }
     .desk[data-open] .desk__hint {
       display: block;

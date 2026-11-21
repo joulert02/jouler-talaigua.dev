@@ -1,6 +1,9 @@
 // Where every object of the Home's desk rests, in world pixels from the desk's top-left corner. This is
 // exactly what the layout editor's "Copy layout" gives: paste it over the value of `layout`, braces included.
 // `origin` is the identity card's top-left corner. The order of `objects` is the order they are stacked in.
+// `compact` is the desk a phone opens full screen: a smaller world, the card placed by its horizontal middle and its
+// top (`center`), and every object's spot in it, keeping the tilt it has on desktop. It follows the desktop
+// arrangement: each object lies in the same direction from the card, closer, as the screen is smaller.
 export const layout = {
   world: { width: 3400, height: 2500 },
   origin: { x: 1430, y: 900 },
@@ -41,6 +44,48 @@ export const layout = {
     punchingBag: { x: 280, y: 1850, tilt: 0 },
     boxingGlove: { x: 660, y: 1910, tilt: 0 },
     parade: { x: 1100, y: 2320, tilt: 0 },
+  },
+  compact: {
+    world: { width: 1512, height: 1481 },
+    center: { x: 786, y: 658 },
+    objects: {
+      talks: { x: 556, y: 428 },
+      ticket: { x: 337, y: 699 },
+      narutoCard: { x: 449, y: 837 },
+      pet: { x: 517, y: 992 },
+      portrait: { x: 894, y: 402 },
+      roadmap: { x: 1059, y: 674 },
+      lol: { x: 1078, y: 519 },
+      pole: { x: 861, y: 824 },
+      mascot: { x: 932, y: 1059 },
+      envelope: { x: 647, y: 840 },
+      vinylUnicornio: { x: 716, y: 989 },
+      lamp: { x: 740, y: 379 },
+      bugJar: { x: 438, y: 526 },
+      stickerAstro: { x: 1078, y: 433 },
+      stickerReact: { x: 749, y: 572 },
+      stickerTypescript: { x: 1276, y: 589 },
+      stickerClaude: { x: 615, y: 992 },
+      vinylGreenPrint: { x: 340, y: 319 },
+      vinylJazz: { x: 233, y: 840 },
+      vinylPiex: { x: 1059, y: 852 },
+      vinylImpulsos: { x: 1066, y: 1059 },
+      passport: { x: 437, y: 115 },
+      bookShelf: { x: 605, y: 169 },
+      sketchbook: { x: 1189, y: 110 },
+      nowNotes: { x: 811, y: 215 },
+      bonsai: { x: 975, y: 133 },
+      moto: { x: 1282, y: 847 },
+      coffeeBeans: { x: 249, y: 645 },
+      coffeeGrinder: { x: 60, y: 457 },
+      pourOver: { x: 164, y: 433 },
+      narutoSticker: { x: 1191, y: 1266 },
+      ramen: { x: 1164, y: 346 },
+      silks: { x: 76, y: 60 },
+      punchingBag: { x: 142, y: 1047 },
+      boxingGlove: { x: 486, y: 1091 },
+      parade: { x: 554, y: 1238 },
+    },
   },
 };
 

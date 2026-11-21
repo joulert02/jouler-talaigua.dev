@@ -10,7 +10,7 @@ const at = layout.objects[id];
 ---
 
 <!-- One object of the desk, placed from the layout. The id travels in the DOM so the editor can find it. -->
-<DeskObject x={at.x} y={at.y} tilt={at.tilt}>
+<DeskObject x={at.x} y={at.y} tilt={at.tilt} compact={layout.compact.objects[id]}>
   <span class="placed" data-layout-id={id}>
     <slot />
   </span>

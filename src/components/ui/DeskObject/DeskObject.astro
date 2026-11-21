@@ -24,7 +24,7 @@ const style = [
   itself and owns its behaviour: a FlipCard, a link, or anything static. A press that does not travel is a
   normal click on the child; a drag moves the object and swallows that click. Positions reset on reload.
   On a desk that reveals its objects (Desk.astro sets `data-reveal`), the object stays out of sight until the desk
-  marks it `data-revealed`, then comes in; with reduced motion it is there from the start. Its images are not
+  marks it `data-revealed`, then comes in (not when it is marked "moved": something else brought it there); with reduced motion it is there from the start. Its images are not
   rendered, so lazy ones are not fetched, until the desk marks it `data-near`.
 -->
 <desk-object class="desk-object" {style}>
@@ -164,7 +164,7 @@ const style = [
     :global(.desk[data-reveal] .desk__world) > .desk-object:not([data-revealed]) {
       opacity: 0;
     }
-    :global(.desk[data-reveal] .desk__world) > .desk-object[data-revealed] {
+    :global(.desk[data-reveal] .desk__world) > .desk-object[data-revealed]:not([data-revealed="moved"]) {
       animation: desk-object-enter var(--desk-object-enter-duration, var(--duration-slow)) var(--ease-out)
         var(--desk-object-enter-delay, 0ms) backwards;
     }
