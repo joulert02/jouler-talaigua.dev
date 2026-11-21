@@ -77,7 +77,7 @@ const tags = [
   .case-top::before {
     content: "";
     position: absolute;
-    inset: 0 calc(-1 * clamp(16px, 3vw, 40px));
+    inset: 0 calc(-1 * var(--page-gutter));
     z-index: -1;
     background: color-mix(in srgb, var(--color-bg) 82%, transparent);
     backdrop-filter: blur(12px);
@@ -88,8 +88,8 @@ const tags = [
     border-bottom-color: var(--color-border);
   }
   .case-coming {
-    /* The case header's top space (v11 `.case-head`), less `.wrap`'s own 1.5rem above it. */
-    padding-block: calc(clamp(28px, 6vw, 64px) - 1.5rem) 120px;
+    /* The case header's top space (v11 `.case-head`), less `.wrap`'s own padding above it. */
+    padding-block: calc(clamp(28px, 6vw, 64px) - var(--wrap-padding-block)) 120px;
   }
   .case-coming__company {
     margin: 0;

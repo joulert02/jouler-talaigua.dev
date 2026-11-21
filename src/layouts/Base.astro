@@ -264,7 +264,7 @@ const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
   .top-language {
     position: absolute;
     top: var(--space-4);
-    right: clamp(16px, 3vw, 40px);
+    right: var(--page-gutter);
     z-index: 20;
   }
   @media (min-width: 561px) {

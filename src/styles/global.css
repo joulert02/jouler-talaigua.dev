@@ -1,5 +1,13 @@
 @import "./tokens.css";
 
+/*
+ * Page layout values other pieces line up with: the side gutter (v11, docs/design/v11/styles.css) and `.wrap`'s block
+ * padding.
+ */
+:root {
+  --page-gutter: clamp(16px, 3vw, 40px);
+  --wrap-padding-block: 1.5rem;
+}
 * {
   box-sizing: border-box;
 }
@@ -10,8 +18,7 @@ body {
   font: var(--font-size-body)/var(--line-height-body) var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Page gutter, as in v11 (docs/design/v11/styles.css). */
-  padding-inline: clamp(16px, 3vw, 40px);
+  padding-inline: var(--page-gutter);
   /* Room for the fixed Dock, so it never covers the end of the page. */
   padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
   /* padding-bottom: calc(var(--space-10) + var(--space-7) + env(safe-area-inset-bottom, 0px)); */
@@ -19,7 +26,7 @@ body {
 .wrap {
   max-width: 44rem;
   margin: 0 auto;
-  padding-block: 1.5rem;
+  padding-block: var(--wrap-padding-block);
 }
 ::selection {
   background: color-mix(in srgb, var(--color-accent) 14%, var(--color-surface));

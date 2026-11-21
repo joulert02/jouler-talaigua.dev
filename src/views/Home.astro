@@ -44,8 +44,8 @@ const t = useTranslations(lang);
     align-content: safe center;
     padding-block: var(--space-4) 80px;
     /* Temporary, until the Work section lands: keeps the footer below the first screen, so the Dock shows on load. */
-    /* Compensate for `.wrap`'s 1.5rem block padding. */
-    min-height: calc(100svh - 3rem);
+    /* Compensate for `.wrap`'s block padding. */
+    min-height: calc(100svh - 2 * var(--wrap-padding-block));
   }
   /* Tablet (561px to 900px): no top padding, as before. */
   @media (min-width: 561px) {
@@ -68,9 +68,9 @@ const t = useTranslations(lang);
       height: 100svh;
       min-height: 0;
       padding: 0;
-      /* Out of `.wrap`'s 44rem column and its 1.5rem top padding. */
+      /* Out of `.wrap`'s 44rem column and its top padding. */
       margin-inline: calc(50% - 50vw);
-      margin-top: -1.5rem;
+      margin-top: calc(-1 * var(--wrap-padding-block));
     }
   }
 </style>
