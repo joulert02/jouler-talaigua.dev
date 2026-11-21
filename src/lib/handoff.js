@@ -4,8 +4,15 @@
 /** A pause longer than this, in ms, ends a wheel gesture: trackpad inertia keeps firing events closer together. */
 export const GESTURE_GAP = 200;
 
-/** Upward wheel travel, in px, that a gesture started at the top needs before it goes back (a mouse notch is ~100). */
-export const RETURN_DISTANCE = 60;
+/**
+ * Wheel travel, in px, that a pull needs before it hands off (about four mouse notches, or a deliberate trackpad
+ * swipe): the resistance that keeps a scroll from changing page by accident. Used both ways: up past a page's top
+ * back to the Home, and down past the Home desk's bottom edge to Work (ui/Desk/camera.ts).
+ */
+export const HANDOFF_DISTANCE = 400;
+
+/** A pull survives pauses up to this long, in ms (slow mouse notches); a longer one empties it. */
+export const PULL_HOLD = 700;
 
 /**
  * @typedef {object} Gesture
@@ -16,18 +23,23 @@ export const RETURN_DISTANCE = 60;
 
 /**
  * Follows one wheel event. Only a gesture that starts at the top counts, so the inertia of a scroll that reached the
- * top cannot go back on its own: the visitor stops, then scrolls up again.
+ * top cannot pull on its own: the visitor stops, then scrolls up again. A new gesture at the top within PULL_HOLD of
+ * a pull keeps its travel, so slow notches add up; scrolling down empties it.
  * @param {Gesture | null} gesture the state the previous event returned, or null
  * @param {{ time: number, deltaY: number, atTop: boolean }} wheel the event's time (ms), vertical travel in px
  *   (negative is up) and whether the page sits at its top
- * @returns {{ gesture: Gesture, back: boolean }}
+ * @returns {{ gesture: Gesture, progress: number, back: boolean }} progress of the pull, 0 to 1; back once it is full
  */
 export function followWheel(gesture, { time, deltaY, atTop }) {
   const fresh = !gesture || time - gesture.last > GESTURE_GAP;
-  const next = fresh ? { last: time, fromTop: atTop, travel: 0 } : { ...gesture, last: time };
+  const held = gesture && atTop && gesture.fromTop && gesture.travel > 0 && time - gesture.last <= PULL_HOLD;
+  const next = fresh
+    ? { last: time, fromTop: atTop, travel: held ? gesture.travel : 0 }
+    : { ...gesture, last: time };
   if (deltaY > 0) next.travel = 0;
   else if (next.fromTop && atTop) next.travel -= deltaY;
-  return { gesture: next, back: next.fromTop && next.travel >= RETURN_DISTANCE };
+  const progress = Math.min(next.travel / HANDOFF_DISTANCE, 1);
+  return { gesture: next, progress, back: progress >= 1 };
 }
 
 /**

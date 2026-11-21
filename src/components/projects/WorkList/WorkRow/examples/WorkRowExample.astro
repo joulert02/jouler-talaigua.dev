@@ -1,0 +1,17 @@
+---
+// A WorkRow is a list item: WorkList renders one per project inside its list.
+import WorkRow from "../WorkRow.astro";
+import { liveItem } from "../../examples/items";
+---
+
+<ul class="work-row-example">
+  <WorkRow item={liveItem} />
+</ul>
+
+<style>
+  .work-row-example {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>

@@ -1,0 +1,19 @@
+---
+// Cases not built yet: no link, their tags beside the title. The last two have no cover; the last is a personal one.
+import WorkRow from "../WorkRow.astro";
+import { comingItem, personalItem, statusItem } from "../../examples/items";
+---
+
+<ul class="work-row-coming-example">
+  <WorkRow item={comingItem} />
+  <WorkRow item={statusItem} />
+  <WorkRow item={personalItem} />
+</ul>
+
+<style>
+  .work-row-coming-example {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>

@@ -44,7 +44,7 @@ const t = useTranslations(lang);
   /* The panel sits in the top layer, above the Dock's right end: Dock offset + Dock height (44px control, 6px padding, 1px border) + a gap. */
   .dock-settings__panel {
     position: fixed;
-    inset: auto clamp(16px, 3vw, 40px)
+    inset: auto var(--page-gutter)
       calc(var(--space-4) + env(safe-area-inset-bottom, 0px) + 58px + var(--space-2)) auto;
     margin: 0;
     display: none;

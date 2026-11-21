@@ -1,7 +1,7 @@
 // Guards the way back from a page to the Home: a deliberate scroll up at the top goes back; inertia does not.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { followWheel, GESTURE_GAP, RETURN_DISTANCE, returnsToHome } from "../src/lib/handoff.js";
+import { followWheel, GESTURE_GAP, HANDOFF_DISTANCE, PULL_HOLD, returnsToHome } from "../src/lib/handoff.js";
 
 /** Plays wheel events through followWheel and says whether any of them went back. */
 function play(events) {
@@ -15,16 +15,38 @@ function play(events) {
   return back;
 }
 
-test("one mouse notch up at the top goes back", () => {
-  assert.equal(play([{ time: 0, deltaY: -100, atTop: true }]), true);
+test("one mouse notch up at the top only starts the pull", () => {
+  assert.equal(play([{ time: 0, deltaY: -100, atTop: true }]), false);
 });
 
-test("a small nudge up at the top does not", () => {
-  assert.equal(play([{ time: 0, deltaY: -(RETURN_DISTANCE - 1), atTop: true }]), false);
+test("four quick mouse notches up at the top go back", () => {
+  const notches = Array.from({ length: 4 }, (_, i) => ({ time: i * 60, deltaY: -100, atTop: true }));
+  assert.equal(play(notches), true);
+});
+
+test("slow notches still add up, while each pause is shorter than the hold", () => {
+  const notches = Array.from({ length: 4 }, (_, i) => ({
+    time: i * (GESTURE_GAP + 200),
+    deltaY: -100,
+    atTop: true,
+  }));
+  assert.equal(play(notches), true);
+});
+
+test("a pause longer than the hold empties the pull", () => {
+  const notches = [
+    { time: 0, deltaY: -300, atTop: true },
+    { time: PULL_HOLD + 1, deltaY: -100, atTop: true },
+  ];
+  assert.equal(play(notches), false);
 });
 
 test("a trackpad swipe up at the top goes back once its travel adds up", () => {
-  const swipe = Array.from({ length: 10 }, (_, i) => ({ time: i * 16, deltaY: -8, atTop: true }));
+  const swipe = Array.from({ length: HANDOFF_DISTANCE / 8 }, (_, i) => ({
+    time: i * 16,
+    deltaY: -8,
+    atTop: true,
+  }));
   assert.equal(play(swipe), true);
 });
 
@@ -42,16 +64,16 @@ test("after a pause, scrolling up again at the top goes back", () => {
   const scroll = [
     { time: 0, deltaY: -40, atTop: false },
     { time: 16, deltaY: -30, atTop: true },
-    { time: 16 + GESTURE_GAP + 1, deltaY: -100, atTop: true },
+    { time: 16 + GESTURE_GAP + 1, deltaY: -HANDOFF_DISTANCE, atTop: true },
   ];
   assert.equal(play(scroll), true);
 });
 
 test("scrolling down resets the upward travel", () => {
   const scroll = [
-    { time: 0, deltaY: -40, atTop: true },
+    { time: 0, deltaY: -300, atTop: true },
     { time: 16, deltaY: 10, atTop: true },
-    { time: 32, deltaY: -40, atTop: true },
+    { time: 32, deltaY: -300, atTop: true },
   ];
   assert.equal(play(scroll), false);
 });
@@ -59,12 +81,12 @@ test("scrolling down resets the upward travel", () => {
 const site = { homePaths: ["/", "/es/"], morphPaths: ["/more-about-me/", "/es/more-about-me/"] };
 
 test("a page opened from the Home goes back to it, in either language", () => {
-  assert.equal(returnsToHome({ ...site, previous: "/", current: "/projects/" }), true);
+  assert.equal(returnsToHome({ ...site, previous: "/", current: "/work/" }), true);
   assert.equal(returnsToHome({ ...site, previous: "/es/", current: "/es/notes/" }), true);
 });
 
 test("a page opened from another page, or as the first page, scrolls as usual", () => {
-  assert.equal(returnsToHome({ ...site, previous: "/projects/", current: "/notes/" }), false);
+  assert.equal(returnsToHome({ ...site, previous: "/work/", current: "/notes/" }), false);
   assert.equal(returnsToHome({ ...site, previous: undefined, current: "/notes/" }), false);
 });
 

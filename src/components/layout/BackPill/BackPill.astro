@@ -1,0 +1,122 @@
+---
+interface Props {
+  /** Where it goes back to, e.g. the row the reader came from: "/work/#row-caps-plus". */
+  href: string;
+  /** What it goes back to ("All work"). */
+  label: string;
+  /** The mono caption under it ("Selected projects"); hidden below 561px. */
+  caption?: string;
+}
+const { href, label, caption } = Astro.props;
+---
+
+<!--
+  The back pill (v11, handoff): one definition for cases, the Notes index and note pages. A chevron disc, the label
+  and a mono caption; it keeps `view-transition-name: case-back`, so it stays put between pages that share it.
+-->
+<a class="back-pill" href={href}>
+  <span class="back-pill__chevron" aria-hidden="true">
+    <svg viewBox="0 0 20 20" width="18" height="18">
+      <path
+        d="M12.5 4.5 7 10l5.5 5.5"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      ></path>
+    </svg>
+  </span>
+  <span class="back-pill__text">
+    {label}
+    {caption && <small class="back-pill__caption">{caption}</small>}
+  </span>
+</a>
+
+<script>
+  // When the page it points to is the one the reader just came from, the pill goes Back instead of opening it again,
+  // so the browser restores the scroll and focus where the reader left them. Otherwise (a shared link, or no
+  // Navigation API) it is a plain link.
+  for (const pill of document.querySelectorAll<HTMLAnchorElement>(".back-pill")) {
+    pill.addEventListener("click", (event) => {
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const nav = window.navigation;
+      const index = nav?.currentEntry?.index ?? -1;
+      const previous = index > 0 ? nav?.entries()[index - 1]?.url : null;
+      if (!previous || new URL(previous).pathname !== new URL(pill.href).pathname) return;
+      event.preventDefault();
+      history.back();
+    });
+  }
+</script>
+
+<style>
+  .back-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: 48px;
+    padding: 4px 18px 4px 4px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-rest);
+    color: var(--color-text);
+    font: 500 15px / 1.2 var(--font-sans);
+    text-decoration: none;
+    view-transition-name: case-back;
+    transition:
+      background-color var(--duration-fast) var(--ease-out),
+      transform var(--duration-fast) var(--ease-out);
+  }
+  .back-pill:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+  .back-pill:active {
+    transform: scale(0.98);
+  }
+  .back-pill__chevron {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--color-bg-subtle);
+    transition: transform var(--duration-fast) var(--ease-out);
+  }
+  .back-pill__text {
+    white-space: nowrap;
+  }
+  .back-pill__caption {
+    display: block;
+    margin-top: 2px;
+    color: var(--color-text-muted);
+    font: 500 var(--font-size-label) / 1.3 var(--font-mono);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  @media (hover: hover) {
+    .back-pill:hover {
+      background: var(--color-surface-hover);
+    }
+    .back-pill:hover .back-pill__chevron {
+      transform: translateX(-2px);
+    }
+  }
+  @media (max-width: 560px) {
+    .back-pill {
+      padding-right: 14px;
+    }
+    .back-pill__caption {
+      display: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .back-pill,
+    .back-pill__chevron {
+      transition: none;
+    }
+  }
+</style>

@@ -19,7 +19,7 @@ Rules: no invented metrics, decisions or results. If something can't be shared (
 3. GoodRx — Datadog to groundcover · **approved 2026-10-26**
 4. Brand platforms at PRAGMA · **copy approved 2026-10-26; XD exports pending**
 5. CAPS+ (short status page) · **approved 2026-10-26**
-6. EKOU Personal Nexus · **deferred by Jouler to a later iteration (2026-10-25)**
+6. EKOU Personal Nexus · **listed on Work as a personal project (HU-03, 2026-11-21); the interview and its page stay deferred**
 
 Answers live in each case file; the question sets for completed cases were removed with the drafts (see [README](README.md#history)).
 

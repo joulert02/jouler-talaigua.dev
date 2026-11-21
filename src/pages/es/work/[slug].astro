@@ -1,0 +1,15 @@
+---
+// Cases not built yet: a short "coming soon" page per project (WorkCaseComing). A built case gets its own page in
+// its HU and leaves this list.
+import WorkCaseComing from "@/views/WorkCaseComing.astro";
+import { getProjects, slugOf } from "@/lib/content";
+export async function getStaticPaths() {
+  const projects = await getProjects("es");
+  return projects
+    .filter((project) => project.data.case === "coming")
+    .map((project) => ({ params: { slug: slugOf(project.id) }, props: { project } }));
+}
+const { project } = Astro.props;
+---
+
+<WorkCaseComing lang="es" project={project} />

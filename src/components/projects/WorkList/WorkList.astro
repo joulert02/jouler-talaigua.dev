@@ -1,0 +1,230 @@
+---
+import WorkRow from "./WorkRow/WorkRow.astro";
+import WorkPreview from "./WorkPreview/WorkPreview.astro";
+import type { WorkItem } from "./types";
+interface Props {
+  /** The projects, in the order they are listed. The Work page builds them from the `projects` collection. */
+  items: readonly WorkItem[];
+  /**
+   * How much each row says (an A/B test, 2026-11-21). `minimal` (default, v11): company, title and focus. `detail`:
+   * also the summary, and on touch screens a two-line cut with "See more" and the cover under the row. On the site,
+   * `?work=detail` picks the detail one for the rest of the visit and `?work=minimal` goes back.
+   */
+  variant?: "minimal" | "detail";
+}
+const { items, variant = "minimal" } = Astro.props;
+---
+
+<div class="work-list" data-variant={variant}>
+  <ul class="work-list__rows">
+    {items.map((item, index) => (
+      <WorkRow item={item} active={index === 0} />
+    ))}
+  </ul>
+  <div class="work-list__preview">
+    <WorkPreview items={items} />
+  </div>
+</div>
+<!-- Inline, right after the list, so the chosen variant shows from the first paint. -->
+<script is:inline>
+  (() => {
+    const key = "work-variant";
+    const asked = new URLSearchParams(location.search).get("work");
+    try {
+      if (asked === "detail") sessionStorage.setItem(key, "detail");
+      else if (asked === "minimal") sessionStorage.removeItem(key);
+      if (sessionStorage.getItem(key) !== "detail") return;
+    } catch {
+      if (asked !== "detail") return;
+    }
+    for (const list of document.querySelectorAll(".work-list")) list.dataset.variant = "detail";
+  })();
+</script>
+
+<script>
+  // The preview follows the row last pointed at or focused, and stays on it when the pointer leaves (v11). Rows and
+  // preview slides share `data-work-slug`; the active one carries `data-active`. The preview also moves down its column
+  // to sit level with that row, kept inside the list and, while the list allows it, inside the viewport (above the
+  // Dock), also as the page scrolls.
+  const gap = 24;
+  for (const list of document.querySelectorAll<HTMLElement>(".work-list")) {
+    const column = list.querySelector<HTMLElement>(".work-list__preview");
+    const preview = column?.firstElementChild as HTMLElement | null | undefined;
+    const align = () => {
+      const row = list.querySelector<HTMLElement>(".work-row[data-active]");
+      if (!column || !preview || !row) return;
+      const top = column.getBoundingClientRect().top;
+      const rowBox = row.getBoundingClientRect();
+      const height = preview.offsetHeight;
+      const floor = (document.querySelector(".dock")?.getBoundingClientRect().top ?? innerHeight) - gap;
+      const clamp = (value: number, min: number, max: number) =>
+        Math.min(Math.max(value, min), Math.max(min, max));
+      // Level with the row, then inside the viewport, then inside the list (which wins, so it never covers the footer).
+      let y = rowBox.top - top + (rowBox.height - height) / 2;
+      y = clamp(y, gap - top, floor - height - top);
+      y = clamp(y, 0, column.clientHeight - height);
+      column.style.setProperty("--work-preview-y", `${Math.round(y)}px`);
+    };
+    let frame = 0;
+    const alignSoon = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(align);
+    };
+    const show = (event: Event) => {
+      const row = (event.target as Element).closest<HTMLElement>(".work-row");
+      const slug = row?.dataset["workSlug"];
+      if (!slug) return;
+      for (const element of list.querySelectorAll<HTMLElement>("[data-work-slug]")) {
+        element.toggleAttribute("data-active", element.dataset["workSlug"] === slug);
+      }
+      align();
+    };
+    list.addEventListener("pointerover", show);
+    list.addEventListener("focusin", show);
+
+    // Touch and narrow screens cut each summary to two lines (WorkRow); "See more" shows only where it was cut.
+    const rows = [...list.querySelectorAll<HTMLElement>(".work-row")];
+    const syncMore = () => {
+      for (const row of rows) {
+        const summary = row.querySelector<HTMLElement>(".work-row__summary");
+        const more = row.querySelector<HTMLButtonElement>(".work-row__more");
+        if (!summary || !more) continue;
+        more.hidden = !row.hasAttribute("data-expanded") && summary.scrollHeight <= summary.clientHeight + 1;
+      }
+    };
+    list.addEventListener("click", (event) => {
+      const more = (event.target as Element).closest<HTMLButtonElement>(".work-row__more");
+      const row = more?.closest<HTMLElement>(".work-row");
+      if (!more || !row) return;
+      const expanded = row.toggleAttribute("data-expanded");
+      more.setAttribute("aria-expanded", String(expanded));
+      more.textContent = (expanded ? more.dataset["less"] : more.dataset["more"]) ?? "";
+      syncMore();
+    });
+    new ResizeObserver(() => {
+      syncMore();
+      alignSoon();
+    }).observe(list);
+    addEventListener("scroll", alignSoon, { passive: true });
+  }
+  // Opened at a row (a case's back pill when the reader did not come from Work, so it could not go Back): the browser
+  // scrolls to it (WorkRow's scroll-margin keeps it mid-screen); focus it too.
+  const back = location.hash.startsWith("#row-") ? document.getElementById(location.hash.slice(1)) : null;
+  back?.focus({ preventScroll: true });
+</script>
+<!--
+  The title morph into a case header (view-transition-name `case-title-<slug>`) is named only on the row of the case
+  being opened or left. A fixed name on every title would make each one fly on its own in any other navigation, such
+  as Home → Work. Inline, so the `pagereveal` listener is in place before the first render.
+-->
+<script is:inline>
+  (() => {
+    const slugOf = (url) => (url ? new URL(url).pathname.match(/\/work\/([^/]+)\/$/)?.[1] : undefined);
+    const name = (slug, viewTransition) => {
+      const title =
+        slug && document.querySelector(`.work-row[data-work-slug="${CSS.escape(slug)}"] .work-row__title`);
+      if (!title || !viewTransition) return;
+      title.style.viewTransitionName = `case-title-${slug}`;
+      viewTransition.finished.finally(() => title.style.removeProperty("view-transition-name"));
+    };
+    // Leaving the list for a case.
+    addEventListener("pageswap", (event) => name(slugOf(event.activation?.entry.url), event.viewTransition));
+    // Back on the list from a case.
+    addEventListener("pagereveal", (event) =>
+      name(slugOf(window.navigation?.activation?.from?.url), event.viewTransition),
+    );
+  })();
+</script>
+
+<style>
+  .work-list {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: 0 72px;
+    align-items: start;
+  }
+  .work-list__rows {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--color-border);
+  }
+  /* While the list is pointed at or focused, the other rows step back, so the one in the preview stands out; built
+     cases also bring in their arrow (WorkRow). */
+  .work-list__rows :global(.work-row) {
+    transition: opacity var(--duration-fast) var(--ease-out);
+  }
+  .work-list__rows:is(:hover, :focus-within) :global(.work-row:not([data-active])) {
+    opacity: 0.45;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .work-list__rows :global(.work-row) {
+      transition: none;
+    }
+  }
+  /* The column runs the full height of the list; the preview moves within it (`--work-preview-y`, set by the script). */
+  .work-list__preview {
+    align-self: stretch;
+  }
+  .work-list__preview > :global(*) {
+    translate: 0 var(--work-preview-y, 0);
+    transition: translate var(--duration-medium) var(--ease-out);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .work-list__preview > :global(*) {
+      transition: none;
+    }
+  }
+  /* Touch and narrow screens: one column, covers under the rows instead of the preview (v11). */
+  /*
+   * Touch and narrow screens, minimal variant: no hover, so the active row (the first one until another is touched or
+   * focused) shows its arrow with a double hop. On the first row it is the invitation to open a case.
+   */
+  @media (hover: none), (max-width: 900px) {
+    .work-list:not([data-variant="detail"]) :global(.work-row[data-active] .work-row__arrow) {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @media (hover: none) and (prefers-reduced-motion: no-preference),
+    (max-width: 900px) and (prefers-reduced-motion: no-preference) {
+    .work-list:not([data-variant="detail"]) :global(.work-row[data-active] .work-row__arrow) {
+      animation: work-list-invite 1.6s ease-in-out 0.4s infinite;
+    }
+  }
+  /* A cheerful double hop: a big one, a small one, then a short rest. */
+  @keyframes work-list-invite {
+    0% {
+      translate: 0 0;
+      scale: 1;
+    }
+    12% {
+      translate: 10px 0;
+      scale: 1.15;
+    }
+    24% {
+      translate: 0 0;
+      scale: 1;
+    }
+    34% {
+      translate: 6px 0;
+      scale: 1.08;
+    }
+    44%,
+    100% {
+      translate: 0 0;
+      scale: 1;
+    }
+  }
+  @media (hover: none), (max-width: 900px) {
+    .work-list {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .work-list__preview {
+      display: none;
+    }
+    .work-list__rows:is(:hover, :focus-within) :global(.work-row:not([data-active])) {
+      opacity: 1;
+    }
+  }
+</style>

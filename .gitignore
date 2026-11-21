@@ -13,3 +13,6 @@ output/
 
 # Local Claude Code settings (shared settings.json is tracked)
 .claude/settings.local.json
+
+# Playwright MCP snapshots, screenshots and console logs
+.playwright-mcp/

@@ -3,6 +3,8 @@
 // on top of that layout. Offset 0 is the resting view, so loading this script never moves anything.
 // No zoom (v11).
 
+import { followWheel, PULL_HOLD, type Gesture } from "../../../lib/handoff.js";
+
 const reducedMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
 const clamp = (value: number, low: number, high: number) => Math.max(low, Math.min(high, value));
 
@@ -14,11 +16,7 @@ const KEY_STEP = 64;
 export const DRAG_THRESHOLD = 5;
 /** Margin, in px, inside which a focused element counts as in view. */
 const FOCUS_MARGIN = 20;
-/**
- * Holding a background drag at the bottom edge fills the hand-off over this long (v11); reduced motion halves it.
- * Only a held pointer fills it: the wheel and trackpad can reach the edge and arm it, but browsers cannot tell when
- * the fingers lift, so a scroll could never be cancelled by letting go.
- */
+/** Holding a background drag at the bottom edge fills the hand-off over this long (v11); reduced motion halves it. */
 const EDGE_MS = 2600;
 const EDGE_MS_REDUCED = 1300;
 /** A touch drag released faster than this, in px/ms, keeps gliding (inertia). */
@@ -84,6 +82,12 @@ export class DeskCamera {
   private pan: Pan | null = null;
   private suppressClick = false;
   private readonly edge = { armed: false, frame: 0 };
+  /** The wheel's own fill of the hand-off (see wheelAtEdge). */
+  private readonly wheelEdge: { gesture: Gesture | null; progress: number; timer: number } = {
+    gesture: null,
+    progress: 0,
+    timer: 0,
+  };
   private readonly abort = new AbortController();
 
   private readonly wheelMode: WheelMode;
@@ -142,6 +146,7 @@ export class DeskCamera {
 
   destroy() {
     cancelAnimationFrame(this.edge.frame);
+    clearTimeout(this.wheelEdge.timer);
     this.stop();
     this.abort.abort();
     this.layer.style.removeProperty("translate");
@@ -236,9 +241,30 @@ export class DeskCamera {
     edge.frame = requestAnimationFrame(tick);
   }
 
+  /**
+   * Fills the hand-off from the wheel, with the same resistance as the way back (lib/handoff.js, HANDOFF_DISTANCE):
+   * only a gesture that starts at the armed edge counts, so the inertia of the scroll that reached it cannot hand off
+   * on its own, and a pause longer than PULL_HOLD empties it, since browsers cannot tell when the fingers lift. A drag
+   * that is already filling it wins.
+   */
+  private wheelAtEdge(time: number, dy: number, wasArmed: boolean) {
+    const wheel = this.wheelEdge;
+    // followWheel measures a pull up past a page's top; this edge is the bottom, so the travel is flipped.
+    const result = followWheel(wheel.gesture, { time, deltaY: -dy, atTop: wasArmed });
+    wheel.gesture = result.gesture;
+    if (!this.edge.armed || this.edge.frame || result.progress <= wheel.progress) return;
+    wheel.progress = result.progress;
+    this.onEdge({ armed: true, progress: result.progress });
+    clearTimeout(wheel.timer);
+    // Full stays full while Work loads; the page is leaving.
+    if (result.progress < 1) wheel.timer = window.setTimeout(() => this.resetEdge(), PULL_HOLD);
+  }
+
   /** Empties the hand-off (the drag ended or left the edge) and reports whether the edge is still armed. */
   private resetEdge() {
     cancelAnimationFrame(this.edge.frame);
+    clearTimeout(this.wheelEdge.timer);
+    this.wheelEdge.progress = 0;
     this.edge.frame = 0;
     this.onEdge({ armed: this.edge.armed, progress: 0 });
   }
@@ -378,6 +404,9 @@ export class DeskCamera {
   private onWheel(event: WheelEvent) {
     // Pinch-zoom (ctrl) and browser shortcuts (meta) stay with the browser.
     if (!event.cancelable || event.ctrlKey || event.metaKey) return;
+    // The page is scrolled past the desk's top (toward the footer below it): the wheel scrolls the page back first,
+    // or the desk would trap it there.
+    if (this.viewport.getBoundingClientRect().top < -1) return;
     // Page mode: a mostly vertical, unshifted wheel belongs to the page.
     if (this.wheelMode === "page" && !event.shiftKey && Math.abs(event.deltaY) >= Math.abs(event.deltaX))
       return;
@@ -397,7 +426,9 @@ export class DeskCamera {
     const coarse =
       event.deltaMode !== WheelEvent.DOM_DELTA_PIXEL ||
       (Number.isInteger(event.deltaY) && Math.abs(event.deltaY) >= 50 && !event.deltaX);
+    const wasArmed = this.edge.armed;
     this.glide((this.targetX ?? this.x) - dx, (this.targetY ?? this.y) - dy, coarse);
+    if (!sideways) this.wheelAtEdge(event.timeStamp, dy, wasArmed);
   }
 
   private onKeyDown(event: KeyboardEvent) {
