@@ -235,7 +235,7 @@ export const desk = {
         es: "Todos nos hemos preguntado los porqués; gran herramienta para dejar de preguntárselos.",
       },
       patronesDeDiseno: {
-        en: "One of the least boring technical books I have read.", // TODO(verify)
+        en: "One of the least boring technical books I have read.",
         es: "De los libros técnicos menos aburridos que he leído.",
       },
     },
