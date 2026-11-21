@@ -1,9 +1,8 @@
 import type { APIRoute, GetStaticPaths } from "astro";
 import { renderOg } from "@/lib/og";
-import { getProjects, slugOf } from "@/lib/content";
 import { ui, type Lang } from "@/i18n/ui";
 
-export const getStaticPaths = (async () => {
+export const getStaticPaths = (() => {
   const langs: Lang[] = ["en", "es"];
   const paths = [];
   for (const lang of langs) {
@@ -15,12 +14,10 @@ export const getStaticPaths = (async () => {
       params: { lang, slug: "more-about-me" },
       props: { title: ui[lang]["layout.about"], kicker: "jouler.dev" },
     });
-    for (const p of await getProjects(lang)) {
-      paths.push({
-        params: { lang, slug: slugOf(p.id) },
-        props: { title: p.data.title, kicker: ui[lang]["nav.projects"] },
-      });
-    }
+    paths.push({
+      params: { lang, slug: "work" },
+      props: { title: ui[lang]["work.heading"], kicker: "jouler.dev" },
+    });
   }
   return paths;
 }) satisfies GetStaticPaths;

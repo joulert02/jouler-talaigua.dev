@@ -16,6 +16,8 @@ import FooterExample from "../src/components/layout/Footer/examples/FooterExampl
 import SkipLinkExample from "../src/components/layout/SkipLink/examples/SkipLinkExample.astro";
 import AboutMeExample from "../src/components/profile/AboutMe/examples/AboutMeExample.astro";
 import CareerRowExample from "../src/components/profile/CareerRow/examples/CareerRowExample.astro";
+import WorkRowExample from "../src/components/projects/WorkList/WorkRow/examples/WorkRowExample.astro";
+import WorkRowComingExample from "../src/components/projects/WorkList/WorkRow/examples/WorkRowComingExample.astro";
 interface Props {
   /** Example file under src/components/, e.g. "ui/Desk/examples/DeskExample.astro". */
   example: string;
@@ -34,6 +36,8 @@ const examples = {
   "layout/SkipLink/examples/SkipLinkExample.astro": SkipLinkExample,
   "profile/AboutMe/examples/AboutMeExample.astro": AboutMeExample,
   "profile/CareerRow/examples/CareerRowExample.astro": CareerRowExample,
+  "projects/WorkList/WorkRow/examples/WorkRowExample.astro": WorkRowExample,
+  "projects/WorkList/WorkRow/examples/WorkRowComingExample.astro": WorkRowComingExample,
 };
 const { example, locale } = Astro.props;
 if (locale) Astro.locals.lang = locale;

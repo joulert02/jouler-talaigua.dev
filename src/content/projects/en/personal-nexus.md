@@ -1,11 +1,10 @@
 ---
-title: EKOU Personal Nexus
-summary: Placeholder — transaction-driven personal finance app with an AI capture layer.
+title: Personal Nexus
+company: EKOU
+summary: Exploring a transaction-driven personal-finance product with an AI-assisted capture layer.
 lang: en
-status: in-progress
-stack: [React Native, Expo, TypeScript]
-featured: true
-date: 2026-01-01
+tier: 3
+order: 2
+kind: personal
+case: coming
 ---
-
-Spike placeholder. The real case study follows the approved project template.

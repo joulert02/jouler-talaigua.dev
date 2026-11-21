@@ -8,6 +8,7 @@ import CopyEmail from "@/components/layout/CopyEmail/CopyEmail.astro";
 import ThemeToggle from "@/components/layout/ThemeToggle/ThemeToggle.astro";
 import DockSettings from "@/components/layout/DockSettings/DockSettings.astro";
 import Footer from "@/components/layout/Footer/Footer.astro";
+import ReturnHint from "@/components/layout/ReturnHint/ReturnHint.astro";
 import LanguageSwitch from "@/components/layout/LanguageSwitch/LanguageSwitch.astro";
 import { navigation } from "@/config/navigation";
 import { identityLinks, languageItems } from "@/config/profile";
@@ -104,15 +105,28 @@ const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
         const isHome = (path) => homePaths.includes(path);
         if (isHome(before) && !isHome(after)) transition.types.add("home-to-page");
         else if (!isHome(before) && isHome(after)) transition.types.add("page-to-home");
+        else return;
+        // While the slide plays, its overlay covers the page and takes the wheel, so a scroll (or the inertia of the
+        // one that changed page) would move the page underneath: on the Home, part way down to the footer. The page
+        // holds still until the slide ends and a moment after, for trackpad inertia.
+        const hold = (wheel) => wheel.cancelable && !wheel.ctrlKey && wheel.preventDefault();
+        addEventListener("wheel", hold, { passive: false });
+        transition.finished.finally(() => setTimeout(() => removeEventListener("wheel", hold), 700));
       });
     </script>
   </head>
   <body>
     <SkipLink />
-    <!-- Trial placement, to validate: the language pill at the top right, besides the Dock and the footer. -->
-    <div class="top-language">
-      <LanguageSwitch items={languages} />
-    </div>
+    {Astro.slots.has("top") ? (
+      // A page with its own top bar (a case: back pill and language switch) replaces the language pill.
+      <slot name="top" />
+    ) : (
+      // Trial placement, to validate: the language pill at the top right, besides the Dock and the footer.
+      <div class="top-language">
+        <LanguageSwitch items={languages} />
+      </div>
+    )}
+    <ReturnHint />
     <div class="wrap">
       <main id="main" tabindex="-1">
         <slot />
@@ -139,36 +153,82 @@ const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
   </body>
 </html>
 <script>
-  // Way back to the Home (HU-02): on a page opened from the Home, scrolling up past the top goes back to it, and the
-  // pagereveal script in the head plays the slide in reverse. Other pages scroll as usual (src/lib/handoff.js).
-  import { followWheel, returnsToHome, type Gesture } from "@/lib/handoff.js";
+  // Way back to the Home (HU-02): on a page opened from the Home, scrolling up past the top pulls the ReturnHint pill
+  // in and fills it, with the same resistance as the way down from the desk (src/lib/handoff.js); a full pull waits
+  // for the Home to answer, then goes back, and the pagereveal script in the head plays the slide in reverse. Other
+  // pages scroll as usual.
+  import { followWheel, PULL_HOLD, returnsToHome, type Gesture } from "@/lib/handoff.js";
 
   const paths = JSON.parse(document.getElementById("page-transitions")?.textContent ?? "{}") as {
     homePaths?: string[];
     morphPaths?: string[];
   };
+  const hint = document.querySelector<HTMLElement>(".return-hint");
   let gesture: Gesture | null = null;
   let leaving = false;
+  let emptyLater = 0;
 
-  /** Needs the Navigation API to see the previous entry, as the reverse slide does; without it, pages scroll as usual. */
-  function openedFromHome() {
+  /** Fills the pill to `progress` (0 to 1); it slides away once the pull pauses longer than PULL_HOLD. */
+  function showPull(progress: number) {
+    if (!hint) return;
+    hint.style.setProperty("--return-hint-pull", String(progress));
+    hint.toggleAttribute("data-visible", progress > 0);
+    clearTimeout(emptyLater);
+    emptyLater = window.setTimeout(() => {
+      hint.removeAttribute("data-visible");
+      hint.style.setProperty("--return-hint-pull", "0");
+    }, PULL_HOLD);
+  }
+
+  /** Goes back once the Home answers (or after 2s at most), so the slide starts with the page ready. */
+  async function goBack(home: string) {
+    clearTimeout(emptyLater);
+    hint?.setAttribute("data-visible", "");
+    hint?.setAttribute("data-loading", "");
+    await Promise.race([
+      fetch(home, { priority: "high" }).catch(() => undefined),
+      new Promise((resolve) => setTimeout(resolve, 2000)),
+    ]);
+    // Still leaving: a link followed meanwhile, then Back to this page, restarts it clean (arrive) without going back.
+    if (leaving) history.back();
+  }
+
+  /**
+   * The Home this page was opened from, if scrolling up goes back to it. Needs the Navigation API to see the previous
+   * entry, as the reverse slide does; without it, pages scroll as usual.
+   */
+  function homeToReturnTo() {
     const nav = window.navigation;
     const index = nav?.currentEntry?.index ?? -1;
     const previous = index > 0 ? nav?.entries()[index - 1]?.url : null;
-    return returnsToHome({
+    const back = returnsToHome({
       previous: previous ? new URL(previous).pathname : undefined,
       current: location.pathname,
       homePaths: paths.homePaths ?? [],
       morphPaths: paths.morphPaths ?? [],
     });
+    return back && previous ? previous : null;
   }
+
+  /** A fresh arrival: no pull in progress. (The head script holds the page still while the slide plays.) */
+  function arrive() {
+    gesture = null;
+    leaving = false;
+    hint?.removeAttribute("data-visible");
+    hint?.removeAttribute("data-loading");
+    hint?.style.setProperty("--return-hint-pull", "0");
+  }
+  arrive();
+  // Forward from the Home can restore this page from the back/forward cache: start clean.
+  addEventListener("pageshow", (event) => event.persisted && arrive());
 
   addEventListener(
     "wheel",
     (event) => {
       // Pinch-zoom and sideways scrolls are not a way back.
-      if (leaving || event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY) || !openedFromHome())
-        return;
+      if (leaving || event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+      const home = homeToReturnTo();
+      if (!home) return;
       const unit =
         event.deltaMode === WheelEvent.DOM_DELTA_LINE
           ? 16
@@ -181,17 +241,16 @@ const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
         atTop: scrollY <= 0,
       });
       gesture = result.gesture;
-      if (!result.back) return;
+      if (!result.back) {
+        // Scrolling back down at the top answers "no": the pill leaves at once.
+        if (result.progress > 0 || hint?.hasAttribute("data-visible")) showPull(result.progress);
+        return;
+      }
       leaving = true;
-      history.back();
+      void goBack(home);
     },
     { passive: true },
   );
-  // Forward from the Home can restore this page from the back/forward cache: start clean.
-  addEventListener("pageshow", () => {
-    gesture = null;
-    leaving = false;
-  });
 </script>
 <style>
   /* Mobile first: phones get the settings gear; from 561px, the theme toggle and the top language pill. */
@@ -205,7 +264,7 @@ const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
   .top-language {
     position: absolute;
     top: var(--space-4);
-    right: clamp(16px, 3vw, 40px);
+    right: var(--page-gutter);
     z-index: 20;
   }
   @media (min-width: 561px) {

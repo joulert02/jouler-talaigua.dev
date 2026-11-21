@@ -1,11 +1,10 @@
 ---
-title: EKOU Personal Nexus
-summary: Placeholder — app de finanzas personales basada en transacciones con capa de captura con IA.
+title: Personal Nexus
+company: EKOU
+summary: Explorando un producto de finanzas personales basado en transacciones, con una capa de captura asistida por IA.
 lang: es
-status: in-progress
-stack: [React Native, Expo, TypeScript]
-featured: true
-date: 2026-01-01
+tier: 3
+order: 2
+kind: personal
+case: coming
 ---
-
-Placeholder del spike. El case study real seguirá la plantilla aprobada.
