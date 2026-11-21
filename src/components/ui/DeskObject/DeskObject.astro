@@ -23,6 +23,9 @@ const style = [
   and a drag walks the desk). The child is the object
   itself and owns its behaviour: a FlipCard, a link, or anything static. A press that does not travel is a
   normal click on the child; a drag moves the object and swallows that click. Positions reset on reload.
+  On a desk that reveals its objects (Desk.astro sets `data-reveal`), the object stays out of sight until the desk
+  marks it `data-revealed`, then comes in (not when it is marked "moved": something else brought it there); with reduced motion it is there from the start. Its images are not
+  rendered, so lazy ones are not fetched, until the desk marks it `data-near`.
 -->
 <desk-object class="desk-object" {style}>
   <slot />
@@ -147,6 +150,30 @@ const style = [
     .desk-object:hover {
       translate: 0 -4px;
       rotate: calc(var(--desk-object-tilt) * 0.4);
+    }
+  }
+
+  /* Far from the screen an object's images take no box: the browser fetches a lazy image only once it is
+     rendered, and the whole desk is closer than its own lazy-loading distance. */
+  :global(.desk[data-reveal] .desk__world) > .desk-object:not([data-near]) :global(img) {
+    display: none;
+  }
+  /* The entrance: unseen until the desk reveals it, then it rises into place after its turn's delay. Only the
+     opacity hides it, so Tab still reaches an object that is off screen and the desk walks to it. */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.desk[data-reveal] .desk__world) > .desk-object:not([data-revealed]) {
+      opacity: 0;
+    }
+    :global(.desk[data-reveal] .desk__world) > .desk-object[data-revealed]:not([data-revealed="moved"]) {
+      animation: desk-object-enter var(--desk-object-enter-duration, var(--duration-slow)) var(--ease-out)
+        var(--desk-object-enter-delay, 0ms) backwards;
+    }
+  }
+  @keyframes desk-object-enter {
+    from {
+      opacity: 0;
+      translate: 0 10px;
+      scale: 0.97;
     }
   }
 

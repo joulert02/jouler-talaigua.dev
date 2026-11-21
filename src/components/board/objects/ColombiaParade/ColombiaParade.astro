@@ -1,0 +1,410 @@
+---
+interface Props {
+  /** Accessible name of the flag, e.g. "Start the Colombia parade". */
+  label: string;
+  /** The five scene names, in order: Medellín, Cali, Barranquilla, the Sierra Nevada and the closing banner.
+   *  They are painted on the banners and shown under the flag while their scene passes. */
+  scenes: readonly [string, string, string, string, string];
+  /** Text of the sound button while the music is off and on, e.g. "Sound off" / "Sound on". */
+  sound: { off: string; on: string };
+}
+const { label, scenes, sound } = Astro.props;
+---
+
+<!--
+  A strip of Colombia's flag taped to the desk. A toggle button: pressing it unrolls the flag into a street and
+  a parade walks by above it for about a minute, one region after another, with its own skyline behind. Under
+  the flag, the current scene's name and a sound button: the music is off until the visitor turns it on, and
+  each scene has its own loop. Pressing the flag again, or the end of the parade, rolls it back.
+-->
+<colombia-parade
+  class="colombia-parade"
+  data-scenes={JSON.stringify(scenes)}
+  data-sound-off={sound.off}
+  data-sound-on={sound.on}
+>
+  <span class="colombia-parade__stage" aria-hidden="true">
+    <svg class="colombia-parade__layer colombia-parade__back" width="4200" height="320"></svg>
+    <svg class="colombia-parade__layer colombia-parade__line" width="6200" height="320"></svg>
+    <span class="colombia-parade__confetti"></span>
+  </span>
+  <button type="button" class="colombia-parade__flag" aria-pressed="false" aria-label={label}></button>
+  <span class="colombia-parade__bar">
+    <button type="button" class="colombia-parade__sound" aria-pressed="false">
+      {sound.off}
+    </button>
+    <span class="colombia-parade__scene" role="status"></span>
+  </span>
+</colombia-parade>
+
+<script>
+  import { mountParade } from "./parade.js";
+  import { readList } from "../reveal";
+
+  class ColombiaParadeElement extends HTMLElement {
+    private stop: (() => void) | undefined;
+
+    connectedCallback() {
+      const part = <T extends Element>(name: string) => this.querySelector<T>(`.colombia-parade__${name}`);
+      const line = part<SVGElement>("line");
+      const back = part<SVGElement>("back");
+      const confetti = part<HTMLElement>("confetti");
+      const scene = part<HTMLElement>("scene");
+      const flag = part<HTMLElement>("flag");
+      const sound = part<HTMLElement>("sound");
+      if (!line || !back || !confetti || !scene || !flag || !sound) return;
+      const parts = { line, back, confetti, scene, flag, sound };
+      this.stop = mountParade(this, parts, readList<string>(this, "scenes"), {
+        soundOff: this.dataset["soundOff"] ?? "",
+        soundOn: this.dataset["soundOn"] ?? "",
+      });
+      // On the desk, pressing the sound button must not pick the object up.
+      sound.addEventListener("pointerdown", (event) => event.stopPropagation());
+    }
+
+    disconnectedCallback() {
+      this.stop?.();
+    }
+  }
+
+  if (!customElements.get("colombia-parade")) customElements.define("colombia-parade", ColombiaParadeElement);
+</script>
+
+<style>
+  .colombia-parade {
+    position: relative;
+    display: inline-block;
+    /* The sky and the far skyline, tinted from the page so they sit in both themes. */
+    --_sky: color-mix(in srgb, #3aa0d9 12%, var(--color-bg));
+    --_far: color-mix(in srgb, #3aa0d9 26%, var(--color-bg-subtle));
+  }
+  /* The flag: a strip of tape with torn ends, in the flag tokens. Unrolled, it is the street. */
+  .colombia-parade__flag {
+    all: unset;
+    box-sizing: border-box;
+    display: block;
+    width: 150px;
+    height: 30px;
+    background: linear-gradient(
+      var(--color-flag-yellow) 0 50%,
+      var(--color-flag-blue) 50% 75%,
+      var(--color-flag-red) 75%
+    );
+    opacity: 0.9;
+    clip-path: polygon(0 0, 97% 0, 100% 25%, 97% 50%, 100% 75%, 97% 100%, 0 100%, 3% 75%, 0 50%, 3% 25%);
+    cursor: pointer;
+    transition: width 0.7s var(--ease-out);
+  }
+  .colombia-parade__flag:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 4px;
+    clip-path: none;
+  }
+  .colombia-parade[data-on] > .colombia-parade__flag {
+    width: 1000px;
+    clip-path: none;
+    border-radius: 3px;
+  }
+  .colombia-parade__stage {
+    position: absolute;
+    left: 0;
+    bottom: 100%;
+    display: block;
+    width: 1000px;
+    height: 320px;
+    overflow: hidden;
+    border-radius: 14px 14px 0 0;
+    background: linear-gradient(var(--_sky), transparent 85%);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 0.4s var(--ease-out),
+      visibility 0s 0.4s;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+  }
+  .colombia-parade[data-on] > .colombia-parade__stage {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
+  }
+  .colombia-parade__layer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 320px;
+    overflow: visible;
+  }
+  .colombia-parade__confetti {
+    position: absolute;
+    inset: 0;
+  }
+  .colombia-parade__bar {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 10px);
+    display: none;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+    font: 500 var(--font-size-small) / 1.3 var(--font-mono);
+    color: var(--color-text-muted);
+  }
+  .colombia-parade[data-on] > .colombia-parade__bar {
+    display: flex;
+  }
+  .colombia-parade__sound {
+    padding: 4px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    font: inherit;
+    color: var(--color-text);
+    cursor: pointer;
+  }
+  .colombia-parade__sound:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 2px;
+  }
+
+  /* Everything below styles markup that parade.js builds, so the rules are global: a scoped selector would
+     never match it. Banner text sits on painted cloth, so it keeps one ink in both themes. */
+  :global(.colombia-parade__sign) {
+    font: 600 17px var(--font-sans);
+    fill: #141517;
+  }
+  :global(.colombia-parade__far) {
+    fill: var(--_far);
+  }
+  /* Character rig: every joint rotates around its own origin. */
+  :global(.colombia-parade__bob) {
+    animation: colombia-parade-bob 0.45s ease-in-out infinite alternate;
+  }
+  @keyframes colombia-parade-bob {
+    to {
+      transform: translateY(-2.5px);
+    }
+  }
+  :global(.colombia-parade__thigh) {
+    animation: colombia-parade-thigh 0.9s ease-in-out infinite;
+  }
+  :global(.colombia-parade__shin) {
+    animation: colombia-parade-shin 0.9s ease-in-out infinite;
+  }
+  @keyframes colombia-parade-thigh {
+    0%,
+    100% {
+      transform: rotate(24deg);
+    }
+    50% {
+      transform: rotate(-22deg);
+    }
+  }
+  @keyframes colombia-parade-shin {
+    0%,
+    45%,
+    100% {
+      transform: rotate(0deg);
+    }
+    70% {
+      transform: rotate(-46deg);
+    }
+    88% {
+      transform: rotate(-14deg);
+    }
+  }
+  :global(.colombia-parade__swing) {
+    animation: colombia-parade-swing 0.9s ease-in-out infinite;
+  }
+  @keyframes colombia-parade-swing {
+    0%,
+    100% {
+      transform: rotate(-24deg);
+    }
+    50% {
+      transform: rotate(26deg);
+    }
+  }
+  :global(.colombia-parade__step) :global(.colombia-parade__thigh) {
+    animation: colombia-parade-step-thigh 0.5s ease-in-out infinite;
+  }
+  :global(.colombia-parade__step) :global(.colombia-parade__shin) {
+    animation: colombia-parade-step-shin 0.5s ease-in-out infinite;
+  }
+  @keyframes colombia-parade-step-thigh {
+    0%,
+    100% {
+      transform: rotate(4deg);
+    }
+    50% {
+      transform: rotate(18deg);
+    }
+  }
+  @keyframes colombia-parade-step-shin {
+    0%,
+    100% {
+      transform: rotate(0deg);
+    }
+    50% {
+      transform: rotate(-34deg);
+    }
+  }
+  :global(.colombia-parade__sway) {
+    animation: colombia-parade-sway 1s ease-in-out infinite alternate;
+  }
+  @keyframes colombia-parade-sway {
+    from {
+      transform: rotate(-7deg) translateX(-5px);
+    }
+    to {
+      transform: rotate(7deg) translateX(5px);
+    }
+  }
+  :global(.colombia-parade__hop) {
+    animation: colombia-parade-hop 0.42s ease-out infinite alternate;
+  }
+  @keyframes colombia-parade-hop {
+    from {
+      transform: rotate(-5deg);
+    }
+    to {
+      transform: translateY(-16px) rotate(5deg);
+    }
+  }
+  :global(.colombia-parade__spin) {
+    animation: colombia-parade-spin-x 2s ease-in-out infinite;
+  }
+  @keyframes colombia-parade-spin-x {
+    0%,
+    55% {
+      transform: scaleX(1);
+    }
+    70% {
+      transform: scaleX(-1);
+    }
+    85%,
+    100% {
+      transform: scaleX(1);
+    }
+  }
+  :global(.colombia-parade__flare) {
+    animation: colombia-parade-flare 1s ease-in-out infinite alternate;
+  }
+  @keyframes colombia-parade-flare {
+    from {
+      transform: skewX(-8deg) scaleX(0.94);
+    }
+    to {
+      transform: skewX(8deg) scaleX(1.06);
+    }
+  }
+  :global(.colombia-parade__wave) {
+    animation: colombia-parade-wave 0.5s ease-in-out infinite alternate;
+  }
+  @keyframes colombia-parade-wave {
+    from {
+      transform: rotate(-16deg);
+    }
+    to {
+      transform: rotate(16deg);
+    }
+  }
+  :global(.colombia-parade__drum) {
+    animation: colombia-parade-drum 0.3s ease-in infinite alternate;
+  }
+  @keyframes colombia-parade-drum {
+    to {
+      transform: rotate(-26deg);
+    }
+  }
+  :global(.colombia-parade__wheel) {
+    animation: colombia-parade-wheel 1.4s linear infinite;
+  }
+  @keyframes colombia-parade-wheel {
+    to {
+      transform: rotate(-360deg);
+    }
+  }
+  :global(.colombia-parade__flap) {
+    animation: colombia-parade-flap 0.28s ease-in-out infinite alternate;
+  }
+  @keyframes colombia-parade-flap {
+    to {
+      transform: scaleY(-0.6);
+    }
+  }
+  :global(.colombia-parade__float) {
+    animation: colombia-parade-float 2.2s ease-in-out infinite alternate;
+  }
+  @keyframes colombia-parade-float {
+    to {
+      transform: translate(8px, -10px);
+    }
+  }
+  :global(.colombia-parade__ribbon) {
+    animation: colombia-parade-ribbon 0.8s ease-in-out infinite alternate;
+    transform-box: fill-box;
+    transform-origin: left center;
+  }
+  @keyframes colombia-parade-ribbon {
+    from {
+      transform: skewY(-10deg);
+    }
+    to {
+      transform: skewY(10deg);
+    }
+  }
+  :global(.colombia-parade__note) {
+    font: 600 22px var(--font-sans);
+    animation: colombia-parade-note 1.7s ease-out infinite;
+  }
+  @keyframes colombia-parade-note {
+    0% {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    30% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: translate(8px, -30px) rotate(14deg);
+    }
+  }
+  :global(.colombia-parade__flame) {
+    animation: colombia-parade-flame 0.2s ease-in-out infinite alternate;
+    transform-box: fill-box;
+    transform-origin: bottom;
+  }
+  @keyframes colombia-parade-flame {
+    to {
+      transform: scale(0.8, 1.25);
+    }
+  }
+  :global(.colombia-parade__confetti) :global(.colombia-parade__bit) {
+    position: absolute;
+    top: -12px;
+    width: 7px;
+    height: 10px;
+    animation: colombia-parade-confetti linear infinite;
+  }
+  @keyframes colombia-parade-confetti {
+    to {
+      transform: translateY(340px) rotate(600deg);
+    }
+  }
+  /* Reduced motion: the parade still passes when asked for, but nobody dances and nothing falls. */
+  @media (prefers-reduced-motion: reduce) {
+    .colombia-parade__flag,
+    .colombia-parade__stage {
+      transition: none;
+    }
+    .colombia-parade__stage :global(*) {
+      animation: none !important;
+    }
+    .colombia-parade__confetti {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,23 @@
+---
+import DeskObject from "../../ui/DeskObject/DeskObject.astro";
+import { layout, type ObjectId } from "./layout";
+interface Props {
+  /** Which entry of the layout places this object. */
+  id: ObjectId;
+}
+const { id } = Astro.props;
+const at = layout.objects[id];
+---
+
+<!-- One object of the desk, placed from the layout. The id travels in the DOM so the editor can find it. -->
+<DeskObject x={at.x} y={at.y} tilt={at.tilt} compact={layout.compact.objects[id]}>
+  <span class="placed" data-layout-id={id}>
+    <slot />
+  </span>
+</DeskObject>
+
+<style>
+  .placed {
+    display: contents;
+  }
+</style>

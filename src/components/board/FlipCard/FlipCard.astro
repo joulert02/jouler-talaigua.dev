@@ -71,6 +71,17 @@ const backId = `${id}-back`;
     inset: 0;
     transform: rotateY(180deg);
   }
+  /* The side turned away is also taken out of sight, not only left to backface-visibility: Safari on iOS shows a
+     back face while something above the card animates (the desk's entrance), mirrored over the front. The switch
+     happens when the card is edge-on, 13% into the turn with this easing. */
+  .flip-card__face,
+  .flip-card__back {
+    transition: visibility 0s linear calc(var(--duration-slow) * 0.13);
+  }
+  .flip-card:not([aria-pressed="true"]) .flip-card__back,
+  .flip-card[aria-pressed="true"] .flip-card__face {
+    visibility: hidden;
+  }
   .flip-card__back > img {
     display: block;
     width: 100%;
@@ -81,7 +92,9 @@ const backId = `${id}-back`;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .flip-card__inner {
+    .flip-card__inner,
+    .flip-card__face,
+    .flip-card__back {
       transition: none;
     }
   }

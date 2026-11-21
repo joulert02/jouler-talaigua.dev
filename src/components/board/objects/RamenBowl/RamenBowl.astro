@@ -1,0 +1,220 @@
+---
+import ObjectReveal from "../ObjectReveal/ObjectReveal.astro";
+import type { RevealContent } from "../reveal";
+interface Props {
+  /** Accessible name of the button, e.g. "Bowl of ramen: slurp it". */
+  label: string;
+  /** Note while there is ramen left; {left} is replaced with the slurps to go. One for a single slurp left. */
+  eating: { one: RevealContent; other: RevealContent };
+  /** Note once the bowl is empty. */
+  empty: RevealContent;
+}
+const { label, eating, empty } = Astro.props;
+// Each instance clips its own soup: ids are shared by the whole document.
+const clip = `ramen-bowl-${crypto.randomUUID().slice(0, 8)}`;
+---
+
+<!--
+  A steaming bowl of ramen. Each press lifts noodles with the chopsticks and lowers the soup; after three slurps
+  the bowl is empty, and one more press serves another.
+-->
+<ramen-bowl class="ramen-bowl" data-notes={JSON.stringify([eating.one, eating.other, empty])}>
+  <button type="button" class="ramen-bowl__face" data-eaten="0" aria-label={label}>
+    <svg
+      class="ramen-bowl__art"
+      viewBox="0 0 170 150"
+      fill="none"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <g class="ramen-bowl__steam" stroke="var(--color-text-muted)" stroke-width="2.5">
+        <path class="ramen-bowl__wisp" d="M60 30c-6-9 6-13 0-22"></path>
+        <path class="ramen-bowl__wisp" d="M92 26c-6-9 6-13 0-22"></path>
+      </g>
+      <ellipse
+        cx="80"
+        cy="62"
+        rx="68"
+        ry="16"
+        fill="#f4f1ea"
+        stroke="var(--_line)"
+        stroke-width="2.5"
+      ></ellipse>
+      <clipPath id={clip}>
+        <ellipse cx="80" cy="62" rx="62" ry="12"></ellipse>
+      </clipPath>
+      <g clip-path={`url(#${clip})`}>
+        <rect class="ramen-bowl__soup" x="16" y="48" width="128" height="28" fill="#e2a24a"></rect>
+        <g class="ramen-bowl__toppings">
+          <path
+            d="M34 60q10-8 20 0t20 0 20 0 20 0M40 67q10-8 20 0t20 0 20 0"
+            stroke="var(--_noodle)"
+            stroke-width="4"
+          ></path>
+          <ellipse
+            cx="112"
+            cy="60"
+            rx="13"
+            ry="8"
+            fill="#fffdf6"
+            stroke="var(--_line)"
+            stroke-width="1.2"
+          ></ellipse>
+          <ellipse cx="112" cy="60" rx="6" ry="4" fill="#f2b230"></ellipse>
+          <circle cx="56" cy="58" r="10" fill="#fffdf6" stroke="var(--_line)" stroke-width="1.2"></circle>
+          <path d="M56 58m-5 0a5 5 0 1 0 5-5 3 3 0 1 1 3 3" stroke="#e2607e" stroke-width="2"></path>
+          <path d="M80 50h16v10H80Z" fill="#23402e"></path>
+        </g>
+      </g>
+      <path d="M12 62q4 62 68 66 64-4 68-66" fill="#e8642c" stroke="var(--_line)" stroke-width="2.5"></path>
+      <path d="M22 84q58 14 116 0" stroke="#17357a" stroke-width="7"></path>
+      <path d="M56 128h48l-4 14H60Z" fill="#17357a" stroke="var(--_line)" stroke-width="2.5"></path>
+      <path
+        class="ramen-bowl__lift"
+        d="M96 26q-6 14 0 26M104 24q-6 14 0 28M112 26q-6 14 0 26"
+        stroke="var(--_noodle)"
+        stroke-width="4"
+      ></path>
+      <g class="ramen-bowl__sticks" stroke="#8a6238" stroke-width="4">
+        <path d="M98 30 158 6"></path>
+        <path d="M110 34 164 16"></path>
+      </g>
+    </svg>
+  </button>
+  <ObjectReveal />
+</ramen-bowl>
+
+<script>
+  import { readList, setReveal, type RevealContent } from "../reveal";
+
+  /** Slurps in a full bowl. */
+  const SLURPS = 3;
+  /** How long the chopsticks stay up (CSS), in milliseconds. */
+  const LIFT = 520;
+
+  class RamenBowlElement extends HTMLElement {
+    connectedCallback() {
+      const face = this.querySelector<HTMLButtonElement>(".ramen-bowl__face");
+      const [one, other, empty] = readList<RevealContent>(this, "notes");
+      let eaten = 0;
+      face?.addEventListener("click", () => {
+        if (face.classList.contains("ramen-bowl__face--slurp")) return;
+        eaten = eaten === SLURPS ? 0 : eaten + 1;
+        face.dataset["eaten"] = String(eaten);
+        face.style.setProperty("--_eaten", String(eaten));
+        if (!eaten) {
+          setReveal(this, false);
+          return;
+        }
+        face.classList.add("ramen-bowl__face--slurp");
+        setTimeout(() => face.classList.remove("ramen-bowl__face--slurp"), LIFT);
+        const left = SLURPS - eaten;
+        const note = left === 0 ? empty : left === 1 ? one : other;
+        if (!note) return;
+        setReveal(this, true, {
+          title: note.title.replace("{left}", String(left)),
+          text: note.text.replace("{left}", String(left)),
+        });
+      });
+    }
+  }
+
+  if (!customElements.get("ramen-bowl")) customElements.define("ramen-bowl", RamenBowlElement);
+</script>
+
+<style>
+  .ramen-bowl {
+    position: relative;
+    display: inline-block;
+    /* Local illustration colors, the same in both themes. */
+    --_line: #141517;
+    --_noodle: #f6dd9a;
+  }
+  .ramen-bowl__face {
+    all: unset;
+    box-sizing: border-box;
+    display: block;
+    cursor: pointer;
+  }
+  .ramen-bowl__face:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
+  }
+  .ramen-bowl__art {
+    display: block;
+    width: 170px;
+    height: 150px;
+    overflow: visible;
+  }
+  .ramen-bowl__sticks {
+    transform-origin: 150px 20px;
+    transition: transform 0.35s var(--ease-out);
+  }
+  .ramen-bowl__lift {
+    opacity: 0;
+    transform: translateY(26px);
+    transition:
+      transform 0.35s var(--ease-out),
+      opacity 0.15s;
+  }
+  .ramen-bowl__face--slurp .ramen-bowl__sticks {
+    transform: rotate(-14deg) translateY(-22px);
+  }
+  .ramen-bowl__face--slurp .ramen-bowl__lift {
+    opacity: 1;
+    transform: none;
+  }
+  /* The soup drops a third with every slurp. */
+  .ramen-bowl__soup {
+    transform-box: fill-box;
+    transform-origin: center bottom;
+    transform: scaleY(calc(1 - var(--_eaten, 0) * 0.3));
+    transition: transform 0.4s var(--ease-out);
+  }
+  .ramen-bowl__toppings {
+    transition:
+      opacity 0.3s,
+      transform 0.4s var(--ease-out);
+  }
+  [data-eaten="3"] .ramen-bowl__toppings {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  .ramen-bowl__wisp {
+    animation: ramen-bowl-steam 2.4s ease-in-out infinite;
+  }
+  .ramen-bowl__wisp + .ramen-bowl__wisp {
+    animation-delay: 0.9s;
+  }
+  [data-eaten="3"] .ramen-bowl__steam {
+    display: none;
+  }
+  @keyframes ramen-bowl-steam {
+    0% {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    40% {
+      opacity: 0.55;
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-14px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ramen-bowl__sticks,
+    .ramen-bowl__lift,
+    .ramen-bowl__soup,
+    .ramen-bowl__toppings {
+      transition: none;
+    }
+    .ramen-bowl__wisp {
+      animation: none;
+      opacity: 0.55;
+    }
+  }
+</style>

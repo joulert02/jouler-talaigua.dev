@@ -1,0 +1,150 @@
+---
+import ObjectReveal from "../ObjectReveal/ObjectReveal.astro";
+import sheet from "../../../../assets/board/chibi-naruto.webp";
+interface Props {
+  /** Accessible name of the button, e.g. "Naruto, my favorite anime: press to change what he is doing". */
+  label: string;
+  /** First line of the note. */
+  title: string;
+  /** The note under the title. */
+  text: string;
+  /** Credit line for the character's owners and the sprite's artist, shown small under the note. */
+  credit: string;
+}
+const { label, title, text, credit } = Astro.props;
+---
+
+<!--
+  An animated die-cut sticker of Naruto (a community fan sprite, credited in the note). He starts eating ramen;
+  each press changes what he does. He sleeps only while the lights are off: he listens to the lamp's event on
+  the window (lights.ts) and wakes up eating when they come back on.
+-->
+<naruto-sticker class="naruto-sticker" style={`--_sheet: url("${sheet.src}")`}>
+  <button type="button" class="naruto-sticker__face" data-state="eat" aria-label={label}>
+    <span class="naruto-sticker__sprite"></span>
+  </button>
+  <ObjectReveal title={title} text={text}>
+    <small class="naruto-sticker__credit">{credit}</small>
+  </ObjectReveal>
+</naruto-sticker>
+
+<script>
+  import { effectiveTheme } from "@/lib/theme.js";
+  import { LIGHTS_EVENT, type LightsDetail } from "../lights";
+  import { setReveal } from "../reveal";
+
+  /** Each action's row in the sprite sheet and its number of frames. */
+  const STATES = {
+    eat: [6, 6],
+    wave: [3, 4],
+    jump: [4, 5],
+    run: [1, 8],
+    code: [7, 6],
+    read: [8, 6],
+    sleep: [0, 7],
+  } as const;
+  type State = keyof typeof STATES;
+  /** What he does on each press, in turn. */
+  const ORDER: readonly State[] = ["wave", "jump", "run", "code", "read", "eat"];
+
+  class NarutoStickerElement extends HTMLElement {
+    private abort: AbortController | undefined;
+
+    connectedCallback() {
+      const face = this.querySelector<HTMLButtonElement>(".naruto-sticker__face");
+      if (!face) return;
+      this.abort = new AbortController();
+      const signal = this.abort.signal;
+      let turn = -1;
+      const act = (state: State) => {
+        const [row, frames] = STATES[state];
+        face.dataset["state"] = state;
+        face.style.setProperty("--_row", String(row));
+        face.style.setProperty("--_frames", String(frames));
+      };
+      // A page that loads in the dark finds him already asleep.
+      const dark =
+        effectiveTheme(
+          document.documentElement.dataset["theme"],
+          matchMedia("(prefers-color-scheme: dark)").matches,
+        ) === "dark";
+      act(dark ? "sleep" : "eat");
+
+      window.addEventListener(
+        LIGHTS_EVENT,
+        (event) => {
+          turn = -1;
+          act((event as CustomEvent<LightsDetail>).detail.on ? "eat" : "sleep");
+        },
+        { signal },
+      );
+      face.addEventListener(
+        "click",
+        () => {
+          if (face.dataset["state"] === "sleep") return;
+          turn = (turn + 1) % ORDER.length;
+          act(ORDER[turn] ?? "eat");
+          setReveal(this, true);
+        },
+        { signal },
+      );
+    }
+
+    disconnectedCallback() {
+      this.abort?.abort();
+    }
+  }
+
+  if (!customElements.get("naruto-sticker")) customElements.define("naruto-sticker", NarutoStickerElement);
+</script>
+
+<style>
+  .naruto-sticker {
+    position: relative;
+    display: inline-block;
+  }
+  .naruto-sticker__face {
+    all: unset;
+    box-sizing: border-box;
+    display: block;
+    width: 134px;
+    height: 146px;
+    cursor: pointer;
+    /* A die-cut sticker: a white edge and a soft shadow, the same in both themes. */
+    filter: drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 2px 0 #fff)
+      drop-shadow(0 -2px 0 #fff) drop-shadow(0 6px 8px rgb(20 21 23 / 0.28));
+  }
+  .naruto-sticker__face:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
+  }
+  /* The sheet is 8 columns by 9 rows of 192×208 cells; a row is one action, played in steps. */
+  .naruto-sticker__sprite {
+    display: block;
+    width: 192px;
+    height: 208px;
+    transform: scale(0.7);
+    transform-origin: 0 0;
+    background: var(--_sheet) 0 calc(var(--_row, 6) * -208px) / 1536px 1872px no-repeat;
+    animation: naruto-sticker-frames calc(var(--_frames, 6) * 0.17s) steps(var(--_frames, 6)) infinite;
+  }
+  @keyframes naruto-sticker-frames {
+    to {
+      background-position-x: calc(var(--_frames, 6) * -192px);
+    }
+  }
+  .naruto-sticker__credit {
+    display: block;
+    margin-top: 6px;
+    font: 500 var(--font-size-small) / 1.4 var(--font-mono);
+    color: var(--color-text-muted);
+  }
+
+  /* Reduced motion: the first frame of each action, still. */
+  @media (prefers-reduced-motion: reduce) {
+    .naruto-sticker__sprite {
+      animation: none;
+    }
+  }
+</style>
