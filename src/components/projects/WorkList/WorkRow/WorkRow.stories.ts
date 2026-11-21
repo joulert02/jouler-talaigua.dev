@@ -35,7 +35,7 @@ export const Coming = meta.story({
     docs: {
       description: {
         story:
-          "Cases not built yet are plain text with a status tag, so they never lead to a broken page; the second has no cover, so its thumbnail on touch screens is an empty tile.",
+          "Rows without `href` are plain text with a status tag. The second and third have no cover, so nothing shows under them on touch screens.",
       },
     },
   },

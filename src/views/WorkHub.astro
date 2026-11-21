@@ -1,5 +1,5 @@
 ---
-// Work: the selected projects, with a preview on desktop (HU-03). Every row links to its case at /work/<slug>/; a case not built yet answers 404 until it ships.
+// Work: the selected projects, with a preview on desktop (HU-03). Every row links to its case at /work/<slug>/; a case not built yet shows a short "coming soon" page.
 import Base from "@/layouts/Base.astro";
 import WorkList from "@/components/projects/WorkList/WorkList.astro";
 import type { WorkItem } from "@/components/projects/WorkList/types";
@@ -55,7 +55,8 @@ const items: WorkItem[] = (await getProjects(lang)).map(({ id, data }) => {
   @media (max-width: 900px) {
     .work-page {
       --work-width: calc(100vw - 40px);
-      padding-top: 48px;
+      /* No language pill up here below 561px: the page starts close to the top. */
+      padding-top: var(--space-4);
     }
     .work-page__heading {
       margin-bottom: 36px;

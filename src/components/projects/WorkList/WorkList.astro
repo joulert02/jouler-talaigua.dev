@@ -5,11 +5,17 @@ import type { WorkItem } from "./types";
 interface Props {
   /** The projects, in the order they are listed. The Work page builds them from the `projects` collection. */
   items: readonly WorkItem[];
+  /**
+   * How much each row says (an A/B test, 2026-11-21). `minimal` (default, v11): company, title and focus. `detail`:
+   * also the summary, and on touch screens a two-line cut with "See more" and the cover under the row. On the site,
+   * `?work=detail` picks the detail one for the rest of the visit and `?work=minimal` goes back.
+   */
+  variant?: "minimal" | "detail";
 }
-const { items } = Astro.props;
+const { items, variant = "minimal" } = Astro.props;
 ---
 
-<div class="work-list">
+<div class="work-list" data-variant={variant}>
   <ul class="work-list__rows">
     {items.map((item, index) => (
       <WorkRow item={item} active={index === 0} />
@@ -19,6 +25,21 @@ const { items } = Astro.props;
     <WorkPreview items={items} />
   </div>
 </div>
+<!-- Inline, right after the list, so the chosen variant shows from the first paint. -->
+<script is:inline>
+  (() => {
+    const key = "work-variant";
+    const asked = new URLSearchParams(location.search).get("work");
+    try {
+      if (asked === "detail") sessionStorage.setItem(key, "detail");
+      else if (asked === "minimal") sessionStorage.removeItem(key);
+      if (sessionStorage.getItem(key) !== "detail") return;
+    } catch {
+      if (asked !== "detail") return;
+    }
+    for (const list of document.querySelectorAll(".work-list")) list.dataset.variant = "detail";
+  })();
+</script>
 
 <script>
   // The preview follows the row last pointed at or focused, and stays on it when the pointer leaves (v11). Rows and
@@ -60,9 +81,36 @@ const { items } = Astro.props;
     };
     list.addEventListener("pointerover", show);
     list.addEventListener("focusin", show);
-    new ResizeObserver(alignSoon).observe(list);
+
+    // Touch and narrow screens cut each summary to two lines (WorkRow); "See more" shows only where it was cut.
+    const rows = [...list.querySelectorAll<HTMLElement>(".work-row")];
+    const syncMore = () => {
+      for (const row of rows) {
+        const summary = row.querySelector<HTMLElement>(".work-row__summary");
+        const more = row.querySelector<HTMLButtonElement>(".work-row__more");
+        if (!summary || !more) continue;
+        more.hidden = !row.hasAttribute("data-expanded") && summary.scrollHeight <= summary.clientHeight + 1;
+      }
+    };
+    list.addEventListener("click", (event) => {
+      const more = (event.target as Element).closest<HTMLButtonElement>(".work-row__more");
+      const row = more?.closest<HTMLElement>(".work-row");
+      if (!more || !row) return;
+      const expanded = row.toggleAttribute("data-expanded");
+      more.setAttribute("aria-expanded", String(expanded));
+      more.textContent = (expanded ? more.dataset["less"] : more.dataset["more"]) ?? "";
+      syncMore();
+    });
+    new ResizeObserver(() => {
+      syncMore();
+      alignSoon();
+    }).observe(list);
     addEventListener("scroll", alignSoon, { passive: true });
   }
+  // Opened at a row (a case's back pill when the reader did not come from Work, so it could not go Back): the browser
+  // scrolls to it (WorkRow's scroll-margin keeps it mid-screen); focus it too.
+  const back = location.hash.startsWith("#row-") ? document.getElementById(location.hash.slice(1)) : null;
+  back?.focus({ preventScroll: true });
 </script>
 <!--
   The title morph into a case header (view-transition-name `case-title-<slug>`) is named only on the row of the case
@@ -127,7 +175,47 @@ const { items } = Astro.props;
       transition: none;
     }
   }
-  /* Touch and narrow screens: one column, thumbnails in the rows instead of the preview (v11). */
+  /* Touch and narrow screens: one column, covers under the rows instead of the preview (v11). */
+  /*
+   * Touch and narrow screens, minimal variant: no hover, so the active row (the first one until another is touched or
+   * focused) shows its arrow with a double hop. On the first row it is the invitation to open a case.
+   */
+  @media (hover: none), (max-width: 900px) {
+    .work-list:not([data-variant="detail"]) :global(.work-row[data-active] .work-row__arrow) {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @media (hover: none) and (prefers-reduced-motion: no-preference),
+    (max-width: 900px) and (prefers-reduced-motion: no-preference) {
+    .work-list:not([data-variant="detail"]) :global(.work-row[data-active] .work-row__arrow) {
+      animation: work-list-invite 1.6s ease-in-out 0.4s infinite;
+    }
+  }
+  /* A cheerful double hop: a big one, a small one, then a short rest. */
+  @keyframes work-list-invite {
+    0% {
+      translate: 0 0;
+      scale: 1;
+    }
+    12% {
+      translate: 10px 0;
+      scale: 1.15;
+    }
+    24% {
+      translate: 0 0;
+      scale: 1;
+    }
+    34% {
+      translate: 6px 0;
+      scale: 1.08;
+    }
+    44%,
+    100% {
+      translate: 0 0;
+      scale: 1;
+    }
+  }
   @media (hover: none), (max-width: 900px) {
     .work-list {
       grid-template-columns: minmax(0, 1fr);

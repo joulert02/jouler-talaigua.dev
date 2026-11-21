@@ -66,6 +66,10 @@ export const ui = {
     "work.heading": "Selected projects",
     "work.coming": "Coming soon",
     "work.personal": "Personal",
+    "work.back": "All work",
+    "work.more": "See more",
+    "work.less": "See less",
+    "work.comingNote": "The full case study is on its way.",
   },
   es: {
     "layout.skip": "Saltar al contenido",
@@ -130,6 +134,10 @@ export const ui = {
     "work.heading": "Proyectos seleccionados",
     "work.coming": "Próximamente",
     "work.personal": "Personal",
+    "work.back": "Proyectos",
+    "work.more": "Ver más",
+    "work.less": "Ver menos",
+    "work.comingNote": "El caso completo está en camino.",
   },
 } as const satisfies Record<Lang, Record<string, string>>;
 

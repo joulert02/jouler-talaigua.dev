@@ -117,10 +117,15 @@ const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
   </head>
   <body>
     <SkipLink />
-    <!-- Trial placement, to validate: the language pill at the top right, besides the Dock and the footer. -->
-    <div class="top-language">
-      <LanguageSwitch items={languages} />
-    </div>
+    {Astro.slots.has("top") ? (
+      // A page with its own top bar (a case: back pill and language switch) replaces the language pill.
+      <slot name="top" />
+    ) : (
+      // Trial placement, to validate: the language pill at the top right, besides the Dock and the footer.
+      <div class="top-language">
+        <LanguageSwitch items={languages} />
+      </div>
+    )}
     <ReturnHint />
     <div class="wrap">
       <main id="main" tabindex="-1">

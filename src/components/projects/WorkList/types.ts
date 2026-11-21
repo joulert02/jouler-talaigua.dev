@@ -7,7 +7,7 @@ export interface WorkItem {
   title: string;
   summary: string;
   focus: readonly string[];
-  /** Preview and thumbnail; without one, both show a status tile. */
+  /** The preview on desktop and the cover under the row on touch screens; without one, the preview shows a status tile. */
   cover?: ImageMetadata | undefined;
   /** The case page. A case that is not built yet has none and is listed without a link. */
   href?: string | undefined;
