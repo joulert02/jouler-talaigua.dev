@@ -50,6 +50,12 @@ const style = [
   At the bottom edge the desktop desk fires a bubbling `desk-edge` event, detail { armed, progress } (camera.ts,
   EdgeState): armed once the camera reaches the edge, progress filling from 0 to 1 while a background drag is held
   there or the wheel keeps scrolling down past it, back to 0 when the drag is released or the scroll pauses. What a full hand-off does is up to the page (the Home opens Work).
+  The objects come in one by one: those in view when the page opens, or each time the phone's desk opens, then each
+  of the others the first time the visitor walks or steps up to it. The inline script hides them before the first
+  paint (DeskObject owns the styles), so without scripts they are simply there; the camera script marks each one
+  `data-revealed` as it comes into view. Their images wait too: an object is marked `data-near` a little before it
+  can be seen, and only then do its lazy images load, so the page opens with what the first screen needs and fetches
+  the rest as the visitor walks.
 -->
 <desk-board
   class="desk"
@@ -60,6 +66,9 @@ const style = [
   data-position={t("desk.position")}
   {style}
 >
+  <script is:inline>
+    document.currentScript.parentElement.dataset.reveal = "";
+  </script>
   <div class="desk__viewport">
     <div class="desk__stage">
       <div class="desk__layer">
@@ -121,6 +130,12 @@ const style = [
 
   const desktop = matchMedia("(min-width: 901px)");
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+  /** Time between two objects that come into view together, in ms: they arrive one by one, not as a block. */
+  const REVEAL_STAGGER = 110;
+  /** How long an object takes to come in, in ms: the ones met while walking arrive slower than the first screen's. */
+  const REVEAL_DURATION = { opening: 900, walking: 1400 };
+  /** How far outside the screen an object starts loading its images, so they are ready when it comes in. */
+  const NEAR_MARGIN = "200px";
   // Experiment flag: `?wheel=page` lets the vertical wheel scroll the page instead of panning the desk.
   const wheelMode: WheelMode = new URLSearchParams(location.search).get("wheel") === "page" ? "page" : "desk";
   /** How long the phone hint stays before it fades on its own, in ms. */
@@ -129,6 +144,8 @@ const style = [
   class DeskBoard extends HTMLElement {
     private camera: DeskCamera | undefined;
     private resize: ResizeObserver | undefined;
+    private entrance: IntersectionObserver | undefined;
+    private nearby: IntersectionObserver | undefined;
     private abort: AbortController | undefined;
     /** What opened the desk on a phone; focus goes back to it on close. */
     private opener: HTMLElement | null = null;
@@ -205,6 +222,10 @@ const style = [
         this.setAttribute("aria-modal", "true");
         this.setAttribute("aria-label", this.dataset["dialogLabel"] ?? "");
         this.inertOutside(true);
+        // Every time the desk opens its objects come in again.
+        for (const object of this.querySelectorAll(".desk-object[data-revealed]")) {
+          object.removeAttribute("data-revealed");
+        }
         this.mount();
         this.collectTour();
         this.at = -1;
@@ -293,16 +314,6 @@ const style = [
       );
       const row = (item: HTMLElement) => Math.round(item.offsetTop / 200);
       this.tour = items.sort((a, b) => row(a) - row(b) || a.offsetLeft - b.offsetLeft);
-      if (reducedMotion.matches) return;
-      // They land on the desk one after another, in that order.
-      this.tour.forEach((item, index) =>
-        item.animate([{ opacity: 0, transform: "translateY(16px) scale(0.94)" }, {}], {
-          duration: 420,
-          delay: 120 + index * 45,
-          easing: "cubic-bezier(0.2, 0.8, 0.2, 1)",
-          fill: "backwards",
-        }),
-      );
     }
 
     private step(direction: number) {
@@ -397,6 +408,52 @@ const style = [
       });
       this.resize = new ResizeObserver(() => this.camera?.refit());
       this.resize.observe(viewport);
+      this.watchEntrances(viewport, world);
+    }
+
+    /** Brings each object in the first time it is in view, the ones nearest the middle of the screen first. */
+    private watchEntrances(viewport: HTMLElement, world: HTMLElement) {
+      // The observer's first report is the screen the page opens on; every later one is the visitor walking.
+      let opening = true;
+      this.entrance = new IntersectionObserver(
+        (entries, observer) => {
+          const duration = opening ? REVEAL_DURATION.opening : REVEAL_DURATION.walking;
+          opening = false;
+          const arriving = entries
+            .filter((entry) => entry.isIntersecting)
+            .map((entry) => {
+              const box = entry.boundingClientRect;
+              const view = entry.rootBounds ?? viewport.getBoundingClientRect();
+              const distance = Math.hypot(
+                box.left + box.width / 2 - (view.left + view.width / 2),
+                box.top + box.height / 2 - (view.top + view.height / 2),
+              );
+              return { object: entry.target as HTMLElement, distance };
+            })
+            .sort((a, b) => a.distance - b.distance);
+          arriving.forEach(({ object }, index) => {
+            object.style.setProperty("--desk-object-enter-delay", `${index * REVEAL_STAGGER}ms`);
+            object.style.setProperty("--desk-object-enter-duration", `${duration}ms`);
+            object.dataset["revealed"] = "";
+            observer.unobserve(object);
+          });
+        },
+        { root: viewport, threshold: 0.1 },
+      );
+      this.nearby = new IntersectionObserver(
+        (entries, observer) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            (entry.target as HTMLElement).dataset["near"] = "";
+            observer.unobserve(entry.target);
+          }
+        },
+        { root: viewport, rootMargin: NEAR_MARGIN },
+      );
+      for (const object of world.querySelectorAll(":scope > .desk-object")) {
+        if (!object.hasAttribute("data-near")) this.nearby.observe(object);
+        if (!object.hasAttribute("data-revealed")) this.entrance.observe(object);
+      }
     }
 
     private edge(state: EdgeState) {
@@ -408,6 +465,8 @@ const style = [
       if (this.camera) this.edge({ armed: false, progress: 0 });
       this.camera?.destroy();
       this.resize?.disconnect();
+      this.entrance?.disconnect();
+      this.nearby?.disconnect();
       this.camera = undefined;
       const viewport = this.querySelector<HTMLElement>(".desk__viewport");
       viewport?.removeAttribute("tabindex");
