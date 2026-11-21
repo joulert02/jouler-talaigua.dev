@@ -1,0 +1,146 @@
+---
+import ObjectReveal from "../ObjectReveal/ObjectReveal.astro";
+interface Props {
+  /** Accessible name of the button, e.g. "Grow the binary tree". */
+  label: string;
+  /** Title of the note, with {count} replaced by the number of nodes, e.g. "{count} nodes." */
+  count: string;
+  /** The note under the count. */
+  text: string;
+}
+const { label, count, text } = Astro.props;
+---
+
+<!--
+  A bonsai that is a binary tree. Each press grows one more level (3, 7, then 15 nodes) and the note counts
+  the nodes; the press after the last level prunes it back to a single node.
+-->
+<binary-bonsai class="binary-bonsai" data-count={count} data-text={text}>
+  <button type="button" class="binary-bonsai__face" aria-label={label}>
+    <svg class="binary-bonsai__art" viewBox="0 0 200 190" aria-hidden="true">
+      <g class="binary-bonsai__tree"></g>
+      <path d="M78 160h44l-6 28H84Z" fill="#b5653a"></path>
+      <rect x="74" y="154" width="52" height="9" rx="3" fill="#9c5530"></rect>
+    </svg>
+  </button>
+  <ObjectReveal text={text} />
+</binary-bonsai>
+
+<script>
+  import { setReveal } from "../reveal";
+
+  /** Levels below the root when fully grown. */
+  const MAX_DEPTH = 3;
+  const SVG = "http://www.w3.org/2000/svg";
+
+  /** Where node `index` of level `depth` sits in the 200×190 drawing. */
+  const point = (depth: number, index: number): [number, number] => [
+    100 + ((index + 0.5) / 2 ** depth - 0.5) * 184,
+    138 - depth * 38,
+  ];
+
+  class BinaryBonsaiElement extends HTMLElement {
+    connectedCallback() {
+      const face = this.querySelector<HTMLButtonElement>(".binary-bonsai__face");
+      const tree = this.querySelector<SVGGElement>(".binary-bonsai__tree");
+      if (!face || !tree) return;
+      let depth = 0;
+
+      const draw = () => {
+        const edges: SVGElement[] = [];
+        const nodes: SVGElement[] = [];
+        const edge = (d: string) => {
+          const path = document.createElementNS(SVG, "path");
+          path.setAttribute("class", "binary-bonsai__edge");
+          path.setAttribute("d", d);
+          edges.push(path);
+        };
+        edge("M100 158V138");
+        for (let level = 0; level <= depth; level++) {
+          for (let index = 0; index < 2 ** level; index++) {
+            const [x, y] = point(level, index);
+            if (level) {
+              const [parentX, parentY] = point(level - 1, index >> 1);
+              edge(`M${parentX} ${parentY}L${x} ${y}`);
+            }
+            const node = document.createElementNS(SVG, "circle");
+            // Only the new level pops in.
+            node.setAttribute(
+              "class",
+              level === depth && depth > 0
+                ? "binary-bonsai__node binary-bonsai__node--new"
+                : "binary-bonsai__node",
+            );
+            node.setAttribute("cx", String(x));
+            node.setAttribute("cy", String(y));
+            node.setAttribute("r", level === MAX_DEPTH ? "7" : "9");
+            nodes.push(node);
+          }
+        }
+        tree.replaceChildren(...edges, ...nodes);
+      };
+
+      face.addEventListener("click", () => {
+        depth = depth === MAX_DEPTH ? 0 : depth + 1;
+        draw();
+        setReveal(this, depth > 0, {
+          title: (this.dataset["count"] ?? "").replace("{count}", String(2 ** (depth + 1) - 1)),
+          text: this.dataset["text"] ?? "",
+        });
+      });
+      draw();
+    }
+  }
+
+  if (!customElements.get("binary-bonsai")) customElements.define("binary-bonsai", BinaryBonsaiElement);
+</script>
+
+<style>
+  .binary-bonsai {
+    position: relative;
+    display: inline-block;
+  }
+  .binary-bonsai__face {
+    all: unset;
+    box-sizing: border-box;
+    display: block;
+    cursor: pointer;
+  }
+  .binary-bonsai__face:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
+  }
+  .binary-bonsai__art {
+    display: block;
+    width: 200px;
+    height: 190px;
+    overflow: visible;
+  }
+  /* Local illustration colors, the same in both themes: brown branches, green leaves, a clay pot. The script
+     draws edges and nodes, so their rules are global: a scoped selector would never match them. */
+  :global(.binary-bonsai__edge) {
+    stroke: #7a5a3c;
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+  :global(.binary-bonsai__node) {
+    fill: #3f8a5c;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  :global(.binary-bonsai__node--new) {
+    animation: binary-bonsai-pop 0.35s var(--ease-spring) backwards;
+  }
+  @keyframes binary-bonsai-pop {
+    from {
+      transform: scale(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.binary-bonsai__node--new) {
+      animation: none;
+    }
+  }
+</style>

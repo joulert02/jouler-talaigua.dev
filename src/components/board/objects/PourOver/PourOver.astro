@@ -1,0 +1,360 @@
+---
+import ObjectReveal from "../ObjectReveal/ObjectReveal.astro";
+interface Props {
+  /** Accessible name of the button, e.g. "Brew a V60 coffee". */
+  label: string;
+  /** How the cup fills: "press" pours a whole cup on one press; "hold" pours only while the button is held, so
+   *  the visitor brews it. */
+  pour?: "press" | "hold";
+  /** First line of the note shown once the cup is full. */
+  title: string;
+  /** The note under the title. */
+  text: string;
+  /** With it, the dripper only brews ground coffee: pressed before the grinder hands it over (coffee.ts), nothing
+   *  pours and this note opens instead, e.g. the steps to brew. Without it the dripper always pours. */
+  recipe?: { title: string; text: string };
+}
+const { label, pour = "press", title, text, recipe } = Astro.props;
+// Each instance clips its own coffee: ids are shared by the whole document.
+const clip = `pour-over-${crypto.randomUUID().slice(0, 8)}`;
+---
+
+<!--
+  A V60 dripper over a glass cup. Pouring brings the kettle in, pours, drips and fills the cup; when the cup is
+  full the note opens and steam rises, and one more press empties it. With pour="press" one press pours the whole
+  cup; with pour="hold" the kettle pours only while the button is held (pointer, Space or Enter) and leaves when
+  it is let go, the coffee staying where it was. When the grinder announces ground coffee (coffee.ts), a bed of
+  coffee shows in the dripper. With a `recipe` that coffee is required: until it arrives a press only opens the recipe.
+-->
+<pour-over
+  class="pour-over"
+  data-pour={pour}
+  data-done={JSON.stringify({ title, text })}
+  data-recipe={recipe && JSON.stringify(recipe)}
+>
+  <button type="button" class="pour-over__face" data-state="idle" aria-label={label}>
+    <svg
+      class="pour-over__art"
+      viewBox="0 0 180 210"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.5"
+      stroke-linejoin="round"
+      stroke-linecap="round"
+      aria-hidden="true"
+    >
+      <g class="pour-over__kettle">
+        <path d="M112 22h44l6 40h-56Z" fill="var(--color-surface)"></path>
+        <path d="M120 22c4-9 24-9 28 0"></path>
+        <path d="M162 30c17 0 17 26 0 28"></path>
+        <path d="M108 54C90 50 96 30 78 30"></path>
+      </g>
+      <path
+        class="pour-over__stream"
+        d="M77 55C72 58 68 66 68 82"
+        stroke="var(--_water)"
+        stroke-width="3.5"
+      ></path>
+      <g class="pour-over__steam" stroke-width="2">
+        <path class="pour-over__wisp" d="M56 70c-5-7 5-11 0-18"></path>
+        <path class="pour-over__wisp" d="M68 70c-5-7 5-11 0-18"></path>
+        <path class="pour-over__wisp" d="M80 70c-5-7 5-11 0-18"></path>
+      </g>
+      <path d="M40 78h56L78 116H58Z" fill="var(--color-surface)"></path>
+      <path d="M52 88h32M57 100h22" stroke-width="1.5" opacity=".45"></path>
+      <path class="pour-over__bed" d="M53 96h30l-7 18H60Z" fill="var(--_grounds)" stroke="none"></path>
+      <rect x="46" y="116" width="44" height="6" rx="2" fill="var(--color-surface)"></rect>
+      <circle class="pour-over__drip" cx="68" cy="126" r="2.6" fill="var(--_coffee)" stroke="none"></circle>
+      <circle class="pour-over__drip" cx="68" cy="126" r="2.6" fill="var(--_coffee)" stroke="none"></circle>
+      <clipPath id={clip}>
+        <path d="M42 134h52l-5 66H47Z"></path>
+      </clipPath>
+      <g clip-path={`url(#${clip})`}>
+        <g class="pour-over__level">
+          <path
+            class="pour-over__wave"
+            d="M-20 0q13-6 26 0t26 0 26 0 26 0 26 0 26 0 26 0 26 0V80H-20Z"
+            fill="var(--_coffee)"
+            stroke="none"
+          ></path>
+        </g>
+      </g>
+      <path d="M42 134h52l-5 66H47Z"></path>
+      <path d="M93 146c15 0 15 28-3 28"></path>
+    </svg>
+  </button>
+  <ObjectReveal title={title} text={text} />
+</pour-over>
+
+<script>
+  import { onCoffee, onHold } from "../coffee";
+  import { setReveal, type RevealContent } from "../reveal";
+
+  /** Kettle in, stream, drips and the cup filling (CSS) on one press, in milliseconds. */
+  const POUR = 4600;
+  /** How long the button has to be held, in total, to fill the cup. */
+  const HOLD = 4200;
+
+  class PourOverElement extends HTMLElement {
+    private abort: AbortController | undefined;
+    private timer: ReturnType<typeof setTimeout> | undefined;
+    private frame = 0;
+
+    connectedCallback() {
+      const face = this.querySelector<HTMLButtonElement>(".pour-over__face");
+      if (!face) return;
+      this.abort = new AbortController();
+      const signal = this.abort.signal;
+      const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const done = JSON.parse(this.dataset["done"] ?? "{}") as RevealContent;
+      const recipe = this.dataset["recipe"] && (JSON.parse(this.dataset["recipe"]) as RevealContent);
+      /** Without ground coffee a dripper with a recipe does not pour: it says how instead. */
+      const refuse = () => {
+        if (!recipe || this.hasAttribute("data-ground") || face.dataset["state"] !== "idle") return false;
+        setReveal(this, true, recipe);
+        return true;
+      };
+      const finish = () => {
+        face.dataset["state"] = "done";
+        setReveal(this, true, done);
+      };
+      const empty = () => {
+        face.dataset["state"] = "idle";
+        face.style.removeProperty("--_fill");
+        this.removeAttribute("data-ground");
+        setReveal(this, false);
+      };
+      onCoffee(
+        "ground",
+        () => {
+          if (face.dataset["state"] !== "idle") return;
+          this.setAttribute("data-ground", "");
+          setReveal(this, false);
+        },
+        signal,
+      );
+
+      if (this.dataset["pour"] !== "hold") {
+        face.addEventListener(
+          "click",
+          () => {
+            clearTimeout(this.timer);
+            if (face.dataset["state"] !== "idle") return empty();
+            if (refuse()) return;
+            face.dataset["state"] = "pouring";
+            this.timer = setTimeout(finish, still ? 0 : POUR);
+          },
+          { signal },
+        );
+        return;
+      }
+
+      // Hold to pour: the cup fills only while the button is held.
+      let filled = 0;
+      let last = 0;
+      /** The press that fills the cup also ends in a click, which must not empty it. */
+      let justFilled = false;
+      const step = (now: number) => {
+        filled = Math.min(1, filled + (now - last) / HOLD);
+        last = now;
+        face.style.setProperty("--_fill", filled.toFixed(3));
+        if (filled < 1) this.frame = requestAnimationFrame(step);
+        else {
+          justFilled = true;
+          finish();
+        }
+      };
+      onHold(
+        face,
+        () => {
+          if (face.dataset["state"] === "done" || refuse()) return false;
+          face.dataset["state"] = "pouring";
+          last = performance.now();
+          this.frame = requestAnimationFrame(step);
+          return true;
+        },
+        () => {
+          cancelAnimationFrame(this.frame);
+          if (face.dataset["state"] === "pouring") face.dataset["state"] = filled ? "paused" : "idle";
+          // Once the release's own click has passed, a press empties the cup again.
+          setTimeout(() => (justFilled = false), 0);
+        },
+        signal,
+      );
+      face.addEventListener(
+        "click",
+        () => {
+          if (face.dataset["state"] !== "done") return;
+          if (justFilled) {
+            justFilled = false;
+            return;
+          }
+          filled = 0;
+          empty();
+        },
+        { signal },
+      );
+    }
+
+    disconnectedCallback() {
+      this.abort?.abort();
+      clearTimeout(this.timer);
+      cancelAnimationFrame(this.frame);
+    }
+  }
+
+  if (!customElements.get("pour-over")) customElements.define("pour-over", PourOverElement);
+</script>
+
+<style>
+  .pour-over {
+    position: relative;
+    display: inline-block;
+    /* Local illustration colors, the same in both themes. */
+    --_coffee: #6b4226;
+    --_grounds: #5a3620;
+    --_water: #7fb7e6;
+  }
+  .pour-over__face {
+    all: unset;
+    box-sizing: border-box;
+    display: block;
+    cursor: pointer;
+  }
+  .pour-over__face:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
+  }
+  .pour-over__art {
+    display: block;
+    width: 162px;
+    height: 189px;
+    color: var(--color-text);
+    overflow: visible;
+  }
+  .pour-over__kettle {
+    opacity: 0;
+    transform: translate(34px, -30px);
+    transform-origin: 134px 44px;
+    transition:
+      transform 0.7s var(--ease-out),
+      opacity 0.4s var(--ease-out);
+  }
+  [data-state="pouring"] > .pour-over__art .pour-over__kettle {
+    opacity: 1;
+    transform: rotate(-24deg);
+  }
+  .pour-over__stream {
+    stroke-dasharray: 40;
+    stroke-dashoffset: 40;
+    transition: stroke-dashoffset 0.3s ease-in;
+  }
+  [data-state="pouring"] > .pour-over__art .pour-over__stream {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 0.35s ease-in 0.6s;
+  }
+  .pour-over__drip {
+    opacity: 0;
+  }
+  [data-state="pouring"] > .pour-over__art .pour-over__drip {
+    animation: pour-over-drip 0.55s ease-in 1s infinite;
+  }
+  [data-state="pouring"] > .pour-over__art .pour-over__drip + .pour-over__drip {
+    animation-delay: 1.28s;
+  }
+  @keyframes pour-over-drip {
+    0% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+  }
+  /* The coffee: a wavy surface that rises inside the cup's clip. */
+  .pour-over__level {
+    transform: translateY(204px);
+    transition: transform 0.6s var(--ease-out);
+  }
+  [data-state="pouring"] > .pour-over__art .pour-over__level {
+    transform: translateY(144px);
+    transition: transform 3.5s cubic-bezier(0.45, 0, 0.3, 1) 1s;
+  }
+  [data-state="done"] > .pour-over__art .pour-over__level {
+    transform: translateY(144px);
+  }
+  /* Held pours: the script sets how full the cup is, so the level follows the hold with no transition, and the
+     stream and the drips start at once. */
+  [data-pour="hold"] .pour-over__level,
+  [data-pour="hold"] [data-state] > .pour-over__art .pour-over__level {
+    transform: translateY(calc(204px - var(--_fill, 0) * 60px));
+    transition: none;
+  }
+  [data-pour="hold"] [data-state="pouring"] > .pour-over__art .pour-over__stream {
+    transition-delay: 0.25s;
+  }
+  [data-pour="hold"] [data-state="pouring"] > .pour-over__art .pour-over__drip {
+    animation-delay: 0.3s;
+  }
+  [data-pour="hold"] [data-state="pouring"] > .pour-over__art .pour-over__drip + .pour-over__drip {
+    animation-delay: 0.58s;
+  }
+  /* Ground coffee waiting in the dripper, once the grinder hands it over. */
+  .pour-over__bed {
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-out);
+  }
+  .pour-over[data-ground] .pour-over__bed {
+    opacity: 1;
+  }
+  .pour-over__wave {
+    animation: pour-over-wave 1.3s linear infinite;
+  }
+  @keyframes pour-over-wave {
+    to {
+      transform: translateX(-52px);
+    }
+  }
+  .pour-over__wisp {
+    opacity: 0;
+  }
+  [data-state="done"] > .pour-over__art .pour-over__wisp {
+    animation: pour-over-steam 2.4s ease-in-out infinite;
+  }
+  [data-state="done"] > .pour-over__art .pour-over__wisp:nth-child(2) {
+    animation-delay: 0.8s;
+  }
+  [data-state="done"] > .pour-over__art .pour-over__wisp:nth-child(3) {
+    animation-delay: 1.6s;
+  }
+  @keyframes pour-over-steam {
+    0% {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    40% {
+      opacity: 0.55;
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-14px);
+    }
+  }
+
+  /* Reduced motion: the cup is simply full, with no kettle, drips, waves or steam. */
+  @media (prefers-reduced-motion: reduce) {
+    .pour-over__kettle,
+    .pour-over__stream,
+    .pour-over__bed,
+    .pour-over__level {
+      transition: none;
+    }
+    .pour-over__wave,
+    [data-state] > .pour-over__art .pour-over__drip,
+    [data-state] > .pour-over__art .pour-over__wisp {
+      animation: none;
+    }
+  }
+</style>

@@ -1,0 +1,165 @@
+---
+import ObjectReveal from "../ObjectReveal/ObjectReveal.astro";
+interface Props {
+  /** Accessible name of the toggle, e.g. "Play the aerial silks sequence". */
+  label: string;
+  /** First line of the note shown once the figure holds the pose. */
+  title: string;
+  /** The note under the title. */
+  text: string;
+}
+const { label, title, text } = Astro.props;
+---
+
+<!--
+  Aerial silks in the brand violet, hanging from a ring. A toggle button: pressing it brings a figure in, who
+  gathers the fabric, opens it and climbs into a pose that sways on the rig; then the note opens. Pressing
+  again plays the sequence backwards and the fabric hangs alone. The figure is a jointed rig (rig.js).
+-->
+<aerial-silks class="aerial-silks">
+  <button type="button" class="aerial-silks__face" aria-pressed="false" aria-label={label}>
+    <svg
+      class="aerial-silks__art"
+      viewBox="0 0 300 420"
+      fill="none"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M150 0v6" stroke="var(--color-text-secondary)" stroke-width="3"></path>
+      <circle cx="150" cy="11" r="6" stroke="var(--color-text-secondary)" stroke-width="3"></circle>
+      <g data-layer="pool"></g>
+      <g data-layer="far"></g>
+      <g data-layer="silkBack"></g>
+      <g data-layer="silkFront"></g>
+      <g data-layer="near"></g>
+      <g data-layer="silkTop"></g>
+    </svg>
+  </button>
+  <ObjectReveal title={title} text={text} />
+</aerial-silks>
+
+<script>
+  import { KEYS, blend, draw, ease } from "./rig.js";
+  import { setReveal } from "../reveal";
+
+  type Pose = (typeof KEYS)[number];
+  /** The key poses to pass through and how long each move takes, going up and coming down. */
+  const UP = [
+    { to: 1, duration: 800 },
+    { to: 2, duration: 900 },
+    { to: 3, duration: 1500 },
+  ];
+  const DOWN = [
+    { to: 2, duration: 1100 },
+    { to: 1, duration: 700 },
+    { to: 0, duration: 600 },
+  ];
+  const POSED = 3;
+
+  class AerialSilksElement extends HTMLElement {
+    private frame = 0;
+    private seen: IntersectionObserver | undefined;
+
+    connectedCallback() {
+      const face = this.querySelector<HTMLButtonElement>(".aerial-silks__face");
+      const layers = Object.fromEntries(
+        [...this.querySelectorAll<SVGGElement>("[data-layer]")].map((layer) => [
+          layer.dataset["layer"],
+          layer,
+        ]),
+      );
+      const rest = KEYS[0];
+      if (!face || !rest) return;
+      const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let current: Pose = rest;
+      let visible = false;
+      let target = 0;
+      let tween: { from: Pose; to: Pose; index: number; start: number; duration: number } | undefined;
+      const queue: { to: number; duration: number }[] = [];
+
+      const settle = () => {
+        setReveal(this, target === POSED);
+        face.setAttribute("aria-pressed", String(target === POSED));
+      };
+      const run = () => {
+        if (!this.frame) this.frame = requestAnimationFrame(tick);
+      };
+      const tick = (now: number) => {
+        this.frame = 0;
+        const next = !tween ? queue.shift() : undefined;
+        const to = next && KEYS[next.to];
+        if (next && to) tween = { from: current, to, index: next.to, start: now, duration: next.duration };
+        if (tween) {
+          const progress = Math.min(1, (now - tween.start) / tween.duration);
+          current = blend(tween.from, tween.to, ease(progress)) as Pose;
+          if (progress === 1) {
+            target = tween.index;
+            tween = undefined;
+            if (!queue.length) settle();
+          }
+        }
+        // Reduced motion: the fabric and the pose do not sway (a fixed time).
+        draw(layers, current, still ? 0 : now);
+        // A sequence always plays to its end. The idle sway only runs while the object is on screen: every frame
+        // rewrites the drawing.
+        if (tween || queue.length || (visible && !still)) run();
+      };
+      face.addEventListener("click", () => {
+        if (tween || queue.length) return;
+        if (still) {
+          // No sequence: straight to the pose, or back to the hanging fabric.
+          target = target === POSED ? 0 : POSED;
+          current = KEYS[target] ?? rest;
+          settle();
+          draw(layers, current, 0);
+          return;
+        }
+        queue.push(...(target === POSED ? DOWN : UP));
+        run();
+      });
+      this.seen = new IntersectionObserver(([entry]) => {
+        visible = entry?.isIntersecting ?? false;
+        if (visible) run();
+      });
+      this.seen.observe(this);
+    }
+
+    disconnectedCallback() {
+      cancelAnimationFrame(this.frame);
+      this.seen?.disconnect();
+    }
+  }
+
+  if (!customElements.get("aerial-silks")) customElements.define("aerial-silks", AerialSilksElement);
+</script>
+
+<style>
+  .aerial-silks {
+    position: relative;
+    display: inline-block;
+    /* Local illustration colors, the same in both themes: charcoal training clothes, near and far limbs. The
+       silk's violets and the skin tones live in rig.js, which draws them. */
+    --_cloth: #2e3138;
+    --_cloth-far: #454a53;
+  }
+  .aerial-silks__face {
+    all: unset;
+    box-sizing: border-box;
+    display: block;
+    cursor: pointer;
+  }
+  .aerial-silks__face:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
+  }
+  .aerial-silks__art {
+    display: block;
+    width: 250px;
+    height: 350px;
+    overflow: visible;
+    /* The drawing is rebuilt every frame: a press must land on the stable button, or the click is lost. */
+    pointer-events: none;
+  }
+</style>

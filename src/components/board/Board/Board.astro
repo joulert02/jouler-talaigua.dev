@@ -2,39 +2,27 @@
 // The Home's board section, exactly as the page renders it: the identity card at the center of the desk, the
 // personal objects around it and the hint pill that hands off to Work. Its story renders this file as is, so
 // changing the section changes the story.
-// Each object is placed by hand at v11's resting spot (docs/design/v11/experience.js), in world pixels from the desk's
-// top-left corner, with v11's tilt: `x`/`y` on desktop, `compact` on the desk a phone opens full screen. What the
-// objects say lives in src/config/desk.ts.
-import { Image } from "astro:assets";
+// The objects are in BoardObjects.astro, where each one rests in layout.ts (world pixels from the desk's top-left
+// corner: `objects` on desktop, `compact` on the desk a phone opens full screen; the desktop is arranged with the
+// layout editor, `npm run board:layout`) and what they say in src/config/desk.ts.
 import Desk from "../../ui/Desk/Desk.astro";
-import DeskObject from "../../ui/DeskObject/DeskObject.astro";
 import IdentityCard from "../../profile/IdentityCard/IdentityCard.astro";
 import BoardHint from "../BoardHint/BoardHint.astro";
 import DeskEntry from "../DeskEntry/DeskEntry.astro";
-import FlipCard from "../FlipCard/FlipCard.astro";
-import Envelope from "../objects/Envelope/Envelope.astro";
-import ObjectCard from "../objects/ObjectCard/ObjectCard.astro";
-import PhotoPrint from "../objects/PhotoPrint/PhotoPrint.astro";
-import RocketCard from "../objects/RocketCard/RocketCard.astro";
-import Ticket from "../objects/Ticket/Ticket.astro";
-import Vinyl from "../objects/Vinyl/Vinyl.astro";
-import { desk } from "../../../config/desk";
-import type { LocalizedText } from "../../../config/profile";
+import BoardObjects from "./BoardObjects.astro";
+import { layout } from "./layout";
 import { getLang, localePath, useTranslations } from "../../../i18n/ui";
 import moto from "../../../assets/photos/desk-moto.jpg";
-import talk from "../../../assets/photos/desk-talk.jpg";
-import frame from "../../../assets/photos/portrait-frame.jpg";
-import pole from "../../../assets/photos/desk-pole.jpg";
+import portrait from "../../../assets/photos/portrait-smile.jpg";
+import teaching from "../../../assets/talks/teaching-01.jpg";
 import unicornio from "../../../assets/covers/unicornio.jpg";
 
 const lang = getLang(Astro);
 const t = useTranslations(lang);
-const l = (text: LocalizedText) => text[lang];
-const { ticket } = desk;
 ---
 
 <div class="board">
-  <Desk id="desk" hint={t("board.touchHint")}>
+  <Desk id="desk" world={layout.world} origin={layout.origin} hint={t("board.touchHint")}>
     <IdentityCard slot="center" />
     <!-- Phones only: the way into the desk, under the card (secondary to it). -->
     <DeskEntry
@@ -42,70 +30,10 @@ const { ticket } = desk;
       desk="desk"
       title={t("board.open")}
       meta={t("board.openMeta")}
-      photos={[talk, unicornio, moto, frame]}
+      photos={[teaching, unicornio, moto, portrait]}
       revealPast=".identity-card__name"
     />
-
-    <DeskObject x={470} y={370} compact={{ x: 460, y: 310 }} tilt={-3}>
-      <PhotoPrint image={talk} alt={l(desk.teach.alt)} caption={l(desk.teach.caption)} />
-    </DeskObject>
-
-    <DeskObject x={340} y={475} compact={{ x: 270, y: 420 }} tilt={3}>
-      <PhotoPrint image={moto} alt={l(desk.moto.alt)} caption={l(desk.moto.caption)} />
-    </DeskObject>
-
-    <DeskObject x={1360} y={350} compact={{ x: 775, y: 325 }} tilt={1.5}>
-      <PhotoPrint image={frame} alt={l(desk.portrait.alt)} caption={l(desk.portrait.caption)} />
-    </DeskObject>
-
-    <DeskObject x={1360} y={760} compact={{ x: 850, y: 650 }} tilt={-1.5}>
-      <RocketCard title={l(desk.rocket.title)} text={l(desk.rocket.text)} />
-    </DeskObject>
-
-    <DeskObject x={420} y={920} compact={{ x: 445, y: 865 }} tilt={-1.5}>
-      <Ticket
-        from={{ code: ticket.from.code, place: l(ticket.from.place), flag: "colombia" }}
-        to={{ code: ticket.to.code, place: l(ticket.to.place) }}
-        details={ticket.details.map(l)}
-      />
-    </DeskObject>
-
-    <DeskObject x={1700} y={910} compact={{ x: 1040, y: 1180 }} tilt={1.5}>
-      <ObjectCard illustration="game" title={l(desk.lol.title)} text={l(desk.lol.text)} />
-    </DeskObject>
-
-    <DeskObject x={1380} y={1040} compact={{ x: 650, y: 1140 }} tilt={3}>
-      <FlipCard id="desk-pole" label={l(desk.pole.label)}>
-        <ObjectCard illustration="pole" title={l(desk.pole.title)} text={l(desk.pole.text)} />
-        <Image
-          slot="back"
-          src={pole}
-          alt={l(desk.pole.alt)}
-          width={184}
-          height={184}
-          densities={[1, 2]}
-          fit="cover"
-        />
-      </FlipCard>
-    </DeskObject>
-
-    <DeskObject x={270} y={1110} compact={{ x: 220, y: 1100 }} tilt={-1.5}>
-      <ObjectCard illustration="anime" title={l(desk.naruto.title)} text={l(desk.naruto.text)} />
-    </DeskObject>
-
-    <DeskObject x={820} y={1190} compact={{ x: 695, y: 895 }} tilt={1.5}>
-      <Envelope to={l(desk.envelope.to)} />
-    </DeskObject>
-
-    <DeskObject x={1460} y={1210} compact={{ x: 900, y: 1050 }} tilt={-3}>
-      <Vinyl
-        title={desk.vinyl.title}
-        artist={desk.vinyl.artist}
-        label={l(desk.vinyl.label)}
-        cover={unicornio}
-        spotify={desk.vinyl.spotify}
-      />
-    </DeskObject>
+    <BoardObjects />
   </Desk>
   <!-- Holding a drag at the desk's bottom edge hands off to Work (HU-02, HU-03). -->
   <BoardHint href={localePath(lang, "/work/")} />
@@ -116,6 +44,7 @@ const { ticket } = desk;
   // document the desk wraps the card and the Dock comes after the board, so Tab is routed by groups (lib/tab-order).
   // From an object, Escape goes back to the menu. The desk opened full screen on a phone keeps its own order.
   import { nextStop } from "@/lib/tab-order.js";
+  import { loadDraft, placedObjects, readAll, writeAll } from "./draft";
 
   const TABBABLE = "a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]";
   /** The skip link and the language pill (0), the card (1), the Dock (2), the board (3), the footer (4). */
@@ -159,6 +88,13 @@ const { ticket } = desk;
     event.preventDefault();
     next.focus();
   });
+  // While developing, the layout editor's unsaved positions are shown here too, so an arrangement can be walked
+  // on the real desk before it is copied into layout.ts. The built site only knows layout.ts.
+  if (import.meta.env.DEV) {
+    const items = placedObjects(document.querySelector(".board") ?? document);
+    const draft = loadDraft(readAll(items));
+    if (draft) writeAll(items, draft);
+  }
 </script>
 
 <style>

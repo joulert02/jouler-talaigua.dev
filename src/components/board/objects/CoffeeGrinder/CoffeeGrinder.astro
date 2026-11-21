@@ -1,0 +1,207 @@
+---
+import ObjectReveal from "../ObjectReveal/ObjectReveal.astro";
+import type { RevealContent } from "../reveal";
+interface Props {
+  /** Accessible name of the button, e.g. "Coffee grinder: press and hold to grind". */
+  label: string;
+  /** Whether it starts with beans in the hopper. Without them it waits for the bag of beans. */
+  loaded?: boolean;
+  /** The notes it shows: pressed while `empty`, once it has `beans`, and when the coffee is `ground`. */
+  notes: { empty: RevealContent; beans: RevealContent; ground: RevealContent };
+}
+const { label, loaded = false, notes } = Astro.props;
+---
+
+<!--
+  A hand grinder, the second step of the coffee objects. It takes beans when the bag announces them on the
+  window (coffee.ts). With beans in the hopper, pressing and holding it (pointer, Space or Enter) turns the
+  crank and fills the ring on its body; letting go keeps what is already ground. When the ring closes it
+  announces the ground coffee, which the dripper shows, and it is empty again.
+-->
+<coffee-grinder class="coffee-grinder" data-notes={JSON.stringify(notes)}>
+  <button type="button" class="coffee-grinder__face" aria-label={label} data-beans={loaded ? "" : undefined}>
+    <svg
+      class="coffee-grinder__art"
+      width="90"
+      height="124"
+      viewBox="0 0 90 124"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <g class="coffee-grinder__crank">
+        <path d="M45 18h30"></path>
+        <circle cx="78" cy="14" r="6" fill="var(--_knob)"></circle>
+      </g>
+      <path d="M30 22h30l-4 14H34Z" fill="var(--color-surface)"></path>
+      <g class="coffee-grinder__beans" stroke="none" fill="var(--_bean)">
+        <ellipse cx="40" cy="27" rx="4" ry="3"></ellipse>
+        <ellipse cx="49" cy="26" rx="4" ry="3"></ellipse>
+        <ellipse cx="45" cy="31" rx="4" ry="3"></ellipse>
+      </g>
+      <rect x="22" y="36" width="46" height="84" rx="10" fill="var(--color-surface)"></rect>
+      <circle cx="45" cy="78" r="16" stroke="var(--color-border)" stroke-width="5"></circle>
+      <circle
+        class="coffee-grinder__ring"
+        cx="45"
+        cy="78"
+        r="16"
+        pathLength="100"
+        stroke="var(--color-accent)"
+        stroke-width="5"
+      ></circle>
+    </svg>
+  </button>
+  <ObjectReveal />
+</coffee-grinder>
+
+<script>
+  import { announceCoffee, onCoffee, onHold } from "../coffee";
+  import { setReveal, type RevealContent } from "../reveal";
+
+  /** How long the button has to be held, in total, to grind the beans. */
+  const GRIND = 2200;
+
+  class CoffeeGrinderElement extends HTMLElement {
+    private abort: AbortController | undefined;
+    private frame = 0;
+
+    connectedCallback() {
+      const face = this.querySelector<HTMLButtonElement>(".coffee-grinder__face");
+      if (!face) return;
+      this.abort = new AbortController();
+      const signal = this.abort.signal;
+      const notes = JSON.parse(this.dataset["notes"] ?? "{}") as Partial<
+        Record<"empty" | "beans" | "ground", RevealContent>
+      >;
+      const say = (note: RevealContent | undefined) => note && setReveal(this, true, note);
+      let ground = 0;
+      let last = 0;
+
+      onCoffee(
+        "beans",
+        () => {
+          if (face.hasAttribute("data-beans")) return;
+          face.setAttribute("data-beans", "");
+          say(notes.beans);
+        },
+        signal,
+      );
+      const step = (now: number) => {
+        ground = Math.min(1, ground + (now - last) / GRIND);
+        last = now;
+        face.style.setProperty("--_ground", ground.toFixed(3));
+        if (ground < 1) {
+          this.frame = requestAnimationFrame(step);
+          return;
+        }
+        // Done: the hopper is empty, the coffee goes to the dripper and the ring winds back.
+        face.removeAttribute("data-grinding");
+        face.removeAttribute("data-beans");
+        ground = 0;
+        announceCoffee("ground");
+        say(notes.ground);
+        setTimeout(() => face.style.removeProperty("--_ground"), 600);
+      };
+      onHold(
+        face,
+        () => {
+          if (!face.hasAttribute("data-beans")) {
+            say(notes.empty);
+            return false;
+          }
+          face.setAttribute("data-grinding", "");
+          last = performance.now();
+          this.frame = requestAnimationFrame(step);
+          return true;
+        },
+        () => {
+          cancelAnimationFrame(this.frame);
+          face.removeAttribute("data-grinding");
+        },
+        signal,
+      );
+    }
+
+    disconnectedCallback() {
+      this.abort?.abort();
+      cancelAnimationFrame(this.frame);
+    }
+  }
+
+  if (!customElements.get("coffee-grinder")) customElements.define("coffee-grinder", CoffeeGrinderElement);
+</script>
+
+<style>
+  .coffee-grinder {
+    position: relative;
+    display: inline-block;
+    /* Local illustration colors, the same in both themes: a wooden knob and roasted beans. */
+    --_knob: #8a6238;
+    --_bean: #5a3620;
+  }
+  .coffee-grinder__face {
+    all: unset;
+    box-sizing: border-box;
+    display: block;
+    cursor: pointer;
+    touch-action: none;
+  }
+  .coffee-grinder__face:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
+  }
+  .coffee-grinder__art {
+    display: block;
+    overflow: visible;
+    color: var(--color-text);
+  }
+  .coffee-grinder__crank {
+    transform-origin: 45px 18px;
+  }
+  /* Grinding: the crank turns and the whole body rattles. */
+  [data-grinding] .coffee-grinder__crank {
+    animation: coffee-grinder-crank 0.5s linear infinite;
+  }
+  @keyframes coffee-grinder-crank {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  [data-grinding] > .coffee-grinder__art {
+    animation: coffee-grinder-rattle 0.12s linear infinite alternate;
+  }
+  @keyframes coffee-grinder-rattle {
+    to {
+      transform: translateX(1.5px);
+    }
+  }
+  .coffee-grinder__beans {
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-out);
+  }
+  [data-beans] .coffee-grinder__beans {
+    opacity: 1;
+  }
+  /* The ring is a circle of length 100: it shows how much is ground, starting at the top. */
+  .coffee-grinder__ring {
+    stroke-dasharray: 100;
+    stroke-dashoffset: calc(100 - var(--_ground, 0) * 100);
+    transform: rotate(-90deg);
+    transform-origin: 45px 78px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-grinding] .coffee-grinder__crank,
+    [data-grinding] > .coffee-grinder__art {
+      animation: none;
+    }
+    .coffee-grinder__beans {
+      transition: none;
+    }
+  }
+</style>

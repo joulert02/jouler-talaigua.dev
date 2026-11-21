@@ -1,0 +1,190 @@
+---
+interface Stamp {
+  /** Two or three characters inside the stamp, e.g. "01" or "VLC". */
+  code: string;
+  /** Whether the visitor already earned it; an empty slot is a dashed circle. */
+  found?: boolean;
+}
+interface Props {
+  /** Accessible name of the toggle, e.g. "Open the passport". */
+  label: string;
+  /** Word on the cover, e.g. "PASSPORT". */
+  cover: string;
+  /** Line at the top of the page, e.g. "MDE · MAD · VLC". */
+  route: string;
+  /** One slot per thing to find on the desk, in order. */
+  stamps: readonly Stamp[];
+  /** Line under the stamps; defaults to "{found} / {total}". */
+  count?: string;
+}
+const { label, cover, route, stamps, count } = Astro.props;
+const found = stamps.filter((stamp) => stamp.found).length;
+const tally = `${found} / ${stamps.length}`;
+// The count describes the button: ids are shared by the whole document, so each passport gets its own.
+const counted = `passport-${crypto.randomUUID().slice(0, 8)}`;
+/** Stamp inks, in turn: green, red, the brand violet and blue. */
+const INKS = ["#2f6f4f", "#b3261e", "#5a31d9", "#2f5d8a"];
+---
+
+<!--
+  A passport that keeps what the visitor found on the desk. A toggle button: pressing it swings the cover open
+  on a page with one slot per stamp; pressing again closes it. The cover shows how many are stamped.
+-->
+<button type="button" class="passport" aria-pressed="false" aria-label={label} aria-describedby={counted}>
+  <span class="passport__page">
+    <span class="passport__route">{route}</span>
+    <span class="passport__grid">
+      {stamps.map((stamp, index) => (
+        <span
+          class:list={["passport__slot", { "passport__slot--found": stamp.found }]}
+          style={`--_ink: ${INKS[index % INKS.length]}; --_turn: ${((index * 37) % 30) - 15}deg`}
+        >
+          {stamp.code}
+        </span>
+      ))}
+    </span>
+    <span class="passport__count" id={counted}>
+      {count ?? tally}
+    </span>
+  </span>
+  <span class="passport__cover">
+    <span class="passport__mark" aria-hidden="true">
+      J
+    </span>
+    <span class="passport__word">{cover}</span>
+    <span class="passport__badge">{tally}</span>
+  </span>
+</button>
+
+<script>
+  // One listener for every passport on the page. On the desk, <desk-object> swallows the click after a drag.
+  const scope = window as typeof window & { passportReady?: boolean };
+  if (!scope.passportReady) {
+    scope.passportReady = true;
+    document.addEventListener("click", (event) => {
+      const passport = (event.target as Element).closest<HTMLButtonElement>(".passport");
+      passport?.setAttribute("aria-pressed", String(passport.getAttribute("aria-pressed") !== "true"));
+    });
+  }
+</script>
+
+<style>
+  .passport {
+    all: unset;
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+    width: 140px;
+    height: 190px;
+    perspective: 900px;
+    cursor: pointer;
+    /* Local illustration colors, the same in both themes: a violet-black cover with gold print over cream paper. */
+    --_cover: #2b2350;
+    --_gold: #e9d9a6;
+    --_paper: #fbf8f0;
+    --_paper-edge: #e4dcc8;
+    --_print: #5b616a;
+  }
+  .passport:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
+  }
+  .passport__page,
+  .passport__cover {
+    position: absolute;
+    inset: 0;
+    box-sizing: border-box;
+    border-radius: 4px 10px 10px 4px;
+    box-shadow: var(--shadow-rest);
+  }
+  .passport__page {
+    display: grid;
+    align-content: space-evenly;
+    justify-items: center;
+    padding: 10px;
+    background: var(--_paper);
+    border: 1px solid var(--_paper-edge);
+    color: var(--_print);
+  }
+  /* Print on a 140px passport, as on the real thing: decorative codes, repeated in the accessible name's context. */
+  .passport__route {
+    font: 500 0.6875rem / 1.2 var(--font-mono);
+    letter-spacing: 0.08em;
+  }
+  .passport__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 24px);
+    gap: 5px;
+  }
+  .passport__slot {
+    box-sizing: border-box;
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border: 1.5px dashed #cfc6ad;
+    border-radius: var(--radius-round);
+    font: 500 0.5625rem / 1 var(--font-mono);
+    color: transparent;
+  }
+  .passport__slot--found {
+    border: 2px solid var(--_ink);
+    color: var(--_ink);
+    rotate: var(--_turn);
+  }
+  .passport__count {
+    font: 500 0.6875rem / 1.2 var(--font-mono);
+  }
+  .passport__cover {
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 10px;
+    background: var(--_cover);
+    color: var(--_gold);
+    font: 500 0.6875rem / 1.2 var(--font-mono);
+    letter-spacing: 0.12em;
+    transform-origin: left center;
+    transition:
+      transform 0.6s var(--ease-out),
+      color 0.3s var(--ease-out);
+  }
+  .passport__mark {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border: 2px solid;
+    border-radius: var(--radius-round);
+    font: 600 1.375rem / 1 var(--font-sans);
+    letter-spacing: 0;
+  }
+  .passport__badge {
+    letter-spacing: 0.04em;
+    opacity: 0.8;
+  }
+  .passport[aria-pressed="true"] > .passport__cover {
+    transform: rotateY(-150deg);
+    color: transparent;
+  }
+  /* Stamps land one after another once the cover is out of the way. */
+  .passport[aria-pressed="true"] .passport__slot--found {
+    animation: passport-stamp 0.4s var(--ease-spring) 0.4s backwards;
+  }
+  @keyframes passport-stamp {
+    from {
+      scale: 1.8;
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .passport__cover {
+      transition: none;
+    }
+    .passport[aria-pressed="true"] .passport__slot--found {
+      animation: none;
+    }
+  }
+</style>

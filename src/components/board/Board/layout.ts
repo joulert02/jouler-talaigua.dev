@@ -1,0 +1,47 @@
+// Where every object of the Home's desk rests, in world pixels from the desk's top-left corner. This is
+// exactly what the layout editor's "Copy layout" gives: paste it over the value of `layout`, braces included.
+// `origin` is the identity card's top-left corner. The order of `objects` is the order they are stacked in.
+export const layout = {
+  world: { width: 3400, height: 2500 },
+  origin: { x: 1430, y: 900 },
+  objects: {
+    talks: { x: 1084, y: 825, tilt: -2 },
+    ticket: { x: 958, y: 1124, tilt: -1.5 },
+    narutoCard: { x: 1078, y: 1423, tilt: 1.5 },
+    pet: { x: 862, y: 1639, tilt: 0 },
+    portrait: { x: 2093, y: 808, tilt: 1.5 },
+    roadmap: { x: 2192, y: 1149, tilt: -1.5 },
+    lol: { x: 2439, y: 1068, tilt: 1.5 },
+    pole: { x: 2083, y: 1410, tilt: 2 },
+    mascot: { x: 2310, y: 1613, tilt: 0 },
+    envelope: { x: 1596, y: 1570, tilt: -1.5 },
+    vinylUnicornio: { x: 2142, y: 1737, tilt: 2 },
+    lamp: { x: 1630, y: 570, tilt: 0 },
+    bugJar: { x: 750, y: 1050, tilt: -1.5 },
+    stickerAstro: { x: 2379, y: 739, tilt: 4 },
+    stickerReact: { x: 1485, y: 785, tilt: 3 },
+    stickerTypescript: { x: 2835, y: 938, tilt: -2 },
+    stickerClaude: { x: 1010, y: 1800, tilt: 4 },
+    vinylGreenPrint: { x: 729, y: 565, tilt: -2 },
+    vinylJazz: { x: 364, y: 1332, tilt: -2 },
+    vinylPiex: { x: 2701, y: 1292, tilt: 2 },
+    vinylImpulsos: { x: 2730, y: 1900, tilt: 2 },
+    passport: { x: 686, y: 155, tilt: 1.5 },
+    bookShelf: { x: 1302, y: 135, tilt: 0 },
+    sketchbook: { x: 3118, y: 64, tilt: -1.5 },
+    nowNotes: { x: 2106, y: 200, tilt: 1.5 },
+    bonsai: { x: 2566, y: 194, tilt: 0 },
+    moto: { x: 3142, y: 1593, tilt: -2 },
+    coffeeBeans: { x: 122, y: 978, tilt: -2 },
+    coffeeGrinder: { x: 168, y: 626, tilt: 0 },
+    pourOver: { x: 332, y: 676, tilt: 0 },
+    narutoSticker: { x: 3207, y: 2310, tilt: -2 },
+    ramen: { x: 2832, y: 510, tilt: 0 },
+    silks: { x: 0, y: 0, tilt: 0 },
+    punchingBag: { x: 280, y: 1850, tilt: 0 },
+    boxingGlove: { x: 660, y: 1910, tilt: 0 },
+    parade: { x: 1100, y: 2320, tilt: 0 },
+  },
+};
+
+export type ObjectId = keyof typeof layout.objects;

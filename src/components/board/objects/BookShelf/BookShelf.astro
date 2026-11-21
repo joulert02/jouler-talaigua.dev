@@ -1,0 +1,661 @@
+---
+import type { ImageMetadata } from "astro";
+import Book from "../Book/Book.astro";
+interface ShelfBook {
+  title: string;
+  /** A shorter title for the spine when the full one does not fit, e.g. "Cómo ganar amigos". */
+  spine?: string;
+  author: string;
+  /** Spine color, and the book's cover color, edge and inside. Spines print white text: keep it dark enough. */
+  color: string;
+  /** Pages of the edition. The spine, and so the book, gets thicker with them. */
+  pages: number;
+  /** The book's real cover, shown once it is off the shelf. */
+  cover?: ImageMetadata;
+  /** The handwritten review on the book's first page. */
+  review: string;
+}
+interface Props {
+  /** The books on the shelf, left to right. */
+  books: readonly ShelfBook[];
+  /** Small heading on each book's first page, e.g. "MY REVIEW". */
+  heading: string;
+  /** Print inside each cover, e.g. "ex libris · JOTA". */
+  bookplate: string;
+  /** Accessible name of a spine, with {title} replaced, e.g. "Take {title} off the shelf". */
+  takeLabel: string;
+  /** Accessible name of a book's empty place, with {title} replaced, e.g. "Put {title} back on the shelf". */
+  returnLabel: string;
+  /** Accessible name of a book that is off the shelf, with {title} replaced, e.g. "{title}: open or close". */
+  bookLabel: string;
+}
+const { books, heading, bookplate, takeLabel, returnLabel, bookLabel } = Astro.props;
+/** Spine heights, in turn, so the row looks like real books. */
+const HEIGHTS = [152, 136, 180, 164, 146];
+const height = (index: number) => HEIGHTS[index % HEIGHTS.length] ?? 152;
+/**
+ * A spine's width in the row, from the book's pages: room for its title plus a pixel every 25 pages.
+ * Not to scale: a thin book still needs a spine wide enough for its title (18px), and a brick stops at 40px.
+ */
+const width = (pages: number) => Math.round(Math.min(40, Math.max(18, 12 + pages * 0.04)));
+/** The spine's size and color, which the row's spine and the book's own spine share. A Book is 178px tall; in the
+ *  row it is seen at its spine's height, and `--_in-row` is how much smaller it looks there. */
+const binding = (index: number, book: ShelfBook) =>
+  `--_color: ${book.color}; --_width: ${width(book.pages)}px; --_height: ${height(index)}px; --_in-row: ${height(index) / 178}`;
+---
+
+<!--
+  A small shelf of books that can be taken out and put back.
+  - Pressing a spine: the book is pulled out of the row, turns to show its cover, lands beside the shelf and opens
+    on its review.
+  - Dragging a spine: the book comes out in the hand, goes wherever it is dropped and opens there.
+  - A book that is out is a Book: pressing it opens or closes it, and it can be dragged around.
+  - Carrying it back near the shelf lights up its place; dropped there, it closes, turns its spine out and slides
+    back in between its neighbours. Pressing the empty place calls the book back without dragging.
+  Each book is a solid: the Book is its front and a spine stands on its left edge, so taking and storing it is a
+  real quarter turn, never a squeeze of the cover.
+  A book that is out no longer belongs to the shelf: it lies on the desk (the Desk's world, or the page when there
+  is no desk), so moving the shelf leaves it where it is. Several books can be out at once.
+  Books go back in any order: the empty place of the book in the hand moves along the row to where the book is
+  aimed, the others make room, and the book is stored there.
+-->
+<book-shelf class="book-shelf">
+  <span class="book-shelf__row">
+    {books.map((book, index) => (
+      <button
+        type="button"
+        class="book-shelf__spine"
+        aria-pressed="false"
+        aria-label={takeLabel.replace("{title}", book.title)}
+        data-book={index}
+        data-take-label={takeLabel.replace("{title}", book.title)}
+        data-return-label={returnLabel.replace("{title}", book.title)}
+        style={binding(index, book)}
+      >
+        <span class="book-shelf__spine-title">{book.spine ?? book.title}</span>
+      </button>
+    ))}
+    <span class="book-shelf__bookend"></span>
+  </span>
+  <span class="book-shelf__plank"></span>
+  {books.map((book, index) => (
+    <span class="book-shelf__copy" data-book={index} style={binding(index, book)} hidden>
+      <span class="book-shelf__volume">
+        <Book
+          title={book.title}
+          author={book.author}
+          color={book.color}
+          {...(book.cover ? { cover: book.cover } : {})}
+          heading={heading}
+          review={book.review}
+          bookplate={bookplate}
+          label={bookLabel.replace("{title}", book.title)}
+        />
+        <span class="book-shelf__side" aria-hidden="true">
+          <span class="book-shelf__spine-title">{book.spine ?? book.title}</span>
+        </span>
+      </span>
+    </span>
+  ))}
+</book-shelf>
+
+<script>
+  import { DRAG_THRESHOLD } from "../../../ui/Desk/camera";
+
+  type Point = [number, number];
+  const wait = (ms: number) => new Promise((done) => setTimeout(done, ms));
+  const clamp = (value: number, low: number, high: number) => Math.max(low, Math.min(high, value));
+  /** The size of a Book, in pixels. */
+  const BOOK: Point = [132, 178];
+  /** A dragged book this close to the row, in pixels, goes back to its place when dropped. */
+  const NEAR = 40;
+  /** Just out of the row, or about to go in, a book stands this many pixels proud of it and a little nearer. */
+  const LIFT = 30;
+  const NEARER = 1.08;
+  /** The book facing the visitor. Turned, its spine faces out instead (see `shape`). */
+  const FACING = "translateZ(0px) rotateY(0deg)";
+  /** A face turned away from the light gets this much darker. */
+  const SHADE = "brightness(0.7)";
+  const LIT = "brightness(1)";
+  const TRAVEL = "cubic-bezier(0.45, 0, 0.2, 1)";
+  const SETTLE = "cubic-bezier(0.2, 0.7, 0.2, 1)";
+  /** Last stacking order handed out: the book touched last lies on top, and all of them above the desk's objects. */
+  let stack = 100;
+
+  class BookShelfElement extends HTMLElement {
+    private abort: AbortController | undefined;
+    private copies: HTMLElement[] = [];
+
+    connectedCallback() {
+      this.abort = new AbortController();
+      const signal = this.abort.signal;
+      const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const row = this.querySelector<HTMLElement>(".book-shelf__row");
+      if (!row) return;
+      const copies = (this.copies = [...this.querySelectorAll<HTMLElement>(".book-shelf__copy")]);
+      /** Where books lie once they are out: the desk the shelf stands on, or the page when there is no desk. */
+      const surface = this.closest<HTMLElement>(".desk__world") ?? document.body;
+      /** Books being moved by an animation: they ignore presses until it ends. */
+      const busy = new WeakSet<HTMLElement>();
+
+      const spineOf = (copy: HTMLElement) =>
+        this.querySelector<HTMLElement>(`.book-shelf__spine[data-book="${copy.dataset["book"]}"]`);
+      const copyOf = (spine: HTMLElement) =>
+        copies.find((copy) => copy.dataset["book"] === spine.dataset["book"]);
+      const coverOf = (copy: HTMLElement) => copy.querySelector<HTMLElement>(".book");
+      /** Where the surface's own (0, 0) is on screen: books are placed in the surface's pixels, not the shelf's. */
+      const origin = (): Point => {
+        if (getComputedStyle(surface).position === "static") return [-scrollX, -scrollY];
+        const box = surface.getBoundingClientRect();
+        return [box.left + surface.clientLeft, box.top + surface.clientTop];
+      };
+      /** A pointer position in the surface's pixels. */
+      const at = (event: PointerEvent): Point => {
+        const [x, y] = origin();
+        return [event.clientX - x, event.clientY - y];
+      };
+      /** Keeps a book on the surface. */
+      const within = ([x, y]: Point): Point => {
+        const page = document.documentElement;
+        const [width, height] =
+          surface === document.body
+            ? [page.scrollWidth, page.scrollHeight]
+            : [surface.clientWidth, surface.clientHeight];
+        return [clamp(x, 0, width - BOOK[0]), clamp(y, 0, height - BOOK[1])];
+      };
+      const place = (copy: HTMLElement, [x, y]: Point) => {
+        copy.style.left = `${x}px`;
+        copy.style.top = `${y}px`;
+      };
+      const placeOf = (copy: HTMLElement): Point => [
+        parseFloat(copy.style.left) || 0,
+        parseFloat(copy.style.top) || 0,
+      ];
+      /** The tilt the desk gives the shelf, in degrees: a book in the row leans with it. */
+      const tilt = () => {
+        const holder = this.closest<HTMLElement>(".desk-object");
+        return (holder && parseFloat(getComputedStyle(holder).rotate)) || 0;
+      };
+      /**
+       * A book as it stands in the row. `scale` shrinks it to its spine's height; `turned` is the quarter turn
+       * that brings its spine to the front, exactly where its cover was; `home` is where the book is placed so that
+       * spine covers the one in the row (the book scales and leans from the middle of its foot).
+       */
+      const shape = (spine: HTMLElement) => {
+        const scale = spine.offsetHeight / BOOK[1];
+        const thick = spine.offsetWidth / scale;
+        const box = spine.getBoundingClientRect();
+        const [x, y] = origin();
+        const lean = tilt();
+        const half = spine.offsetHeight / 2;
+        const home: Point = [
+          box.left + box.width / 2 - x - half * Math.sin((lean * Math.PI) / 180) - BOOK[0] / 2,
+          box.top + box.height / 2 - y + half * Math.cos((lean * Math.PI) / 180) - BOOK[1],
+        ];
+        return {
+          scale,
+          lean: `${lean}deg`,
+          turned: `translateZ(${(thick - BOOK[0]) / 2}px) rotateY(90deg)`,
+          home,
+        };
+      };
+      /**
+       * Where a book lands when it leaves by itself: beside the shelf, far enough for its cover to swing open.
+       * To the right when that is in view, else to the left.
+       */
+      const beside = (): Point => {
+        const box = this.getBoundingClientRect();
+        const [x, y] = origin();
+        const out = copies.filter((copy) => !copy.hidden).length - 1;
+        const step = (out % 3) * 26;
+        const right = box.right + 150 + step;
+        const left = box.left - BOOK[0] - 24 - step;
+        const fits = right + BOOK[0] <= document.documentElement.clientWidth || left < BOOK[0];
+        return within([(fits ? right : left) - x, box.top - y + 6 + (out % 3) * 22]);
+      };
+      const isNear = (copy: HTMLElement) => {
+        const [x, y] = origin();
+        const [left, top] = placeOf(copy);
+        const box = row.getBoundingClientRect();
+        const centerX = left + x + BOOK[0] / 2;
+        const centerY = top + y + BOOK[1] / 2;
+        return (
+          centerX > box.left - NEAR &&
+          centerX < box.right + NEAR &&
+          centerY > box.top - NEAR &&
+          centerY < box.bottom + NEAR
+        );
+      };
+      /**
+       * Books go back in any order: the empty place of the book in the hand moves along the row to where the book
+       * is aimed, and the other spines slide over to make room.
+       */
+      const aim = (copy: HTMLElement) => {
+        const place = spineOf(copy);
+        if (!place) return;
+        const center = placeOf(copy)[0] + origin()[0] + BOOK[0] / 2;
+        const left = this.getBoundingClientRect().left;
+        const spines = [...row.querySelectorAll<HTMLElement>(".book-shelf__spine")];
+        // Read from the layout, not from the screen: a spine that is still sliding counts where it is going.
+        const next = spines.find(
+          (spine) => spine !== place && left + spine.offsetLeft + spine.offsetWidth / 2 > center,
+        );
+        const before = next ?? row.querySelector(".book-shelf__bookend");
+        if (place.nextElementSibling === before) return;
+        const was = new Map(spines.map((spine) => [spine, spine.offsetLeft]));
+        const focused = document.activeElement === place;
+        row.insertBefore(place, before);
+        // Moving a button in the document drops its focus.
+        if (focused) place.focus({ preventScroll: true });
+        if (still) return;
+        for (const [spine, from] of was) {
+          const by = from - spine.offsetLeft;
+          if (by)
+            spine.animate([{ translate: `${by}px 0` }, { translate: "0 0" }], {
+              duration: 220,
+              easing: SETTLE,
+            });
+        }
+      };
+      /** One stretch of a book's way. It keeps its last frame, so the next stretch starts from it; `rest` ends the way. */
+      const fly = (part: Element | null, frames: Keyframe[], duration: number) =>
+        still || !part ? Promise.resolve() : part.animate(frames, { duration, fill: "forwards" }).finished;
+      const rest = (copy: HTMLElement) => {
+        for (const animation of copy.getAnimations({ subtree: true })) animation.cancel();
+      };
+      /**
+       * Which face is out during a stretch: the spine or the cover, and the quarter turn between them when it
+       * changes, with the light changing on both faces.
+       */
+      const turn = (
+        copy: HTMLElement,
+        turned: string,
+        from: "spine" | "cover",
+        to: "spine" | "cover",
+        ms: number,
+      ) => {
+        const track = (spine: Keyframe, cover: Keyframe): Keyframe[] => [
+          { ...(from === "spine" ? spine : cover), easing: TRAVEL },
+          { ...(to === "spine" ? spine : cover) },
+        ];
+        return Promise.all([
+          fly(
+            copy.querySelector(".book-shelf__volume"),
+            track({ transform: turned }, { transform: FACING }),
+            ms,
+          ),
+          fly(coverOf(copy), track({ filter: SHADE }, { filter: LIT }), ms),
+          fly(copy.querySelector(".book-shelf__side"), track({ filter: LIT }, { filter: SHADE }), ms),
+        ]);
+      };
+      /** The books on each side lean away for a moment, as they do when one is pushed in or pulled out. */
+      const nudge = (spine: HTMLElement) => {
+        if (still) return;
+        const lean = (neighbour: Element | null, degrees: number) => {
+          if (neighbour?.matches('.book-shelf__spine[aria-pressed="false"]'))
+            neighbour.animate([{ rotate: "0deg" }, { rotate: `${degrees}deg` }, { rotate: "0deg" }], {
+              duration: 420,
+              easing: "ease-out",
+            });
+        };
+        lean(spine.previousElementSibling, -1.6);
+        lean(spine.nextElementSibling, 1.6);
+      };
+
+      /**
+       * The book leaves the row. By itself it is pulled out, turns its cover to the front on the way to a spot
+       * beside the shelf, and opens. In the `hand` it turns right where the pointer holds it, by its `grip`.
+       */
+      const take = async (spine: HTMLElement, hand?: { at: Point; grip: Point }) => {
+        const copy = copyOf(spine);
+        if (!copy || busy.has(copy)) return;
+        busy.add(copy);
+        // Measured before anything changes: this is where the spine is right now, hover lift included.
+        const { scale, lean, turned, home } = shape(spine);
+        spine.setAttribute("aria-pressed", "true");
+        spine.setAttribute("aria-label", spine.dataset["returnLabel"] ?? "");
+        nudge(spine);
+        surface.append(copy);
+        copy.hidden = false;
+        copy.style.zIndex = String(++stack);
+        const out: Keyframe = { translate: "0px 0px", scale: "1", rotate: "0deg" };
+        if (hand) {
+          // Held by the point that was pressed, so the book grows and straightens around the pointer.
+          copy.style.transformOrigin = `${hand.grip[0]}px ${hand.grip[1]}px`;
+          place(copy, within([hand.at[0] - hand.grip[0], hand.at[1] - hand.grip[1]]));
+          await Promise.all([
+            fly(copy, [{ scale: `${scale}`, rotate: lean, easing: TRAVEL }, out], 360),
+            turn(copy, turned, "spine", "cover", 360),
+          ]);
+          rest(copy);
+          copy.style.transformOrigin = "";
+        } else {
+          const to = beside();
+          place(copy, to);
+          const [x, y] = [home[0] - to[0], home[1] - to[1]];
+          copy.dataset["flying"] = "";
+          const pulled: Keyframe = {
+            translate: `${x}px ${y - LIFT}px`,
+            scale: `${scale * NEARER}`,
+            rotate: lean,
+          };
+          await Promise.all([
+            fly(
+              copy,
+              [{ translate: `${x}px ${y}px`, scale: `${scale}`, rotate: lean, easing: "ease-out" }, pulled],
+              270,
+            ),
+            turn(copy, turned, "spine", "spine", 270),
+          ]);
+          await Promise.all([
+            fly(copy, [{ ...pulled, easing: TRAVEL }, out], 640),
+            turn(copy, turned, "spine", "cover", 640),
+          ]);
+          rest(copy);
+          delete copy.dataset["flying"];
+          coverOf(copy)?.setAttribute("aria-pressed", "true");
+        }
+        busy.delete(copy);
+      };
+      /** The book closes, turns its spine out on the way to its place, and slides in between its neighbours. */
+      const putBack = async (copy: HTMLElement) => {
+        const spine = spineOf(copy);
+        if (!spine || busy.has(copy)) return;
+        busy.add(copy);
+        copy.dataset["flying"] = "";
+        const cover = coverOf(copy);
+        const wasOpen = cover?.getAttribute("aria-pressed") === "true";
+        cover?.setAttribute("aria-pressed", "false");
+        if (wasOpen && !still) await wait(700);
+        const from = placeOf(copy);
+        const aim = shape(spine);
+        const above: Keyframe = {
+          translate: `${aim.home[0] - from[0]}px ${aim.home[1] - from[1] - LIFT}px`,
+          scale: `${aim.scale * NEARER}`,
+          rotate: aim.lean,
+        };
+        await Promise.all([
+          fly(copy, [{ translate: "0px 0px", scale: "1", rotate: "0deg", easing: TRAVEL }, above], 620),
+          turn(copy, aim.turned, "cover", "spine", 620),
+        ]);
+        // The shelf may have settled meanwhile (the desk lifts the object under the pointer): the last stretch
+        // aims again, so the book ends exactly on its place.
+        const { scale, lean, turned, home } = shape(spine);
+        nudge(spine);
+        await Promise.all([
+          fly(
+            copy,
+            [
+              { ...above, easing: SETTLE },
+              { translate: `${home[0] - from[0]}px ${home[1] - from[1]}px`, scale: `${scale}`, rotate: lean },
+            ],
+            320,
+          ),
+          turn(copy, turned, "spine", "spine", 320),
+        ]);
+        copy.hidden = true;
+        rest(copy);
+        delete copy.dataset["flying"];
+        spine.setAttribute("aria-pressed", "false");
+        spine.setAttribute("aria-label", spine.dataset["takeLabel"] ?? "");
+        busy.delete(copy);
+      };
+
+      // A press that does not travel is a click, handled below. One that travels carries a book: out of the row
+      // when it started on a spine, or from wherever the book was lying.
+      const press = (down: PointerEvent, spine: HTMLElement | null, lying: HTMLElement | null) => {
+        if (down.button !== 0) return;
+        // The desk's own drags (the shelf as an object, the camera) are not for the books.
+        down.stopPropagation();
+        if (spine?.getAttribute("aria-pressed") === "true") return;
+        if (lying && busy.has(lying)) return;
+        let copy = lying;
+        const start = at(down);
+        let grip: Point = [BOOK[0] / 2, BOOK[1] / 2];
+        if (lying) grip = [start[0] - placeOf(lying)[0], start[1] - placeOf(lying)[1]];
+        let dragging = false;
+        /** The book coming out of the row, when the drag started on a spine. */
+        let coming: Promise<void> | undefined;
+        const moves = new AbortController();
+
+        const move = (event: PointerEvent) => {
+          if (event.pointerId !== down.pointerId) return;
+          if (!dragging) {
+            if (Math.hypot(event.clientX - down.clientX, event.clientY - down.clientY) <= DRAG_THRESHOLD)
+              return;
+            dragging = true;
+            getSelection()?.removeAllRanges();
+            if (spine) {
+              copy = copyOf(spine) ?? null;
+              // Held at the same height it was pressed at, along the middle of the spine.
+              const box = spine.getBoundingClientRect();
+              grip = [BOOK[0] / 2, clamp((down.clientY - box.top) / box.height, 0, 1) * BOOK[1]];
+              coming = take(spine, { at: at(event), grip });
+            }
+            if (!copy) return;
+            copy.dataset["held"] = "";
+            copy.style.zIndex = String(++stack);
+            spineOf(copy)?.setAttribute("data-place", "");
+          }
+          if (!copy) return;
+          const point = at(event);
+          place(copy, within([point[0] - grip[0], point[1] - grip[1]]));
+          const near = isNear(copy);
+          this.toggleAttribute("data-near", near);
+          if (near) aim(copy);
+        };
+        const end = (event: PointerEvent) => {
+          if (event.pointerId !== down.pointerId) return;
+          moves.abort();
+          if (!dragging || !copy) return;
+          const dropped = copy;
+          delete dropped.dataset["held"];
+          spineOf(dropped)?.removeAttribute("data-place");
+          const near = this.hasAttribute("data-near");
+          this.removeAttribute("data-near");
+          // The release after a drag is not a press on the book or the spine.
+          const swallow = (click: Event) => {
+            click.preventDefault();
+            click.stopPropagation();
+          };
+          window.addEventListener("click", swallow, { capture: true, once: true });
+          setTimeout(() => window.removeEventListener("click", swallow, { capture: true }), 0);
+          // A book let go before it finished coming out waits for that turn to end.
+          void (coming ?? Promise.resolve()).then(() => {
+            if (near) void putBack(dropped);
+            // A book that just came off the shelf opens where it is dropped.
+            else if (spine) coverOf(dropped)?.setAttribute("aria-pressed", "true");
+          });
+        };
+        window.addEventListener("pointermove", move, { signal: moves.signal });
+        window.addEventListener("pointerup", end, { signal: moves.signal });
+        window.addEventListener("pointercancel", end, { signal: moves.signal });
+      };
+
+      row.addEventListener(
+        "pointerdown",
+        (down) => {
+          const spine = (down.target as Element).closest<HTMLElement>(".book-shelf__spine");
+          if (spine) press(down, spine, null);
+        },
+        { signal },
+      );
+      row.addEventListener(
+        "click",
+        (event) => {
+          const spine = (event.target as Element).closest<HTMLElement>(".book-shelf__spine");
+          if (!spine) return;
+          const copy = copyOf(spine);
+          if (spine.getAttribute("aria-pressed") === "true") {
+            if (copy) void putBack(copy);
+          } else void take(spine);
+        },
+        { signal },
+      );
+      for (const copy of copies) {
+        copy.addEventListener("pointerdown", (down) => press(down, null, copy), { signal });
+        // Cover images are natively draggable; that would fight the book's own drag.
+        copy.addEventListener("dragstart", (event) => event.preventDefault(), { signal });
+      }
+    }
+
+    // The books go back with the shelf when it leaves the page.
+    disconnectedCallback() {
+      this.abort?.abort();
+      for (const copy of this.copies) {
+        copy.hidden = true;
+        this.append(copy);
+      }
+      for (const spine of this.querySelectorAll<HTMLElement>(".book-shelf__spine")) {
+        spine.setAttribute("aria-pressed", "false");
+        spine.setAttribute("aria-label", spine.dataset["takeLabel"] ?? "");
+      }
+    }
+  }
+
+  if (!customElements.get("book-shelf")) customElements.define("book-shelf", BookShelfElement);
+</script>
+
+<style>
+  .book-shelf {
+    position: relative;
+    display: inline-block;
+  }
+  .book-shelf__row {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 184px;
+    padding: 0 14px;
+  }
+  /* A spine, in the row or on the book itself: its color under a light band near the top and darker edges. */
+  .book-shelf__spine {
+    all: unset;
+    position: relative;
+    transform-origin: center bottom;
+    cursor: grab;
+    touch-action: none;
+    transition:
+      translate var(--duration-medium) var(--ease-spring),
+      opacity var(--duration-fast) var(--ease-out);
+  }
+  .book-shelf__spine,
+  .book-shelf__side {
+    box-sizing: border-box;
+    display: grid;
+    place-items: center;
+    width: var(--_width);
+    height: var(--_height);
+    border-radius: 3px 3px 1px 1px;
+    background:
+      linear-gradient(180deg, transparent 12px, rgb(255 255 255 / 0.5) 12px 14px, transparent 14px),
+      linear-gradient(90deg, rgb(0 0 0 / 0.22), transparent 22% 78%, rgb(0 0 0 / 0.26)), var(--_color);
+  }
+  @media (hover: hover) {
+    .book-shelf__spine[aria-pressed="false"]:hover {
+      translate: 0 -8px;
+    }
+  }
+  .book-shelf__spine:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 2px;
+  }
+  .book-shelf__spine-title {
+    max-height: calc(var(--_height) - 28px);
+    margin-top: 14px;
+    overflow: hidden;
+    writing-mode: vertical-rl;
+    rotate: 180deg;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font: 600 0.6875rem / 1 var(--font-sans);
+    color: #fff;
+  }
+  /* A book that is out leaves its place empty: a faint outline, which is still the button that calls it back. */
+  .book-shelf__spine[aria-pressed="true"] {
+    background: none;
+    outline: 1.5px dashed color-mix(in srgb, var(--color-text-muted) 55%, transparent);
+    outline-offset: -2px;
+    cursor: pointer;
+  }
+  .book-shelf__spine[aria-pressed="true"] > .book-shelf__spine-title {
+    visibility: hidden;
+  }
+  /* The place of the book in the hand lights up once it is close enough to drop. */
+  .book-shelf[data-near] .book-shelf__spine[data-place] {
+    outline: 2px solid var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+  }
+  .book-shelf__bookend {
+    width: 22px;
+    height: 70px;
+    margin-left: 4px;
+    border: solid var(--color-text-secondary);
+    border-width: 0 0 4px 4px;
+    border-radius: 0 0 0 3px;
+  }
+  /* The wooden plank keeps its own colors in both themes. */
+  .book-shelf__plank {
+    display: block;
+    height: 12px;
+    border-radius: 3px;
+    background: linear-gradient(#c79a68, #a87a4c);
+    box-shadow: 0 10px 14px -8px rgb(20 21 23 / 0.5);
+    cursor: grab;
+  }
+  /* A book off the shelf lies on the desk, in the desk's pixels. It is seen in perspective, so its quarter turn
+     has depth; in the row it shrinks and leans from the middle of its foot. */
+  .book-shelf__copy {
+    position: absolute;
+    z-index: 100;
+    display: block;
+    width: 132px;
+    height: 178px;
+    perspective: 900px;
+    transform-origin: center bottom;
+    cursor: grab;
+    touch-action: none;
+    transition: filter var(--duration-fast) var(--ease-out);
+  }
+  .book-shelf__copy[hidden] {
+    display: none;
+  }
+  .book-shelf__copy[data-held] {
+    cursor: grabbing;
+    filter: drop-shadow(0 14px 12px rgb(20 21 23 / 0.28));
+  }
+  /* A book travelling by itself cannot be pressed. */
+  .book-shelf__copy[data-flying] {
+    pointer-events: none;
+  }
+  /* The solid book: it turns around its own middle, half its thickness behind the cover. A Book is 132px wide and
+     its thickness is the spine's width at the book's full size. */
+  .book-shelf__volume {
+    display: block;
+    position: relative;
+    transform-style: preserve-3d;
+    transform-origin: 50% 50% calc(var(--_width) / var(--_in-row) / -2);
+  }
+  /* The book's own spine stands on the cover's left edge, going back. It is drawn like the one in the row and
+     enlarged to the book's full size, so in the row the two match to the pixel. */
+  .book-shelf__side {
+    position: absolute;
+    top: 0;
+    right: 100%;
+    transform-origin: 100% 0;
+    transform: rotateY(-90deg) scale(calc(1 / var(--_in-row)));
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  /* The Book inside shows the hand of whatever is carrying it. */
+  .book-shelf__volume > :global(.book) {
+    cursor: inherit;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .book-shelf__spine,
+    .book-shelf__copy {
+      transition: none;
+    }
+  }
+</style>

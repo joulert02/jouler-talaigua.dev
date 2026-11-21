@@ -1,0 +1,46 @@
+---
+import { logos, type LogoName } from "./logos";
+interface Props {
+  /** Which logo the sticker shows. */
+  logo: LogoName;
+  /** Accessible name, e.g. "Astro sticker". */
+  label: string;
+}
+const { logo, label } = Astro.props;
+// A logo that paints with a gradient finds it by id, and ids are shared by the whole document: if an earlier
+// sticker with the same logo is hidden (a closed panel, the story Storybook parks behind its docs page), every later
+// one loses that fill. So each sticker renames the ids in its own copy.
+const own = crypto.randomUUID().slice(0, 8);
+const art = logos[logo].replace(/(id="|url\(#)([\w-]+)/g, `$1$2-${own}`);
+---
+
+<!--
+  A die-cut sticker of a favourite tool: the logo itself with a white edge, no card and no shadow. Pure
+  decoration: on the desk it can be dragged and does nothing else, not even the lift every object gets on hover.
+-->
+<span class="tech-sticker" role="img" aria-label={label}>
+  <svg class="tech-sticker__logo" viewBox="0 0 24 24" aria-hidden="true" set:html={art} />
+</span>
+
+<style>
+  .tech-sticker {
+    display: block;
+  }
+  .tech-sticker__logo {
+    display: block;
+    width: 72px;
+    height: 72px;
+    overflow: visible;
+    /* The white die-cut edge, the same in both themes. */
+    filter: drop-shadow(1.5px 0 0 #fff) drop-shadow(-1.5px 0 0 #fff) drop-shadow(0 1.5px 0 #fff)
+      drop-shadow(0 -1.5px 0 #fff);
+  }
+  /* On the desk a sticker stays flat: no lift on hover and no straightening while it is dragged. */
+  :global(.desk-object:has(> .tech-sticker)),
+  :global(.desk-object:has(> .tech-sticker):hover),
+  :global(.desk-object[data-dragging]:has(> .tech-sticker)) {
+    translate: none;
+    rotate: var(--desk-object-tilt);
+    transition: none;
+  }
+</style>

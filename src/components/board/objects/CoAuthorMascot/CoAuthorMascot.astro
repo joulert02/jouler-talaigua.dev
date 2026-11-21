@@ -1,0 +1,159 @@
+---
+import ObjectReveal from "../ObjectReveal/ObjectReveal.astro";
+import type { RevealContent } from "../reveal";
+interface Props {
+  /** Accessible name of the button, e.g. "The co-author of this site". */
+  label: string;
+  /** The title under the mascot, e.g. "Co-author". */
+  role: string;
+  /** What it says, one note per press, in a loop. */
+  lines: readonly RevealContent[];
+}
+const { label, role, lines } = Astro.props;
+---
+
+<!--
+  The pixel mascot of the coding agent that co-authors the site, with its role on a chip underneath. It idles
+  in two-frame steps and blinks; each press makes it hop and say the next line.
+-->
+<co-author-mascot class="co-author-mascot" data-lines={JSON.stringify(lines)}>
+  <button type="button" class="co-author-mascot__face" aria-label={label}>
+    <svg class="co-author-mascot__art" viewBox="0 0 150 90" aria-hidden="true">
+      <g fill="var(--_body)">
+        <rect x="20" y="0" width="110" height="70"></rect>
+        <rect x="0" y="30" width="20" height="18"></rect>
+        <rect x="130" y="30" width="20" height="18"></rect>
+        <rect class="co-author-mascot__leg" x="30" y="70" width="10" height="20"></rect>
+        <rect
+          class="co-author-mascot__leg co-author-mascot__leg--late"
+          x="50"
+          y="70"
+          width="10"
+          height="20"
+        ></rect>
+        <rect class="co-author-mascot__leg" x="90" y="70" width="10" height="20"></rect>
+        <rect
+          class="co-author-mascot__leg co-author-mascot__leg--late"
+          x="110"
+          y="70"
+          width="10"
+          height="20"
+        ></rect>
+      </g>
+      <rect class="co-author-mascot__eye" x="40" y="20" width="10" height="20" fill="var(--_eye)"></rect>
+      <rect class="co-author-mascot__eye" x="100" y="20" width="10" height="20" fill="var(--_eye)"></rect>
+    </svg>
+    <span class="co-author-mascot__role">{role}</span>
+  </button>
+  <ObjectReveal />
+</co-author-mascot>
+
+<script>
+  import { readList, setReveal, type RevealContent } from "../reveal";
+
+  class CoAuthorMascotElement extends HTMLElement {
+    connectedCallback() {
+      const face = this.querySelector<HTMLButtonElement>(".co-author-mascot__face");
+      const lines = readList<RevealContent>(this, "lines");
+      let line = -1;
+      face?.addEventListener("click", () => {
+        line = (line + 1) % Math.max(1, lines.length);
+        const note = lines[line];
+        if (note) setReveal(this, true, note);
+        // Restart the hop on every press.
+        face.classList.remove("co-author-mascot__face--hop");
+        void face.offsetWidth;
+        face.classList.add("co-author-mascot__face--hop");
+      });
+    }
+  }
+
+  if (!customElements.get("co-author-mascot")) {
+    customElements.define("co-author-mascot", CoAuthorMascotElement);
+  }
+</script>
+
+<style>
+  .co-author-mascot {
+    position: relative;
+    display: inline-block;
+    /* Local illustration colors, the same in both themes. */
+    --_body: #de886d;
+    --_eye: #141517;
+  }
+  .co-author-mascot__face {
+    all: unset;
+    box-sizing: border-box;
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+  .co-author-mascot__face:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
+  }
+  /* Pixel art: hard edges and two-frame steps instead of smooth motion. */
+  .co-author-mascot__art {
+    display: block;
+    width: 120px;
+    height: 72px;
+    overflow: visible;
+    shape-rendering: crispEdges;
+    animation: co-author-mascot-idle 1.6s steps(2) infinite;
+  }
+  @keyframes co-author-mascot-idle {
+    50% {
+      transform: translateY(-4px);
+    }
+  }
+  .co-author-mascot__face--hop > .co-author-mascot__art {
+    animation: co-author-mascot-hop 0.45s var(--ease-out);
+  }
+  @keyframes co-author-mascot-hop {
+    40% {
+      transform: translateY(-26px);
+    }
+  }
+  .co-author-mascot__eye {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: co-author-mascot-blink 4s steps(1) infinite;
+  }
+  @keyframes co-author-mascot-blink {
+    96% {
+      transform: scaleY(0.15);
+    }
+  }
+  .co-author-mascot__leg {
+    animation: co-author-mascot-leg 0.8s steps(2) infinite;
+  }
+  .co-author-mascot__leg--late {
+    animation-delay: -0.4s;
+  }
+  @keyframes co-author-mascot-leg {
+    50% {
+      transform: translateY(-4px);
+    }
+  }
+  .co-author-mascot__role {
+    padding: 2px 10px;
+    font: 500 var(--font-size-small) / 1.5 var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .co-author-mascot__art,
+    .co-author-mascot__face--hop > .co-author-mascot__art,
+    .co-author-mascot__eye,
+    .co-author-mascot__leg {
+      animation: none;
+    }
+  }
+</style>
