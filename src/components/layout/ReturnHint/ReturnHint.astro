@@ -1,0 +1,111 @@
+---
+import { getLang, useTranslations } from "../../../i18n/ui";
+interface Props {
+  /** Shows the pill at rest, part full (0 to 1), for Storybook. On the site it stays hidden until a pull starts. */
+  preview?: number;
+}
+const { preview } = Astro.props;
+const t = useTranslations(getLang(Astro));
+---
+
+<!--
+  The way back to the Home, mirroring the board's hint pill (BoardHint): on a page opened from the Home, scrolling up
+  past the top slides it in from the top edge ("Keep going up for Home ↑") and fills it; a full pill keeps moving
+  while the Home loads, then the page goes back (Base.astro drives it through `--return-hint-pull`, `data-visible`
+  and `data-loading`). Decorative: the gesture is a wheel and trackpad shortcut, and the Dock's Home link is the way
+  back for everyone.
+-->
+<div
+  class="return-hint"
+  aria-hidden="true"
+  data-visible={preview !== undefined ? "" : undefined}
+  style={preview !== undefined ? `--return-hint-pull: ${preview}` : undefined}
+>
+  <p class="return-hint__pill">
+    <span class="return-hint__arrow">↑</span>
+    {t("handoff.back")}
+  </p>
+</div>
+
+<style>
+  .return-hint {
+    --return-hint-pull: 0;
+    position: fixed;
+    top: var(--space-4);
+    left: 50%;
+    z-index: 30;
+    pointer-events: none;
+    opacity: 0;
+    translate: -50% calc(-100% - var(--space-4));
+    transition:
+      opacity var(--duration-fast) var(--ease-out),
+      translate var(--duration-medium) var(--ease-spring);
+  }
+  .return-hint[data-visible] {
+    opacity: 1;
+    translate: -50% 0;
+  }
+  .return-hint__pill {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 10px 18px 10px 14px;
+    font: 500 var(--font-size-small) / 1 var(--font-sans);
+    color: var(--color-text);
+    white-space: nowrap;
+    background: color-mix(in srgb, var(--color-surface) 94%, transparent);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-lift);
+  }
+  /* The fill: grows from the left as the pull adds up, as on the board's pill. */
+  .return-hint__pill::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: color-mix(in srgb, var(--color-accent) 16%, var(--color-surface));
+    transform-origin: left;
+    scale: var(--return-hint-pull) 1;
+    transition: scale 0.12s linear;
+  }
+  .return-hint__arrow {
+    color: var(--color-text-accent);
+  }
+  /* Full: the Home is loading. The pill stays full and the arrow keeps rising until the page goes. */
+  .return-hint[data-loading] .return-hint__pill::before {
+    scale: 1 1;
+  }
+  .return-hint[data-loading] .return-hint__arrow {
+    animation: return-hint-rise 0.8s var(--ease-out) infinite;
+  }
+  @keyframes return-hint-rise {
+    0% {
+      translate: 0 4px;
+      opacity: 0;
+    }
+    40% {
+      opacity: 1;
+    }
+    100% {
+      translate: 0 -4px;
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .return-hint {
+      transition: opacity var(--duration-fast) linear;
+    }
+    .return-hint__pill::before {
+      transition: none;
+    }
+    .return-hint[data-loading] .return-hint__arrow {
+      animation: none;
+    }
+  }
+</style>

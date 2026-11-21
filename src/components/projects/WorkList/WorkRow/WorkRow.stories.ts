@@ -13,7 +13,7 @@ const meta = preview.meta({
     docs: {
       description: {
         component:
-          "One project in WorkList: company, title, summary and focus. A built case is a link whose title shares `case-title-<slug>` with the case header, and whose `row-<slug>` id lets the case's back pill return to it. Private to WorkList; documented here to tune it on its own.",
+          "One project in WorkList: company, title, summary and focus. A row with a case is a link; its title takes `case-title-<slug>` (set by WorkList only while navigating to or from that case) to morph into the case header, and its `row-<slug>` id lets the case's back pill return to it. Private to WorkList; documented here to tune it on its own.",
       },
     },
   },

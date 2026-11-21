@@ -1,4 +1,4 @@
-// Sample Work items for the stories: the approved English listing copy, one entry per state a row can be in. On the
+// Sample Work items for the stories: the approved English listing copy, one entry per state a row can be in, plus a personal project. On the
 // site, the Work page builds them from the `projects` collection (src/views/WorkHub.astro).
 import type { WorkItem } from "../types";
 import meliLists from "../../../../assets/projects/mercadolibre/lists.png";
@@ -14,6 +14,7 @@ export const liveItem: WorkItem = {
   focus: ["Product engineering", "Test strategy", "Web views in native apps"],
   cover: meliLists,
   href: "#",
+  tags: [],
 };
 
 /** A case not built yet: no link, a "Coming soon" tag. */
@@ -25,7 +26,7 @@ export const comingItem: WorkItem = {
     "Moving the frontend's observability to groundcover, running on GoodRx's own cloud, to cut costs without losing sight of real users.",
   focus: ["Observability", "Real User Monitoring", "CI/CD"],
   cover: goodrxCards,
-  status: "Coming soon",
+  tags: [{ label: "Coming soon", tone: "muted" }],
 };
 
 /** A status page without a cover: its own tag, and a status tile instead of a picture. */
@@ -35,7 +36,20 @@ export const statusItem: WorkItem = {
   title: "CAPS+",
   summary: "Rebuilding a production-accounting platform, one piece at a time.",
   focus: [],
-  status: "Under construction",
+  tags: [{ label: "Under construction", tone: "muted" }],
 };
 
-export const workItems: WorkItem[] = [liveItem, comingItem, statusItem];
+/** Jouler's own product: the violet "Personal" tag before its state. */
+export const personalItem: WorkItem = {
+  slug: "personal-nexus",
+  company: "EKOU",
+  title: "Personal Nexus",
+  summary: "Exploring a transaction-driven personal-finance product with an AI-assisted capture layer.",
+  focus: [],
+  tags: [
+    { label: "Personal", tone: "accent" },
+    { label: "Coming soon", tone: "muted" },
+  ],
+};
+
+export const workItems: WorkItem[] = [liveItem, comingItem, statusItem, personalItem];

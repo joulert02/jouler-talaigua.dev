@@ -20,8 +20,10 @@ const projects = defineCollection({
       focus: z.array(z.string()).default([]),
       /** Shown on the Work page's preview and thumbnails; without one, the preview shows a status tile. */
       cover: image().optional(),
-      /** Whether the case page is built: a "coming" case is listed without a link. */
+      /** Whether the case page is built: a "coming" case gets a "Coming soon" tag (its link answers 404 until then). */
       case: z.enum(["coming", "live"]),
+      /** Client work or Jouler's own product; a personal project carries a violet "Personal" tag on the Work page. */
+      kind: z.enum(["client", "personal"]).default("client"),
       /** A status that replaces "Coming soon" on the Work page, e.g. "Under construction". */
       label: z.string().optional(),
     }),

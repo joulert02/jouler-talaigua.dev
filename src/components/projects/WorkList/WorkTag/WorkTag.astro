@@ -1,0 +1,28 @@
+---
+import type { WorkTag } from "../types";
+interface Props {
+  /** The label and its tone: `muted` (grey) for a case's state, `accent` (violet) to make a kind of project stand out. */
+  tag: WorkTag;
+}
+const { tag } = Astro.props;
+---
+
+<span class:list={["work-tag", `work-tag--${tag.tone}`]}>{tag.label}</span>
+
+<style>
+  .work-tag {
+    padding: 4px 6px 3px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-muted);
+    font: 500 var(--font-size-label) / 1 var(--font-mono);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .work-tag--accent {
+    border-color: color-mix(in srgb, var(--color-accent) 35%, transparent);
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    color: var(--color-text-accent);
+  }
+</style>

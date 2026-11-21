@@ -49,7 +49,7 @@ const style = [
   to object (‹ ›) and closes it. Back, Escape and the close button leave it; focus returns to the opener.
   At the bottom edge the desktop desk fires a bubbling `desk-edge` event, detail { armed, progress } (camera.ts,
   EdgeState): armed once the camera reaches the edge, progress filling from 0 to 1 while a background drag is held
-  there, back to 0 when it is released. What a full hand-off does is up to the page (the Home opens Work).
+  there or the wheel keeps scrolling down past it, back to 0 when the drag is released or the scroll pauses. What a full hand-off does is up to the page (the Home opens Work).
 -->
 <desk-board
   class="desk"

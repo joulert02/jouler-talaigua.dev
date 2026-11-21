@@ -10,9 +10,9 @@ const t = useTranslations(getLang(Astro));
 
 <!--
   The board's hint pill (v11), above the Dock from 901px: "Drag to explore", with a short bounce. It follows the
-  desk's `desk-edge` events (ui/Desk): when the camera reaches the bottom edge it arms ("Keep dragging for Work ↓"),
-  a held drag fills it, and once full the page goes to `href`, sliding up as if it scrolled down to Work (global.css).
-  Releasing empties it; the wheel never fills it.
+  desk's `desk-edge` events (ui/Desk): when the camera reaches the bottom edge it arms ("Keep going down for Work ↓"),
+  a held drag or scrolling on down fills it, and once full the page goes to `href`, sliding up as if it scrolled down
+  to Work (global.css). Releasing the drag or pausing the scroll empties it.
   Below 901px it is hidden: the desk is not shown there.
 -->
 <board-hint
@@ -36,7 +36,7 @@ const t = useTranslations(getLang(Astro));
     >
       <path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"></path>
     </svg>
-    <!-- Polite: arming the edge is announced once ("Keep dragging for Work"). -->
+    <!-- Polite: arming the edge is announced once ("Keep going down for Work"). -->
     <span class="board-hint__text" aria-live="polite">
       {t("board.hint")}
     </span>

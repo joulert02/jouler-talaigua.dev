@@ -39,7 +39,8 @@ export const ui = {
     "vinyl.close": "Close the player",
     "vinyl.loading": "Loading Spotify…",
     "board.hint": "Drag to explore",
-    "board.hintEdge": "Keep dragging for Work",
+    "board.hintEdge": "Keep going down for Work",
+    "handoff.back": "Keep going up for Home",
     "board.open": "Explore my desk",
     "board.openMeta": "Photos, a ticket, a record and more",
     "board.touchHint": "Drag to explore",
@@ -64,6 +65,7 @@ export const ui = {
       "Selected projects by Jouler Talaigua: product engineering, frontend architecture and observability.",
     "work.heading": "Selected projects",
     "work.coming": "Coming soon",
+    "work.personal": "Personal",
   },
   es: {
     "layout.skip": "Saltar al contenido",
@@ -101,7 +103,8 @@ export const ui = {
     "vinyl.close": "Cerrar el reproductor",
     "vinyl.loading": "Cargando Spotify…",
     "board.hint": "Arrastra para explorar",
-    "board.hintEdge": "Sigue arrastrando para ir a Proyectos",
+    "board.hintEdge": "Sigue bajando para ir a Proyectos",
+    "handoff.back": "Sigue subiendo para volver al Inicio",
     "board.open": "Explora mi escritorio",
     "board.openMeta": "Fotos, un tiquete, un disco y más",
     "board.touchHint": "Arrastra para explorar",
@@ -126,6 +129,7 @@ export const ui = {
       "Proyectos seleccionados de Jouler Talaigua: ingeniería de producto, arquitectura frontend y observabilidad.",
     "work.heading": "Proyectos seleccionados",
     "work.coming": "Próximamente",
+    "work.personal": "Personal",
   },
 } as const satisfies Record<Lang, Record<string, string>>;
 

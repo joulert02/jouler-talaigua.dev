@@ -1,8 +1,9 @@
 ---
 import { Image } from "astro:assets";
+import WorkTag from "../WorkTag/WorkTag.astro";
 import type { WorkItem } from "../types";
 interface Props {
-  /** The project. With `href` the row is a link to its case; without one it is plain text with its status tag. */
+  /** The project. With `href` the row is a link to its case; without one it is plain text, tagged as coming. */
   item: WorkItem;
   /** Whether the Work preview starts on this row (the first one). */
   active?: boolean;
@@ -21,12 +22,11 @@ const Body = item.href ? "a" : "div";
     <span class="work-row__company" translate="no">
       {item.company}
     </span>
-    <strong
-      class="work-row__title"
-      style={item.href ? `view-transition-name: case-title-${item.slug}` : undefined}
-    >
+    <strong class="work-row__title">
       {item.title}
-      {item.status && <span class="work-row__status">{item.status}</span>}
+      {item.tags.map((tag) => (
+        <WorkTag tag={tag} />
+      ))}
     </strong>
     <span class="work-row__summary">{item.summary}</span>
     {item.focus.length > 0 && <span class="work-row__focus">{item.focus.join(" · ")}</span>}
@@ -78,16 +78,6 @@ const Body = item.href ? "a" : "div";
     font-weight: 500;
     line-height: 1.2;
     letter-spacing: -0.025em;
-  }
-  .work-row__status {
-    padding: 4px 6px 3px;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
-    color: var(--color-text-muted);
-    font: 500 var(--font-size-label) / 1 var(--font-mono);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    white-space: nowrap;
   }
   .work-row__summary {
     grid-column: 1;

@@ -11,6 +11,12 @@ export interface WorkItem {
   cover?: ImageMetadata | undefined;
   /** The case page. A case that is not built yet has none and is listed without a link. */
   href?: string | undefined;
-  /** Tag beside the title, e.g. "Coming soon" or "Under construction"; none for a live case. */
-  status?: string | undefined;
+  /** Tags beside the title, e.g. "Personal" and "Coming soon"; none for a live client case. */
+  tags: readonly WorkTag[];
+}
+
+/** A label beside a project's title: `muted` (grey) for its state, `accent` (violet) for a kind worth noticing. */
+export interface WorkTag {
+  label: string;
+  tone: "muted" | "accent";
 }

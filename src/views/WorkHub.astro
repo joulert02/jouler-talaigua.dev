@@ -1,5 +1,5 @@
 ---
-// Work: the selected projects, with a preview on desktop (HU-03). A case that is not built yet is listed without a link.
+// Work: the selected projects, with a preview on desktop (HU-03). Every row links to its case at /work/<slug>/; a case not built yet answers 404 until it ships.
 import Base from "@/layouts/Base.astro";
 import WorkList from "@/components/projects/WorkList/WorkList.astro";
 import type { WorkItem } from "@/components/projects/WorkList/types";
@@ -20,8 +20,11 @@ const items: WorkItem[] = (await getProjects(lang)).map(({ id, data }) => {
     summary: data.summary,
     focus: data.focus,
     cover: data.cover,
-    href: live ? localePath(lang, `/work/${slug}/`) : undefined,
-    status: data.label ?? (live ? undefined : t("work.coming")),
+    href: localePath(lang, `/work/${slug}/`),
+    tags: [
+      ...(data.kind === "personal" ? [{ label: t("work.personal"), tone: "accent" as const }] : []),
+      ...(data.label || !live ? [{ label: data.label ?? t("work.coming"), tone: "muted" as const }] : []),
+    ],
   };
 });
 ---
