@@ -9,25 +9,37 @@ interface Props {
 }
 const { previous, next } = Astro.props;
 const t = useTranslations(getLang(Astro));
+// The narrow nav's name: the shorter of the case's title and its company ("GoodRx", "CAPS+").
+const short = (link: CaseLink) => (link.title.length <= link.company.length ? link.title : link.company);
 ---
 
 <!--
-  The end of a case (v11 `.case-next`): the previous and the next case on Work, then the footer. Side by side when
-  the nav has room for both titles; stacked otherwise.
+  The end of a case (v11 `.case-next`): the previous and the next case on Work, side by side, then the footer. When
+  the nav is too narrow for both titles, each shows a short name instead. On phones a band between two hairlines, its own on top
+  and the footer's under it; from 720px only the footer's (WorkCase ends the page flush with the footer). `data-case-end` tells CaseNav where the
+  case ends.
 -->
-<nav class="case-next" aria-label={t("case.more")}>
+<nav class="case-next" aria-label={t("case.more")} data-case-end>
   <div class="case-next__links">
     <a class="case-next__link" href={previous.href}>
       <span class="case-next__label">
-        {t("case.previous")} · {previous.company}
+        {t("case.previous")}
+        <span class="case-next__company"> · {previous.company}</span>
       </span>
-      <b class="case-next__title">← {previous.title}</b>
+      <b class="case-next__title">
+        ← <span class="case-next__name">{previous.title}</span>
+        <span class="case-next__name case-next__name--short">{short(previous)}</span>
+      </b>
     </a>
     <a class="case-next__link case-next__link--next" href={next.href}>
       <span class="case-next__label">
-        {t("case.next")} · {next.company}
+        {t("case.next")}
+        <span class="case-next__company"> · {next.company}</span>
       </span>
-      <b class="case-next__title">{next.title} →</b>
+      <b class="case-next__title">
+        <span class="case-next__name">{next.title}</span>
+        <span class="case-next__name case-next__name--short">{short(next)}</span> →
+      </b>
     </a>
   </div>
 </nav>
@@ -35,26 +47,33 @@ const t = useTranslations(getLang(Astro));
 <style>
   .case-next {
     container: case-next / inline-size;
-    margin-top: clamp(96px, 12vw, 152px);
+    margin-top: var(--space-9);
     border-top: 1px solid var(--color-border);
   }
+  /* Narrow: both side by side, a short name in place of the title; display: none keeps the hidden text unread. */
   .case-next__links {
     display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-5);
   }
   .case-next__link {
     display: grid;
-    gap: 6px;
-    padding: 28px 0;
+    gap: var(--space-2);
+    padding: var(--space-7) 0;
     color: var(--color-text);
     text-decoration: none;
   }
   .case-next__link--next {
-    border-top: 1px solid var(--color-border);
+    text-align: right;
+  }
+  .case-next__company,
+  .case-next__name:not(.case-next__name--short) {
+    display: none;
   }
   .case-next__link:focus-visible {
     outline: 2px solid var(--color-text-accent);
     outline-offset: 4px;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
   }
   .case-next__label {
     color: var(--color-text-muted);
@@ -71,17 +90,32 @@ const t = useTranslations(getLang(Astro));
   }
   @container case-next (min-width: 640px) {
     .case-next__links {
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
+      gap: var(--space-6);
     }
-    .case-next__link--next {
+    .case-next__company,
+    .case-next__name:not(.case-next__name--short) {
+      display: inline;
+    }
+    .case-next__name--short {
+      display: none;
+    }
+  }
+  /* From 720px no rule of its own: open space above it, and the footer's hairline closes it. */
+  @media (min-width: 720px) {
+    .case-next {
+      margin-top: calc(2 * var(--space-10));
+      padding-bottom: var(--space-7);
       border-top: 0;
-      text-align: right;
     }
   }
   @media (hover: hover) {
     .case-next__link:hover .case-next__title {
       color: var(--color-text-accent);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .case-next__title {
+      transition: none;
     }
   }
 </style>
