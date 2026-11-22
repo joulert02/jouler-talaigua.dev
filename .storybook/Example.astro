@@ -19,6 +19,12 @@ import AboutMeExample from "../src/components/profile/AboutMe/examples/AboutMeEx
 import CareerRowExample from "../src/components/profile/CareerRow/examples/CareerRowExample.astro";
 import WorkRowExample from "../src/components/projects/WorkList/WorkRow/examples/WorkRowExample.astro";
 import WorkRowComingExample from "../src/components/projects/WorkList/WorkRow/examples/WorkRowComingExample.astro";
+import BrowserFrameExample from "../src/components/ui/BrowserFrame/examples/BrowserFrameExample.astro";
+import CaseFactsExample from "../src/components/projects/CaseFacts/examples/CaseFactsExample.astro";
+import CaseQuoteExample from "../src/components/projects/CaseQuote/examples/CaseQuoteExample.astro";
+import CaseIntroExample from "../src/components/projects/CaseIntro/examples/CaseIntroExample.astro";
+import ChapterExample from "../src/components/projects/Chapter/examples/ChapterExample.astro";
+import ExampleFrameExample from "../src/components/projects/ExampleFrame/examples/ExampleFrameExample.astro";
 interface Props {
   /** Example file under src/components/, e.g. "ui/Desk/examples/DeskExample.astro". */
   example: string;
@@ -40,6 +46,12 @@ const examples = {
   "profile/CareerRow/examples/CareerRowExample.astro": CareerRowExample,
   "projects/WorkList/WorkRow/examples/WorkRowExample.astro": WorkRowExample,
   "projects/WorkList/WorkRow/examples/WorkRowComingExample.astro": WorkRowComingExample,
+  "ui/BrowserFrame/examples/BrowserFrameExample.astro": BrowserFrameExample,
+  "projects/CaseFacts/examples/CaseFactsExample.astro": CaseFactsExample,
+  "projects/CaseQuote/examples/CaseQuoteExample.astro": CaseQuoteExample,
+  "projects/CaseIntro/examples/CaseIntroExample.astro": CaseIntroExample,
+  "projects/Chapter/examples/ChapterExample.astro": ChapterExample,
+  "projects/ExampleFrame/examples/ExampleFrameExample.astro": ExampleFrameExample,
 };
 const { example, locale } = Astro.props;
 if (locale) Astro.locals.lang = locale;

@@ -1,0 +1,52 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { StatusBadge } from "../blocks/index.js";
+
+<Meta title="Patterns/Case pages" />
+
+# Case pages
+
+<StatusBadge status="approved" />
+
+How to assemble a case study from content alone, without touching code. The first case built this way is Brand platforms (HU-04, `src/content/projects/*/brand-platforms.mdx`); the sealed design is `docs/design/v11/work/brand-platforms/`.
+
+## Turning a case on
+
+Each project has one file per language in `src/content/projects/en/` and `src/content/projects/es/`. A case is built when:
+
+1. The file is `.mdx` (rename it from `.md`).
+2. Its frontmatter says `case: live` (`coming` keeps the short "coming soon" page).
+
+The route `/work/<slug>/` (and `/es/work/<slug>/`) then renders `WorkCase`: the case top bar (back pill and language switch), the header from `title` and `company`, the MDX body, and the previous and next case in Work order. The title morphs from its row on Work. Nothing else needs to change.
+
+## The body, in order
+
+Write plain Markdown for paragraphs; WorkCase renders every paragraph as `CaseParagraph`, and each block below sets its size. Markdown links render as `CaseLink`: a full URL (`[TENA](https://www.tena.com.co/)`) opens in a new tab with an arrow. Import the blocks at the top of the MDX with the `@/components/...` alias.
+
+| Block                                    | What it holds                                                                                                                    |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `<CaseFacts>` with `<Fact label="…">`    | The facts strip: usually Role, the brands or scope, and Stack. Labels are content, so each language writes its own.              |
+| `<CaseIntro title="…" next="<chapter>">` | "What I learned": the text and a `<CaseQuote>` as Markdown, and the media in `slot="media"`. `next` is the first chapter's `id`. |
+| `<CaseQuote>`                            | The owner's words, as Markdown paragraphs.                                                                                       |
+| `<CaseVideo slot="media" …>`             | A portrait video: files in `public/video/`, H.264 MP4 as the fallback, WebVTT tracks in both languages, `duration` in seconds.   |
+| `<Chapter id number title lead>`         | One chapter: its interactive piece first, then `<FullStory>`.                                                                    |
+| `<FullStory>`                            | "The full story": the approved paragraphs, unchanged, as Markdown.                                                               |
+| `<ExampleFrame id label>`                | The frame for any example or playground: label, controls, the piece, hints and notes (`ExampleHint`, `ExampleNote`) and actions. |
+
+**The case index** (`CaseNav`, mounted inside `CaseTop`) builds itself from the page: the page's h1 first (it goes back to the top), then the intro and each chapter as "number + short name" (`short`, or the title up to its colon). From 1320px it is a column of ticks in the right margin: on hover or focus the ticks stretch and the names slide in as bare text, with no panel. Below that it is a pill in the top bar with the section in view ("02 TENA") that unfolds the same ticks and names under the bar; on phones the bar slides away while scrolling down and comes back on scroll up. The reading progress is the bar's hairline, and from 1320px (where the bar is not sticky) a line fixed to the top edge of the screen.
+
+**Known issue:** the rail's names are bare text, so they can lose contrast when they open over media (the intro video, screenshots). A fix is pending a decision.
+
+A playground specific to one case is a component in `src/components/projects/` that composes ExampleFrame, with its copy per language in a config file next to it (`PetysPlayground`, `TenaPlayground`, `NosotrasPlayground`). The MDX only places it: `<PetysPlayground />`.
+
+## Rules from the design (v11)
+
+- **Labels** say what a piece is and whose code it is not ("Recreation of the shipped screens · not TENA code").
+- **Actions:** the primary button runs the demo and is always rightmost; links that leave the site are ghost, to its left, and open in a new tab.
+- **Every interactive piece has a scripted path** (Publish a change, Run scenario, Show me) and announces its result.
+- **Phones** always get the phone version of a Desktop/Mobile playground; the switch shows from 720px.
+- **Third-party screens** keep their own palette in both themes and make no claims about the third party; credits go in an ExampleNote.
+- **Live sites are linked, not embedded.** Brand sites block framing (CORS and frame policies), so a case shows captures or recreations plus "See it live ↗".
+
+## Not built yet
+
+`<Context>`, `<Role>`, `<Decision>`, `<Metric>` and `<Figure>` from the discovery brief have no design in v11 yet. Each is designed first (in `docs/design/v12/`) by the first case that needs it, then added here.

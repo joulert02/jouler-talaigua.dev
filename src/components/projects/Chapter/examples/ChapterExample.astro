@@ -1,0 +1,22 @@
+---
+// In a case's MDX: the interactive piece, then FullStory with the approved paragraphs as Markdown.
+import Chapter from "../Chapter.astro";
+import FullStory from "../FullStory/FullStory.astro";
+import CaseParagraph from "../../CaseParagraph/CaseParagraph.astro";
+import ExampleFrame from "../../ExampleFrame/ExampleFrame.astro";
+---
+
+<Chapter
+  id="tena"
+  number="02"
+  title="TENA: an academy and a registration for older adults"
+  lead="Many TENA users are older adults. I redesigned the registration so it is easier to get through."
+>
+  <ExampleFrame id="chapter-example" label="The interactive piece goes here" />
+  <FullStory>
+    <CaseParagraph>
+      I also redesigned the registration flow. Many TENA users are older adults, and the old form confused
+      them. The new one is much easier to get through.
+    </CaseParagraph>
+  </FullStory>
+</Chapter>
