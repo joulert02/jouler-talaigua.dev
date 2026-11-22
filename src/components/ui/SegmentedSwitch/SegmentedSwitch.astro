@@ -51,10 +51,13 @@ const { name, legend, options, value = options[0]?.value } = Astro.props;
     clip-path: inset(50%);
     white-space: nowrap;
   }
+  /* Options share the width when a layout stretches the switch; at its own size nothing changes. */
   .segmented-switch__option {
     position: relative;
     display: inline-flex;
+    flex: 1 1 auto;
     align-items: center;
+    justify-content: center;
     min-height: 40px;
     padding: 0 var(--space-4);
     border-radius: 9px;

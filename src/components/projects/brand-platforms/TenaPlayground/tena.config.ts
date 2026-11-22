@@ -9,7 +9,7 @@ import article1HeroMobile from "../../../../assets/projects/pragma/tena/academy-
 import article2Card from "../../../../assets/projects/pragma/tena/academy-article-2-card.jpg";
 import article2Hero from "../../../../assets/projects/pragma/tena/academy-article-2-hero.jpg";
 import article2HeroMobile from "../../../../assets/projects/pragma/tena/academy-article-2-hero-mobile.jpg";
-import liveCard from "../../../../assets/projects/pragma/tena/academy-live-card.jpg";
+import liveCard from "../../../../assets/projects/pragma/tena/academy-live-placeholder-card.jpg";
 
 /** Each screen's page on the live site; "See it live" follows the screen picked. */
 export const tenaUrls = {
@@ -44,6 +44,7 @@ export const tenaCards: readonly TenaCard[] = [
 export const tenaCopy = {
   en: {
     label: "Recreation of the shipped screens · not TENA code",
+    shortLabel: "Recreation of the shipped screens",
     screen: "Screen",
     registration: "Registration",
     screenAcademy: "Academy",
@@ -129,6 +130,7 @@ export const tenaCopy = {
   },
   es: {
     label: "Recreación de las pantallas publicadas · no es código de TENA",
+    shortLabel: "Recreación de las pantallas",
     screen: "Pantalla",
     registration: "Registro",
     screenAcademy: "Academia",

@@ -2,11 +2,12 @@
 interface Props {
   /** Mono label at the top left: what this is and whose code it is ("Recreation of the shipped screens · not TENA code"). */
   label: string;
+  /** The label on phones, where the full one would wrap ("Screenshots of the live site"); defaults to `label`. */
+  shortLabel?: string;
   /** Unique on the page; names the frame for screen readers and lets scripts find it. */
   id: string;
 }
-const { label, id } = Astro.props;
-const labelId = `${id}-label`;
+const { label, shortLabel = label, id } = Astro.props;
 ---
 
 <!--
@@ -16,10 +17,11 @@ const labelId = `${id}-label`;
   action runs the demo and is always rightmost; links that leave are ghost, to its left. On phones the actions stack,
   primary last, nearest the thumb. Scripts announce results through the frame's polite live region.
 -->
-<div class="example-frame" id={id} role="group" aria-labelledby={labelId}>
+<div class="example-frame" id={id} role="group" aria-label={label}>
   <div class="example-frame__head">
-    <p class="example-frame__label" id={labelId}>
-      {label}
+    <p class="example-frame__label" aria-hidden="true">
+      <span class="example-frame__label-full">{label}</span>
+      <span class="example-frame__label-short">{shortLabel}</span>
     </p>
     {Astro.slots.has("controls") && (
       <div class="example-frame__controls">
@@ -58,12 +60,14 @@ const labelId = `${id}-label`;
     );
     background-size: 22px 22px;
   }
+  /* Phones: the short label centred on one line, the controls full width under it. */
   .example-frame__head {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     gap: 12px 24px;
+    text-align: center;
   }
   .example-frame__label {
     margin: 0;
@@ -72,11 +76,18 @@ const labelId = `${id}-label`;
     letter-spacing: 0.05em;
     text-transform: uppercase;
   }
+  .example-frame__label-full {
+    display: none;
+  }
   .example-frame__controls {
     display: flex;
+    flex: 1 1 100%;
     flex-wrap: wrap;
     align-items: center;
     gap: 8px;
+  }
+  .example-frame__controls > :global(*) {
+    flex: 1 1 auto;
   }
   .example-frame__foot {
     display: flex;
@@ -113,6 +124,22 @@ const labelId = `${id}-label`;
     white-space: nowrap;
   }
   @media (min-width: 720px) {
+    .example-frame__head {
+      justify-content: space-between;
+      text-align: left;
+    }
+    .example-frame__label-full {
+      display: inline;
+    }
+    .example-frame__label-short {
+      display: none;
+    }
+    .example-frame__controls {
+      flex: 0 1 auto;
+    }
+    .example-frame__controls > :global(*) {
+      flex: 0 1 auto;
+    }
     .example-frame__actions {
       flex: 0 0 auto;
       flex-direction: row;

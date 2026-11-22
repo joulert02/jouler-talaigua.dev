@@ -36,6 +36,7 @@ export const nosotrasSite = {
 export const nosotrasCopy = {
   en: {
     label: "Nosotras today · a recreation of the live page",
+    shortLabel: "Recreation of the live page",
     desktop:
       "Recreation of the Nosotras “Estoy creciendo” page: three characters on a floating island. Choosing one brings it to the front and its world colours with it.",
     mobile:
@@ -56,6 +57,7 @@ export const nosotrasCopy = {
   },
   es: {
     label: "Nosotras hoy · recreación de la página en vivo",
+    shortLabel: "Recreación de la página en vivo",
     desktop:
       "Recreación de la página «Estoy creciendo» de Nosotras: tres personajes sobre una isla flotante. Al elegir uno pasa al frente y trae los colores de su mundo.",
     mobile:

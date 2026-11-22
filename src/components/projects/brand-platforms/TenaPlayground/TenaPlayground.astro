@@ -6,7 +6,7 @@ import ExampleNote from "../../case/ExampleFrame/ExampleNote/ExampleNote.astro";
 import SegmentedSwitch from "../../../ui/SegmentedSwitch/SegmentedSwitch.astro";
 import Button from "../../../ui/Button/Button.astro";
 import Icon from "../../../ui/Icon/Icon.astro";
-import registration from "../../../../assets/projects/pragma/tena/registration.jpg";
+import registration from "../../../../assets/projects/pragma/tena/registration-placeholder.jpg";
 import logo from "../../../../assets/projects/pragma/tena/logo-header.webp";
 import { getLang } from "../../../../i18n/ui";
 import { tenaCards, tenaCopy, tenaUrls, type TenaUserIcon } from "./tena.config";
@@ -68,7 +68,7 @@ const banners = await Promise.all(
   site for older adults. Academy: each format opens its own layout (article, live). Nothing is sent or stored.
 -->
 <div class="tena-playground" data-tena data-demo={copy.demo} data-size={copy.textSize}>
-  <ExampleFrame id="tena-example" label={copy.label}>
+  <ExampleFrame id="tena-example" label={copy.label} shortLabel={copy.shortLabel}>
     <SegmentedSwitch
       slot="controls"
       name="tena-screen"
@@ -78,7 +78,6 @@ const banners = await Promise.all(
         { value: "academy", label: copy.screenAcademy },
       ]}
     />
-    <ExampleHint slot="head">{copy.hint}</ExampleHint>
     <div
       class="tena-playground__window"
       role="region"
@@ -402,6 +401,7 @@ const banners = await Promise.all(
       </section>
       <p class="tena-playground__toast" aria-hidden="true"></p>
     </div>
+    <ExampleHint slot="foot">{copy.hint}</ExampleHint>
     <ExampleNote slot="foot">{copy.note}</ExampleNote>
     <Button slot="actions" variant="ghost" size="sm" href={tenaUrls.registration} label={copy.live}>
       <Icon slot="end" name="external" size={14} />
