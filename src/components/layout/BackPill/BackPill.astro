@@ -4,10 +4,12 @@ interface Props {
   href: string;
   /** What it goes back to ("All work"). */
   label: string;
+  /** The label below 561px, where the caption hides ("Proyectos"); defaults to `label`. */
+  shortLabel?: string;
   /** The mono caption under it ("Selected projects"); hidden below 561px. */
   caption?: string;
 }
-const { href, label, caption } = Astro.props;
+const { href, label, shortLabel = label, caption } = Astro.props;
 ---
 
 <!--
@@ -28,7 +30,14 @@ const { href, label, caption } = Astro.props;
     </svg>
   </span>
   <span class="back-pill__text">
-    {label}
+    {shortLabel === label ? (
+      label
+    ) : (
+      <>
+        <span class="back-pill__label">{label}</span>
+        <span class="back-pill__label back-pill__label--short">{shortLabel}</span>
+      </>
+    )}
     {caption && <small class="back-pill__caption">{caption}</small>}
   </span>
 </a>
@@ -108,12 +117,19 @@ const { href, label, caption } = Astro.props;
       transform: translateX(-2px);
     }
   }
+  .back-pill__label--short {
+    display: none;
+  }
   @media (max-width: 560px) {
     .back-pill {
       padding-right: 14px;
     }
-    .back-pill__caption {
+    .back-pill__caption,
+    .back-pill__label:not(.back-pill__label--short) {
       display: none;
+    }
+    .back-pill__label--short {
+      display: inline;
     }
   }
   @media (prefers-reduced-motion: reduce) {
