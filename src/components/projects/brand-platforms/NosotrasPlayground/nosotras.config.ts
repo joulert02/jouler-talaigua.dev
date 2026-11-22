@@ -1,6 +1,6 @@
 // Copy and stage data for NosotrasPlayground (v11 page). The recreated site stays in Spanish on both pages, as it is
 // live; only the frame around it follows the page language.
-import type { Lang } from "../../../i18n/ui";
+import type { Lang } from "../../../../i18n/ui";
 
 export const nosotrasUrl = "https://www.nosotrasonline.com.co/";
 

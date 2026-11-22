@@ -36,7 +36,7 @@ Write plain Markdown for paragraphs; WorkCase renders every paragraph as `CasePa
 
 **Known issue:** the rail's names are bare text, so they can lose contrast when they open over media (the intro video, screenshots). A fix is pending a decision.
 
-A playground specific to one case is a component in `src/components/projects/` that composes ExampleFrame, with its copy per language in a config file next to it (`PetysPlayground`, `TenaPlayground`, `NosotrasPlayground`). The MDX only places it: `<PetysPlayground />`.
+A playground specific to one case lives in that case's module, `src/components/projects/<case-slug>/` (Storybook: `Components/Projects/<Case>/…`), and composes ExampleFrame, with its copy per language in a config file next to it (`brand-platforms/PetysPlayground`, `TenaPlayground`, `NosotrasPlayground`). The MDX only places it: `<PetysPlayground />`.
 
 ## Rules from the design (v11)
 

@@ -1,10 +1,10 @@
-import preview from "../../../../.storybook/preview";
+import preview from "../../../../../.storybook/preview";
 import TenaPlayground from "./TenaPlayground.astro";
-import { withLocale } from "../../../../.storybook/locale";
+import { withLocale } from "../../../../../.storybook/locale";
 
 const meta = preview.meta({
   ...withLocale,
-  title: "Components/Projects/TenaPlayground",
+  title: "Components/Projects/BrandPlatforms/TenaPlayground",
   component: TenaPlayground,
   tags: ["autodocs"],
   parameters: {

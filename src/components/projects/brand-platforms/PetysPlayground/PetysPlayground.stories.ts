@@ -1,10 +1,10 @@
-import preview from "../../../../.storybook/preview";
+import preview from "../../../../../.storybook/preview";
 import PetysPlayground from "./PetysPlayground.astro";
-import { withLocale } from "../../../../.storybook/locale";
+import { withLocale } from "../../../../../.storybook/locale";
 
 const meta = preview.meta({
   ...withLocale,
-  title: "Components/Projects/PetysPlayground",
+  title: "Components/Projects/BrandPlatforms/PetysPlayground",
   component: PetysPlayground,
   tags: ["autodocs"],
   parameters: {

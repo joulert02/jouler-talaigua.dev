@@ -1,14 +1,14 @@
 ---
 import { Image, getImage } from "astro:assets";
-import ExampleFrame from "../ExampleFrame/ExampleFrame.astro";
-import ExampleHint from "../ExampleFrame/ExampleHint/ExampleHint.astro";
-import ExampleNote from "../ExampleFrame/ExampleNote/ExampleNote.astro";
-import SegmentedSwitch from "../../ui/SegmentedSwitch/SegmentedSwitch.astro";
-import Button from "../../ui/Button/Button.astro";
-import Icon from "../../ui/Icon/Icon.astro";
-import registration from "../../../assets/projects/pragma/tena/registration.jpg";
-import logo from "../../../assets/projects/pragma/tena/logo-header.webp";
-import { getLang } from "../../../i18n/ui";
+import ExampleFrame from "../../ExampleFrame/ExampleFrame.astro";
+import ExampleHint from "../../ExampleFrame/ExampleHint/ExampleHint.astro";
+import ExampleNote from "../../ExampleFrame/ExampleNote/ExampleNote.astro";
+import SegmentedSwitch from "../../../ui/SegmentedSwitch/SegmentedSwitch.astro";
+import Button from "../../../ui/Button/Button.astro";
+import Icon from "../../../ui/Icon/Icon.astro";
+import registration from "../../../../assets/projects/pragma/tena/registration.jpg";
+import logo from "../../../../assets/projects/pragma/tena/logo-header.webp";
+import { getLang } from "../../../../i18n/ui";
 import { tenaCards, tenaCopy, tenaTitles, tenaUrls, type TenaUserIcon } from "./tena.config";
 const lang = getLang(Astro);
 const copy = tenaCopy[lang];
@@ -1477,7 +1477,7 @@ const banners = await Promise.all(
 </style>
 
 <script>
-  import { announce } from "../ExampleFrame/frame";
+  import { announce } from "../../ExampleFrame/frame";
 
   for (const root of document.querySelectorAll<HTMLElement>("[data-tena]")) {
     const frame = root.querySelector(".example-frame");

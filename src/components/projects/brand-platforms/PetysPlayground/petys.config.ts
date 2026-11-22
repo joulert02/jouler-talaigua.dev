@@ -1,5 +1,5 @@
 // Copy for PetysPlayground, approved with the case (docs/content/projects/pragma-brand-platforms.md, v11 page).
-import type { Lang } from "../../../i18n/ui";
+import type { Lang } from "../../../../i18n/ui";
 
 export const petysUrl = "https://petys.com/";
 

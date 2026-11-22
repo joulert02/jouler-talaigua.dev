@@ -1,10 +1,10 @@
-import preview from "../../../../.storybook/preview";
+import preview from "../../../../../.storybook/preview";
 import NosotrasPlayground from "./NosotrasPlayground.astro";
-import { withLocale } from "../../../../.storybook/locale";
+import { withLocale } from "../../../../../.storybook/locale";
 
 const meta = preview.meta({
   ...withLocale,
-  title: "Components/Projects/NosotrasPlayground",
+  title: "Components/Projects/BrandPlatforms/NosotrasPlayground",
   component: NosotrasPlayground,
   tags: ["autodocs"],
   parameters: {

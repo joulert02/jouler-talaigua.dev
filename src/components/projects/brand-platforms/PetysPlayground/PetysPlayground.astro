@@ -1,16 +1,16 @@
 ---
 import { Image } from "astro:assets";
-import ExampleFrame from "../ExampleFrame/ExampleFrame.astro";
-import ExampleHint from "../ExampleFrame/ExampleHint/ExampleHint.astro";
-import SegmentedSwitch from "../../ui/SegmentedSwitch/SegmentedSwitch.astro";
-import BrowserFrame from "../../ui/BrowserFrame/BrowserFrame.astro";
-import Button from "../../ui/Button/Button.astro";
-import Icon from "../../ui/Icon/Icon.astro";
-import home from "../../../assets/projects/pragma/petys/home.webp";
-import homeMobile from "../../../assets/projects/pragma/petys/home-mobile.jpg";
-import homeUpdated from "../../../assets/projects/pragma/petys/home-updated.jpg";
-import homeMobileUpdated from "../../../assets/projects/pragma/petys/home-mobile-updated.jpg";
-import { getLang, useTranslations } from "../../../i18n/ui";
+import ExampleFrame from "../../ExampleFrame/ExampleFrame.astro";
+import ExampleHint from "../../ExampleFrame/ExampleHint/ExampleHint.astro";
+import SegmentedSwitch from "../../../ui/SegmentedSwitch/SegmentedSwitch.astro";
+import BrowserFrame from "../../../ui/BrowserFrame/BrowserFrame.astro";
+import Button from "../../../ui/Button/Button.astro";
+import Icon from "../../../ui/Icon/Icon.astro";
+import home from "../../../../assets/projects/pragma/petys/home.webp";
+import homeMobile from "../../../../assets/projects/pragma/petys/home-mobile.jpg";
+import homeUpdated from "../../../../assets/projects/pragma/petys/home-updated.jpg";
+import homeMobileUpdated from "../../../../assets/projects/pragma/petys/home-mobile-updated.jpg";
+import { getLang, useTranslations } from "../../../../i18n/ui";
 import { petysCopy, petysUrl } from "./petys.config";
 const lang = getLang(Astro);
 const t = useTranslations(lang);
@@ -348,7 +348,7 @@ const copy = petysCopy[lang];
 </style>
 
 <script>
-  import { announce, followDevice, wait } from "../ExampleFrame/frame";
+  import { announce, followDevice, wait } from "../../ExampleFrame/frame";
 
   for (const root of document.querySelectorAll<HTMLElement>("[data-petys]")) {
     const frame = root.querySelector(".example-frame");

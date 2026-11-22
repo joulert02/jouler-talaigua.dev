@@ -2,14 +2,14 @@
 // English; article titles stay as published on tena.com.co (Spanish) in both languages. The Academy cards, photos,
 // dates and the live's speaker are as published on tena.com.co/academia-tena (checked November 2026).
 import type { ImageMetadata } from "astro";
-import type { Lang } from "../../../i18n/ui";
-import orinarCard from "../../../assets/projects/pragma/tena/academy-orinar-card.jpg";
-import orinarHero from "../../../assets/projects/pragma/tena/academy-orinar-hero.jpg";
-import orinarHeroMobile from "../../../assets/projects/pragma/tena/academy-orinar-hero-mobile.jpg";
-import pelvicoCard from "../../../assets/projects/pragma/tena/academy-pelvico-card.jpg";
-import pelvicoHero from "../../../assets/projects/pragma/tena/academy-pelvico-hero.jpg";
-import pelvicoHeroMobile from "../../../assets/projects/pragma/tena/academy-pelvico-hero-mobile.jpg";
-import liveCard from "../../../assets/projects/pragma/tena/academy-live-card.jpg";
+import type { Lang } from "../../../../i18n/ui";
+import orinarCard from "../../../../assets/projects/pragma/tena/academy-orinar-card.jpg";
+import orinarHero from "../../../../assets/projects/pragma/tena/academy-orinar-hero.jpg";
+import orinarHeroMobile from "../../../../assets/projects/pragma/tena/academy-orinar-hero-mobile.jpg";
+import pelvicoCard from "../../../../assets/projects/pragma/tena/academy-pelvico-card.jpg";
+import pelvicoHero from "../../../../assets/projects/pragma/tena/academy-pelvico-hero.jpg";
+import pelvicoHeroMobile from "../../../../assets/projects/pragma/tena/academy-pelvico-hero-mobile.jpg";
+import liveCard from "../../../../assets/projects/pragma/tena/academy-live-card.jpg";
 
 /** Each screen's page on the live site; "See it live" follows the screen picked. */
 export const tenaUrls = {
