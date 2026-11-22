@@ -12,32 +12,22 @@ const t = useTranslations(getLang(Astro));
 ---
 
 <!--
-  The end of a case (v11 `.case-next`): the previous and the next case on Work, then the footer. When the nav is too
-  narrow for both titles side by side, each link shows only "← Previous" / "Next →" and the case stays in its name.
+  The end of a case (v11 `.case-next`): the previous and the next case on Work, then the footer. Side by side when
+  the nav has room for both titles; stacked otherwise.
 -->
 <nav class="case-next" aria-label={t("case.more")}>
   <div class="case-next__links">
     <a class="case-next__link" href={previous.href}>
-      <span class="case-next__full">
-        <span class="case-next__label">
-          {t("case.previous")} · {previous.company}
-        </span>
-        <b class="case-next__title">← {previous.title}</b>
+      <span class="case-next__label">
+        {t("case.previous")} · {previous.company}
       </span>
-      <b class="case-next__short" aria-hidden="true">
-        ← {t("case.previousShort")}
-      </b>
+      <b class="case-next__title">← {previous.title}</b>
     </a>
     <a class="case-next__link case-next__link--next" href={next.href}>
-      <span class="case-next__full">
-        <span class="case-next__label">
-          {t("case.next")} · {next.company}
-        </span>
-        <b class="case-next__title">{next.title} →</b>
+      <span class="case-next__label">
+        {t("case.next")} · {next.company}
       </span>
-      <b class="case-next__short" aria-hidden="true">
-        {t("case.nextShort")} →
-      </b>
+      <b class="case-next__title">{next.title} →</b>
     </a>
   </div>
 </nav>
@@ -50,27 +40,21 @@ const t = useTranslations(getLang(Astro));
   }
   .case-next__links {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
   }
   .case-next__link {
-    position: relative;
     display: grid;
+    gap: 6px;
     padding: 28px 0;
     color: var(--color-text);
     text-decoration: none;
   }
   .case-next__link--next {
-    text-align: right;
+    border-top: 1px solid var(--color-border);
   }
   .case-next__link:focus-visible {
     outline: 2px solid var(--color-text-accent);
     outline-offset: 4px;
     border-radius: 6px;
-  }
-  .case-next__full {
-    display: grid;
-    gap: 6px;
   }
   .case-next__label {
     color: var(--color-text-muted);
@@ -78,32 +62,25 @@ const t = useTranslations(getLang(Astro));
     letter-spacing: 0.05em;
     text-transform: uppercase;
   }
-  .case-next__title,
-  .case-next__short {
+  .case-next__title {
     font-size: clamp(20px, 2.4vw, 28px);
     font-weight: 600;
     line-height: 1.2;
     letter-spacing: -0.02em;
     transition: color var(--duration-fast) var(--ease-out);
   }
-  /* Narrow: only the short labels show; the full text stays for screen readers. */
-  @container case-next (max-width: 639px) {
-    .case-next__full {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-      clip-path: inset(50%);
-      white-space: nowrap;
-    }
-  }
   @container case-next (min-width: 640px) {
-    .case-next__short {
-      display: none;
+    .case-next__links {
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .case-next__link--next {
+      border-top: 0;
+      text-align: right;
     }
   }
   @media (hover: hover) {
-    .case-next__link:hover :is(.case-next__title, .case-next__short) {
+    .case-next__link:hover .case-next__title {
       color: var(--color-text-accent);
     }
   }
