@@ -9,7 +9,7 @@ import Icon from "../../../ui/Icon/Icon.astro";
 import registration from "../../../../assets/projects/pragma/tena/registration.jpg";
 import logo from "../../../../assets/projects/pragma/tena/logo-header.webp";
 import { getLang } from "../../../../i18n/ui";
-import { tenaCards, tenaCopy, tenaTitles, tenaUrls, type TenaUserIcon } from "./tena.config";
+import { tenaCards, tenaCopy, tenaUrls, type TenaUserIcon } from "./tena.config";
 const lang = getLang(Astro);
 const copy = tenaCopy[lang];
 // Line drawings for the user types, as on the site.
@@ -47,8 +47,7 @@ const barIcons = [
 ];
 const cards = tenaCards.flatMap((card, index) => {
   const text = copy.cards[index];
-  const title = tenaTitles[index];
-  return text && title ? [{ ...card, ...text, title }] : [];
+  return text ? [{ ...card, ...text }] : [];
 });
 // The article banner swaps to its mobile crop below 720px, as on the site.
 const banners = await Promise.all(
@@ -90,6 +89,10 @@ const banners = await Promise.all(
         <div class="tena-playground__hero">
           <Image class="tena-playground__hero-image" src={registration} alt="" width={720} />
           <Image class="tena-playground__hero-logo" src={logo} alt="" width={500} />
+          <button class="tena-playground__home" type="button" data-demo-action>
+            <span class="tena-playground__home-arrow" aria-hidden="true"></span>
+            {copy.home}
+          </button>
         </div>
         <div class="tena-playground__panel">
           <div class="tena-playground__zoom">
@@ -261,7 +264,6 @@ const banners = await Promise.all(
                       { "tena-playground__card-title--live": card.format === "live" },
                     ]}
                     id={`tena-card-${index}`}
-                    lang="es"
                   >
                     {card.title}
                   </p>
@@ -336,9 +338,7 @@ const banners = await Promise.all(
                       />
                     </picture>
                     <span class="tena-playground__banner-tag">{card.category}</span>
-                    <p class="tena-playground__banner-title" lang="es">
-                      {card.title}
-                    </p>
+                    <p class="tena-playground__banner-title">{card.title}</p>
                   </div>
                   {row}
                   <div class="tena-playground__article" aria-hidden="true">
@@ -357,7 +357,7 @@ const banners = await Promise.all(
                       <Image class="tena-playground__video-poster" src={card.image} alt="" width={720} />
                       <span class="tena-playground__video-bar">
                         <span class="tena-playground__video-avatar">TENA</span>
-                        <span class="tena-playground__video-title" lang="es">
+                        <span class="tena-playground__video-title">
                           {card.title}
                           <small class="tena-playground__video-channel">TENA</small>
                         </span>
@@ -366,9 +366,7 @@ const banners = await Promise.all(
                     </div>
                     <div class="tena-playground__live-side">
                       <span class="tena-playground__live-tag">{card.category}</span>
-                      <p class="tena-playground__live-title" lang="es">
-                        {card.title}
-                      </p>
+                      <p class="tena-playground__live-title">{card.title}</p>
                       <p class="tena-playground__live-who">{card.who}</p>
                       {row}
                     </div>
@@ -471,6 +469,44 @@ const banners = await Promise.all(
     left: 0;
     width: max(160px, 44%);
     height: auto;
+  }
+  /* The site's "Back to home" link, beside the logo at the photo's top. */
+  .tena-playground__home {
+    position: absolute;
+    top: 8px;
+    left: calc(max(160px, 44%) - 2%);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px;
+    border: 0;
+    background: none;
+    color: #13294b;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .tena-playground__home-arrow {
+    position: relative;
+    display: block;
+    flex: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #173a72;
+  }
+  .tena-playground__home-arrow::before {
+    content: "";
+    position: absolute;
+    top: 6px;
+    left: 7px;
+    width: 6px;
+    height: 6px;
+    border-bottom: 2px solid #fff;
+    border-left: 2px solid #fff;
+    transform: rotate(45deg);
   }
   .tena-playground__panel {
     position: relative;

@@ -1,14 +1,14 @@
-// Copy for TenaPlayground, approved with the case (v11 page). The interface is translated from the Spanish site in
-// English; article titles stay as published on tena.com.co (Spanish) in both languages. The Academy cards, photos,
-// dates and the live's speaker are as published on tena.com.co/academia-tena (checked November 2026).
+// Copy for TenaPlayground, approved with the case (v11 page). The interface is a recreation of TENA's site, translated
+// from Spanish in English. Everything shown inside it is placeholder test content: the Academy titles, dates and
+// speaker are generic, and the images are abstract gradients generated for this project (no photos from the site).
 import type { ImageMetadata } from "astro";
 import type { Lang } from "../../../../i18n/ui";
-import orinarCard from "../../../../assets/projects/pragma/tena/academy-orinar-card.jpg";
-import orinarHero from "../../../../assets/projects/pragma/tena/academy-orinar-hero.jpg";
-import orinarHeroMobile from "../../../../assets/projects/pragma/tena/academy-orinar-hero-mobile.jpg";
-import pelvicoCard from "../../../../assets/projects/pragma/tena/academy-pelvico-card.jpg";
-import pelvicoHero from "../../../../assets/projects/pragma/tena/academy-pelvico-hero.jpg";
-import pelvicoHeroMobile from "../../../../assets/projects/pragma/tena/academy-pelvico-hero-mobile.jpg";
+import article1Card from "../../../../assets/projects/pragma/tena/academy-article-1-card.jpg";
+import article1Hero from "../../../../assets/projects/pragma/tena/academy-article-1-hero.jpg";
+import article1HeroMobile from "../../../../assets/projects/pragma/tena/academy-article-1-hero-mobile.jpg";
+import article2Card from "../../../../assets/projects/pragma/tena/academy-article-2-card.jpg";
+import article2Hero from "../../../../assets/projects/pragma/tena/academy-article-2-hero.jpg";
+import article2HeroMobile from "../../../../assets/projects/pragma/tena/academy-article-2-hero-mobile.jpg";
 import liveCard from "../../../../assets/projects/pragma/tena/academy-live-card.jpg";
 
 /** Each screen's page on the live site; "See it live" follows the screen picked. */
@@ -24,42 +24,22 @@ export type TenaUserIcon = "user" | "buyer" | "caregiver" | "institution";
 export type TenaCard =
   | {
       format: "article";
-      /** The card photo (16:9). */
+      /** The card image (16:9), a generated placeholder. */
       image: ImageMetadata;
       /** The article's banner: wide from 720px, `mobile` below. */
       hero: { wide: ImageMetadata; mobile: ImageMetadata };
-      /** As shown in the opened view ("22/OCT/2026"). */
-      stamp: string;
     }
   | {
       format: "live";
-      /** The card artwork, also the video's poster in the opened view. */
+      /** The card image, also the video's poster in the opened view. */
       image: ImageMetadata;
-      stamp: string;
     };
 
 export const tenaCards: readonly TenaCard[] = [
-  {
-    format: "article",
-    image: orinarCard,
-    hero: { wide: orinarHero, mobile: orinarHeroMobile },
-    stamp: "22/OCT/2026",
-  },
-  {
-    format: "article",
-    image: pelvicoCard,
-    hero: { wide: pelvicoHero, mobile: pelvicoHeroMobile },
-    stamp: "22/OCT/2026",
-  },
-  { format: "live", image: liveCard, stamp: "23/SEPT/2026" },
+  { format: "article", image: article1Card, hero: { wide: article1Hero, mobile: article1HeroMobile } },
+  { format: "article", image: article2Card, hero: { wide: article2Hero, mobile: article2HeroMobile } },
+  { format: "live", image: liveCard },
 ];
-
-/** Titles as published, in Spanish on both pages. Same order as tenaCards. */
-export const tenaTitles = [
-  "¿Es malo aguantar las ganas de orinar? Consecuencias para tu salud",
-  "Músculos del suelo pélvico: cuáles son y para qué sirven",
-  "¿Qué necesita nuestra mente para envejecer con bienestar?",
-] as const;
 
 export const tenaCopy = {
   en: {
@@ -95,6 +75,8 @@ export const tenaCopy = {
       "Under Colombia's Habeas Data law, I authorise Essity to process my data in order to contact me through instant messaging (WhatsApp or similar), social networks, email or post, for surveys about products…",
     back: "Back",
     next: "Next",
+    /** The link at the top of the registration photo. */
+    home: "Back to home",
     help: "Need help with your registration?",
     promo: ["Try our products by requesting your ", "Free sample"],
     /** The promo's opening on phones, as on the site. */
@@ -111,22 +93,28 @@ export const tenaCopy = {
       {
         category: "Self-care, health and wellbeing",
         kind: "Article",
+        title: "Sample article title: a short test guide for every day",
         who: "TENA",
-        when: "22 October 2026",
+        when: "12 March 2026",
+        stamp: "12/MAR/2026",
         open: "Read article",
       },
       {
         category: "Self-care, health and wellbeing",
         kind: "Article",
+        title: "Second sample article: what this test topic is about",
         who: "TENA",
-        when: "22 October 2026",
+        when: "12 March 2026",
+        stamp: "12/MAR/2026",
         open: "Read article",
       },
       {
         category: "Wellbeing",
         kind: "Live",
-        who: "Andrea Salazar — Psychologist",
-        when: "23 September 2026",
+        title: "Sample live session: a test topic about wellbeing",
+        who: "Guest specialist",
+        when: "5 February 2026",
+        stamp: "05/FEB/2026",
         open: "Watch live",
       },
     ],
@@ -136,7 +124,7 @@ export const tenaCopy = {
     aboutLive: "About the live",
     aimedAt: "Aimed at:",
     audience: "Caregivers",
-    note: "Interface translated from Spanish; titles, photos and speaker as published on tena.com.co. Article and live text is not reproduced.",
+    note: "The interface is a recreation of TENA's site, translated from Spanish. Titles, dates, speaker and images are placeholder test content, not TENA's.",
     live: "See it live on TENA",
   },
   es: {
@@ -176,6 +164,7 @@ export const tenaCopy = {
       "De acuerdo a la Ley de Habeas Data, autorizo a Essity para que realice el tratamiento de mis datos con la finalidad de contactarme mediante aplicaciones de mensajería instantánea (WhatsApp o similares), redes sociales, correo electrónico o físico para la realización de encuestas sobre productos…",
     back: "Atrás",
     next: "Siguiente",
+    home: "Volver al inicio",
     help: "¿Necesitas ayuda con tu registro?",
     promo: ["Prueba nuestros productos solicitando tu ", "Muestra gratis"],
     promoShort: "Solicita tu ",
@@ -191,22 +180,28 @@ export const tenaCopy = {
       {
         category: "Autocuidado, salud y bienestar",
         kind: "Artículo",
+        title: "Título de artículo de ejemplo: una guía de prueba para el día a día",
         who: "TENA",
-        when: "22 de octubre de 2026",
+        when: "12 de marzo de 2026",
+        stamp: "12/MAR/2026",
         open: "Leer artículo",
       },
       {
         category: "Autocuidado, salud y bienestar",
         kind: "Artículo",
+        title: "Segundo artículo de ejemplo: de qué trata este tema de prueba",
         who: "TENA",
-        when: "22 de octubre de 2026",
+        when: "12 de marzo de 2026",
+        stamp: "12/MAR/2026",
         open: "Leer artículo",
       },
       {
         category: "Bienestar",
         kind: "Live",
-        who: "Andrea Salazar — Psicóloga",
-        when: "23 de septiembre de 2026",
+        title: "Live de ejemplo: un tema de prueba sobre bienestar",
+        who: "Especialista invitada",
+        when: "5 de febrero de 2026",
+        stamp: "05/FEB/2026",
         open: "Ver live",
       },
     ],
@@ -216,7 +211,7 @@ export const tenaCopy = {
     aboutLive: "Sobre el live",
     aimedAt: "Dirigido a:",
     audience: "Cuidadores",
-    note: "Textos de la interfaz, títulos, fotos y ponente como en tena.com.co. No se reproduce el texto de los artículos ni del live.",
+    note: "La interfaz es una recreación del sitio de TENA. Títulos, fechas, ponente e imágenes son contenido de prueba, no de TENA.",
     live: "Ver en vivo en TENA",
   },
 } as const satisfies Record<Lang, unknown>;
