@@ -2,15 +2,17 @@
 import { icons, type IconName } from "./icons";
 interface Props {
   name: IconName;
+  /** Width and height in pixels; 20 by default, the size it is drawn at. */
+  size?: number;
 }
-const { name } = Astro.props;
+const { name, size = 20 } = Astro.props;
 const Svg = icons[name];
 ---
 
 <Svg
   aria-hidden="true"
-  width="20"
-  height="20"
+  width={size}
+  height={size}
   fill="none"
   stroke="currentColor"
   stroke-width="1.6"
