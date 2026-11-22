@@ -20,10 +20,11 @@ const copy = petysCopy[lang];
 <!--
   Petys (Brand platforms, chapter 01): the live site's screenshots on desktop or phone, and a content change travelling
   from the CMS to the CDN. "Publish a change" lights each step of the rail in turn, then a chip lands on the capture.
-  Each step's explanation is persistent text in the list; only the completion is announced.
+  On the phone capture (always, on phones) the rail stays out: three checks tick inside the phone instead, then the
+  site changes. Each step's explanation is persistent text in the rail; only the completion is announced.
 -->
 <div class="petys-playground" data-petys data-done={copy.done}>
-  <ExampleFrame id="petys-example" label={copy.label}>
+  <ExampleFrame id="petys-example" label={copy.label} shortLabel={copy.shortLabel}>
     <div class="petys-playground__device" slot="controls">
       <SegmentedSwitch
         name="petys-device"
@@ -68,27 +69,20 @@ const copy = petysCopy[lang];
           alt=""
           width={452}
         />
+        <ol class="petys-playground__checks" aria-hidden="true">
+          {copy.checks.map((check) => (
+            <li class="petys-playground__check">{check}</li>
+          ))}
+        </ol>
       </div>
       <p class="petys-playground__chip" aria-hidden="true">
         {copy.updated}
       </p>
     </div>
-    <div class="petys-playground__rail-head">
-      <p class="petys-playground__rail-title" id="petys-rail">
-        {copy.railTitle}
-      </p>
-      <button
-        class="petys-playground__rail-toggle"
-        type="button"
-        aria-expanded="false"
-        aria-controls="petys-rail-steps"
-        data-show={copy.showRail}
-        data-hide={copy.hideRail}
-      >
-        {copy.showRail}
-      </button>
-    </div>
-    <ol class="petys-playground__rail" id="petys-rail-steps" aria-labelledby="petys-rail">
+    <p class="petys-playground__rail-title" id="petys-rail">
+      {copy.railTitle}
+    </p>
+    <ol class="petys-playground__rail" aria-labelledby="petys-rail">
       {copy.steps.map((step) => (
         <li class="petys-playground__step">
           <b class="petys-playground__step-name">{step.name}</b>
@@ -109,7 +103,10 @@ const copy = petysCopy[lang];
 </div>
 
 <style>
+  /* Capped at 1200px and centred, so the board keeps its structure on very wide screens. */
   .petys-playground {
+    max-width: 1200px;
+    margin-inline: auto;
     --example-frame-foot-gap: 24px;
     /* The phone's outer width, which places the chip on it. */
     --petys-phone: min(236px, 72%);
@@ -198,35 +195,69 @@ const copy = petysCopy[lang];
     opacity: 1;
     transform: none;
   }
-  .petys-playground__rail-head {
+  /* The phone keeps no chip: its checks tell the story. */
+  .petys-playground__site[data-device="mobile"] .petys-playground__chip {
+    display: none;
+  }
+  /* Inside the phone: a frosted card with three checks that tick one by one while the change ships. */
+  .petys-playground__checks {
+    position: absolute;
+    inset: auto 12px 50%;
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 16px;
+    border-radius: 16px;
+    background: rgb(255 255 255 / 0.86);
+    box-shadow: 0 10px 30px rgb(0 0 0 / 0.18);
+    backdrop-filter: blur(10px);
+    color: #16181b;
+    list-style: none;
+    opacity: 0;
+    transform: translateY(calc(50% + 8px));
+    transition:
+      opacity 0.3s var(--ease-out),
+      transform 0.3s var(--ease-out);
+  }
+  .petys-playground__checks[data-show] {
+    opacity: 1;
+    transform: translateY(50%);
+  }
+  .petys-playground__check {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
-    gap: 8px 16px;
-    margin: 28px 0 0;
+    gap: 10px;
+    font: 500 13px / 1.3 var(--font-sans);
+    opacity: 0.45;
+    transition: opacity 0.3s;
   }
-  /* On phones the illustration is folded behind a button; from 720px it is always shown. */
-  .petys-playground__rail-toggle {
-    min-height: 44px;
-    padding: 0 16px;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-pill);
-    background: var(--color-surface);
-    color: var(--color-text);
-    font-size: var(--font-size-small);
-    font-weight: 500;
-    cursor: pointer;
+  .petys-playground__check::before {
+    content: "";
+    flex: none;
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid currentColor;
+    border-radius: 50%;
+    transition:
+      background-color 0.3s,
+      border-color 0.3s;
   }
-  .petys-playground__rail-toggle:focus-visible {
-    outline: 2px solid var(--color-text-accent);
-    outline-offset: 2px;
+  .petys-playground__check[data-on] {
+    opacity: 1;
   }
-  .petys-playground__rail-head:has([aria-expanded="false"]) + .petys-playground__rail {
+  .petys-playground__check[data-on]::before {
+    border-color: #2f9e44;
+    background: #2f9e44
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5 6.8 11 12 5.5' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+      center / 14px no-repeat;
+  }
+  /* Phones never see the rail; from 720px it is always shown. */
+  .petys-playground__rail-title,
+  .petys-playground__rail {
     display: none;
   }
   .petys-playground__rail-title {
-    margin: 0;
+    margin: 28px 0 0;
     color: var(--color-text-muted);
     font: 500 var(--font-size-label) / 1.3 var(--font-mono);
     letter-spacing: 0.05em;
@@ -311,13 +342,11 @@ const copy = petysCopy[lang];
       width: 226px;
       box-sizing: content-box;
     }
-    .petys-playground__rail-toggle {
-      display: none;
-    }
-    .petys-playground__rail-head:has([aria-expanded="false"]) + .petys-playground__rail {
-      display: grid;
+    .petys-playground__rail-title {
+      display: block;
     }
     .petys-playground__rail {
+      display: grid;
       grid-template-columns: repeat(6, minmax(0, 1fr));
       gap: 0;
     }
@@ -338,6 +367,9 @@ const copy = petysCopy[lang];
   }
   @media (prefers-reduced-motion: reduce) {
     .petys-playground__chip,
+    .petys-playground__checks,
+    .petys-playground__check,
+    .petys-playground__check::before,
     .petys-playground__shot--after,
     .petys-playground__step,
     .petys-playground__step::before,
@@ -356,26 +388,42 @@ const copy = petysCopy[lang];
     const chip = root.querySelector<HTMLElement>(".petys-playground__chip");
     const publish = root.querySelector<HTMLButtonElement>("button.button--primary");
     const steps = [...root.querySelectorAll<HTMLElement>(".petys-playground__step")];
-    if (!frame || !site || !chip || !publish) continue;
+    const rail = root.querySelector<HTMLElement>(".petys-playground__rail");
+    const checks = root.querySelector<HTMLElement>(".petys-playground__checks");
+    const ticks = [...root.querySelectorAll<HTMLElement>(".petys-playground__check")];
+    if (!frame || !site || !chip || !publish || !rail || !checks) continue;
     followDevice(frame, site, "petys-device");
-    const toggle = root.querySelector<HTMLButtonElement>(".petys-playground__rail-toggle");
-    toggle?.addEventListener("click", () => {
-      const open = toggle.getAttribute("aria-expanded") !== "true";
-      toggle.setAttribute("aria-expanded", String(open));
-      toggle.textContent = (open ? toggle.dataset["hide"] : toggle.dataset["show"]) ?? "";
-    });
-    publish.addEventListener("click", async () => {
-      if (publish.getAttribute("aria-disabled") === "true") return;
-      publish.setAttribute("aria-disabled", "true");
-      chip.removeAttribute("data-show");
-      site.removeAttribute("data-published");
-      steps.forEach((step) => step.removeAttribute("data-on"));
+    // The rail lights its six steps; the phone ticks its three checks, then the card leaves before the site changes.
+    const runRail = async () => {
       for (const step of steps) {
         step.setAttribute("data-on", "");
         step.setAttribute("data-now", "");
         await wait(650);
         step.removeAttribute("data-now");
       }
+    };
+    const runChecks = async () => {
+      checks.setAttribute("data-show", "");
+      await wait(400);
+      for (const tick of ticks) {
+        tick.setAttribute("data-on", "");
+        await wait(900);
+      }
+      checks.removeAttribute("data-show");
+      await wait(300);
+    };
+    publish.addEventListener("click", async () => {
+      if (publish.getAttribute("aria-disabled") === "true") return;
+      publish.setAttribute("aria-disabled", "true");
+      chip.removeAttribute("data-show");
+      site.removeAttribute("data-published");
+      steps.forEach((step) => step.removeAttribute("data-on"));
+      ticks.forEach((tick) => tick.removeAttribute("data-on"));
+      const phone = site.dataset.device === "mobile";
+      await Promise.all([
+        getComputedStyle(rail).display === "none" ? undefined : runRail(),
+        phone ? runChecks() : undefined,
+      ]);
       announce(frame, root.dataset.done ?? "");
       site.setAttribute("data-published", "");
       chip.setAttribute("data-show", "");

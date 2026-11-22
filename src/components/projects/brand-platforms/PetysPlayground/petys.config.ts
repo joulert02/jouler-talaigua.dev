@@ -6,12 +6,12 @@ export const petysUrl = "https://petys.com/";
 export const petysCopy = {
   en: {
     label: "Petys today · screenshots of the live site",
+    shortLabel: "Screenshots of the live site",
     desktopAlt: "The Petys home page in a desktop browser.",
     mobileAlt: "The Petys home page on a phone.",
     updated: "Updated just now",
     railTitle: "How a content change reaches the site · illustration",
-    showRail: "Show the illustration",
-    hideRail: "Hide the illustration",
+    checks: ["Content changed in Contentful", "Deployed with Jenkins", "Site published"],
     steps: [
       { name: "Contentful", text: "An editor publishes, in the content model I designed." },
       { name: "GraphQL", text: "The build asks for exactly the content each page needs." },
@@ -27,12 +27,12 @@ export const petysCopy = {
   },
   es: {
     label: "Petys hoy · capturas del sitio en vivo",
+    shortLabel: "Capturas del sitio en vivo",
     desktopAlt: "La página de inicio de Petys en un navegador de escritorio.",
     mobileAlt: "La página de inicio de Petys en un teléfono.",
     updated: "Actualizado ahora",
     railTitle: "Cómo llega un cambio de contenido al sitio · ilustración",
-    showRail: "Ver ilustración",
-    hideRail: "Ocultar ilustración",
+    checks: ["Modificación de contenido en Contentful", "Despliegue en Jenkins", "Sitio publicado"],
     steps: [
       { name: "Contentful", text: "Alguien publica, en el modelo de contenido que diseñé." },
       { name: "GraphQL", text: "El build pide exactamente el contenido que necesita cada página." },
