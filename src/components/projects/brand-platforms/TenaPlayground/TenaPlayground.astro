@@ -6,7 +6,7 @@ import ExampleNote from "../../case/ExampleFrame/ExampleNote/ExampleNote.astro";
 import SegmentedSwitch from "../../../ui/SegmentedSwitch/SegmentedSwitch.astro";
 import Button from "../../../ui/Button/Button.astro";
 import Icon from "../../../ui/Icon/Icon.astro";
-import registration from "../../../../assets/projects/pragma/tena/registration-placeholder.jpg";
+import registration from "../../../../assets/projects/pragma/tena/registration-photo.jpg";
 import logo from "../../../../assets/projects/pragma/tena/logo-header.webp";
 import { getLang } from "../../../../i18n/ui";
 import { tenaCards, tenaCopy, tenaUrls, type TenaUserIcon } from "./tena.config";
@@ -460,7 +460,8 @@ const banners = await Promise.all(
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center top;
+    /* Phones show a short strip: framed on the two faces. From 720px the tall column shows the photo from the top. */
+    object-position: center 32%;
   }
   /* The site's logo wave over the photo's top left, as on the registration page. */
   .tena-playground__hero-logo {
@@ -470,7 +471,7 @@ const banners = await Promise.all(
     width: max(160px, 44%);
     height: auto;
   }
-  /* The site's "Back to home" link, beside the logo at the photo's top. */
+  /* The site's "Back to home" link, beside the logo at the photo's top: white, over the photo's dark wall. */
   .tena-playground__home {
     position: absolute;
     top: 8px;
@@ -481,7 +482,8 @@ const banners = await Promise.all(
     padding: 2px;
     border: 0;
     background: none;
-    color: #13294b;
+    color: #fff;
+    text-shadow: 0 1px 2px rgb(0 0 0 / 0.35);
     font: inherit;
     font-size: 12px;
     font-weight: 700;
@@ -1350,6 +1352,9 @@ const banners = await Promise.all(
     .tena-playground__registration {
       grid-template-columns: 42% 58%;
       grid-template-rows: none;
+    }
+    .tena-playground__hero-image {
+      object-position: center top;
     }
     .tena-playground__types {
       grid-template-columns: 1fr 1fr;

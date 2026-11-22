@@ -125,7 +125,7 @@ export const tenaCopy = {
     aboutLive: "About the live",
     aimedAt: "Aimed at:",
     audience: "Caregivers",
-    note: "The interface is a recreation of TENA's site, translated from Spanish. Titles, dates, speaker and images are placeholder test content, not TENA's.",
+    note: "The interface is a recreation of TENA's site, translated from Spanish. Academy titles, dates, speaker and images are placeholder test content, not TENA's.",
     live: "See it live on TENA",
   },
   es: {
@@ -213,7 +213,7 @@ export const tenaCopy = {
     aboutLive: "Sobre el live",
     aimedAt: "Dirigido a:",
     audience: "Cuidadores",
-    note: "La interfaz es una recreación del sitio de TENA. Títulos, fechas, ponente e imágenes son contenido de prueba, no de TENA.",
+    note: "La interfaz es una recreación del sitio de TENA. Los títulos, fechas, ponente e imágenes de la Academia son contenido de prueba, no de TENA.",
     live: "Ver en vivo en TENA",
   },
 } as const satisfies Record<Lang, unknown>;
