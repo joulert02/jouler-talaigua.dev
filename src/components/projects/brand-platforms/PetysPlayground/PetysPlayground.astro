@@ -1,7 +1,7 @@
 ---
 import { Image } from "astro:assets";
-import ExampleFrame from "../../ExampleFrame/ExampleFrame.astro";
-import ExampleHint from "../../ExampleFrame/ExampleHint/ExampleHint.astro";
+import ExampleFrame from "../../case/ExampleFrame/ExampleFrame.astro";
+import ExampleHint from "../../case/ExampleFrame/ExampleHint/ExampleHint.astro";
 import SegmentedSwitch from "../../../ui/SegmentedSwitch/SegmentedSwitch.astro";
 import BrowserFrame from "../../../ui/BrowserFrame/BrowserFrame.astro";
 import Button from "../../../ui/Button/Button.astro";
@@ -348,7 +348,7 @@ const copy = petysCopy[lang];
 </style>
 
 <script>
-  import { announce, followDevice, wait } from "../../ExampleFrame/frame";
+  import { announce, followDevice, wait } from "../../case/ExampleFrame/frame";
 
   for (const root of document.querySelectorAll<HTMLElement>("[data-petys]")) {
     const frame = root.querySelector(".example-frame");

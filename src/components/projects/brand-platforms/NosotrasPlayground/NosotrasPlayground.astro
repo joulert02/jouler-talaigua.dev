@@ -1,9 +1,9 @@
 ---
 import { Font, Image } from "astro:assets";
 import type { ImageMetadata } from "astro";
-import ExampleFrame from "../../ExampleFrame/ExampleFrame.astro";
-import ExampleHint from "../../ExampleFrame/ExampleHint/ExampleHint.astro";
-import ExampleNote from "../../ExampleFrame/ExampleNote/ExampleNote.astro";
+import ExampleFrame from "../../case/ExampleFrame/ExampleFrame.astro";
+import ExampleHint from "../../case/ExampleFrame/ExampleHint/ExampleHint.astro";
+import ExampleNote from "../../case/ExampleFrame/ExampleNote/ExampleNote.astro";
 import SegmentedSwitch from "../../../ui/SegmentedSwitch/SegmentedSwitch.astro";
 import PhoneFrame from "../../../ui/PhoneFrame/PhoneFrame.astro";
 import Button from "../../../ui/Button/Button.astro";
@@ -1100,7 +1100,7 @@ const artClass = (art: Art) => [
 </style>
 
 <script>
-  import { announce, followDevice, wait } from "../../ExampleFrame/frame";
+  import { announce, followDevice, wait } from "../../case/ExampleFrame/frame";
   import { nosotrasCast, nosotrasWorlds, type NosotrasWorld } from "./nosotras.config";
 
   const reduce = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
