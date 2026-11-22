@@ -1,0 +1,320 @@
+---
+import ExampleFrame from "../../case/ExampleFrame/ExampleFrame.astro";
+import ExampleHint from "../../case/ExampleFrame/ExampleHint/ExampleHint.astro";
+import Button from "../../../ui/Button/Button.astro";
+import { getLang } from "../../../../i18n/ui";
+import { sdksCopy } from "./sdks.config";
+const copy = sdksCopy[getLang(Astro)];
+const { match, first, promoted, certified, promote, again } = copy;
+---
+
+<!--
+  GoodRx, chapter 03 (v11 `.streams-lab`): each event button sends the same user action to both SDKs, Datadog first
+  and groundcover a beat later, and a tick marks the pair as matching (the last four stay). "Promote" moves the release
+  one environment on, up to production, then offers to start over. Illustrative, not GoodRx data. Results go to the
+  status line and the frame's live region.
+-->
+<div
+  class="sdks-playground"
+  data-sdks
+  data-strings={JSON.stringify({ match, first, promoted, certified, promote, again })}
+>
+  <ExampleFrame id="sdks-example" label={copy.label} shortLabel={copy.shortLabel}>
+    <ol class="sdks-playground__envs" slot="controls" aria-label={copy.environmentsLabel}>
+      {copy.environments.map((environment, index) => (
+        <li class="sdks-playground__env" aria-current={index === 0 ? "step" : undefined}>
+          {environment}
+        </li>
+      ))}
+    </ol>
+    <div class="sdks-playground__events">
+      {copy.events.map((event) => (
+        <button
+          class="sdks-playground__event"
+          type="button"
+          data-kind={event.kind}
+          data-detail={event.detail}
+        >
+          {event.label}
+        </button>
+      ))}
+    </div>
+    <div class="sdks-playground__streams">
+      {copy.streams.map((stream, index) => (
+        <>
+          {index > 0 && <ol class="sdks-playground__match" aria-hidden="true" />}
+          <div class="sdks-playground__stream">
+            <p class="sdks-playground__stream-head">
+              <span>{stream.name}</span>
+              <span>{stream.tag}</span>
+            </p>
+            <ol class="sdks-playground__rows" aria-label={stream.name} />
+            <p class="sdks-playground__empty">{copy.empty}</p>
+          </div>
+        </>
+      ))}
+    </div>
+    <p class="sdks-playground__status" aria-hidden="true"></p>
+    <ExampleHint slot="foot">{copy.hint}</ExampleHint>
+    <Fragment slot="actions">
+      <Button size="sm" label={copy.promote} />
+    </Fragment>
+  </ExampleFrame>
+</div>
+
+<style>
+  .sdks-playground__envs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .sdks-playground__env {
+    display: grid;
+    place-items: center;
+    min-height: 36px;
+    padding: 4px 8px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    font: 500 12px / 1.2 var(--font-mono);
+    text-align: center;
+    transition:
+      background-color var(--duration-fast) var(--ease-out),
+      color var(--duration-fast) var(--ease-out);
+  }
+  .sdks-playground__env[data-done] {
+    color: var(--color-text);
+  }
+  .sdks-playground__env[aria-current] {
+    border-color: var(--color-text);
+    background: var(--color-text);
+    color: var(--color-bg);
+  }
+  /* Phones: the three events stacked, full width; from 720px in one row. */
+  .sdks-playground__events {
+    display: grid;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .sdks-playground__event {
+    min-height: 44px;
+    padding: 0 16px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font: inherit;
+    font-size: var(--font-size-small);
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .sdks-playground__event:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 2px;
+  }
+  .sdks-playground__streams {
+    display: grid;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .sdks-playground__match {
+    display: none;
+  }
+  .sdks-playground__stream {
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    font: 13px / 1.4 var(--font-mono);
+  }
+  .sdks-playground__stream-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text);
+  }
+  .sdks-playground__stream-head span:last-child {
+    color: var(--color-text-muted);
+  }
+  .sdks-playground__rows {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .sdks-playground__rows:empty {
+    display: none;
+  }
+  /* Rows and ticks are built by the script, so their rules reach them through :global under the playground. */
+  .sdks-playground :global(.sdks-playground__row),
+  .sdks-playground__empty {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 40px;
+    margin: 0;
+    padding: 0 14px;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+  }
+  .sdks-playground :global(.sdks-playground__row:last-child) {
+    border-bottom: 0;
+  }
+  .sdks-playground__rows:not(:empty) + .sdks-playground__empty {
+    display: none;
+  }
+  .sdks-playground :global(.sdks-playground__row-n) {
+    color: var(--color-text-muted);
+  }
+  .sdks-playground :global(.sdks-playground__row-kind) {
+    padding: 1px 8px;
+    border-radius: var(--radius-pill);
+    background: var(--color-bg-subtle);
+    color: var(--color-text);
+  }
+  .sdks-playground :global(.sdks-playground__row-kind[data-kind="error"]) {
+    background: color-mix(in srgb, #d64545 22%, transparent);
+  }
+  .sdks-playground__status {
+    min-height: 1.5em;
+    margin: 16px 0 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-small);
+  }
+  @media (min-width: 720px) {
+    .sdks-playground__envs {
+      display: flex;
+    }
+    .sdks-playground__env {
+      padding: 4px 14px;
+    }
+    .sdks-playground__events {
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+    .sdks-playground__streams {
+      grid-template-columns: minmax(0, 1fr) 28px minmax(0, 1fr);
+      gap: 12px;
+      align-items: start;
+    }
+    .sdks-playground__match {
+      display: grid;
+      align-content: start;
+      margin: 0;
+      padding: 45px 0 0;
+      list-style: none;
+    }
+    .sdks-playground :global(.sdks-playground__tick) {
+      display: grid;
+      place-items: center;
+      height: 41px;
+      color: #2f9e44;
+      font-weight: 700;
+    }
+    .sdks-playground__stream {
+      min-height: 220px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sdks-playground__env {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { announce, wait } from "../../case/ExampleFrame/frame";
+
+  type Strings = Record<"match" | "first" | "promoted" | "certified" | "promote" | "again", string>;
+  const kept = 4;
+
+  for (const root of document.querySelectorAll<HTMLElement>("[data-sdks]")) {
+    const frame = root.querySelector(".example-frame");
+    const envs = [...root.querySelectorAll<HTMLElement>(".sdks-playground__env")];
+    const [datadog, groundcover] = [...root.querySelectorAll<HTMLOListElement>(".sdks-playground__rows")];
+    const ticks = root.querySelector<HTMLOListElement>(".sdks-playground__match");
+    const status = root.querySelector<HTMLElement>(".sdks-playground__status");
+    const promote = root.querySelector<HTMLButtonElement>("button.button--primary");
+    if (!frame || !datadog || !groundcover || !ticks || !status || !promote) continue;
+    const strings = JSON.parse(root.dataset["strings"] ?? "{}") as Strings;
+    const label = [...promote.childNodes].find(
+      (node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim(),
+    );
+    let sent = 0;
+    let at = 0;
+
+    const say = (text: string) => {
+      status.textContent = text;
+      announce(frame, text);
+    };
+    const trim = (list: HTMLOListElement) => {
+      while (list.children.length > kept) list.firstElementChild?.remove();
+    };
+    const row = (n: number, kind: string, detail: string) => {
+      const item = document.createElement("li");
+      item.className = "sdks-playground__row";
+      const number = Object.assign(document.createElement("span"), { className: "sdks-playground__row-n" });
+      number.textContent = `#${n}`;
+      const tag = Object.assign(document.createElement("span"), { className: "sdks-playground__row-kind" });
+      tag.dataset["kind"] = kind;
+      tag.textContent = kind;
+      item.append(number, tag, detail);
+      return item;
+    };
+    const paint = () => {
+      envs.forEach((env, index) => {
+        env.toggleAttribute("data-done", index < at);
+        if (index === at) env.setAttribute("aria-current", "step");
+        else env.removeAttribute("aria-current");
+      });
+      if (label) label.textContent = at === envs.length - 1 ? strings.again : strings.promote;
+    };
+
+    for (const button of root.querySelectorAll<HTMLButtonElement>(".sdks-playground__event")) {
+      button.addEventListener("click", async () => {
+        sent += 1;
+        const n = sent;
+        const { kind = "", detail = "" } = button.dataset;
+        datadog.append(row(n, kind, detail));
+        trim(datadog);
+        await wait(260);
+        groundcover.append(row(n, kind, detail));
+        trim(groundcover);
+        const tick = Object.assign(document.createElement("li"), { className: "sdks-playground__tick" });
+        tick.textContent = "✓";
+        ticks.append(tick);
+        while (ticks.children.length > kept) ticks.firstElementChild?.remove();
+        say(strings.match.replaceAll("{n}", String(n)));
+      });
+    }
+
+    promote.addEventListener("click", () => {
+      // Certified: the button starts over, from local with no events.
+      if (at === envs.length - 1) {
+        sent = 0;
+        at = 0;
+        [datadog, groundcover, ticks].forEach((list) => list.replaceChildren());
+        status.textContent = "";
+        paint();
+        return;
+      }
+      if (!sent) {
+        say(strings.first);
+        return;
+      }
+      at += 1;
+      paint();
+      const env = envs[at]?.textContent?.trim() ?? "";
+      say(at === envs.length - 1 ? strings.certified : strings.promoted.replace("{env}", env));
+    });
+    paint();
+  }
+</script>
