@@ -171,11 +171,9 @@ const t = useTranslations(lang);
       --_row: 32px;
     }
   }
-  /* From 720px the footer breathes more: wider bands above the columns, around the wordmark and below the last line. */
   @media (min-width: 720px) {
     .footer {
-      padding-top: calc(var(--space-10) + var(--space-6));
-      padding-bottom: calc(var(--space-10) + env(safe-area-inset-bottom, 0px));
+      padding-top: var(--space-9);
     }
     .footer__columns {
       grid-template-columns: repeat(3, max-content);
@@ -185,7 +183,7 @@ const t = useTranslations(lang);
       grid-column: auto;
     }
     .footer__wordmark {
-      margin: calc(var(--space-10) + var(--space-6)) 0 var(--space-10);
+      margin: var(--space-10) 0 var(--space-9);
     }
   }
   @media (prefers-reduced-motion: reduce) {

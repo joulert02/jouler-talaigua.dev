@@ -100,11 +100,10 @@ const short = (link: CaseLink) => (link.title.length <= link.company.length ? li
       display: none;
     }
   }
-  /* From 720px no rule of its own: open space above it, and the footer's hairline closes it. */
+  /* From 720px no rule of its own: the footer's hairline closes it. */
   @media (min-width: 720px) {
     .case-next {
-      margin-top: calc(2 * var(--space-10));
-      padding-bottom: var(--space-7);
+      margin-top: var(--space-10);
       border-top: 0;
     }
   }
