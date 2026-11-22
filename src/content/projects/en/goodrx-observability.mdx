@@ -7,5 +7,91 @@ tier: 1
 order: 3
 focus: [Observability, Real User Monitoring, CI/CD]
 cover: ../../../assets/projects/goodrx/cards.webp
-case: coming
+case: live
 ---
+
+import CaseFacts from "@/components/projects/case/CaseFacts/CaseFacts.astro";
+import Fact from "@/components/projects/case/CaseFacts/Fact/Fact.astro";
+import CaseIntro from "@/components/projects/case/CaseIntro/CaseIntro.astro";
+import CaseQuote from "@/components/projects/case/CaseQuote/CaseQuote.astro";
+import Chapter from "@/components/projects/case/Chapter/Chapter.astro";
+import FullStory from "@/components/projects/case/Chapter/FullStory/FullStory.astro";
+import PlanPlayground from "@/components/projects/goodrx-observability/PlanPlayground/PlanPlayground.astro";
+import CloudFigure from "@/components/projects/goodrx-observability/CloudFigure/CloudFigure.astro";
+import SdksPlayground from "@/components/projects/goodrx-observability/SdksPlayground/SdksPlayground.astro";
+import PrivacyPlayground from "@/components/projects/goodrx-observability/PrivacyPlayground/PrivacyPlayground.astro";
+import CardsPlayground from "@/components/projects/goodrx-observability/CardsPlayground/CardsPlayground.astro";
+
+<CaseFacts>
+  <Fact label="Role">Senior Software Engineer · EPAM</Fact>
+  <Fact label="Team">Three engineers</Fact>
+  <Fact label="Focus">Observability migration · Frontend · CI/CD</Fact>
+</CaseFacts>
+
+<CaseIntro title="What I learned" next="plan">
+
+GoodRx handles so many logs and transactions that Datadog's storage-based pricing had become expensive. The company decided to move to groundcover, and I was one of three engineers who migrated the frontend application's observability.
+
+We treated it as a proof of concept with a clear finish line: decide what to measure, prove both tools captured it the same way, and ship it to production.
+
+<CaseQuote>
+
+I expected a simple product and found one of the most mature teams I have worked with. AI was a partner, not the one doing everything: agents reviewed pull requests as part of the flow. Visual regression tests with Chromatic stopped a pull request until someone confirmed a change to a component was intentional, and every component and guideline lived in Storybook.
+
+It also changed what ownership means to me. We defined our own product and technical roadmap, owned features from definition to delivery, proposed our own improvements and helped other teams. I still work that way today.
+
+</CaseQuote>
+</CaseIntro>
+
+<Chapter id="plan" number="01" title="Defining the migration" short="The plan" lead="We treated it as a proof of concept with a clear finish line. The plan was our first deliverable, presented before any code.">
+  <PlanPlayground />
+  <FullStory>
+
+We started by reviewing what Datadog was measuring for the frontend. From there, working closely with product, we defined the scope ourselves: which metrics to migrate first, how the migration would run, how we would prove it worked, and a definition of done.
+
+That plan was our first deliverable. We presented it to our leads and to product before writing any code.
+
+  </FullStory>
+</Chapter>
+
+<Chapter id="cloud" number="02" title="Running on our own cloud" short="Our own cloud" lead="groundcover's Bring Your Own Cloud model: their interface and SDK, on servers GoodRx already had.">
+  <CloudFigure />
+  <FullStory>
+
+We used groundcover's Bring Your Own Cloud model: their interface and SDK, running on GoodRx's own infrastructure. That way the company used servers it already had instead of paying for another vendor's storage.
+
+  </FullStory>
+</Chapter>
+
+<Chapter id="sdks" number="03" title="Two SDKs, side by side" short="Two SDKs" lead="I ran groundcover's SDK next to Datadog's, compared what each captured, then took it through every environment up to production.">
+  <SdksPlayground />
+  <FullStory>
+
+I installed the groundcover SDK in specific modules of the frontend and ran it next to Datadog's, first locally, so we could compare what each one captured. Then I deployed it through every environment up to production, certified that the data arrived correctly and checked each point of the definition of done.
+
+It was practically my first deliverable at GoodRx, so the real challenge was learning the system fast: how the architecture was organized, how environments were separated and how keys were registered. I provisioned what groundcover's Real User Monitoring and dashboards needed on our servers, and changed the CI pipelines to deploy the new artifact.
+
+  </FullStory>
+</Chapter>
+
+<Chapter id="privacy" number="04" title="Real users, without recording them" short="Privacy" lead="Real User Monitoring in production: events and grouped console errors, without tying them to specific people.">
+  <PrivacyPlayground />
+  <FullStory>
+
+We delivered Real User Monitoring working in production: user events, plus console errors captured and grouped so the team could act on them.
+
+One default had to go. groundcover records user sessions out of the box, and GoodRx's policies don't allow recording that kind of user data. We configured the SDK to capture errors and events without tying them to specific people.
+
+The backend teams handled their own metrics. Our scope was the frontend, and it stayed there until I left EPAM.
+
+  </FullStory>
+</Chapter>
+
+<Chapter id="cards" number="05" title="A smaller piece: one card instead of three" short="Cards" lead="The home page showed health content through three card components that had drifted apart. I built one card that covers what all three needed.">
+  <CardsPlayground />
+  <FullStory>
+
+The home page showed health content through three different card components that had drifted apart. I built a single card component that covered what all three needed, so every card on the page now comes from one place. A small change, but the kind that keeps a design system consistent.
+
+  </FullStory>
+</Chapter>
