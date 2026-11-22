@@ -1,0 +1,1607 @@
+---
+import { Image, getImage } from "astro:assets";
+import ExampleFrame from "../ExampleFrame/ExampleFrame.astro";
+import ExampleHint from "../ExampleFrame/ExampleHint/ExampleHint.astro";
+import ExampleNote from "../ExampleFrame/ExampleNote/ExampleNote.astro";
+import SegmentedSwitch from "../../ui/SegmentedSwitch/SegmentedSwitch.astro";
+import Button from "../../ui/Button/Button.astro";
+import Icon from "../../ui/Icon/Icon.astro";
+import registration from "../../../assets/projects/pragma/tena/registration.jpg";
+import logo from "../../../assets/projects/pragma/tena/logo-header.webp";
+import { getLang } from "../../../i18n/ui";
+import { tenaCards, tenaCopy, tenaTitles, tenaUrls, type TenaUserIcon } from "./tena.config";
+const lang = getLang(Astro);
+const copy = tenaCopy[lang];
+// Line drawings for the user types, as on the site.
+const icons: Record<TenaUserIcon, string> = {
+  user: '<circle cx="16" cy="10" r="5"/><path d="M7 28c0-5 4-9 9-9s9 4 9 9"/>',
+  buyer: '<path d="M10 6h12v11H10z M4 24c4-4 8-4 12-2h8l4-3" stroke-linejoin="round"/>',
+  caregiver: '<circle cx="16" cy="11" r="5"/><path d="M11 6h10M16 3v4M7 28c0-5 4-9 9-9s9 4 9 9"/>',
+  institution:
+    '<path d="M5 28V11h22v17M3 28h26M10 15h3M19 15h3M10 20h3M19 20h3M14 28v-5h4v5M14 6h4M16 4v4"/>',
+};
+// Academy: line drawings for the card's format tab, the date and the site chrome, after the site's own icons.
+const formatIcons = {
+  article:
+    '<rect x="4" y="8" width="16" height="21" rx="3"/><path d="M8 8V6a3 3 0 0 1 3-3h8l7 7.5V23a3 3 0 0 1-3 3h-3"/><path d="M19 3v5a2.5 2.5 0 0 0 2.5 2.5H26M8 18h8M8 23h8"/>',
+  live: '<path d="M12.5 2.5a10 10 0 0 0-8.6 15.1L2.5 22.5l4.9-1.4a10 10 0 1 0 5.1-18.6z"/><path d="M9.6 10a2.9 2.9 0 1 1 4 2.7c-.7.3-1.1.9-1.1 1.6v.6M12.5 17.6v.3"/><path d="M22.7 11.7a8.4 8.4 0 0 1 5.4 12.6l1.4 5.2-5.2-1.4a8.4 8.4 0 0 1-11.2-4.4"/>',
+} as const;
+const chromeIcons = {
+  calendar: '<rect x="2.5" y="3.5" width="11" height="10" rx="1.5"/><path d="M2.5 7h11M5.5 2v3M10.5 2v3"/>',
+  search: '<circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/>',
+  user: '<circle cx="8" cy="5" r="3"/><path d="M2.5 14.5c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/>',
+  register:
+    '<circle cx="7" cy="5" r="3"/><path d="M1.5 14.5c0-3 2.5-5 5.5-5 1.3 0 2.5.4 3.4 1M13 9v5M10.5 11.5h5"/>',
+  home: '<path d="M2 8 8 2.5 14 8M4 6.5V14h3v-4h2v4h3V6.5"/>',
+  sample: '<rect x="2" y="2.5" width="12" height="4" rx="1"/><path d="M3 6.5V14h10V6.5M6 9.5h4"/>',
+  cart: '<path d="M1 2h2l1.6 8h8.2L14.5 4.5H4M6 13.5h.01M12 13.5h.01"/>',
+  menu: '<path d="M2 4h12M2 8h12M2 12h12"/>',
+} as const;
+const tabIcons = [chromeIcons.cart, chromeIcons.sample];
+const barIcons = [
+  chromeIcons.home,
+  chromeIcons.search,
+  chromeIcons.sample,
+  chromeIcons.cart,
+  chromeIcons.menu,
+];
+const cards = tenaCards.flatMap((card, index) => {
+  const text = copy.cards[index];
+  const title = tenaTitles[index];
+  return text && title ? [{ ...card, ...text, title }] : [];
+});
+// The article banner swaps to its mobile crop below 720px, as on the site.
+const banners = await Promise.all(
+  cards.map(async (card) =>
+    card.format === "article"
+      ? {
+          wide: await getImage({ src: card.hero.wide, width: 1440, format: "webp" }),
+          mobile: await getImage({ src: card.hero.mobile, width: 960, format: "webp" }),
+        }
+      : undefined,
+  ),
+);
+---
+
+<!--
+  TENA (Brand platforms, chapter 02): a recreation of the shipped registration and Academy, in TENA's own light
+  palette in both themes. Registration: pick a user type to reach the details step; A− / A+ scale the text, as on the
+  site for older adults. Academy: each format opens its own layout (article, live). Nothing is sent or stored.
+-->
+<div class="tena-playground" data-tena data-demo={copy.demo} data-size={copy.textSize}>
+  <ExampleFrame id="tena-example" label={copy.label}>
+    <SegmentedSwitch
+      slot="controls"
+      name="tena-screen"
+      legend={copy.screen}
+      options={[
+        { value: "registration", label: copy.registration },
+        { value: "academy", label: copy.screenAcademy },
+      ]}
+    />
+    <ExampleHint slot="head">{copy.hint}</ExampleHint>
+    <div
+      class="tena-playground__window"
+      role="region"
+      aria-label={copy.region}
+      data-urls={JSON.stringify(tenaUrls)}
+    >
+      <section class="tena-playground__registration" data-screen="registration">
+        <div class="tena-playground__hero">
+          <Image class="tena-playground__hero-image" src={registration} alt="" width={720} />
+          <Image class="tena-playground__hero-logo" src={logo} alt="" width={500} />
+        </div>
+        <div class="tena-playground__panel">
+          <div class="tena-playground__zoom">
+            <button
+              class="tena-playground__zoom-button"
+              type="button"
+              aria-label={copy.smaller}
+              disabled
+              data-zoom="-1"
+            >
+              A−
+            </button>
+            <button class="tena-playground__zoom-button" type="button" aria-label={copy.larger} data-zoom="1">
+              A+
+            </button>
+          </div>
+          <p class="tena-playground__welcome">{copy.welcome}</p>
+          <div data-step="types">
+            <p class="tena-playground__subtitle">{copy.signUp}</p>
+            <p class="tena-playground__text">{copy.pick}</p>
+            <div class="tena-playground__types">
+              {copy.types.map((type) => (
+                <button class="tena-playground__type" type="button">
+                  <svg
+                    viewBox="0 0 32 32"
+                    aria-hidden="true"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    set:html={icons[type.icon]}
+                  />
+                  <b class="tena-playground__type-title">{type.title}</b>
+                  <span class="tena-playground__type-text">{type.text}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+          <div data-step="details" hidden>
+            <p class="tena-playground__text">{copy.details}</p>
+            {copy.fields.map((field, index) => (
+              <div class="tena-playground__field">
+                {field}
+                {index === 0 && <span aria-hidden="true">⌄</span>}
+              </div>
+            ))}
+            {[copy.terms, copy.privacy].map(([before, link, after]) => (
+              <label class="tena-playground__check">
+                <input class="tena-playground__checkbox" type="checkbox" />
+                <span>
+                  {before}
+                  <em class="tena-playground__em">{link}</em>
+                  {after}
+                </span>
+              </label>
+            ))}
+            <p class="tena-playground__legal">{copy.legal}</p>
+            <div class="tena-playground__buttons">
+              <button class="tena-playground__button" type="button" data-back>
+                {copy.back}
+              </button>
+              <button
+                class="tena-playground__button tena-playground__button--dark"
+                type="button"
+                data-demo-action
+              >
+                {copy.next}
+              </button>
+            </div>
+          </div>
+          <button class="tena-playground__help" type="button" data-demo-action>
+            {copy.help}
+          </button>
+        </div>
+      </section>
+      <section class="tena-playground__academy" data-screen="academy" hidden>
+        <!-- The site's fixed header: the promo bar slides away on scroll down and back on scroll up. -->
+        <div class="tena-playground__chrome">
+          <p class="tena-playground__promo">
+            <span class="tena-playground__promo-long">{copy.promo[0]}</span>
+            <span class="tena-playground__promo-short">{copy.promoShort}</span>
+            <span class="tena-playground__promo-tag">{copy.promo[1]}</span>
+          </p>
+          <div class="tena-playground__header" aria-hidden="true">
+            <Image class="tena-playground__logo" src={logo} alt="" width={500} />
+            <span class="tena-playground__search">
+              {copy.search}
+              <svg
+                class="tena-playground__glyph"
+                viewBox="0 0 16 16"
+                aria-hidden="true"
+                set:html={chromeIcons.search}
+              />
+            </span>
+            <span class="tena-playground__sizes" aria-hidden="true">
+              <span class="tena-playground__size tena-playground__size--off">A-</span>
+              <span class="tena-playground__size">A+</span>
+            </span>
+            <span class="tena-playground__account">
+              <svg
+                class="tena-playground__glyph"
+                viewBox="0 0 16 16"
+                aria-hidden="true"
+                set:html={chromeIcons.user}
+              />
+              {copy.logIn}
+            </span>
+            <span class="tena-playground__account tena-playground__account--register">
+              <svg
+                class="tena-playground__glyph"
+                viewBox="0 0 16 16"
+                aria-hidden="true"
+                set:html={chromeIcons.register}
+              />
+              {copy.register}
+            </span>
+          </div>
+          <div class="tena-playground__nav">
+            {copy.nav.map((item, index) =>
+              index === copy.nav.length - 1 ? (
+                <button
+                  class="tena-playground__nav-link tena-playground__nav-link--on"
+                  type="button"
+                  aria-current="page"
+                  data-home
+                >
+                  {item}
+                </button>
+              ) : (
+                <span class="tena-playground__nav-link" aria-hidden="true">
+                  {item}
+                </span>
+              ),
+            )}
+            {copy.tabs.map((tab, index) => (
+              <span class="tena-playground__nav-tab" aria-hidden="true">
+                <svg
+                  class="tena-playground__glyph"
+                  viewBox="0 0 16 16"
+                  aria-hidden="true"
+                  set:html={tabIcons[index]}
+                />
+                {tab}
+              </span>
+            ))}
+          </div>
+        </div>
+        <div class="tena-playground__list" data-list data-scroll>
+          <p class="tena-playground__academy-title">{copy.academy}</p>
+          <p class="tena-playground__heading" tabindex="-1" data-heading>
+            {copy.designed}
+          </p>
+          <div class="tena-playground__cards">
+            {cards.map((card, index) => (
+              <article class="tena-playground__card">
+                <div class="tena-playground__thumb">
+                  <Image class="tena-playground__thumb-image" src={card.image} alt="" width={540} />
+                  <span class="tena-playground__format" aria-hidden="true">
+                    <svg viewBox="0 0 32 32" set:html={formatIcons[card.format]} />
+                  </span>
+                </div>
+                <div class="tena-playground__card-head">
+                  <span class="tena-playground__category">{card.category}</span>
+                  <span class="tena-playground__kind">{card.kind}</span>
+                </div>
+                <div class="tena-playground__card-body">
+                  <p
+                    class:list={[
+                      "tena-playground__card-title",
+                      { "tena-playground__card-title--live": card.format === "live" },
+                    ]}
+                    id={`tena-card-${index}`}
+                    lang="es"
+                  >
+                    {card.title}
+                  </p>
+                  <span
+                    class:list={[
+                      "tena-playground__who",
+                      { "tena-playground__who--live": card.format === "live" },
+                    ]}
+                  >
+                    {card.who}
+                  </span>
+                  <span class="tena-playground__when">
+                    <svg
+                      class="tena-playground__glyph"
+                      viewBox="0 0 16 16"
+                      aria-hidden="true"
+                      set:html={chromeIcons.calendar}
+                    />
+                    {card.when}
+                  </span>
+                  <button
+                    class="tena-playground__cta"
+                    type="button"
+                    data-open={index}
+                    aria-describedby={`tena-card-${index}`}
+                  >
+                    {card.open}
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+        {cards.map((card, index) => {
+          const banner = banners[index];
+          const row = (
+            <p class="tena-playground__row">
+              <span class="tena-playground__stamp">
+                <svg
+                  class="tena-playground__glyph"
+                  viewBox="0 0 16 16"
+                  aria-hidden="true"
+                  set:html={chromeIcons.calendar}
+                />
+                {card.stamp}
+              </span>
+              <u class="tena-playground__row-link">{copy.share}</u>
+              <u class="tena-playground__row-link">{copy.like}</u>
+            </p>
+          );
+          return (
+            <div
+              class:list={["tena-playground__view", `tena-playground__view--${card.format}`]}
+              data-view={index}
+              data-scroll
+              hidden
+            >
+              <button class="tena-playground__back" type="button" data-close>
+                {copy.toList}
+              </button>
+              {banner ? (
+                <>
+                  <div class="tena-playground__banner">
+                    <picture class="tena-playground__banner-picture">
+                      <source media="(min-width: 720px)" srcset={banner.wide.src} />
+                      <img
+                        class="tena-playground__banner-image"
+                        src={banner.mobile.src}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </picture>
+                    <span class="tena-playground__banner-tag">{card.category}</span>
+                    <p class="tena-playground__banner-title" lang="es">
+                      {card.title}
+                    </p>
+                  </div>
+                  {row}
+                  <div class="tena-playground__article" aria-hidden="true">
+                    <div class="tena-playground__lines">
+                      {Array.from({ length: 10 }, () => (
+                        <i class="tena-playground__line" />
+                      ))}
+                    </div>
+                    <span class="tena-playground__aside" />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div class="tena-playground__live">
+                    <div class="tena-playground__video" aria-hidden="true">
+                      <Image class="tena-playground__video-poster" src={card.image} alt="" width={720} />
+                      <span class="tena-playground__video-bar">
+                        <span class="tena-playground__video-avatar">TENA</span>
+                        <span class="tena-playground__video-title" lang="es">
+                          {card.title}
+                          <small class="tena-playground__video-channel">TENA</small>
+                        </span>
+                      </span>
+                      <span class="tena-playground__play" />
+                    </div>
+                    <div class="tena-playground__live-side">
+                      <span class="tena-playground__live-tag">{card.category}</span>
+                      <p class="tena-playground__live-title" lang="es">
+                        {card.title}
+                      </p>
+                      <p class="tena-playground__live-who">{card.who}</p>
+                      {row}
+                    </div>
+                  </div>
+                  <div class="tena-playground__about">
+                    <div class="tena-playground__about-text">
+                      <p class="tena-playground__about-heading">{copy.aboutLive}</p>
+                      <div class="tena-playground__lines" aria-hidden="true">
+                        {Array.from({ length: 5 }, () => (
+                          <i class="tena-playground__line" />
+                        ))}
+                      </div>
+                    </div>
+                    <div class="tena-playground__aimed">
+                      <p class="tena-playground__about-heading">{copy.aimedAt}</p>
+                      <span class="tena-playground__aimed-tile" aria-hidden="true" />
+                      <p class="tena-playground__aimed-label">{copy.audience}</p>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          );
+        })}
+        <div class="tena-playground__bar" aria-hidden="true">
+          {copy.bar.map((item, index) => (
+            <span class="tena-playground__bar-item">
+              <svg class="tena-playground__bar-icon" viewBox="0 0 16 16" set:html={barIcons[index]} />
+              {item}
+            </span>
+          ))}
+        </div>
+      </section>
+      <p class="tena-playground__toast" aria-hidden="true"></p>
+    </div>
+    <ExampleNote slot="foot">{copy.note}</ExampleNote>
+    <Button slot="actions" variant="ghost" size="sm" href={tenaUrls.registration} label={copy.live}>
+      <Icon slot="end" name="external" size={14} />
+    </Button>
+  </ExampleFrame>
+</div>
+
+<style>
+  /* TENA's own palette and type, fixed in both themes like the product. --_zoom is the A− / A+ text scale. */
+  .tena-playground__window {
+    --_navy: #173a72;
+    --_blue: #3a78d4;
+    --_green: #7ac143;
+    --_ink: #33415c;
+    --_muted: #6b7280;
+    --_zoom: 1;
+    position: relative;
+    height: 620px;
+    margin-top: 20px;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    background: #fbfbfb;
+    box-shadow: var(--shadow-rest);
+    color: var(--_ink);
+    color-scheme: light;
+    font:
+      14px/1.4 Nunito,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      sans-serif;
+  }
+  .tena-playground__window [hidden] {
+    display: none !important;
+  }
+  .tena-playground__window :focus-visible {
+    outline: 2px solid var(--_blue);
+    outline-offset: 2px;
+  }
+
+  /* Registration */
+  .tena-playground__registration {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 120px minmax(0, 1fr);
+    height: 100%;
+  }
+  .tena-playground__hero {
+    position: relative;
+    overflow: hidden;
+  }
+  .tena-playground__hero-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
+  /* The site's logo wave over the photo's top left, as on the registration page. */
+  .tena-playground__hero-logo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: max(160px, 44%);
+    height: auto;
+  }
+  .tena-playground__panel {
+    position: relative;
+    overflow: auto;
+    padding: 28px clamp(18px, 4vw, 48px) 24px;
+    border-bottom-right-radius: 14px;
+    font-size: calc(14px * var(--_zoom));
+  }
+  .tena-playground__zoom {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    display: flex;
+    gap: 4px;
+  }
+  .tena-playground__zoom-button {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid #9aa3b2;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--_ink);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .tena-playground__zoom-button:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+  .tena-playground__welcome {
+    margin: 0;
+    color: var(--_navy);
+    font-size: 1.85em;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+  .tena-playground__subtitle {
+    margin: 2px 0 12px;
+    color: var(--_navy);
+    font-size: 1.3em;
+  }
+  .tena-playground__text {
+    margin: 0 0 12px;
+    color: var(--_muted);
+    font-size: 0.95em;
+  }
+  .tena-playground__types {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+  .tena-playground__type {
+    position: relative;
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 8px 10px;
+    align-items: center;
+    padding: 12px 14px 12px 18px;
+    border: 0;
+    border-radius: 2px;
+    background: #fff;
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.18);
+    color: var(--_ink);
+    text-align: left;
+    cursor: pointer;
+  }
+  .tena-playground__type::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 8px;
+    height: 30%;
+    background: var(--_green);
+  }
+  .tena-playground__type::after {
+    content: "";
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid var(--_blue);
+    border-radius: 50%;
+  }
+  .tena-playground__type svg {
+    width: 30px;
+    height: 30px;
+    color: var(--_blue);
+  }
+  .tena-playground__type-title {
+    color: var(--_blue);
+    font-size: 0.95em;
+    font-weight: 800;
+  }
+  .tena-playground__type-text {
+    grid-column: 1 / -1;
+    color: var(--_muted);
+    font-size: 0.92em;
+  }
+  .tena-playground__field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 2.9em;
+    margin-bottom: 10px;
+    padding: 0 12px;
+    border: 1px solid #d3d7de;
+    border-radius: 3px;
+    background: #fff;
+    color: #555;
+    font-size: 0.95em;
+  }
+  .tena-playground__check {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin: 6px 0 10px;
+    font-size: 0.95em;
+    cursor: pointer;
+  }
+  .tena-playground__checkbox {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    margin: 1px 0 0;
+    accent-color: var(--_blue);
+  }
+  .tena-playground__em {
+    color: var(--_blue);
+    font-style: normal;
+    font-weight: 700;
+  }
+  .tena-playground__legal {
+    height: 3.4em;
+    margin: 0 0 14px;
+    overflow: hidden;
+    color: #444;
+    font-size: 0.78em;
+    font-weight: 600;
+    mask: linear-gradient(#000 50%, transparent);
+  }
+  .tena-playground__buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .tena-playground__button {
+    min-height: 2.8em;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: var(--_blue);
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .tena-playground__button--dark {
+    background: var(--_navy);
+  }
+  .tena-playground__help {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 2.6em;
+    margin: 14px 0 0;
+    border: 0;
+    border-radius: 999px;
+    background: var(--_green);
+    color: #fff;
+    font-size: 1em;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  /* Academy: tena.com.co/academia-tena as measured (Nunito; the live's texts use a lighter face). */
+  .tena-playground__academy {
+    --_site-navy: #063c73;
+    --_site-blue: #0082d6;
+    --_site-sky: #13b8f1;
+    --_site-green: #62c224;
+    --_slate: #3f515d;
+    --_promo-h: 34px;
+    --_chrome-h: calc(var(--_promo-h) + 38px);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #fbfcfc;
+    color: var(--_slate);
+  }
+  .tena-playground__glyph {
+    flex: none;
+    width: 1.1em;
+    height: 1.1em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  /*
+    The site's header is fixed: scrolling down collapses the promo bar (0.4s, linear) and scrolling up brings it back.
+    Here it sits over the scrolling list or view, which leave room for it, so nothing below it moves. On phones the
+    whole header (promo and logo) goes; from 720px only the promo, under the green line, and the header rises.
+  */
+  .tena-playground__chrome {
+    position: absolute;
+    inset: 0 0 auto;
+    z-index: 2;
+    transition: transform 0.4s linear;
+  }
+  .tena-playground__academy[data-promo="hidden"] .tena-playground__chrome {
+    transform: translateY(-100%);
+  }
+  .tena-playground__promo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    box-sizing: border-box;
+    height: var(--_promo-h);
+    margin: 0;
+    padding: 0 12px;
+    background: #003b71;
+    color: #fff;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .tena-playground__promo-long {
+    display: none;
+  }
+  .tena-playground__promo-tag {
+    padding: 2px 14px;
+    border-radius: 999px;
+    background: var(--_site-green);
+    font-weight: 800;
+  }
+
+  /*
+    Header: the site's logo image (its navy wave joins the promo bar) at the top left. On phones it hangs alone under
+    the promo over the content, as on the site; the rest of the header shows from 720px.
+  */
+  .tena-playground__header {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 10px;
+    height: 38px;
+    padding: 0 12px 0 0;
+  }
+  .tena-playground__logo {
+    flex: none;
+    align-self: start;
+    width: auto;
+    height: 38px;
+  }
+  .tena-playground__search,
+  .tena-playground__sizes,
+  .tena-playground__account,
+  .tena-playground__nav {
+    display: none;
+  }
+  .tena-playground__search {
+    flex: 1;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 360px;
+    height: 32px;
+    margin-left: auto;
+    padding: 0 12px 0 18px;
+    border-radius: 999px;
+    background: #f3f5f7;
+    color: #9aa7b3;
+    font-size: 11px;
+  }
+  .tena-playground__search .tena-playground__glyph {
+    width: 16px;
+    height: 16px;
+    color: #003b71;
+    stroke-width: 2.4;
+  }
+  .tena-playground__sizes {
+    gap: 3px;
+  }
+  .tena-playground__size {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border: 1.5px solid #4a4a4a;
+    border-radius: 50%;
+    color: #4a4a4a;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .tena-playground__size--off {
+    border-color: #d5d9dd;
+    color: #d5d9dd;
+  }
+  .tena-playground__account {
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 12px;
+    border-radius: 4px;
+    background: #0b2e63;
+    color: #fff;
+    font-size: 12.5px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+  .tena-playground__account--register {
+    background: #1f6fe5;
+  }
+  .tena-playground__nav {
+    flex: none;
+    align-items: flex-end;
+    justify-content: center;
+    height: 40px;
+    padding: 0 12px;
+    background: #fff;
+    box-shadow: 0 3px 4px rgb(0 0 0 / 0.08);
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+  .tena-playground__nav-link {
+    position: relative;
+    margin-bottom: 13px;
+    padding: 0 9px;
+    border: 0;
+    border-left: 1px solid #b9c2ca;
+    border-radius: 0;
+    background: none;
+    color: #7b8a98;
+    font: inherit;
+    line-height: 1;
+    text-transform: inherit;
+  }
+  button.tena-playground__nav-link {
+    cursor: pointer;
+  }
+  .tena-playground__nav-link:first-child {
+    border-left: 0;
+  }
+  .tena-playground__nav-link--on {
+    color: var(--_site-blue);
+  }
+  .tena-playground__nav-link--on::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -9px;
+    width: 46px;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--_site-green);
+    transform: translateX(-50%);
+  }
+  .tena-playground__nav-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    margin-left: 12px;
+    padding: 0 14px;
+    border-radius: 6px 6px 0 0;
+    background: #f0f1f3;
+    color: #7b8a98;
+  }
+  .tena-playground__nav-tab .tena-playground__glyph {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* The card grid */
+  .tena-playground__list {
+    flex: 1;
+    overflow: auto;
+    padding: calc(var(--_chrome-h) + 18px) 16px 24px;
+  }
+  .tena-playground__academy-title {
+    margin: 0 0 18px;
+    color: #1e9be9;
+    font-size: 17px;
+    font-weight: 800;
+  }
+  .tena-playground__heading {
+    margin: 0 0 14px;
+    color: var(--_site-navy);
+    font-size: 15px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+  .tena-playground__cards {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+  .tena-playground__card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 0 0 10px 10px;
+    background: #fff;
+    box-shadow: 0 4px 16px rgb(0 0 0 / 0.1);
+  }
+  .tena-playground__thumb {
+    position: relative;
+    border-bottom: 5px solid var(--_site-navy);
+  }
+  .tena-playground__thumb-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+  .tena-playground__format {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 46px;
+    border-radius: 0 0 6px;
+    background: #f3f3f3;
+    box-shadow: 0 2px 4px rgb(0 0 0 / 0.16);
+    color: #033c73;
+  }
+  .tena-playground__format svg {
+    width: 26px;
+    height: 26px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .tena-playground__card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-top: 10px;
+  }
+  .tena-playground__category {
+    padding: 8px 13px 5px;
+    background: var(--_site-green);
+    color: #fff;
+    font-size: 9px;
+    font-weight: 800;
+    line-height: 1.3;
+    text-transform: uppercase;
+  }
+  .tena-playground__kind {
+    margin-right: 14px;
+    font-size: 9px;
+    text-transform: uppercase;
+  }
+  .tena-playground__card-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 10px 22px 15px;
+  }
+  .tena-playground__card-title {
+    margin: 0;
+    color: var(--_site-navy);
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+  .tena-playground__card-title--live {
+    color: #242424;
+    font-weight: 500;
+    line-height: 1.55;
+  }
+  .tena-playground__who {
+    color: #1782d6;
+    font-size: 15px;
+    font-weight: 800;
+  }
+  .tena-playground__who--live {
+    margin-top: 2px;
+    color: #003a81;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .tena-playground__when {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: auto 0 14px;
+    padding-top: 2px;
+    font-size: 12.5px;
+    text-transform: uppercase;
+  }
+  .tena-playground__when .tena-playground__glyph {
+    width: 12px;
+    height: 12px;
+  }
+  .tena-playground__cta {
+    align-self: center;
+    min-height: 36px;
+    padding: 8px 36px;
+    border: 0;
+    border-radius: 29px;
+    background: var(--_site-blue);
+    color: #fff;
+    font: inherit;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  /* An opened article or live */
+  .tena-playground__view {
+    flex: 1;
+    overflow: auto;
+    padding-top: var(--_chrome-h);
+    animation: tena-playground-in 0.2s ease;
+  }
+  @keyframes tena-playground-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+  .tena-playground__back {
+    display: block;
+    min-height: 32px;
+    margin: 8px 16px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--_site-blue);
+    font: inherit;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+  .tena-playground__banner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .tena-playground__banner-picture {
+    grid-area: 1 / 1;
+  }
+  .tena-playground__banner-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 960 / 347;
+    object-fit: cover;
+  }
+  .tena-playground__banner-tag {
+    grid-area: 1 / 1;
+    align-self: end;
+    justify-self: center;
+    margin-bottom: 10%;
+    padding: 9px 16px;
+    background: var(--_site-blue);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+  .tena-playground__banner-title {
+    margin: 0;
+    padding: 18px 16px 4px;
+    color: #242424;
+    font-size: 21px;
+    font-weight: 500;
+    line-height: 1.25;
+  }
+  .tena-playground__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 32px;
+    margin: 0;
+    padding: 14px 16px;
+    color: var(--_slate);
+    font-size: 14px;
+  }
+  .tena-playground__stamp {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tena-playground__row-link {
+    color: #003c73;
+    font-weight: 800;
+  }
+  .tena-playground__article {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    padding: 4px 16px 24px;
+  }
+  .tena-playground__lines {
+    display: grid;
+    gap: 14px;
+  }
+  .tena-playground__line {
+    display: block;
+    height: 8px;
+    border-radius: 8px;
+    background: #e2e7eb;
+  }
+  .tena-playground__line:nth-child(4n) {
+    width: 76%;
+  }
+  .tena-playground__article .tena-playground__line:nth-child(6) {
+    width: 52%;
+    height: 12px;
+    margin-top: 10px;
+    background: #9dcdf0;
+  }
+  .tena-playground__aside {
+    display: none;
+    border-radius: 8px;
+    background: linear-gradient(160deg, #2a9ee0, #0a4f9b);
+  }
+
+  /* The live: its YouTube video next to the details, as on the site. */
+  .tena-playground__live {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    background: #f5f8f9;
+  }
+  .tena-playground__video {
+    position: relative;
+    display: grid;
+    overflow: hidden;
+    background: #000;
+  }
+  .tena-playground__video-poster {
+    grid-area: 1 / 1;
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+  .tena-playground__video-bar {
+    position: absolute;
+    inset: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px 22px;
+    background: linear-gradient(rgb(0 0 0 / 0.6), transparent);
+    color: #fff;
+  }
+  .tena-playground__video-avatar {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: inset 0 0 0 4px #1d3d8f;
+    color: #1d3d8f;
+    font-size: 7px;
+    font-weight: 900;
+  }
+  .tena-playground__video-title {
+    display: grid;
+    min-width: 0;
+    overflow: hidden;
+    font-family: Roboto, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.25;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .tena-playground__video-channel {
+    font-size: 11px;
+    font-weight: 400;
+  }
+  .tena-playground__play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: grid;
+    place-items: center;
+    width: 60px;
+    height: 42px;
+    border-radius: 12px / 14px;
+    background: #ff0033;
+    transform: translate(-50%, -50%);
+  }
+  .tena-playground__play::after {
+    content: "";
+    margin-left: 4px;
+    border-left: 15px solid #fff;
+    border-block: 9px solid transparent;
+  }
+  .tena-playground__live-side {
+    display: grid;
+    justify-items: start;
+    align-content: start;
+    gap: 8px;
+    padding: 18px 0 8px;
+  }
+  .tena-playground__live-tag {
+    min-width: 46%;
+    padding: 4px 14px 4px 5px;
+    background: var(--_site-sky);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+    text-align: right;
+    text-transform: uppercase;
+  }
+  .tena-playground__live-title {
+    margin: 10px 16px 0;
+    color: #242424;
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.25;
+  }
+  .tena-playground__live-who {
+    margin: 0 16px;
+    color: #003a81;
+    font-size: 15px;
+    font-weight: 500;
+  }
+  .tena-playground__live-side .tena-playground__row {
+    padding-top: 6px;
+  }
+  .tena-playground__live-side .tena-playground__row-link,
+  .tena-playground__live-side .tena-playground__stamp {
+    color: #033c73;
+    font-weight: 400;
+  }
+  .tena-playground__about {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    padding: 24px 16px 28px;
+  }
+  .tena-playground__about-heading {
+    margin: 0 0 14px;
+    color: #242424;
+    font-size: 18px;
+    font-weight: 500;
+  }
+  .tena-playground__about .tena-playground__lines {
+    gap: 10px;
+  }
+  .tena-playground__about .tena-playground__line {
+    height: 6px;
+  }
+  .tena-playground__aimed-tile {
+    display: block;
+    width: 96px;
+    height: 96px;
+    border-radius: 6px;
+    background: linear-gradient(160deg, #e9e3f3, #b9a4d8);
+  }
+  .tena-playground__aimed-label {
+    width: 96px;
+    margin: 10px 0 0;
+    color: #003a81;
+    font-size: 14px;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  /* Phones: the site's bottom bar. */
+  .tena-playground__bar {
+    display: flex;
+    flex: none;
+    justify-content: space-around;
+    padding: 7px 4px 6px;
+    background: #fff;
+    box-shadow: 0 -2px 6px rgb(0 0 0 / 0.1);
+    color: #003b71;
+    font-size: 7.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+  .tena-playground__bar-item {
+    display: grid;
+    justify-items: center;
+    gap: 3px;
+  }
+  .tena-playground__bar-icon {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .tena-playground__toast {
+    position: absolute;
+    left: 50%;
+    bottom: 14px;
+    z-index: 5;
+    width: 86%;
+    margin: 0;
+    padding: 10px 14px;
+    border-radius: 6px;
+    background: rgb(0 0 0 / 0.82);
+    color: #fff;
+    font-size: 13px;
+    text-align: center;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateX(-50%);
+    transition: opacity 0.2s;
+  }
+  .tena-playground__toast[data-show] {
+    opacity: 1;
+  }
+  @media (hover: hover) {
+    .tena-playground__type:hover {
+      box-shadow: 0 4px 12px rgb(0 0 0 / 0.2);
+    }
+    .tena-playground__cta:hover {
+      background: #006bb3;
+    }
+  }
+  @media (min-width: 720px) {
+    .tena-playground__window {
+      height: 560px;
+    }
+    .tena-playground__registration {
+      grid-template-columns: 42% 58%;
+      grid-template-rows: none;
+    }
+    .tena-playground__types {
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .tena-playground__type {
+      padding: 16px 16px 16px 20px;
+    }
+    .tena-playground__academy {
+      --_promo-h: 30px;
+      --_chrome-h: calc(3px + var(--_promo-h) + 56px + 40px);
+    }
+    /* The green line stays on top while the promo slides away under it. */
+    .tena-playground__academy::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      z-index: 3;
+      height: 3px;
+      background: var(--_site-green);
+    }
+    .tena-playground__chrome {
+      top: 3px;
+    }
+    .tena-playground__academy[data-promo="hidden"] .tena-playground__chrome {
+      transform: translateY(calc(-1 * var(--_promo-h)));
+    }
+    .tena-playground__promo {
+      font-size: 12.5px;
+    }
+    .tena-playground__promo-long {
+      display: inline;
+    }
+    .tena-playground__promo-short {
+      display: none;
+    }
+    .tena-playground__header {
+      height: 56px;
+      background: #fff;
+    }
+    .tena-playground__logo {
+      height: 56px;
+    }
+    .tena-playground__search,
+    .tena-playground__sizes,
+    .tena-playground__account,
+    .tena-playground__nav {
+      display: flex;
+    }
+    .tena-playground__list {
+      padding: calc(var(--_chrome-h) + 22px) clamp(16px, 4vw, 48px) 28px;
+    }
+    .tena-playground__academy-title {
+      font-size: 20px;
+    }
+    .tena-playground__heading {
+      font-size: 18px;
+    }
+    .tena-playground__cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .tena-playground__card-title {
+      font-size: 14.5px;
+    }
+    .tena-playground__back,
+    .tena-playground__row,
+    .tena-playground__article,
+    .tena-playground__about {
+      padding-inline: clamp(16px, 7vw, 92px);
+    }
+    .tena-playground__back {
+      margin: 10px 0;
+    }
+    .tena-playground__banner-image {
+      aspect-ratio: 1440 / 281;
+    }
+    .tena-playground__banner-tag,
+    .tena-playground__banner-title {
+      grid-area: 1 / 1;
+      margin-left: clamp(16px, 7vw, 92px);
+    }
+    .tena-playground__banner-tag {
+      align-self: start;
+      justify-self: start;
+      margin-top: 4%;
+      margin-bottom: 0;
+      font-size: 13px;
+    }
+    .tena-playground__banner-title {
+      align-self: end;
+      margin-right: 24px;
+      padding: 0 0 4%;
+      color: #fff;
+      font-size: clamp(18px, 2.4vw, 28px);
+      font-weight: 800;
+      line-height: 1.3;
+      text-shadow: 0 0 5px #000;
+      text-transform: uppercase;
+    }
+    .tena-playground__row {
+      font-size: 15px;
+    }
+    .tena-playground__live {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      padding-left: clamp(16px, 5vw, 64px);
+    }
+    /* The site clips its 16:9 player to the band's height. */
+    .tena-playground__video-poster {
+      aspect-ratio: 600 / 305;
+      object-position: top;
+    }
+    .tena-playground__live-side {
+      padding-top: 22px;
+    }
+    .tena-playground__live-title,
+    .tena-playground__live-who,
+    .tena-playground__live-side .tena-playground__row {
+      margin-inline: clamp(16px, 4vw, 52px) 16px;
+      padding-inline: 0;
+    }
+    .tena-playground__live-title {
+      margin-top: 30px;
+      font-size: 20px;
+    }
+    .tena-playground__about {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 48px;
+    }
+    .tena-playground__bar {
+      display: none;
+    }
+    .tena-playground__toast {
+      width: auto;
+      white-space: nowrap;
+    }
+  }
+  @media (min-width: 901px) {
+    .tena-playground__cards {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .tena-playground__article {
+      grid-template-columns: minmax(0, 1fr) 220px;
+      gap: 32px;
+    }
+    .tena-playground__aside {
+      display: block;
+      height: 260px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tena-playground__view {
+      animation: none;
+    }
+    .tena-playground__chrome {
+      transition: none;
+    }
+    .tena-playground__toast {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { announce } from "../ExampleFrame/frame";
+
+  for (const root of document.querySelectorAll<HTMLElement>("[data-tena]")) {
+    const frame = root.querySelector(".example-frame");
+    const win = root.querySelector<HTMLElement>(".tena-playground__window");
+    const toast = root.querySelector<HTMLElement>(".tena-playground__toast");
+    if (!frame || !win || !toast) continue;
+    const $ = <T extends Element = HTMLElement>(selector: string) => win.querySelector<T>(selector);
+    const $$ = <T extends Element = HTMLElement>(selector: string) => [...win.querySelectorAll<T>(selector)];
+
+    // Registration / Academy
+    for (const radio of frame.querySelectorAll<HTMLInputElement>('input[name="tena-screen"]')) {
+      radio.addEventListener("change", () => {
+        for (const screen of $$("[data-screen]")) screen.hidden = screen.dataset.screen !== radio.value;
+        const live = frame.querySelector<HTMLAnchorElement>(".example-frame__actions a");
+        const urls = JSON.parse(win.dataset.urls ?? "{}") as Record<string, string>;
+        const url = urls[radio.value];
+        if (live && url) live.href = url;
+      });
+    }
+
+    // A demo action: a toast in the window, announced.
+    let toastTimer = 0;
+    const demo = () => {
+      const text = root.dataset.demo ?? "";
+      toast.textContent = text;
+      toast.setAttribute("data-show", "");
+      clearTimeout(toastTimer);
+      toastTimer = window.setTimeout(() => toast.removeAttribute("data-show"), 2200);
+      announce(frame, text);
+    };
+    $$("[data-demo-action]").forEach((button) => button.addEventListener("click", demo));
+
+    // Steps: a user type leads to the details; Back returns to the types.
+    const types = $('[data-step="types"]');
+    const details = $('[data-step="details"]');
+    if (types && details) {
+      $$(".tena-playground__type").forEach((button) =>
+        button.addEventListener("click", () => {
+          types.hidden = true;
+          details.hidden = false;
+          $("[data-back]")?.focus();
+        }),
+      );
+      $("[data-back]")?.addEventListener("click", () => {
+        details.hidden = true;
+        types.hidden = false;
+        $(".tena-playground__type")?.focus();
+      });
+    }
+
+    // A− / A+: 100% to 130% in steps of 15%.
+    let zoom = 1;
+    const [smaller, larger] = $$<HTMLButtonElement>("[data-zoom]");
+    $$<HTMLButtonElement>("[data-zoom]").forEach((button) =>
+      button.addEventListener("click", () => {
+        zoom = Math.round(Math.max(1, Math.min(1.3, zoom + Number(button.dataset.zoom) * 0.15)) * 100) / 100;
+        win.style.setProperty("--_zoom", String(zoom));
+        if (smaller) smaller.disabled = zoom <= 1;
+        if (larger) larger.disabled = zoom >= 1.3;
+        announce(frame, `${root.dataset.size}: ${Math.round(zoom * 100)}%`);
+      }),
+    );
+
+    // Academy: the promo bar hides when the list or a view scrolls down and comes back when it scrolls up, as the
+    // site's does with the page. A few pixels of slack keep it from flickering at the very top.
+    const academy = $('[data-screen="academy"]');
+    const showPromo = (shown: boolean) => {
+      if (shown) academy?.removeAttribute("data-promo");
+      else academy?.setAttribute("data-promo", "hidden");
+    };
+    const lastTop = new WeakMap<HTMLElement, number>();
+    $$("[data-scroll]").forEach((scroller) =>
+      scroller.addEventListener(
+        "scroll",
+        () => {
+          const top = scroller.scrollTop;
+          const previous = lastTop.get(scroller) ?? 0;
+          if (top > previous && top > 8) showPromo(false);
+          else if (top < previous) showPromo(true);
+          lastTop.set(scroller, top);
+        },
+        { passive: true },
+      ),
+    );
+
+    // Each card opens its own view, at its top; Back returns focus to the card's button.
+    const list = $("[data-list]");
+    let opener: HTMLElement | null = null;
+    $$("[data-open]").forEach((button) =>
+      button.addEventListener("click", () => {
+        const view = $(`[data-view="${button.dataset.open}"]`);
+        if (!list || !view) return;
+        opener = button;
+        list.hidden = true;
+        view.hidden = false;
+        view.scrollTop = 0;
+        lastTop.set(view, 0);
+        showPromo(true);
+        view.querySelector<HTMLElement>("[data-close]")?.focus();
+      }),
+    );
+    const closeView = () => {
+      const view = $("[data-view]:not([hidden])");
+      if (!list || !view) return false;
+      view.hidden = true;
+      list.hidden = false;
+      showPromo(true);
+      return true;
+    };
+    $$("[data-close]").forEach((button) =>
+      button.addEventListener("click", () => {
+        if (closeView()) opener?.focus();
+      }),
+    );
+
+    // TENA Academy in the nav: back to the grid, at its top; focus goes to the card that was open, or the heading.
+    $("[data-home]")?.addEventListener("click", () => {
+      const fromView = closeView();
+      if (!list) return;
+      list.scrollTop = 0;
+      lastTop.set(list, 0);
+      showPromo(true);
+      const target = fromView && opener ? opener : $("[data-heading]");
+      target?.focus({ preventScroll: true });
+    });
+  }
+</script>
