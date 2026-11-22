@@ -1,0 +1,73 @@
+---
+// A built case (HU-04 on): the case top bar, the header from the entry's frontmatter, its MDX body (facts, intro,
+// chapters) and the previous and next case on Work. The MDX renders Markdown paragraphs as CaseParagraph and links as
+// CaseLink, so the copy stays plain Markdown. The language comes from the entry.
+import { render, type CollectionEntry } from "astro:content";
+import Base from "@/layouts/Base.astro";
+import CaseTop from "@/components/projects/CaseTop/CaseTop.astro";
+import CaseHeader from "@/components/projects/CaseHeader/CaseHeader.astro";
+import CaseNext from "@/components/projects/CaseNext/CaseNext.astro";
+import CaseParagraph from "@/components/projects/CaseParagraph/CaseParagraph.astro";
+import CaseLink from "@/components/projects/CaseLink/CaseLink.astro";
+import CaseNav from "@/components/projects/CaseNav/CaseNav.astro";
+import { getProjects, slugOf } from "@/lib/content";
+import { localePath } from "@/i18n/ui";
+interface Props {
+  project: CollectionEntry<"projects">;
+}
+const { project } = Astro.props;
+const { data } = project;
+const { lang } = data;
+const slug = slugOf(project.id);
+const { Content } = await render(project);
+
+// Previous and next on Work, wrapping around the ends.
+const projects = await getProjects(lang);
+const at = projects.findIndex((entry) => entry.id === project.id);
+const link = (entry: CollectionEntry<"projects">) => ({
+  href: localePath(lang, `/work/${slugOf(entry.id)}/`),
+  title: entry.data.title,
+  company: entry.data.company.split(" · ")[0] ?? entry.data.company,
+});
+const previous = link(projects.at(at - 1) ?? project);
+const next = link(projects[(at + 1) % projects.length] ?? project);
+---
+
+<Base
+  title={`${data.title} · ${data.company} · Jouler Talaigua`}
+  description={data.summary}
+  lang={lang}
+  ogSlug="work"
+  altPath={`/work/${slug}/`}
+  dockHidden
+>
+  <CaseTop slot="top" slug={slug}>
+    <CaseNav />
+  </CaseTop>
+  <article class="work-case">
+    <CaseHeader company={data.company} title={data.title} slug={slug} />
+    <Content components={{ p: CaseParagraph, a: CaseLink }} />
+    <CaseNext previous={previous} next={next} />
+  </article>
+</Base>
+
+<style>
+  /* Out of `.wrap`'s 44rem column: a case takes the layout container (v11 `.case`, 1240px). */
+  /* Jumps land a little under the top: on phones the bar hides while scrolling down; from 720px it stays sticky. */
+  :global(html:has(.work-case)) {
+    overflow-x: clip;
+    scroll-padding-top: 32px;
+    scroll-padding-bottom: 24px;
+  }
+  @media (min-width: 720px) {
+    :global(html:has(.work-case)) {
+      scroll-padding-top: 88px;
+    }
+  }
+  .work-case {
+    --work-case-width: min(var(--layout-container), 100vw - 2 * var(--page-gutter));
+    width: var(--work-case-width);
+    margin-inline: calc((100% - var(--work-case-width)) / 2);
+    margin-top: calc(-1 * var(--wrap-padding-block));
+  }
+</style>

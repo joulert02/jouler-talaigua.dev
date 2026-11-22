@@ -1,0 +1,89 @@
+---
+title: Plataformas de marca
+company: Marcas de Grupo Familia · con PRAGMA
+summary: "Donde pasé de probar sitios a construirlos: una plataforma de cuidado de mascotas desde cero, un rediseño para adultos mayores y un juego al mes para una marca adolescente."
+lang: es
+tier: 2
+order: 1
+focus: [Arquitectura frontend, Gatsby + Contentful, Gamificación]
+cover: ../../../assets/projects/pragma/petys/home.webp
+case: live
+---
+
+import CaseFacts from "@/components/projects/CaseFacts/CaseFacts.astro";
+import Fact from "@/components/projects/CaseFacts/Fact/Fact.astro";
+import CaseIntro from "@/components/projects/CaseIntro/CaseIntro.astro";
+import CaseQuote from "@/components/projects/CaseQuote/CaseQuote.astro";
+import CaseVideo from "@/components/projects/CaseVideo/CaseVideo.astro";
+import Chapter from "@/components/projects/Chapter/Chapter.astro";
+import FullStory from "@/components/projects/Chapter/FullStory/FullStory.astro";
+import PetysPlayground from "@/components/projects/PetysPlayground/PetysPlayground.astro";
+import TenaPlayground from "@/components/projects/TenaPlayground/TenaPlayground.astro";
+import NosotrasPlayground from "@/components/projects/NosotrasPlayground/NosotrasPlayground.astro";
+
+<CaseFacts>
+  <Fact label="Rol">QA → Junior → Frontend Developer · PRAGMA</Fact>
+  <Fact label="Marcas">Petys · TENA · Nosotras</Fact>
+  <Fact label="Tecnología">Gatsby · React · GraphQL · Contentful · AWS S3 y CloudFront · Jenkins</Fact>
+</CaseFacts>
+
+<CaseIntro title="Lo que aprendí" next="petys">
+
+Entré a PRAGMA como QA en dos sitios de marca, [Nosotras](https://www.nosotrasonline.com.co/) y [TENA](https://www.tena.com.co/), y los probé hasta su primer lanzamiento. Ocho meses después pasé a desarrollo frontend. Con los años, estas marcas se volvieron el lugar donde aprendí a construir, y luego a ser responsable de, plataformas completas.
+
+<CaseQuote>
+
+Aprendí a dirigir mi propio camino. PRAGMA despertó una curiosidad que se volvió el motor de mi carrera. Ahí empecé a dar charlas, en universidades y dentro de la empresa, y descubrí mi amor por enseñar y por aprender de forma continua. Y aprendí que rodearse de las personas correctas te lleva lejos, porque juntos llegamos más lejos.
+
+</CaseQuote>
+
+  <CaseVideo
+    slot="media"
+    sources={[{ src: "/video/pragma-reel.mp4", type: "video/mp4" }]}
+    poster="/video/pragma-reel-poster.jpg"
+    tracks={[
+      { src: "/video/pragma-reel.es.vtt", srclang: "es", label: "Español", kind: "captions" },
+      { src: "/video/pragma-reel.en.vtt", srclang: "en", label: "English", kind: "subtitles" },
+    ]}
+    caption="Un video que PRAGMA hizo para mí"
+    duration={44}
+    width={540}
+    height={960}
+    link={{ href: "https://www.instagram.com/reel/C2QiirxRWHl/", label: "Ver en Instagram" }}
+  />
+</CaseIntro>
+
+<Chapter id="petys" number="01" title="Petys: una plataforma desde cero" lead="Un sitio nuevo de una marca para el cuidado de mascotas, y mi primer proyecto como único desarrollador frontend.">
+  <PetysPlayground />
+  <FullStory>
+
+Petys era el sitio nuevo de una marca para el cuidado de mascotas, y mi primer proyecto como desarrollador. El equipo era de cuatro personas: un frontend (yo), un backend, un QA y una persona de diseño.
+
+Reconstruí para Petys la arquitectura que habíamos usado en Nosotras y TENA: sitios estáticos construidos con Gatsby, servidos desde S3 detrás de CloudFront, con contenido de Contentful consumido por GraphQL. Hoy es una configuración conocida; en ese momento muy pocos equipos lo hacían.
+
+Pedí ser dueño de todo el lado frontend, y lo conseguí. Modelé el contenido en Contentful, configuré el repositorio y el arquetipo de cada micro frontend, compartí componentes entre proyectos con un submódulo de Git, configuré los ambientes y construí los pipelines de Jenkins. Un arquitecto me guió y revisó las partes importantes: el CI/CD y las políticas de caché e invalidación en AWS. El backend solo manejaba las reseñas de productos, que yo integré.
+
+  </FullStory>
+</Chapter>
+
+<Chapter id="tena" number="02" title="TENA: una academia y un registro para adultos mayores" lead="Muchos usuarios de TENA son adultos mayores. Rediseñé el registro para que sea más fácil de completar, y rehíce la Academia para que cada formato de contenido se muestre a su manera.">
+  <TenaPlayground />
+  <FullStory>
+
+De vuelta en TENA, rehíce la sección Academia: las guías y artículos para adultos mayores y sus cuidadores. Los artículos vienen en varios formatos, y cada tipo tiene su propia estructura y diseño, así que construí la sección para mostrar cada formato de la forma correcta desde el CMS.
+
+También rediseñé el flujo de registro. Muchos usuarios de TENA son adultos mayores, y el formulario anterior los confundía. El nuevo es mucho más fácil de completar.
+
+  </FullStory>
+</Chapter>
+
+<Chapter id="nosotras" number="03" title="Nosotras: un público nuevo y un juego al mes" lead="Implementé el rebrand que abrió el sitio a mujeres jóvenes, y construí los juegos de campaña de la marca, normalmente uno al mes.">
+  <NosotrasPlayground />
+  <FullStory>
+
+Nosotras se lanzó con una marca pensada para niñas: suave y muy rosada. Cuando el negocio quiso llegar también a mujeres jóvenes, implementé el rebrand, sumando un azul profundo junto al rosado para abrir el sitio a un público mayor.
+
+También construí los juegos de campaña de la marca, normalmente uno al mes. Cada uno vivía en su propia ruta del sitio: un micrositio didáctico e interactivo donde las niñas aprendían jugando. Algunos eran concursos: jugabas, sumabas puntos y subías en una tabla de posiciones, y la marca premiaba a quienes quedaban arriba. Para cada uno elegí la técnica que el juego necesitaba, HTML y CSS o SVG, y construí la experiencia completa.
+
+  </FullStory>
+</Chapter>
