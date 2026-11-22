@@ -1,0 +1,4 @@
+# The production pages.dev host mirrors jouler-talaigua.dev; keep it out of search indexes.
+# Preview deployments already get X-Robots-Tag: noindex from Cloudflare Pages.
+https://jouler-talaigua-dev.pages.dev/*
+  X-Robots-Tag: noindex
