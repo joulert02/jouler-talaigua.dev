@@ -7,6 +7,9 @@ import sitemap from "@astrojs/sitemap";
 export default defineConfig({
   site: "https://jouler-talaigua.dev",
   integrations: [react(), mdx(), sitemap({ i18n: { defaultLocale: "en", locales: { en: "en", es: "es" } } })],
+  devToolbar: {
+    enabled: false,
+  },
   // Self-hosted at build time; <Font /> in Base.astro emits the @font-face rules, metric-adjusted fallbacks and preloads.
   fonts: [
     {
@@ -40,6 +43,17 @@ export default defineConfig({
       subsets: ["latin"],
       formats: ["woff2"],
       fallbacks: ["Segoe Print", "Bradley Hand", "cursive"],
+    },
+    {
+      // Only for the Nosotras recreation in the Brand platforms case (NosotrasPlayground), as on the brand's site.
+      provider: fontProviders.fontsource(),
+      name: "Montserrat",
+      cssVariable: "--font-nosotras",
+      weights: [500, 800],
+      styles: ["normal"],
+      subsets: ["latin"],
+      formats: ["woff2"],
+      fallbacks: ["system-ui", "sans-serif"],
     },
   ],
   i18n: {
