@@ -233,7 +233,8 @@ const languages = languageItems.map((item) => ({ ...item, href: localePath(item.
       else if (y - turn > 48) hidden = true;
       else if (turn - y > 24) hidden = false;
       top.toggleAttribute("data-hidden", hidden);
-      top.toggleAttribute("data-compact", y > 160);
+      // Only a visible index takes the switch's place; without one (a coming-soon case) the switch stays.
+      top.toggleAttribute("data-compact", y > 160 && top.querySelector(".case-nav:not([hidden])") !== null);
       if (progress) {
         const end = document.documentElement.scrollHeight - innerHeight;
         top.style.setProperty("--case-top-progress", String(end > 0 ? Math.min(1, y / end) : 0));

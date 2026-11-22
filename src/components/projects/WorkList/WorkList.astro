@@ -88,14 +88,24 @@ const { items, variant = "minimal" } = Astro.props;
       const slug = (event.target as Element).closest<HTMLElement>(".work-row")?.dataset["workSlug"];
       if (slug && (event.target as Element).closest(".work-row__link")) sessionStorage.setItem(opened, slug);
     });
+    // Only a return through the browser's Back uses the remembered case; any other way in starts at the first.
+    const back = () =>
+      (performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined)?.type ===
+      "back_forward";
     const restore = () =>
       activate(
         location.hash.startsWith("#row-")
           ? location.hash.slice(5)
-          : (sessionStorage.getItem(opened) ?? undefined),
+          : back()
+            ? (sessionStorage.getItem(opened) ?? undefined)
+            : undefined,
       );
     restore();
-    addEventListener("pageshow", (event) => event.persisted && restore());
+    // A page restored from the back-forward cache is always a Back or Forward.
+    addEventListener(
+      "pageshow",
+      (event) => event.persisted && activate(sessionStorage.getItem(opened) ?? undefined),
+    );
 
     // Touch and narrow screens cut each summary to two lines (WorkRow); "See more" shows only where it was cut.
     const rows = [...list.querySelectorAll<HTMLElement>(".work-row")];
