@@ -1,0 +1,84 @@
+---
+import CaseJump from "./CaseJump/CaseJump.astro";
+interface Props {
+  /** The intro's heading ("What I learned"). */
+  title: string;
+  /** Id of the first chapter: the floating "See what we built" invitation scrolls to it. */
+  next: string;
+}
+const { title, next } = Astro.props;
+const id = "case-intro-title";
+---
+
+<!--
+  The case intro (v11 intro-c with the Pragma variant): the heading, the owner's text and quote on the left, the media
+  (a photo or a CaseVideo, in the `media` slot) on the right; one column on phones, text first. A floating invitation
+  leads to the first chapter.
+-->
+<section class="case-intro" id="case-intro" aria-labelledby={id} data-case-nav={title}>
+  <h2 class="case-intro__title" id={id}>
+    {title}
+  </h2>
+  <div class="case-intro__text">
+    <slot />
+  </div>
+  {Astro.slots.has("media") && (
+    <div class="case-intro__media">
+      <slot name="media" />
+    </div>
+  )}
+</section>
+<CaseJump target={next} />
+
+<style>
+  .case-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+    margin-top: clamp(48px, 6vw, 72px);
+  }
+  .case-intro__title {
+    margin: 0 0 -8px;
+    font-size: clamp(26px, 3vw, 36px);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+  .case-intro__text {
+    --case-paragraph-size: clamp(18px, 1.5vw, 20px);
+    --case-paragraph-leading: 1.65;
+    --case-paragraph-measure: 56ch;
+    --case-paragraph-gap: 1.15em;
+    --case-paragraph-color: var(--color-text);
+    --case-quote-size: clamp(18px, 1.5vw, 20px);
+    --case-quote-leading: 1.55;
+    --case-quote-margin: 28px 0 24px;
+    --case-quote-indent: 20px;
+    --case-quote-measure: 44rem;
+  }
+  .case-intro__media {
+    width: min(100%, 380px);
+  }
+  @media (min-width: 720px) {
+    .case-intro {
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 380px);
+      grid-template-rows: auto 1fr;
+      gap: 28px clamp(32px, 6vw, 96px);
+      align-items: start;
+    }
+    .case-intro__title,
+    .case-intro__text {
+      grid-column: 1;
+    }
+    .case-intro__text {
+      margin-top: 20px;
+    }
+    .case-intro__media {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+      justify-self: end;
+      width: 100%;
+    }
+  }
+</style>

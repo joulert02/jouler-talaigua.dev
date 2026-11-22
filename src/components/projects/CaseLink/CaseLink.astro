@@ -1,0 +1,62 @@
+---
+import Icon from "../../ui/Icon/Icon.astro";
+import { getLang, useTranslations } from "../../../i18n/ui";
+interface Props {
+  /** Where the link goes. A full URL leaves the site: it opens in a new tab, with an arrow and a spoken note. */
+  href: string;
+}
+const { href } = Astro.props;
+const external = /^https?:\/\//.test(href);
+const t = useTranslations(getLang(Astro));
+---
+
+<!--
+  A link in case copy. Case MDX renders every Markdown link with it (WorkCase passes it as `a`), so the copy stays
+  plain Markdown: `[Nosotras](https://www.nosotrasonline.com.co/)`.
+-->
+{external ? (
+  <a class="case-link" href={href} target="_blank" rel="noopener noreferrer">
+    <slot />
+    <Icon name="external" size={12} />
+    <span class="case-link__note">{t("layout.newTab")}</span>
+  </a>
+) : (
+  <a class="case-link" href={href}>
+    <slot />
+  </a>
+)}
+
+<style>
+  .case-link {
+    color: var(--color-text-accent);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    transition:
+      color var(--duration-fast) var(--ease-out),
+      text-decoration-color var(--duration-fast) var(--ease-out);
+  }
+  .case-link :global(svg) {
+    margin-left: 0.15em;
+    vertical-align: 0.05em;
+  }
+  .case-link:focus-visible {
+    border-radius: 2px;
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 2px;
+  }
+  .case-link__note {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  @media (hover: hover) {
+    .case-link:hover {
+      text-decoration-color: currentColor;
+    }
+  }
+</style>

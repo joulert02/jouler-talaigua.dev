@@ -1,0 +1,227 @@
+---
+import Icon from "../../ui/Icon/Icon.astro";
+import { getLang, useTranslations } from "../../../i18n/ui";
+import type { VideoSource, VideoTrack } from "./types";
+interface Props {
+  /** The files, best first; the browser plays the first `type` it supports. Keep an H.264 MP4 last as the fallback. */
+  sources: readonly VideoSource[];
+  /** Still shown before it plays; also blurred behind the frame. */
+  poster: string;
+  /** Captions and subtitles; the one in the page's language is on by default. */
+  tracks?: readonly VideoTrack[];
+  /** The figure's caption, also used in the Play button's name. */
+  caption: string;
+  /** Length in seconds, shown on the Play button and read with its name. */
+  duration: number;
+  /** Intrinsic size of the video, to reserve its space. */
+  width: number;
+  height: number;
+  /** A link out under the caption, e.g. the original post. */
+  link?: { href: string; label: string };
+}
+const { sources, poster, tracks = [], caption, duration, width, height, link } = Astro.props;
+const lang = getLang(Astro);
+const t = useTranslations(lang);
+const clock = `${Math.floor(duration / 60)}:${String(Math.round(duration % 60)).padStart(2, "0")}`;
+const spoken = new Intl.NumberFormat(lang, { style: "unit", unit: "second", unitDisplay: "long" }).format(
+  duration,
+);
+const playLabel = t("case.playVideo").replace("{caption}", caption).replace("{duration}", spoken);
+const captionId = "case-video-caption";
+---
+
+<!--
+  A portrait video in a case (v11 `.reel`, Pragma intro): a 3:4 plate over a blurred copy of the poster, so the column
+  reads square. At rest one clear Play button sits over the poster; once it plays, the native controls take over.
+  Without JS the video keeps its native controls and the button stays hidden. Fullscreen letterboxes, never crops.
+-->
+<figure class="case-video" aria-labelledby={captionId} data-case-video>
+  <div class="case-video__frame" style={`--case-video-poster: url("${poster}")`}>
+    <video
+      class="case-video__video"
+      controls
+      playsinline
+      preload="metadata"
+      poster={poster}
+      width={width}
+      height={height}
+      aria-labelledby={captionId}
+    >
+      {sources.map((source) => (
+        <source src={source.src} type={source.type} />
+      ))}
+      {tracks.map((track) => (
+        <track
+          kind={track.kind ?? "subtitles"}
+          src={track.src}
+          srclang={track.srclang}
+          label={track.label}
+          default={track.srclang === lang}
+        />
+      ))}
+    </video>
+    <button class="case-video__play" type="button" aria-label={playLabel} hidden>
+      <Icon name="play" />
+      <span>{t("case.play")}</span>
+      <small class="case-video__clock" aria-hidden="true">
+        {clock}
+      </small>
+    </button>
+  </div>
+  <figcaption class="case-video__caption">
+    <span id={captionId}>{caption}</span>
+    {link && (
+      <a class="case-video__link" href={link.href} target="_blank" rel="noopener noreferrer">
+        {link.label}
+        <Icon name="external" size={12} />
+        <span class="case-video__note">{t("layout.newTab")}</span>
+      </a>
+    )}
+  </figcaption>
+</figure>
+
+<style>
+  .case-video {
+    display: grid;
+    gap: 4px;
+    margin: 0;
+    padding: 9px;
+  }
+  .case-video__frame {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    isolation: isolate;
+    border-radius: 9px;
+    background: #0e0f11;
+    box-shadow:
+      0 0 0 8px var(--color-surface),
+      0 0 0 9px var(--color-border),
+      var(--shadow-rest);
+  }
+  .case-video__frame::before {
+    content: "";
+    position: absolute;
+    inset: -24px;
+    z-index: -1;
+    background: var(--case-video-poster, none) center / cover;
+    filter: blur(22px) saturate(1.1);
+    opacity: 0.9;
+  }
+  .case-video__video {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: transparent;
+  }
+  .case-video__video:fullscreen {
+    object-fit: contain;
+    background: #000;
+  }
+  .case-video__play {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 52px;
+    padding: 0 22px 0 18px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: #fff;
+    box-shadow: 0 8px 24px -8px rgb(0 0 0 / 0.5);
+    color: #141517;
+    font: 600 16px / 1 var(--font-sans);
+    cursor: pointer;
+    transition: transform var(--duration-fast) var(--ease-out);
+  }
+  .case-video__play[hidden] {
+    display: none;
+  }
+  .case-video__play:active {
+    transform: scale(0.97);
+  }
+  .case-video__play:focus-visible {
+    outline: 3px solid #a58bff;
+    outline-offset: 3px;
+  }
+  .case-video__clock {
+    color: #5b616a;
+    font: 500 13px / 1 var(--font-mono);
+  }
+  .case-video__caption {
+    display: grid;
+    justify-items: start;
+    padding-top: 18px;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-small);
+    line-height: 1.5;
+  }
+  .case-video__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    color: var(--color-text-secondary);
+  }
+  .case-video__link:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 2px;
+  }
+  .case-video__note {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  @media (hover: hover) {
+    .case-video__play:hover {
+      transform: scale(1.04);
+    }
+    .case-video__link:hover {
+      color: var(--color-text-accent);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .case-video__play {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  for (const figure of document.querySelectorAll<HTMLElement>("[data-case-video]")) {
+    const video = figure.querySelector("video");
+    const play = figure.querySelector<HTMLButtonElement>(".case-video__play");
+    if (!video || !play) continue;
+    const rest = (atRest: boolean) => {
+      play.hidden = !atRest;
+      video.controls = !atRest;
+    };
+    play.addEventListener("click", () => {
+      rest(false);
+      video.focus();
+      video.play().catch(() => {
+        if (video.paused && !video.currentTime) rest(true);
+      });
+    });
+    video.addEventListener("play", () => rest(false));
+    video.addEventListener("ended", () => {
+      rest(true);
+      play.focus();
+    });
+    rest(true);
+    // Fullscreen keeps the portrait frame; phones that allow it stay in portrait.
+    document.addEventListener("fullscreenchange", () => {
+      const orientation = screen.orientation as ScreenOrientation & { lock?: (o: string) => Promise<void> };
+      if (document.fullscreenElement === video) orientation.lock?.("portrait").catch(() => undefined);
+      else if (!document.fullscreenElement) orientation.unlock?.();
+    });
+  }
+</script>
