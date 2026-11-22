@@ -1,0 +1,385 @@
+---
+import { Image } from "astro:assets";
+import ExampleFrame from "../ExampleFrame/ExampleFrame.astro";
+import ExampleHint from "../ExampleFrame/ExampleHint/ExampleHint.astro";
+import SegmentedSwitch from "../../ui/SegmentedSwitch/SegmentedSwitch.astro";
+import BrowserFrame from "../../ui/BrowserFrame/BrowserFrame.astro";
+import Button from "../../ui/Button/Button.astro";
+import Icon from "../../ui/Icon/Icon.astro";
+import home from "../../../assets/projects/pragma/petys/home.webp";
+import homeMobile from "../../../assets/projects/pragma/petys/home-mobile.jpg";
+import homeUpdated from "../../../assets/projects/pragma/petys/home-updated.jpg";
+import homeMobileUpdated from "../../../assets/projects/pragma/petys/home-mobile-updated.jpg";
+import { getLang, useTranslations } from "../../../i18n/ui";
+import { petysCopy, petysUrl } from "./petys.config";
+const lang = getLang(Astro);
+const t = useTranslations(lang);
+const copy = petysCopy[lang];
+---
+
+<!--
+  Petys (Brand platforms, chapter 01): the live site's screenshots on desktop or phone, and a content change travelling
+  from the CMS to the CDN. "Publish a change" lights each step of the rail in turn, then a chip lands on the capture.
+  Each step's explanation is persistent text in the list; only the completion is announced.
+-->
+<div class="petys-playground" data-petys data-done={copy.done}>
+  <ExampleFrame id="petys-example" label={copy.label}>
+    <div class="petys-playground__device" slot="controls">
+      <SegmentedSwitch
+        name="petys-device"
+        legend={t("case.device")}
+        options={[
+          { value: "desktop", label: t("case.desktop") },
+          { value: "mobile", label: t("case.mobile") },
+        ]}
+      />
+    </div>
+    <div class="petys-playground__site" data-device="desktop">
+      <div class="petys-playground__desktop">
+        <BrowserFrame address="petys.com">
+          <div class="petys-playground__shots">
+            <Image
+              class="petys-playground__shot"
+              src={home}
+              alt={copy.desktopAlt}
+              widths={[680, 1280]}
+              sizes="(min-width: 720px) 680px, 100vw"
+            />
+            <Image
+              class="petys-playground__shot petys-playground__shot--after"
+              src={homeUpdated}
+              alt=""
+              widths={[680, 1280]}
+              sizes="(min-width: 720px) 680px, 100vw"
+            />
+          </div>
+        </BrowserFrame>
+      </div>
+      <div class="petys-playground__phone">
+        <Image
+          class="petys-playground__shot petys-playground__shot--phone"
+          src={homeMobile}
+          alt={copy.mobileAlt}
+          width={452}
+        />
+        <Image
+          class="petys-playground__shot petys-playground__shot--phone petys-playground__shot--after"
+          src={homeMobileUpdated}
+          alt=""
+          width={452}
+        />
+      </div>
+      <p class="petys-playground__chip" aria-hidden="true">
+        {copy.updated}
+      </p>
+    </div>
+    <div class="petys-playground__rail-head">
+      <p class="petys-playground__rail-title" id="petys-rail">
+        {copy.railTitle}
+      </p>
+      <button
+        class="petys-playground__rail-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="petys-rail-steps"
+        data-show={copy.showRail}
+        data-hide={copy.hideRail}
+      >
+        {copy.showRail}
+      </button>
+    </div>
+    <ol class="petys-playground__rail" id="petys-rail-steps" aria-labelledby="petys-rail">
+      {copy.steps.map((step) => (
+        <li class="petys-playground__step">
+          <b class="petys-playground__step-name">{step.name}</b>
+          <span class="petys-playground__step-text">{step.text}</span>
+        </li>
+      ))}
+    </ol>
+    <ExampleHint slot="foot">{copy.hint}</ExampleHint>
+    <Fragment slot="actions">
+      <Button variant="ghost" size="sm" href={petysUrl} label={copy.live}>
+        <Icon slot="end" name="external" size={14} />
+      </Button>
+      <Button size="sm" label={copy.publish}>
+        <Icon slot="start" name="play" size={14} />
+      </Button>
+    </Fragment>
+  </ExampleFrame>
+</div>
+
+<style>
+  .petys-playground {
+    --example-frame-foot-gap: 24px;
+    /* The phone's outer width, which places the chip on it. */
+    --petys-phone: min(236px, 72%);
+  }
+  /* Phones always see the phone capture; the switch only appears where both fit. */
+  .petys-playground__device {
+    display: none;
+  }
+  .petys-playground__site {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    margin-top: 20px;
+  }
+  .petys-playground__desktop {
+    width: min(100%, 680px);
+  }
+  .petys-playground__shot {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  /* The capture after "Publish a change": the live site with the next banner, faded in over the first one. */
+  .petys-playground__shots {
+    position: relative;
+  }
+  .petys-playground__shot--after {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.6s var(--ease-out);
+  }
+  .petys-playground__site[data-published] .petys-playground__shot--after {
+    opacity: 1;
+  }
+  .petys-playground__phone {
+    position: relative;
+    display: none;
+    width: var(--petys-phone);
+    aspect-ratio: 786 / 1704;
+    overflow: hidden;
+    border: 6px solid #0e0f11;
+    border-radius: 32px;
+    background: #fff;
+    box-shadow:
+      0 0 0 1.5px #46484d,
+      0 18px 40px rgb(0 0 0 / 0.18);
+  }
+  /* Cover from the top: the bezel's border changes the box's ratio a little, and contain left white bands. */
+  .petys-playground__shot--phone {
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+  .petys-playground__site[data-device="mobile"] .petys-playground__desktop {
+    display: none;
+  }
+  .petys-playground__site[data-device="mobile"] .petys-playground__phone {
+    display: block;
+  }
+  .petys-playground__chip {
+    position: absolute;
+    top: 52px;
+    right: max(16px, calc(50% - 340px + 16px));
+    margin: 0;
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
+    background: var(--color-text);
+    color: var(--color-bg);
+    font: 500 12px / 1.3 var(--font-mono);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition:
+      opacity 0.25s var(--ease-out),
+      transform 0.25s var(--ease-out);
+  }
+  /* On the phone: bottom right of the screen, just above the site's tab bar. */
+  .petys-playground__site[data-device="mobile"] .petys-playground__chip {
+    top: auto;
+    right: calc(50% - var(--petys-phone) / 2 + 14px);
+    bottom: 54px;
+  }
+  .petys-playground__chip[data-show] {
+    opacity: 1;
+    transform: none;
+  }
+  .petys-playground__rail-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 16px;
+    margin: 28px 0 0;
+  }
+  /* On phones the illustration is folded behind a button; from 720px it is always shown. */
+  .petys-playground__rail-toggle {
+    min-height: 44px;
+    padding: 0 16px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: var(--font-size-small);
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .petys-playground__rail-toggle:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 2px;
+  }
+  .petys-playground__rail-head:has([aria-expanded="false"]) + .petys-playground__rail {
+    display: none;
+  }
+  .petys-playground__rail-title {
+    margin: 0;
+    color: var(--color-text-muted);
+    font: 500 var(--font-size-label) / 1.3 var(--font-mono);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .petys-playground__rail {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    margin: 16px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .petys-playground__step {
+    position: relative;
+    padding: 0 0 0 28px;
+    color: var(--color-text-secondary);
+    font-size: 14px;
+    font-weight: 600;
+    transition: color 0.3s;
+  }
+  .petys-playground__step::before {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 0;
+    width: 12px;
+    height: 12px;
+    border: 2px solid var(--color-text-muted);
+    border-radius: 50%;
+    background: var(--color-surface);
+    transition:
+      background-color 0.3s,
+      border-color 0.3s,
+      box-shadow 0.3s;
+  }
+  .petys-playground__step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 16px;
+    bottom: -14px;
+    left: 5px;
+    width: 2px;
+    background: var(--color-border);
+    transition: background-color 0.3s;
+  }
+  .petys-playground__step-name {
+    display: block;
+    font-weight: 600;
+  }
+  .petys-playground__step-text {
+    display: block;
+    margin-top: 4px;
+    color: var(--color-text-muted);
+    font: 400 var(--font-size-small) / 1.45 var(--font-sans);
+    text-wrap: pretty;
+  }
+  .petys-playground__step[data-on] {
+    color: var(--color-text);
+  }
+  .petys-playground__step[data-on]::before {
+    border-color: var(--color-text);
+    background: var(--color-text);
+  }
+  .petys-playground__step[data-on]::after {
+    background: var(--color-text);
+  }
+  .petys-playground__step[data-on] .petys-playground__step-text {
+    color: var(--color-text-secondary);
+  }
+  .petys-playground__step[data-now]::before {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-text) 16%, transparent);
+  }
+  @media (min-width: 720px) {
+    .petys-playground__device {
+      display: block;
+    }
+    .petys-playground {
+      --petys-phone: 238px;
+    }
+    .petys-playground__phone {
+      width: 226px;
+      box-sizing: content-box;
+    }
+    .petys-playground__rail-toggle {
+      display: none;
+    }
+    .petys-playground__rail-head:has([aria-expanded="false"]) + .petys-playground__rail {
+      display: grid;
+    }
+    .petys-playground__rail {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 0;
+    }
+    .petys-playground__step {
+      padding: 24px 20px 0 0;
+    }
+    .petys-playground__step::before {
+      top: 0;
+    }
+    .petys-playground__step:not(:last-child)::after {
+      top: 5px;
+      bottom: auto;
+      left: 18px;
+      right: 6px;
+      width: auto;
+      height: 2px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .petys-playground__chip,
+    .petys-playground__shot--after,
+    .petys-playground__step,
+    .petys-playground__step::before,
+    .petys-playground__step::after {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { announce, followDevice, wait } from "../ExampleFrame/frame";
+
+  for (const root of document.querySelectorAll<HTMLElement>("[data-petys]")) {
+    const frame = root.querySelector(".example-frame");
+    const site = root.querySelector<HTMLElement>(".petys-playground__site");
+    const chip = root.querySelector<HTMLElement>(".petys-playground__chip");
+    const publish = root.querySelector<HTMLButtonElement>("button.button--primary");
+    const steps = [...root.querySelectorAll<HTMLElement>(".petys-playground__step")];
+    if (!frame || !site || !chip || !publish) continue;
+    followDevice(frame, site, "petys-device");
+    const toggle = root.querySelector<HTMLButtonElement>(".petys-playground__rail-toggle");
+    toggle?.addEventListener("click", () => {
+      const open = toggle.getAttribute("aria-expanded") !== "true";
+      toggle.setAttribute("aria-expanded", String(open));
+      toggle.textContent = (open ? toggle.dataset["hide"] : toggle.dataset["show"]) ?? "";
+    });
+    publish.addEventListener("click", async () => {
+      if (publish.getAttribute("aria-disabled") === "true") return;
+      publish.setAttribute("aria-disabled", "true");
+      chip.removeAttribute("data-show");
+      site.removeAttribute("data-published");
+      steps.forEach((step) => step.removeAttribute("data-on"));
+      for (const step of steps) {
+        step.setAttribute("data-on", "");
+        step.setAttribute("data-now", "");
+        await wait(650);
+        step.removeAttribute("data-now");
+      }
+      announce(frame, root.dataset.done ?? "");
+      site.setAttribute("data-published", "");
+      chip.setAttribute("data-show", "");
+      publish.removeAttribute("aria-disabled");
+    });
+  }
+</script>
