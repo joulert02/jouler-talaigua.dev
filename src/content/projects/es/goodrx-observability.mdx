@@ -7,5 +7,91 @@ tier: 1
 order: 3
 focus: [Observabilidad, Real User Monitoring, CI/CD]
 cover: ../../../assets/projects/goodrx/cards.webp
-case: coming
+case: live
 ---
+
+import CaseFacts from "@/components/projects/case/CaseFacts/CaseFacts.astro";
+import Fact from "@/components/projects/case/CaseFacts/Fact/Fact.astro";
+import CaseIntro from "@/components/projects/case/CaseIntro/CaseIntro.astro";
+import CaseQuote from "@/components/projects/case/CaseQuote/CaseQuote.astro";
+import Chapter from "@/components/projects/case/Chapter/Chapter.astro";
+import FullStory from "@/components/projects/case/Chapter/FullStory/FullStory.astro";
+import PlanPlayground from "@/components/projects/goodrx-observability/PlanPlayground/PlanPlayground.astro";
+import CloudFigure from "@/components/projects/goodrx-observability/CloudFigure/CloudFigure.astro";
+import SdksPlayground from "@/components/projects/goodrx-observability/SdksPlayground/SdksPlayground.astro";
+import PrivacyPlayground from "@/components/projects/goodrx-observability/PrivacyPlayground/PrivacyPlayground.astro";
+import CardsPlayground from "@/components/projects/goodrx-observability/CardsPlayground/CardsPlayground.astro";
+
+<CaseFacts>
+  <Fact label="Rol">Senior Software Engineer · EPAM</Fact>
+  <Fact label="Equipo">Tres ingenieros</Fact>
+  <Fact label="Enfoque">Migración de observabilidad · Frontend · CI/CD</Fact>
+</CaseFacts>
+
+<CaseIntro title="Lo que aprendí" next="plan">
+
+GoodRx maneja tantos logs y transacciones que el precio de Datadog, basado en almacenamiento, se había vuelto caro. La empresa decidió pasarse a groundcover, y yo fui uno de los tres ingenieros que migraron la observabilidad de la aplicación frontend.
+
+La tratamos como una prueba de concepto con una meta clara: decidir qué medir, demostrar que ambas herramientas lo capturaban igual y llevarlo a producción.
+
+<CaseQuote>
+
+Esperaba un producto sencillo y encontré uno de los equipos más maduros con los que he trabajado. La IA era una compañera, no la que lo hacía todo: agentes revisaban los pull requests como parte del flujo. Las pruebas de regresión visual con Chromatic frenaban un pull request hasta que alguien confirmaba que un cambio en un componente era intencional, y cada componente y lineamiento vivía en Storybook.
+
+También cambió lo que para mí significa el ownership. Definíamos nuestro propio roadmap de producto y técnico, éramos dueños de las funcionalidades desde la definición hasta la entrega, proponíamos nuestras propias mejoras y ayudábamos a otros equipos. Sigo trabajando así hoy.
+
+</CaseQuote>
+</CaseIntro>
+
+<Chapter id="plan" number="01" title="Definir la migración" short="El plan" lead="La tratamos como una prueba de concepto con una meta clara. El plan fue nuestro primer entregable, presentado antes de escribir código.">
+  <PlanPlayground />
+  <FullStory>
+
+Empezamos revisando lo que Datadog medía en el frontend. A partir de ahí, en estrecho trabajo con producto, definimos el alcance nosotros mismos: qué métricas migrar primero, cómo correría la migración, cómo demostraríamos que funcionaba y una definición de terminado.
+
+Ese plan fue nuestro primer entregable. Lo presentamos a nuestros líderes y a producto antes de escribir código.
+
+  </FullStory>
+</Chapter>
+
+<Chapter id="cloud" number="02" title="Sobre nuestra propia nube" short="Nube propia" lead="El modelo Bring Your Own Cloud de groundcover: su interfaz y su SDK, sobre servidores que GoodRx ya tenía.">
+  <CloudFigure />
+  <FullStory>
+
+Usamos el modelo Bring Your Own Cloud de groundcover: su interfaz y su SDK, corriendo sobre la propia infraestructura de GoodRx. Así la empresa usaba servidores que ya tenía en lugar de pagar el almacenamiento de otro proveedor.
+
+  </FullStory>
+</Chapter>
+
+<Chapter id="sdks" number="03" title="Dos SDK, lado a lado" short="Dos SDK" lead="Corrí el SDK de groundcover junto al de Datadog, comparé lo que capturaba cada uno y lo llevé por cada ambiente hasta producción.">
+  <SdksPlayground />
+  <FullStory>
+
+Instalé el SDK de groundcover en módulos específicos del frontend y lo corrí junto al de Datadog, primero en local, para comparar lo que capturaba cada uno. Después lo desplegué por cada ambiente hasta producción, certifiqué que los datos llegaban correctamente y revisé cada punto de la definición de terminado.
+
+Fue prácticamente mi primer entregable en GoodRx, así que el verdadero reto fue aprender el sistema rápido: cómo estaba organizada la arquitectura, cómo se separaban los ambientes y cómo se registraban las llaves. Aprovisioné en nuestros servidores lo que necesitaban el Real User Monitoring y los dashboards de groundcover, y cambié los pipelines de CI para desplegar el nuevo artefacto.
+
+  </FullStory>
+</Chapter>
+
+<Chapter id="privacy" number="04" title="Usuarios reales, sin grabarlos" short="Privacidad" lead="Real User Monitoring en producción: eventos y errores de consola agrupados, sin asociarlos a personas concretas.">
+  <PrivacyPlayground />
+  <FullStory>
+
+Entregamos Real User Monitoring funcionando en producción: eventos de usuario, más errores de consola capturados y agrupados para que el equipo pudiera actuar sobre ellos.
+
+Una opción por defecto tenía que irse. groundcover graba las sesiones de usuario de entrada, y las políticas de GoodRx no permiten grabar ese tipo de datos de usuario. Configuramos el SDK para capturar errores y eventos sin asociarlos a personas concretas.
+
+Los equipos de backend se encargaron de sus propias métricas. Nuestro alcance era el frontend, y ahí se quedó hasta que salí de EPAM.
+
+  </FullStory>
+</Chapter>
+
+<Chapter id="cards" number="05" title="Una pieza más pequeña: una card en lugar de tres" short="Cards" lead="El inicio mostraba contenido de salud con tres componentes de card que se habían ido distanciando. Construí una sola card que cubre lo que necesitaban las tres.">
+  <CardsPlayground />
+  <FullStory>
+
+El inicio mostraba contenido de salud con tres componentes de card distintos que se habían ido distanciando. Construí un único componente de card que cubría lo que necesitaban los tres, así que cada card de la página sale ahora de un solo lugar. Un cambio pequeño, pero del tipo que mantiene consistente un sistema de diseño.
+
+  </FullStory>
+</Chapter>
