@@ -1,0 +1,1200 @@
+---
+import { Font, Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import ExampleFrame from "../../case/ExampleFrame/ExampleFrame.astro";
+import ExampleHint from "../../case/ExampleFrame/ExampleHint/ExampleHint.astro";
+import ExampleNote from "../../case/ExampleFrame/ExampleNote/ExampleNote.astro";
+import SegmentedSwitch from "../../../ui/SegmentedSwitch/SegmentedSwitch.astro";
+import PhoneFrame from "../../../ui/PhoneFrame/PhoneFrame.astro";
+import Button from "../../../ui/Button/Button.astro";
+import Icon from "../../../ui/Icon/Icon.astro";
+import appBar from "../../../../assets/projects/pragma/nosotras/app-bar.png";
+import blobM from "../../../../assets/projects/pragma/nosotras/blob-m.svg";
+import blobYellow from "../../../../assets/projects/pragma/nosotras/blob-yellow.svg";
+import bloodDrop from "../../../../assets/projects/pragma/nosotras/blood-drop.png";
+import bubbleM from "../../../../assets/projects/pragma/nosotras/bubble-m.svg";
+import bubble from "../../../../assets/projects/pragma/nosotras/bubble.svg";
+import circle from "../../../../assets/projects/pragma/nosotras/circle.svg";
+import creamDrop from "../../../../assets/projects/pragma/nosotras/cream-drop.png";
+import dots from "../../../../assets/projects/pragma/nosotras/dots.svg";
+import island from "../../../../assets/projects/pragma/nosotras/island.svg";
+import logo from "../../../../assets/projects/pragma/nosotras/logo.png";
+import menu from "../../../../assets/projects/pragma/nosotras/menu.svg";
+import planetBlue from "../../../../assets/projects/pragma/nosotras/planet-blue.svg";
+import planetPink from "../../../../assets/projects/pragma/nosotras/planet-pink.svg";
+import puddle from "../../../../assets/projects/pragma/nosotras/puddle.svg";
+import ring from "../../../../assets/projects/pragma/nosotras/ring.svg";
+import spotifyCard from "../../../../assets/projects/pragma/nosotras/spotify-card.png";
+import stripes from "../../../../assets/projects/pragma/nosotras/stripes.svg";
+import title from "../../../../assets/projects/pragma/nosotras/title.png";
+import uterus from "../../../../assets/projects/pragma/nosotras/uterus.png";
+import worm from "../../../../assets/projects/pragma/nosotras/worm.svg";
+import { getLang, useTranslations } from "../../../../i18n/ui";
+import {
+  nosotrasCast,
+  nosotrasCopy,
+  nosotrasSite,
+  nosotrasUrl,
+  nosotrasWorlds,
+  type NosotrasWorld,
+} from "./nosotras.config";
+
+const lang = getLang(Astro);
+const t = useTranslations(lang);
+const copy = nosotrasCopy[lang];
+
+/** One piece of art on an artboard: position and width in artboard units; `tint` recolours it per world. */
+interface Art {
+  src: ImageMetadata;
+  x: number;
+  y: number;
+  w: number;
+  tint?: string;
+  drift?: "normal" | "slow";
+}
+const desktopArt: Art[] = [
+  { src: circle, x: 563, y: -110, w: 945, tint: "circle" },
+  { src: ring, x: 1206, y: 22, w: 174, tint: "ring", drift: "normal" },
+  { src: planetBlue, x: 1266, y: 107, w: 118, tint: "planet-r", drift: "slow" },
+  { src: stripes, x: 1160, y: 517, w: 99, tint: "stripes" },
+  { src: blobYellow, x: -37, y: 118, w: 137, tint: "blob", drift: "slow" },
+  { src: planetPink, x: -95, y: 525, w: 284, tint: "planet-b", drift: "normal" },
+  { src: worm, x: 568, y: 586, w: 188, tint: "worm" },
+  { src: dots, x: 568, y: 71, w: 72, tint: "dots", drift: "normal" },
+  { src: menu, x: 139, y: 40, w: 42 },
+  { src: title, x: 223, y: 40, w: 264 },
+  { src: spotifyCard, x: 128, y: 319, w: 240 },
+  { src: bubble, x: 375, y: 377, w: 214, tint: "bubble" },
+];
+const phoneArt: Art[] = [
+  { src: blobM, x: -22, y: 100, w: 85, tint: "blob", drift: "slow" },
+  { src: logo, x: 38, y: 26, w: 51 },
+  { src: title, x: 76, y: 48, w: 239 },
+  { src: dots, x: 329, y: 167, w: 38, tint: "dots", drift: "normal" },
+  { src: bubbleM, x: 40, y: 422, w: 215, tint: "bubble" },
+];
+const characters: Record<NosotrasWorld, { src: ImageMetadata; phoneWidth: number }> = {
+  utero: { src: uterus, phoneWidth: 132 },
+  periodo: { src: bloodDrop, phoneWidth: 128 },
+  flujo: { src: creamDrop, phoneWidth: 112 },
+};
+const first = nosotrasWorlds[0];
+const place = (x: number, y: number, w: number) => `--x: ${x}; --y: ${y}; --w: ${w}`;
+const artClass = (art: Art) => [
+  "nosotras-playground__art",
+  { "nosotras-playground__tint": art.tint, [`nosotras-playground__drift--${art.drift}`]: art.drift },
+];
+---
+
+<!--
+  Nosotras (Brand platforms, chapter 03): a recreation of the "Estoy creciendo" page, rebuilt from the designer's
+  exported layers on the original artboard grid (1 --u is one artboard unit: 1366 wide on desktop, 418 on the phone).
+  Choosing a character rotates the cast and brings its world's colours to the front, as in the three XD home
+  screens; on the phone the arrow does the same one character at a time. "Jugar" only says where the real game lives.
+  The art is drawn once, in the útero colours; the other worlds recolour it with filters fitted to the XD screens.
+-->
+<Font cssVariable="--font-nosotras" />
+<div class="nosotras-playground" data-nosotras data-play={copy.play} data-front={copy.front}>
+  <ExampleFrame id="nosotras-example" label={copy.label} shortLabel={copy.shortLabel}>
+    <div class="nosotras-playground__device" slot="controls">
+      <SegmentedSwitch
+        name="nosotras-device"
+        legend={t("case.device")}
+        options={[
+          { value: "desktop", label: t("case.desktop") },
+          { value: "mobile", label: t("case.mobile") },
+        ]}
+      />
+    </div>
+    <div class="nosotras-playground__site" data-device="desktop" data-world={first}>
+      <div class="nosotras-playground__desktop">
+        <div class="nosotras-playground__stage">
+          <p class="nosotras-playground__sr">{copy.desktop}</p>
+          <div class="nosotras-playground__top" aria-hidden="true">
+            <Image class="nosotras-playground__art" src={logo} alt="" style={place(69, 8, 66)} />
+            <div class="nosotras-playground__tools">
+              <span class="nosotras-playground__tool nosotras-playground__tool--pink">
+                <svg viewBox="0 0 20 20">
+                  <circle cx="8.5" cy="8.5" r="6"></circle>
+                  <path d="m13 13 5 5"></path>
+                </svg>
+              </span>
+              <span class="nosotras-playground__tool nosotras-playground__tool--pink">
+                <svg viewBox="0 0 20 20">
+                  <path d="M1 2h3l2.2 10.5h10L18 5H5"></path>
+                  <circle cx="7.5" cy="16.5" r="1.3"></circle>
+                  <circle cx="15" cy="16.5" r="1.3"></circle>
+                </svg>
+              </span>
+              <span class="nosotras-playground__tool">{nosotrasSite.contact}</span>
+              <span class="nosotras-playground__tool">
+                <svg viewBox="0 0 20 20">
+                  <path d="M5 14V9a5 5 0 0 1 10 0v5l1.5 2h-13Z M8.5 18h3"></path>
+                </svg>
+              </span>
+              <span class="nosotras-playground__tool nosotras-playground__auth">
+                <span class="nosotras-playground__auth-part">{nosotrasSite.signIn}</span>
+                <span class="nosotras-playground__auth-part">{nosotrasSite.signUp}</span>
+              </span>
+            </div>
+            <div class="nosotras-playground__nav">
+              {nosotrasSite.nav.map((item) => (
+                <span
+                  class:list={[
+                    "nosotras-playground__nav-item",
+                    { "nosotras-playground__nav-item--on": "current" in item },
+                  ]}
+                  style={`left: ${item.left}%`}
+                >
+                  {item.label}
+                  {"menu" in item && <i class="nosotras-playground__caret" />}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div class="nosotras-playground__hero" lang="es">
+            <div aria-hidden="true">
+              {desktopArt.map((art) => (
+                <Image
+                  class:list={artClass(art)}
+                  src={art.src}
+                  alt=""
+                  data-tint={art.tint}
+                  style={place(art.x, art.y, art.w)}
+                />
+              ))}
+            </div>
+            <p class="nosotras-playground__copy nosotras-playground__copy--1">
+              ¡Tus personajes favoritos de Nosotras ahora <br />
+              tienen <b class="nosotras-playground__bold">su propio juego</b>!
+            </p>
+            <p class="nosotras-playground__copy nosotras-playground__copy--2">
+              Cada uno de ellos tiene <b class="nosotras-playground__bold">un mundo increíble</b> <br />
+              en el que puedes jugar y aprender mucho sobre <br />
+              los cambios de tu cuerpo y la pubertad.
+            </p>
+            <p class="nosotras-playground__say">
+              Además, podrás ganar <br />
+              premios increíbles para <br />
+              disfrutar en casa <b class="nosotras-playground__say-bold">¡Serán xx ganadoras!</b>
+            </p>
+            <div class="nosotras-playground__isle">
+              <Image
+                class="nosotras-playground__art nosotras-playground__tint"
+                src={island}
+                alt=""
+                data-tint="island"
+                style={place(693, 387, 529)}
+              />
+              <Image
+                class="nosotras-playground__art nosotras-playground__tint"
+                src={puddle}
+                alt=""
+                data-tint="puddle"
+                style={place(743, 433, 189)}
+              />
+              {nosotrasWorlds.map((world, rank) => {
+                const [x, y, w] = nosotrasCast[first][world];
+                return (
+                  <button
+                    class="nosotras-playground__art nosotras-playground__char"
+                    type="button"
+                    data-char={world}
+                    lang={lang}
+                    aria-label={copy.characters[world]}
+                    aria-pressed={rank === 0 ? "true" : "false"}
+                    style={`${place(x, y, w)}; z-index: ${3 - rank}`}
+                  >
+                    <Image class="nosotras-playground__char-image" src={characters[world].src} alt="" />
+                  </button>
+                );
+              })}
+            </div>
+            <button class="nosotras-playground__play" type="button">
+              <span class="nosotras-playground__play-text">{nosotrasSite.play}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="nosotras-playground__phone">
+        <PhoneFrame label={copy.phone}>
+          <div class="nosotras-playground__phone-screen">
+            <div class="nosotras-playground__status" aria-hidden="true">
+              <span>9:41</span>
+              <span class="nosotras-playground__status-icons">
+                <svg viewBox="0 0 20 13">
+                  <rect x="0" y="8" width="3.2" height="5" rx="1" fill="currentColor"></rect>
+                  <rect x="5.5" y="5.5" width="3.2" height="7.5" rx="1" fill="currentColor"></rect>
+                  <rect x="11" y="3" width="3.2" height="10" rx="1" fill="currentColor"></rect>
+                  <rect x="16.5" y="0" width="3.2" height="13" rx="1" fill="currentColor"></rect>
+                </svg>
+                <svg viewBox="0 0 18 13">
+                  <path
+                    d="M1 4.6a11 11 0 0 1 16 0M3.6 7.6a7 7 0 0 1 10.8 0M6.3 10.5a3.2 3.2 0 0 1 5.4 0"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.9"
+                    stroke-linecap="round"
+                  ></path>
+                  <circle cx="9" cy="12" r="1.2" fill="currentColor"></circle>
+                </svg>
+                <svg viewBox="0 0 28 13">
+                  <rect
+                    x=".6"
+                    y=".6"
+                    width="23"
+                    height="11.8"
+                    rx="3.6"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-opacity=".4"
+                    stroke-width="1.2"
+                  ></rect>
+                  <rect x="2.4" y="2.4" width="19.2" height="8.2" rx="2.2" fill="currentColor"></rect>
+                  <path d="M25.5 4.5v4a2 2 0 0 0 0-4Z" fill="currentColor" fill-opacity=".45"></path>
+                </svg>
+              </span>
+            </div>
+            <div class="nosotras-playground__stage nosotras-playground__stage--phone" lang="es">
+              <p class="nosotras-playground__sr" lang={lang}>
+                {copy.mobile}
+              </p>
+              <div aria-hidden="true">
+                <i class="nosotras-playground__glow"></i>
+                <svg class="nosotras-playground__edge" viewBox="0 0 40 754" preserveAspectRatio="none">
+                  <path d="M40 0H27v368c0 40-22 60-22 110s22 70 22 110v166h13Z"></path>
+                </svg>
+                {phoneArt.map((art) => (
+                  <Image
+                    class:list={artClass(art)}
+                    src={art.src}
+                    alt=""
+                    data-tint={art.tint}
+                    style={place(art.x, art.y, art.w)}
+                  />
+                ))}
+                <span
+                  class="nosotras-playground__round"
+                  style="top: calc(27 * var(--u)); background: #ff3d9a"
+                >
+                  <svg viewBox="0 0 20 20">
+                    <circle cx="8.5" cy="8.5" r="5.5"></circle>
+                    <path d="m12.5 12.5 4.5 4.5"></path>
+                  </svg>
+                </span>
+                <span
+                  class="nosotras-playground__round"
+                  style="top: calc(83 * var(--u)); background: #8a3fd1"
+                >
+                  <svg viewBox="0 0 20 20">
+                    <path d="M4 6h12M4 10h12M4 14h12"></path>
+                  </svg>
+                </span>
+                <div class="nosotras-playground__isle">
+                  <Image
+                    class="nosotras-playground__art nosotras-playground__tint"
+                    src={island}
+                    alt=""
+                    data-tint="island"
+                    style={place(214, 565, 156)}
+                  />
+                </div>
+                <Image
+                  class="nosotras-playground__planet nosotras-playground__tint"
+                  src={planetPink}
+                  alt=""
+                  data-tint="planet-b"
+                />
+                <div class="nosotras-playground__bar">
+                  <Image class="nosotras-playground__bar-image" src={appBar} alt="" />
+                </div>
+              </div>
+              <p class="nosotras-playground__copy nosotras-playground__copy--1">
+                ¡Tus personajes favoritos de Nosotras ahora <br />
+                tienen <b class="nosotras-playground__bold">su propio juego</b>!
+              </p>
+              <p class="nosotras-playground__copy nosotras-playground__copy--2">
+                Cada uno de ellos tiene <b class="nosotras-playground__bold">un mundo increíble</b> <br />
+                en el que puedes jugar y aprender mucho <br />
+                sobre los cambios de tu cuerpo y la pubertad.
+              </p>
+              <p class="nosotras-playground__say">
+                Además, podrás ganar <br />
+                premios increíbles para <br />
+                disfrutar en casa <b class="nosotras-playground__say-bold">¡Serán xx ganadoras!</b>
+              </p>
+              <div class="nosotras-playground__isle">
+                <div class="nosotras-playground__chars">
+                  {nosotrasWorlds.map((world) => (
+                    <button
+                      class="nosotras-playground__char"
+                      type="button"
+                      data-char={world}
+                      lang={lang}
+                      aria-label={copy.characters[world]}
+                      style={`width: calc(${characters[world].phoneWidth} * var(--u))`}
+                      hidden={world !== first}
+                    >
+                      <Image class="nosotras-playground__char-image" src={characters[world].src} alt="" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <button class="nosotras-playground__next" type="button" lang={lang} aria-label={copy.next}>
+                <svg viewBox="0 0 26 26" aria-hidden="true">
+                  <path d="M23 13H3m8-8-8 8 8 8"></path>
+                </svg>
+              </button>
+              <button class="nosotras-playground__play" type="button">
+                <span class="nosotras-playground__play-text">{nosotrasSite.play}</span>
+              </button>
+            </div>
+          </div>
+        </PhoneFrame>
+      </div>
+      <p class="nosotras-playground__chip" aria-hidden="true"></p>
+    </div>
+    <Fragment slot="foot">
+      <ExampleHint>{copy.hint}</ExampleHint>
+      <ExampleNote>{copy.note}</ExampleNote>
+    </Fragment>
+    <Fragment slot="actions">
+      <Button variant="ghost" size="sm" href={nosotrasUrl} label={copy.live}>
+        <Icon slot="end" name="external" size={14} />
+      </Button>
+      <Button size="sm" label={copy.tour}>
+        <Icon slot="start" name="play" size={14} />
+      </Button>
+    </Fragment>
+  </ExampleFrame>
+</div>
+
+<style>
+  /* World colours: útero (default), periodo and flujo, from the XD screens. */
+  .nosotras-playground__site {
+    --_t: 0.8s;
+    --_bg: #c7a0ed;
+    --_next: #fff081;
+    --_copy: #fff;
+    --_b1: #fff080;
+    --_b2: #ff4dc1;
+    --_say: #b45ee6;
+    --_say-b: #8a1fd8;
+    --_play: #07cccc;
+    --_g1: #a77cd7;
+    --_g2: #b48ae0;
+    --_g3: #bc96e6;
+    --_f-island: none;
+    --_f-puddle: none;
+    --_f-ring: none;
+    --_f-blob: none;
+    --_f-planet-r: none;
+    --_f-planet-b: none;
+    --_f-worm: none;
+    --_f-dots: none;
+    --_f-stripes: none;
+    --_f-bubble: none;
+    --_f-circle: none;
+    position: relative;
+    display: grid;
+    justify-items: center;
+    margin-top: 20px;
+  }
+  .nosotras-playground__site[data-world="periodo"] {
+    --_bg: #fff081;
+    --_next: #ff89bf;
+    --_copy: #b47de6;
+    --_b1: #ff4dc1;
+    --_b2: #8a3fd1;
+    --_say: #fff;
+    --_say-b: #ff1fa6;
+    --_play: #b36bf2;
+    --_g1: #ffc766;
+    --_g2: #ffd96f;
+    --_g3: #ffe877;
+    --_f-island: hue-rotate(64deg) saturate(9) brightness(0.85);
+    --_f-puddle: hue-rotate(76deg) saturate(4.5) brightness(0.75);
+    --_f-ring: hue-rotate(-68deg) saturate(9) brightness(1);
+    --_f-blob: hue-rotate(-68deg) saturate(9) brightness(1.15);
+    --_f-planet-r: hue-rotate(64deg) saturate(9) brightness(0.8);
+    --_f-planet-b: hue-rotate(-108deg) saturate(0.4) brightness(1.55);
+    --_f-worm: hue-rotate(44deg) saturate(0.6) brightness(1.55);
+    --_f-dots: hue-rotate(44deg) saturate(0.6) brightness(1.55);
+    --_f-stripes: hue-rotate(76deg) saturate(8.5) brightness(0.8);
+    --_f-bubble: hue-rotate(-68deg) saturate(3.5) brightness(1);
+    --_f-circle: hue-rotate(140deg) saturate(1.5) brightness(1.22);
+  }
+  .nosotras-playground__site[data-world="flujo"] {
+    --_bg: #ff89bf;
+    --_next: #c7a0ed;
+    --_copy: #fff;
+    --_b1: #fff080;
+    --_b2: #8a3fd1;
+    --_say: #fff;
+    --_say-b: #fff080;
+    --_play: #ff3a96;
+    --_g1: #ff4d95;
+    --_g2: #ff6aa8;
+    --_g3: #ff7ab6;
+    --_f-island: hue-rotate(-128deg) saturate(1.2) brightness(1.1);
+    --_f-puddle: hue-rotate(-116deg) saturate(0.6) brightness(1.1);
+    --_f-ring: hue-rotate(108deg) saturate(0.6) brightness(1);
+    --_f-blob: hue-rotate(116deg) saturate(0.6) brightness(1);
+    --_f-planet-r: hue-rotate(-128deg) saturate(1.2) brightness(1.1);
+    --_f-planet-b: hue-rotate(-24deg) saturate(1) brightness(0.95);
+    --_f-worm: hue-rotate(-36deg) saturate(1.4) brightness(0.95);
+    --_f-dots: hue-rotate(-128deg) saturate(0.4) brightness(1.6);
+    --_f-stripes: hue-rotate(-128deg) saturate(1.6) brightness(1);
+    --_f-bubble: hue-rotate(-156deg) saturate(9) brightness(0.8);
+    --_f-circle: hue-rotate(76deg) saturate(7.5) brightness(1.2);
+  }
+  .nosotras-playground__tint {
+    transition: filter var(--_t) ease;
+  }
+  .nosotras-playground__tint[data-tint="island"] {
+    filter: var(--_f-island);
+  }
+  .nosotras-playground__tint[data-tint="puddle"] {
+    filter: var(--_f-puddle);
+  }
+  .nosotras-playground__tint[data-tint="ring"] {
+    filter: var(--_f-ring);
+  }
+  .nosotras-playground__tint[data-tint="blob"] {
+    filter: var(--_f-blob);
+  }
+  .nosotras-playground__tint[data-tint="planet-r"] {
+    filter: var(--_f-planet-r);
+  }
+  .nosotras-playground__tint[data-tint="planet-b"] {
+    filter: var(--_f-planet-b);
+  }
+  .nosotras-playground__tint[data-tint="worm"] {
+    filter: var(--_f-worm);
+  }
+  .nosotras-playground__tint[data-tint="dots"] {
+    filter: var(--_f-dots);
+  }
+  .nosotras-playground__tint[data-tint="stripes"] {
+    filter: var(--_f-stripes);
+  }
+  .nosotras-playground__tint[data-tint="bubble"] {
+    filter: var(--_f-bubble);
+  }
+  .nosotras-playground__tint[data-tint="circle"] {
+    filter: var(--_f-circle);
+  }
+
+  /* Phones always see the phone; the switch only appears where both fit. */
+  .nosotras-playground__device {
+    display: none;
+  }
+  .nosotras-playground__desktop {
+    display: none;
+    width: 100%;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: var(--shadow-rest);
+    container-type: inline-size;
+  }
+  .nosotras-playground__phone {
+    --_hit: 72px;
+    display: none;
+  }
+  .nosotras-playground__site[data-device="desktop"] .nosotras-playground__desktop,
+  .nosotras-playground__site[data-device="mobile"] .nosotras-playground__phone {
+    display: block;
+  }
+  .nosotras-playground__sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* The stage: the artboard. */
+  .nosotras-playground__stage {
+    --u: calc(100cqw / 1366);
+    position: relative;
+    overflow: hidden;
+    color-scheme: light;
+    font-family: var(--font-nosotras), "Gotham Rounded", "Avenir Next", system-ui, sans-serif;
+    line-height: 1;
+    text-align: left;
+    user-select: none;
+  }
+  .nosotras-playground__art {
+    position: absolute;
+    left: calc(var(--x) * var(--u));
+    top: calc(var(--y) * var(--u));
+    display: block;
+    width: calc(var(--w) * var(--u));
+    max-width: none;
+    height: auto;
+  }
+
+  /* Site chrome (desktop) */
+  .nosotras-playground__top {
+    position: relative;
+    height: calc(115 * var(--u));
+    background: #fff;
+    color: #4a4a4a;
+    font-family: "Avenir Next", "Nunito Sans", system-ui, sans-serif;
+    font-size: calc(12.5 * var(--u));
+  }
+  .nosotras-playground__top::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(72 * var(--u));
+    border-top: calc(1 * var(--u)) dashed #e3e3e3;
+  }
+  .nosotras-playground__tools {
+    position: absolute;
+    right: calc(78 * var(--u));
+    top: calc(23 * var(--u));
+    display: flex;
+    align-items: center;
+    height: calc(29 * var(--u));
+  }
+  .nosotras-playground__tool {
+    display: flex;
+    align-items: center;
+    height: calc(20 * var(--u));
+    padding: 0 calc(10 * var(--u));
+    border-right: calc(1 * var(--u)) solid #e3e3e3;
+  }
+  .nosotras-playground__tool:nth-last-child(-n + 2) {
+    border: 0;
+  }
+  .nosotras-playground__tool svg {
+    width: calc(17 * var(--u));
+    height: calc(17 * var(--u));
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .nosotras-playground__tool--pink {
+    color: #ff3d9a;
+  }
+  .nosotras-playground__auth {
+    height: calc(29 * var(--u));
+    margin-left: calc(14 * var(--u));
+    padding: 0;
+    overflow: hidden;
+    border-radius: calc(6 * var(--u));
+    color: #fff;
+    font-weight: 600;
+  }
+  .nosotras-playground__auth-part {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 calc(11 * var(--u));
+    background: #ff3d9a;
+  }
+  .nosotras-playground__auth-part + .nosotras-playground__auth-part {
+    background: #f2398e;
+  }
+  .nosotras-playground__nav {
+    position: absolute;
+    top: calc(73 * var(--u));
+    left: 0;
+    right: 0;
+    height: calc(42 * var(--u));
+  }
+  .nosotras-playground__nav-item {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+  }
+  .nosotras-playground__caret {
+    display: inline-block;
+    width: calc(5 * var(--u));
+    height: calc(5 * var(--u));
+    margin-left: calc(6 * var(--u));
+    border: solid currentColor;
+    border-width: 0 calc(1.2 * var(--u)) calc(1.2 * var(--u)) 0;
+    transform: translateY(-30%) rotate(45deg);
+  }
+  .nosotras-playground__nav-item--on {
+    color: #ff3d9a;
+  }
+  .nosotras-playground__nav-item--on::before {
+    content: "";
+    position: absolute;
+    left: calc(-6 * var(--u));
+    top: calc(-7 * var(--u));
+    width: calc(7 * var(--u));
+    height: calc(7 * var(--u));
+    border-radius: 50% 50% 0 50%;
+    background: #ff3d9a;
+    transform: rotate(45deg);
+  }
+
+  /* Hero world */
+  .nosotras-playground__hero {
+    position: relative;
+    height: calc(653 * var(--u));
+    overflow: hidden;
+    background: var(--_bg);
+    transition: background-color var(--_t) ease;
+  }
+  .nosotras-playground__copy {
+    position: absolute;
+    margin: 0;
+    color: var(--_copy);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    text-align: center;
+    white-space: nowrap;
+    transition: color var(--_t) ease;
+  }
+  .nosotras-playground__bold {
+    font-weight: 800;
+    transition: color var(--_t) ease;
+  }
+  .nosotras-playground__copy--1 .nosotras-playground__bold {
+    color: var(--_b1);
+  }
+  .nosotras-playground__copy--2 .nosotras-playground__bold {
+    color: var(--_b2);
+  }
+  .nosotras-playground__hero .nosotras-playground__copy {
+    line-height: calc(20 * var(--u));
+  }
+  .nosotras-playground__hero .nosotras-playground__copy--1 {
+    left: calc(135 * var(--u));
+    top: calc(233 * var(--u));
+    width: calc(446 * var(--u));
+    font-size: calc(20 * var(--u));
+  }
+  .nosotras-playground__hero .nosotras-playground__copy--2 {
+    left: calc(129 * var(--u));
+    top: calc(295 * var(--u));
+    width: calc(458 * var(--u));
+    font-size: calc(19 * var(--u));
+  }
+  .nosotras-playground__say {
+    position: absolute;
+    display: grid;
+    place-content: center;
+    gap: calc(6 * var(--u));
+    margin: 0;
+    color: var(--_say);
+    font-weight: 500;
+    text-align: center;
+    transition: color var(--_t) ease;
+  }
+  .nosotras-playground__say-bold {
+    color: var(--_say-b);
+    font-weight: 800;
+    transition: color var(--_t) ease;
+  }
+  .nosotras-playground__hero .nosotras-playground__say {
+    left: calc(392 * var(--u));
+    top: calc(393 * var(--u));
+    width: calc(190 * var(--u));
+    height: calc(80 * var(--u));
+    font-size: calc(14 * var(--u));
+    line-height: calc(15 * var(--u));
+    transform: rotate(-1deg);
+  }
+  .nosotras-playground__hero .nosotras-playground__say-bold {
+    font-size: calc(15 * var(--u));
+  }
+
+  /* Characters and the island float together. */
+  .nosotras-playground__isle {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    animation: nosotras-float 5.5s ease-in-out infinite;
+  }
+  .nosotras-playground__drift--normal,
+  .nosotras-playground__drift--slow {
+    animation: nosotras-drift 9s ease-in-out infinite;
+  }
+  .nosotras-playground__drift--slow {
+    animation-duration: 12s;
+    animation-direction: reverse;
+  }
+  @keyframes nosotras-float {
+    50% {
+      transform: translateY(calc(-9 * var(--u)));
+    }
+  }
+  @keyframes nosotras-drift {
+    50% {
+      transform: translate(calc(4 * var(--u)), calc(-6 * var(--u))) rotate(2deg);
+    }
+  }
+  .nosotras-playground__char {
+    padding: 0;
+    border: 0;
+    border-radius: calc(10 * var(--u));
+    background: none;
+    cursor: pointer;
+    pointer-events: auto;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nosotras-playground__char-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    transform-origin: 50% 100%;
+    transition: transform 0.2s var(--ease-out);
+  }
+  .nosotras-playground__char:focus-visible,
+  .nosotras-playground__play:focus-visible,
+  .nosotras-playground__next:focus-visible {
+    outline: 3px solid var(--color-text-accent);
+    outline-offset: 3px;
+  }
+  .nosotras-playground__char[data-hop] .nosotras-playground__char-image {
+    animation: nosotras-hop 0.55s cubic-bezier(0.3, 0.7, 0.4, 1);
+  }
+  @keyframes nosotras-hop {
+    35% {
+      transform: translateY(calc(-26 * var(--u))) scale(0.97, 1.04);
+    }
+    70% {
+      transform: translateY(0) scale(1.05, 0.95);
+    }
+  }
+  /* The cast rotates: each character glides to its new place; the one leaving the front arcs over the others. */
+  .nosotras-playground__hero .nosotras-playground__char {
+    transition:
+      left var(--_t) cubic-bezier(0.6, 0, 0.3, 1),
+      top var(--_t) cubic-bezier(0.6, 0, 0.3, 1),
+      width var(--_t) cubic-bezier(0.6, 0, 0.3, 1);
+  }
+  .nosotras-playground__hero .nosotras-playground__char[data-arc] {
+    animation: nosotras-arc var(--_t) cubic-bezier(0.5, 0, 0.5, 1);
+  }
+  @keyframes nosotras-arc {
+    50% {
+      transform: translateY(calc(-70 * var(--u))) rotate(6deg);
+    }
+  }
+
+  /* "Jugar": a filled pill with an offset outline, as drawn in the source file. */
+  .nosotras-playground__play {
+    position: absolute;
+    left: calc(415 * var(--u));
+    top: calc(539 * var(--u));
+    width: calc(162 * var(--u));
+    height: calc(40 * var(--u));
+    margin-top: calc(5 * var(--u));
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: var(--_play);
+    color: #fff;
+    font:
+      500 calc(20 * var(--u)) / 1 var(--font-nosotras),
+      "Gotham Rounded",
+      system-ui,
+      sans-serif;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    transition: background-color var(--_t) ease;
+  }
+  .nosotras-playground__play::before {
+    content: "";
+    position: absolute;
+    inset: calc(-5 * var(--u)) calc(-6 * var(--u)) calc(5 * var(--u)) calc(6 * var(--u));
+    border: calc(1.5 * var(--u)) solid #1a1a1a;
+    border-radius: 999px;
+    transition: transform 0.2s var(--ease-out);
+  }
+  .nosotras-playground__play::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(100%, var(--_hit, 44px));
+    height: max(100%, var(--_hit, 44px));
+    transform: translate(-50%, -50%);
+  }
+  .nosotras-playground__play-text {
+    position: relative;
+    top: calc(-2 * var(--u));
+    left: calc(4 * var(--u));
+  }
+  .nosotras-playground__play:active::before {
+    transform: translate(calc(-6 * var(--u)), calc(5 * var(--u)));
+  }
+
+  /* Phone: the shared iPhone frame, with the site below the status bar. Inside the frame the stage is 402 × 816
+     points; the extra height over the 418 × 738 artboard goes above "Jugar" and the app bar. */
+  .nosotras-playground__phone-screen {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .nosotras-playground__status {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: space-between;
+    height: 58px;
+    padding: 14px 34px 0 42px;
+    background: var(--_bg);
+    color: #000;
+    font:
+      600 18px/1 -apple-system,
+      BlinkMacSystemFont,
+      "SF Pro Text",
+      sans-serif;
+    transition: background-color var(--_t) ease;
+  }
+  .nosotras-playground__status-icons {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .nosotras-playground__status-icons svg {
+    width: auto;
+    height: 13px;
+  }
+  /*
+   * The artboard unit from the frame's screen width (PhoneFrame's --_width less its 9px bezels), not from 100cqw:
+   * PhoneFrame shrinks with CSS zoom, and Safari resolves container units inside a zoomed box at a different scale
+   * than Chrome, which broke the layout on iPhones.
+   */
+  .nosotras-playground__stage--phone {
+    --u: calc((var(--_width) - 18px) / 418);
+    flex: 1;
+    background: var(--_bg);
+    transition: background-color var(--_t) ease;
+  }
+  .nosotras-playground__glow {
+    position: absolute;
+    left: calc(-75 * var(--u));
+    top: calc(250 * var(--u));
+    width: calc(570 * var(--u));
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle at 57% 50%,
+      var(--_g1) 0 26%,
+      var(--_g2) 26% 37%,
+      var(--_g3) 37% 50%,
+      transparent 50%
+    );
+    transition: background var(--_t) ease;
+  }
+  .nosotras-playground__round {
+    position: absolute;
+    left: calc(336 * var(--u));
+    display: grid;
+    place-items: center;
+    width: calc(44 * var(--u));
+    height: calc(44 * var(--u));
+    border-radius: 50%;
+  }
+  .nosotras-playground__round svg {
+    width: 50%;
+    height: 50%;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+  }
+  .nosotras-playground__stage--phone .nosotras-playground__copy {
+    left: calc(20 * var(--u));
+    width: calc(378 * var(--u));
+    font-size: calc(16 * var(--u));
+    line-height: calc(20 * var(--u));
+  }
+  .nosotras-playground__stage--phone .nosotras-playground__copy--1 {
+    top: calc(247 * var(--u));
+  }
+  .nosotras-playground__stage--phone .nosotras-playground__copy--2 {
+    top: calc(299 * var(--u));
+  }
+  .nosotras-playground__stage--phone .nosotras-playground__say {
+    left: calc(57 * var(--u));
+    top: calc(450 * var(--u));
+    width: calc(190 * var(--u));
+    height: calc(80 * var(--u));
+    font-size: calc(11.5 * var(--u));
+    line-height: calc(14 * var(--u));
+  }
+  .nosotras-playground__stage--phone .nosotras-playground__say-bold {
+    font-size: calc(12.5 * var(--u));
+  }
+  .nosotras-playground__edge {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: calc(40 * var(--u));
+    height: calc(754 * var(--u));
+  }
+  .nosotras-playground__edge path {
+    fill: var(--_next);
+    transition: fill var(--_t) ease;
+  }
+  .nosotras-playground__chars {
+    position: absolute;
+    left: calc(214 * var(--u));
+    top: calc(420 * var(--u));
+    display: grid;
+    justify-items: center;
+    align-items: end;
+    width: calc(156 * var(--u));
+    height: calc(168 * var(--u));
+  }
+  .nosotras-playground__chars .nosotras-playground__char {
+    display: block;
+    grid-area: 1 / 1;
+  }
+  .nosotras-playground__chars .nosotras-playground__char[hidden] {
+    display: none;
+  }
+  .nosotras-playground__chars .nosotras-playground__char[data-in] .nosotras-playground__char-image {
+    animation: nosotras-in 0.45s cubic-bezier(0.3, 0.7, 0.4, 1) both;
+  }
+  @keyframes nosotras-in {
+    from {
+      opacity: 0;
+      transform: translateX(calc(60 * var(--u))) rotate(8deg);
+    }
+  }
+  .nosotras-playground__next {
+    position: absolute;
+    right: 0;
+    top: calc(482 * var(--u));
+    display: grid;
+    place-items: center;
+    width: calc(72 * var(--u));
+    height: calc(72 * var(--u));
+    padding: 0 0 0 calc(16 * var(--u));
+    border: 0;
+    border-radius: calc(10 * var(--u));
+    background: none;
+    color: #1a1a1a;
+    cursor: pointer;
+  }
+  .nosotras-playground__next:focus-visible {
+    outline-offset: -3px;
+  }
+  .nosotras-playground__next svg {
+    width: calc(26 * var(--u));
+    height: calc(26 * var(--u));
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.2s var(--ease-out);
+  }
+  .nosotras-playground__stage--phone .nosotras-playground__play {
+    left: calc(125 * var(--u));
+    top: calc(668 * var(--u));
+    width: calc(160 * var(--u));
+  }
+  .nosotras-playground__planet {
+    position: absolute;
+    left: calc(-70 * var(--u));
+    top: calc(670 * var(--u));
+    width: calc(200 * var(--u));
+  }
+  .nosotras-playground__bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(754 * var(--u));
+    bottom: 0;
+    background: #ff3e9a;
+  }
+  /* The exported bar carries a white strip on top and a grey one below; clip both, the bar's pink shows instead. */
+  .nosotras-playground__bar-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    clip-path: inset(4.5% 0 9% 0);
+  }
+
+  /* The demo toast: on the capture on desktop, above "Jugar" in the phone. */
+  .nosotras-playground__chip {
+    position: absolute;
+    left: 50%;
+    bottom: 150px;
+    width: max-content;
+    max-width: 250px;
+    margin: 0;
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
+    background: var(--color-text);
+    color: var(--color-bg);
+    font: 500 12px / 1.3 var(--font-mono);
+    text-align: center;
+    pointer-events: none;
+    opacity: 0;
+    translate: -50% -4px;
+    transition:
+      opacity 0.25s var(--ease-out),
+      translate 0.25s var(--ease-out);
+  }
+  .nosotras-playground__chip[data-show] {
+    opacity: 1;
+    translate: -50% 0;
+  }
+  @media (hover: hover) {
+    .nosotras-playground__char:hover .nosotras-playground__char-image {
+      transform: translateY(calc(-4 * var(--u))) scale(1.03);
+    }
+    .nosotras-playground__play:hover {
+      filter: brightness(1.06);
+    }
+    .nosotras-playground__play:hover::before {
+      transform: translate(calc(-3 * var(--u)), calc(3 * var(--u)));
+    }
+    .nosotras-playground__next:hover svg {
+      transform: translateX(calc(-3 * var(--u)));
+    }
+  }
+  @media (min-width: 720px) {
+    .nosotras-playground__device {
+      display: block;
+    }
+    .nosotras-playground__site[data-device="desktop"] .nosotras-playground__chip {
+      top: 52px;
+      right: 16px;
+      bottom: auto;
+      left: auto;
+      max-width: none;
+      translate: 0 -4px;
+    }
+    .nosotras-playground__site[data-device="desktop"] .nosotras-playground__chip[data-show] {
+      translate: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nosotras-playground__isle,
+    .nosotras-playground__drift--normal,
+    .nosotras-playground__drift--slow,
+    .nosotras-playground__char[data-hop] .nosotras-playground__char-image,
+    .nosotras-playground__hero .nosotras-playground__char[data-arc],
+    .nosotras-playground__chars .nosotras-playground__char[data-in] .nosotras-playground__char-image {
+      animation: none;
+    }
+    .nosotras-playground__char-image,
+    .nosotras-playground__play::before,
+    .nosotras-playground__next svg,
+    .nosotras-playground__hero .nosotras-playground__char,
+    .nosotras-playground__chip {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { announce, followDevice, wait } from "../../case/ExampleFrame/frame";
+  import { nosotrasCast, nosotrasWorlds, type NosotrasWorld } from "./nosotras.config";
+
+  const reduce = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  /** Restarts the CSS animation keyed on `attribute`. */
+  const replay = (element: HTMLElement, attribute: string) => {
+    element.removeAttribute(attribute);
+    void element.offsetWidth;
+    element.setAttribute(attribute, "");
+  };
+  const isWorld = (value: string | undefined): value is NosotrasWorld =>
+    nosotrasWorlds.includes(value as NosotrasWorld);
+
+  for (const root of document.querySelectorAll<HTMLElement>("[data-nosotras]")) {
+    const frame = root.querySelector(".example-frame");
+    const site = root.querySelector<HTMLElement>(".nosotras-playground__site");
+    const chip = root.querySelector<HTMLElement>(".nosotras-playground__chip");
+    if (!frame || !site || !chip) continue;
+    followDevice(frame, site, "nosotras-device");
+
+    let chipTimer = 0;
+    root.querySelectorAll(".nosotras-playground__play").forEach((button) =>
+      button.addEventListener("click", () => {
+        const text = root.dataset.play ?? "";
+        chip.textContent = text;
+        chip.setAttribute("data-show", "");
+        announce(frame, text);
+        clearTimeout(chipTimer);
+        chipTimer = window.setTimeout(() => chip.removeAttribute("data-show"), 3500);
+      }),
+    );
+
+    const desk = [
+      ...root.querySelectorAll<HTMLElement>(".nosotras-playground__hero .nosotras-playground__char"),
+    ];
+    const phone = [
+      ...root.querySelectorAll<HTMLElement>(".nosotras-playground__chars .nosotras-playground__char"),
+    ];
+    for (const button of [...desk, ...phone]) {
+      button.addEventListener("animationend", (event) => {
+        if (event.target === button) button.removeAttribute("data-arc");
+        else button.removeAttribute(button.hasAttribute("data-in") ? "data-in" : "data-hop");
+      });
+    }
+    const hop = (button: HTMLElement) => !reduce() && replay(button, "data-hop");
+
+    const setWorld = (world: NosotrasWorld) => {
+      const from = site.dataset.world;
+      if (world === from) return;
+      site.dataset.world = world;
+      const order = Object.keys(nosotrasCast[world]);
+      for (const button of desk) {
+        const character = button.dataset.char;
+        if (!isWorld(character)) continue;
+        const [x, y, width] = nosotrasCast[world][character];
+        const rank = order.indexOf(character);
+        button.style.setProperty("--x", String(x));
+        button.style.setProperty("--y", String(y));
+        button.style.setProperty("--w", String(width));
+        button.style.zIndex = String(3 - rank);
+        button.setAttribute("aria-pressed", String(rank === 0));
+        if (character === from && !reduce()) replay(button, "data-arc");
+      }
+      for (const button of phone) button.hidden = button.dataset.char !== world;
+      const shown = phone.find((button) => !button.hidden);
+      if (shown && !reduce()) replay(shown, "data-in");
+      const name = desk.find((button) => button.dataset.char === world)?.getAttribute("aria-label") ?? world;
+      announce(frame, (root.dataset.front ?? "%s").replace("%s", name));
+    };
+
+    desk.forEach((button) =>
+      button.addEventListener("click", () => {
+        const character = button.dataset.char;
+        if (!isWorld(character)) return;
+        if (site.dataset.world === character) hop(button);
+        else setWorld(character);
+      }),
+    );
+    phone.forEach((button) => button.addEventListener("click", () => hop(button)));
+    const next = () => {
+      const current = nosotrasWorlds.indexOf(site.dataset.world as NosotrasWorld);
+      setWorld(nosotrasWorlds[(current + 1) % nosotrasWorlds.length] ?? nosotrasWorlds[0]);
+    };
+    root.querySelector(".nosotras-playground__next")?.addEventListener("click", next);
+
+    // The scripted path: walk every world once, back to where it started.
+    const tour = root.querySelector<HTMLElement>(".example-frame__actions button.button--primary");
+    tour?.addEventListener("click", async () => {
+      if (tour.getAttribute("aria-disabled") === "true") return;
+      tour.setAttribute("aria-disabled", "true");
+      for (let step = 0; step < nosotrasWorlds.length; step++) {
+        next();
+        await wait(1400);
+      }
+      tour.removeAttribute("aria-disabled");
+    });
+  }
+</script>

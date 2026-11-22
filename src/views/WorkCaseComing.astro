@@ -3,12 +3,10 @@
 // replaces it. The title shares `case-title-<slug>` with its row on Work (WorkList), so it morphs on the way in.
 import Base from "@/layouts/Base.astro";
 import WorkTag from "@/components/projects/WorkList/WorkTag/WorkTag.astro";
-import BackPill from "@/components/layout/BackPill/BackPill.astro";
-import LanguageSwitch from "@/components/layout/LanguageSwitch/LanguageSwitch.astro";
-import { languageItems } from "@/config/profile";
+import CaseTop from "@/components/projects/case/CaseTop/CaseTop.astro";
 import type { CollectionEntry } from "astro:content";
 import { slugOf } from "@/lib/content";
-import { localePath, useTranslations, type Lang } from "@/i18n/ui";
+import { useTranslations, type Lang } from "@/i18n/ui";
 interface Props {
   lang: Lang;
   project: CollectionEntry<"projects">;
@@ -17,7 +15,6 @@ const { lang, project } = Astro.props;
 const { data } = project;
 const t = useTranslations(lang);
 const slug = slugOf(project.id);
-const languages = languageItems.map((item) => ({ ...item, href: localePath(item.lang, `/work/${slug}/`) }));
 const tags = [
   ...(data.kind === "personal" ? [{ label: t("work.personal"), tone: "accent" as const }] : []),
   { label: data.label ?? t("work.coming"), tone: "muted" as const },
@@ -32,15 +29,7 @@ const tags = [
   altPath={`/work/${slug}/`}
   dockHidden
 >
-  <!-- The case top bar (v11): sticky, the back pill to the row the reader came from and the language switch; no Dock. -->
-  <header class="case-top" slot="top">
-    <BackPill
-      href={localePath(lang, `/work/#row-${slug}`)}
-      label={t("work.back")}
-      caption={t("work.heading")}
-    />
-    <LanguageSwitch items={languages} />
-  </header>
+  <CaseTop slot="top" slug={slug} />
   <article class="case-coming">
     <p class="case-coming__company" translate="no">
       {data.company}
@@ -59,34 +48,6 @@ const tags = [
 </Base>
 
 <style>
-  /*
-   * Sticky over the page, with a hairline once it scrolls (script below). No side padding of its own: the body's
-   * already sets the page margin, so the pill lines up with the content (v11). The blurred backdrop and the hairline
-   * reach the screen edges through that margin.
-   */
-  .case-top {
-    position: sticky;
-    top: 0;
-    z-index: 20;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-4);
-    padding: var(--space-4) 0 12px;
-  }
-  .case-top::before {
-    content: "";
-    position: absolute;
-    inset: 0 calc(-1 * var(--page-gutter));
-    z-index: -1;
-    background: color-mix(in srgb, var(--color-bg) 82%, transparent);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid transparent;
-    transition: border-color var(--duration-fast) var(--ease-out);
-  }
-  .case-top[data-stuck]::before {
-    border-bottom-color: var(--color-border);
-  }
   .case-coming {
     /* The case header's top space (v11 `.case-head`), less `.wrap`'s own padding above it. */
     padding-block: calc(clamp(28px, 6vw, 64px) - var(--wrap-padding-block)) 120px;
@@ -118,16 +79,4 @@ const tags = [
     margin: 0;
     color: var(--color-text-muted);
   }
-  @media (prefers-reduced-motion: reduce) {
-    .case-top::before {
-      transition: none;
-    }
-  }
 </style>
-
-<script>
-  const top = document.querySelector<HTMLElement>(".case-top");
-  const sync = () => top?.toggleAttribute("data-stuck", scrollY > 0);
-  addEventListener("scroll", sync, { passive: true });
-  sync();
-</script>

@@ -7,6 +7,20 @@ import roadmap from "./svg/roadmap.svg";
 import email from "./svg/email.svg";
 import theme from "./svg/theme.svg";
 import settings from "./svg/settings.svg";
+import external from "./svg/external.svg";
+import play from "./svg/play.svg";
+import arrowDown from "./svg/arrow-down.svg";
 
-export const icons = { home, work, notes, roadmap, email, theme, settings };
+export const icons = {
+  home,
+  work,
+  notes,
+  roadmap,
+  email,
+  theme,
+  settings,
+  external,
+  play,
+  "arrow-down": arrowDown,
+};
 export type IconName = keyof typeof icons;

@@ -1,15 +1,18 @@
 ---
-// Cases not built yet: a short "coming soon" page per project (WorkCaseComing). A built case gets its own page in
-// its HU and leaves this list.
+// Every case on Work answers at /work/<slug>/: a built case renders its MDX (WorkCase); one not built yet answers
+// with a short "coming soon" page (WorkCaseComing) until its HU ships.
+import WorkCase from "@/views/WorkCase.astro";
 import WorkCaseComing from "@/views/WorkCaseComing.astro";
 import { getProjects, slugOf } from "@/lib/content";
 export async function getStaticPaths() {
   const projects = await getProjects("en");
-  return projects
-    .filter((project) => project.data.case === "coming")
-    .map((project) => ({ params: { slug: slugOf(project.id) }, props: { project } }));
+  return projects.map((project) => ({ params: { slug: slugOf(project.id) }, props: { project } }));
 }
 const { project } = Astro.props;
 ---
 
-<WorkCaseComing lang="en" project={project} />
+{project.data.case === "live" ? (
+  <WorkCase project={project} />
+) : (
+  <WorkCaseComing lang="en" project={project} />
+)}

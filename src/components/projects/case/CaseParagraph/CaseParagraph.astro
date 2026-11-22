@@ -1,0 +1,24 @@
+---
+// A paragraph of case copy. Case MDX renders every Markdown paragraph with it (WorkCase passes it as `p`), so the
+// copy stays plain Markdown. The place it sits in tunes it through custom properties instead of reaching into it:
+// --case-paragraph-size, --case-paragraph-leading, --case-paragraph-measure, --case-paragraph-gap, --case-paragraph-color.
+---
+
+<p class="case-paragraph">
+  <slot />
+</p>
+
+<style>
+  .case-paragraph {
+    max-width: var(--case-paragraph-measure, var(--measure-prose));
+    margin: 0 0 var(--case-paragraph-gap, 1.1em);
+    color: var(--case-paragraph-color, inherit);
+    font-size: var(--case-paragraph-size, inherit);
+    line-height: var(--case-paragraph-leading, inherit);
+    letter-spacing: var(--case-paragraph-tracking, normal);
+    text-wrap: pretty;
+  }
+  .case-paragraph:last-child {
+    margin-bottom: 0;
+  }
+</style>

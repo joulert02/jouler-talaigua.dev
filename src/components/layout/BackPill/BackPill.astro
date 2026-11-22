@@ -4,10 +4,12 @@ interface Props {
   href: string;
   /** What it goes back to ("All work"). */
   label: string;
+  /** The label below 561px, where the caption hides ("Proyectos"); defaults to `label`. */
+  shortLabel?: string;
   /** The mono caption under it ("Selected projects"); hidden below 561px. */
   caption?: string;
 }
-const { href, label, caption } = Astro.props;
+const { href, label, shortLabel = label, caption } = Astro.props;
 ---
 
 <!--
@@ -28,7 +30,14 @@ const { href, label, caption } = Astro.props;
     </svg>
   </span>
   <span class="back-pill__text">
-    {label}
+    {shortLabel === label ? (
+      label
+    ) : (
+      <>
+        <span class="back-pill__label">{label}</span>
+        <span class="back-pill__label back-pill__label--short">{shortLabel}</span>
+      </>
+    )}
     {caption && <small class="back-pill__caption">{caption}</small>}
   </span>
 </a>
@@ -89,12 +98,15 @@ const { href, label, caption } = Astro.props;
   .back-pill__text {
     white-space: nowrap;
   }
+  /*
+   * v11 sets the caption at 11.5px; the site's 14px floor makes it taller and wider. Tighter leading, no gap above and
+   * less tracking keep the pill's v11 proportions: the two lines fill the same height inside the 48px pill.
+   */
   .back-pill__caption {
     display: block;
-    margin-top: 2px;
     color: var(--color-text-muted);
-    font: 500 var(--font-size-label) / 1.3 var(--font-mono);
-    letter-spacing: 0.05em;
+    font: 500 var(--font-size-label) / 1.15 var(--font-mono);
+    letter-spacing: 0.02em;
     text-transform: uppercase;
   }
   @media (hover: hover) {
@@ -105,12 +117,19 @@ const { href, label, caption } = Astro.props;
       transform: translateX(-2px);
     }
   }
+  .back-pill__label--short {
+    display: none;
+  }
   @media (max-width: 560px) {
     .back-pill {
       padding-right: 14px;
     }
-    .back-pill__caption {
+    .back-pill__caption,
+    .back-pill__label:not(.back-pill__label--short) {
       display: none;
+    }
+    .back-pill__label--short {
+      display: inline;
     }
   }
   @media (prefers-reduced-motion: reduce) {

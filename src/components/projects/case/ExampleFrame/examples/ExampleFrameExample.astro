@@ -1,0 +1,51 @@
+---
+// The parts of a playground: label, controls, the piece, then hints on the left and actions on the right.
+import ExampleFrame from "../ExampleFrame.astro";
+import ExampleHint from "../ExampleHint/ExampleHint.astro";
+import ExampleNote from "../ExampleNote/ExampleNote.astro";
+import SegmentedSwitch from "../../../../ui/SegmentedSwitch/SegmentedSwitch.astro";
+import Button from "../../../../ui/Button/Button.astro";
+import Icon from "../../../../ui/Icon/Icon.astro";
+---
+
+<ExampleFrame
+  id="example-frame-example"
+  label="Recreation of the shipped screens · not ACME code"
+  shortLabel="Recreation of the shipped screens"
+>
+  <SegmentedSwitch
+    slot="controls"
+    name="example-frame-view"
+    legend="Screen"
+    options={[
+      { value: "before", label: "Before" },
+      { value: "after", label: "After" },
+    ]}
+  />
+  <div class="example-frame-example__piece">The demo</div>
+  <Fragment slot="foot">
+    <ExampleHint>Press “Run scenario” to play it step by step.</ExampleHint>
+    <ExampleNote>Interface translated from Spanish.</ExampleNote>
+  </Fragment>
+  <Fragment slot="actions">
+    <Button variant="ghost" size="sm" href="https://example.com/" label="See it live">
+      <Icon slot="end" name="external" size={14} />
+    </Button>
+    <Button size="sm" label="Run scenario">
+      <Icon slot="start" name="play" size={14} />
+    </Button>
+  </Fragment>
+</ExampleFrame>
+
+<style>
+  .example-frame-example__piece {
+    display: grid;
+    place-items: center;
+    min-height: 200px;
+    margin-top: 20px;
+    border: 1px dashed var(--color-border);
+    border-radius: 14px;
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+  }
+</style>

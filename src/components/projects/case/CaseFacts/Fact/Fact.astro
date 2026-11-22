@@ -1,0 +1,46 @@
+---
+interface Props {
+  /** What the fact is ("Role", "Stack"), shown as a mono label. */
+  label: string;
+}
+const { label } = Astro.props;
+---
+
+<!-- One entry of CaseFacts: the label and, in the slot, its value. -->
+<div class="case-fact">
+  <dt class="case-fact__label">{label}</dt>
+  <dd class="case-fact__value">
+    <slot />
+  </dd>
+</div>
+
+<style>
+  .case-fact {
+    display: grid;
+    gap: 2px;
+    padding: 12px 0;
+  }
+  .case-fact + .case-fact {
+    border-top: 1px solid var(--color-border);
+  }
+  .case-fact__label {
+    color: var(--color-text-muted);
+    font: 500 var(--font-size-label) / 1.4 var(--font-mono);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .case-fact__value {
+    margin: 0;
+    color: var(--color-text);
+  }
+  @media (min-width: 720px) {
+    .case-fact {
+      padding: 14px 32px 14px 0;
+    }
+    .case-fact + .case-fact {
+      padding-left: 32px;
+      border-top: 0;
+      border-left: 1px solid var(--color-border);
+    }
+  }
+</style>

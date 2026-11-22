@@ -47,6 +47,7 @@ const { items, variant = "minimal" } = Astro.props;
   // to sit level with that row, kept inside the list and, while the list allows it, inside the viewport (above the
   // Dock), also as the page scrolls.
   const gap = 24;
+  const opened = "work-list-opened";
   for (const list of document.querySelectorAll<HTMLElement>(".work-list")) {
     const column = list.querySelector<HTMLElement>(".work-list__preview");
     const preview = column?.firstElementChild as HTMLElement | null | undefined;
@@ -70,17 +71,31 @@ const { items, variant = "minimal" } = Astro.props;
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(align);
     };
-    const show = (event: Event) => {
-      const row = (event.target as Element).closest<HTMLElement>(".work-row");
-      const slug = row?.dataset["workSlug"];
-      if (!slug) return;
-      for (const element of list.querySelectorAll<HTMLElement>("[data-work-slug]")) {
+    const activate = (slug: string | undefined) => {
+      const slides = [...list.querySelectorAll<HTMLElement>("[data-work-slug]")];
+      if (!slug || !slides.some((element) => element.dataset["workSlug"] === slug)) return;
+      for (const element of slides)
         element.toggleAttribute("data-active", element.dataset["workSlug"] === slug);
-      }
       align();
     };
+    const show = (event: Event) =>
+      activate((event.target as Element).closest<HTMLElement>(".work-row")?.dataset["workSlug"]);
     list.addEventListener("pointerover", show);
     list.addEventListener("focusin", show);
+
+    // Back from a case (the pill or the browser) lands with the preview on the case the reader opened, not the first.
+    list.addEventListener("click", (event) => {
+      const slug = (event.target as Element).closest<HTMLElement>(".work-row")?.dataset["workSlug"];
+      if (slug && (event.target as Element).closest(".work-row__link")) sessionStorage.setItem(opened, slug);
+    });
+    const restore = () =>
+      activate(
+        location.hash.startsWith("#row-")
+          ? location.hash.slice(5)
+          : (sessionStorage.getItem(opened) ?? undefined),
+      );
+    restore();
+    addEventListener("pageshow", (event) => event.persisted && restore());
 
     // Touch and narrow screens cut each summary to two lines (WorkRow); "See more" shows only where it was cut.
     const rows = [...list.querySelectorAll<HTMLElement>(".work-row")];

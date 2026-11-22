@@ -1,0 +1,23 @@
+---
+// The facts strip under a case header (v11 `.facts`): one Fact per entry, in a row from 720px, stacked on phones.
+---
+
+<dl class="case-facts">
+  <slot />
+</dl>
+
+<style>
+  .case-facts {
+    display: grid;
+    margin: 28px 0 0;
+    border-block: 1px solid var(--color-border);
+    font-size: var(--font-size-small);
+    line-height: 1.5;
+  }
+  @media (min-width: 720px) {
+    .case-facts {
+      grid-template-columns: repeat(3, minmax(0, auto));
+      justify-content: start;
+    }
+  }
+</style>
