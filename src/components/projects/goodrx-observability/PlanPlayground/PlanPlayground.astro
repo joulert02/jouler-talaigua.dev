@@ -1,0 +1,159 @@
+---
+import ExampleFrame from "../../case/ExampleFrame/ExampleFrame.astro";
+import Button from "../../../ui/Button/Button.astro";
+import Icon from "../../../ui/Icon/Icon.astro";
+import { getLang } from "../../../../i18n/ui";
+import { planCopy } from "./plan.config";
+const copy = planCopy[getLang(Astro)];
+---
+
+<!--
+  GoodRx, chapter 01: the four questions of the migration plan as a checklist. Ticking all four turns the line under
+  it into "Plan ready" and announces it; "Tick them all" ticks them one by one, and "Start over" clears them.
+-->
+<div class="plan-playground" data-plan data-run={copy.run} data-again={copy.again}>
+  <ExampleFrame id="plan-example" label={copy.label} shortLabel={copy.shortLabel}>
+    <ul class="plan-playground__list">
+      {copy.questions.map((question) => (
+        <li class="plan-playground__item">
+          <label class="plan-playground__question">
+            <input class="plan-playground__check" type="checkbox" />
+            <span class="plan-playground__text">
+              <b class="plan-playground__title">{question.title}</b>
+              <small class="plan-playground__detail">{question.text}</small>
+            </span>
+          </label>
+        </li>
+      ))}
+    </ul>
+    <p class="plan-playground__status" slot="foot">
+      <span class="plan-playground__waiting">{copy.waiting}</span>
+      <span class="plan-playground__ready">
+        <b>{copy.readyTitle}</b> {copy.ready}
+      </span>
+    </p>
+    <Fragment slot="actions">
+      <Button size="sm" label={copy.run}>
+        <Icon slot="start" name="play" size={14} />
+      </Button>
+    </Fragment>
+  </ExampleFrame>
+</div>
+
+<style>
+  .plan-playground__list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    margin: 20px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .plan-playground__question {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    min-height: 44px;
+    padding: 16px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    cursor: pointer;
+    transition: border-color var(--duration-fast) var(--ease-out);
+  }
+  .plan-playground__question:has(.plan-playground__check:checked) {
+    border-color: var(--color-text-accent);
+  }
+  .plan-playground__check {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    margin: 1px 0 0;
+    accent-color: var(--color-accent);
+    cursor: pointer;
+  }
+  .plan-playground__check:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 2px;
+  }
+  .plan-playground__text {
+    display: grid;
+    gap: 4px;
+  }
+  .plan-playground__title {
+    color: var(--color-text);
+    font-size: var(--font-size-small);
+    font-weight: 600;
+  }
+  .plan-playground__detail {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-small);
+  }
+  .plan-playground__status {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-small);
+  }
+  /* All four ticked: the line turns into "Plan ready". */
+  .plan-playground__ready {
+    display: none;
+  }
+  .plan-playground:not(:has(.plan-playground__check:not(:checked))) .plan-playground__waiting {
+    display: none;
+  }
+  .plan-playground:not(:has(.plan-playground__check:not(:checked))) .plan-playground__ready {
+    display: inline;
+  }
+  @media (min-width: 720px) {
+    .plan-playground__list {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .plan-playground__question {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { announce, wait } from "../../case/ExampleFrame/frame";
+
+  for (const root of document.querySelectorAll<HTMLElement>("[data-plan]")) {
+    const frame = root.querySelector(".example-frame");
+    const checks = [...root.querySelectorAll<HTMLInputElement>(".plan-playground__check")];
+    const ready = root.querySelector(".plan-playground__ready");
+    const run = root.querySelector<HTMLButtonElement>("button.button--primary");
+    if (!frame || !ready || !run) continue;
+    const label = [...run.childNodes].find(
+      (node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim(),
+    );
+    const done = () => checks.every((check) => check.checked);
+    // The primary button follows the list: "Tick them all" until the plan is ready, then "Start over".
+    const sync = () => {
+      if (label) label.textContent = (done() ? root.dataset["again"] : root.dataset["run"]) ?? "";
+    };
+    const settle = () => {
+      sync();
+      if (done()) announce(frame, ready.textContent?.trim() ?? "");
+    };
+    checks.forEach((check) => check.addEventListener("change", settle));
+    run.addEventListener("click", async () => {
+      if (run.getAttribute("aria-disabled") === "true") return;
+      if (done()) {
+        checks.forEach((check) => (check.checked = false));
+        sync();
+        return;
+      }
+      run.setAttribute("aria-disabled", "true");
+      for (const check of checks) {
+        if (check.checked) continue;
+        check.checked = true;
+        await wait(350);
+      }
+      run.removeAttribute("aria-disabled");
+      settle();
+    });
+  }
+</script>

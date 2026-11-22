@@ -1,0 +1,178 @@
+---
+import ExampleFrame from "../../case/ExampleFrame/ExampleFrame.astro";
+import ExampleHint from "../../case/ExampleFrame/ExampleHint/ExampleHint.astro";
+import Switch from "../../../ui/Switch/Switch.astro";
+import Button from "../../../ui/Button/Button.astro";
+import Icon from "../../../ui/Icon/Icon.astro";
+import { getLang } from "../../../../i18n/ui";
+import { privacyCopy } from "./privacy.config";
+const copy = privacyCopy[getLang(Astro)];
+const previews = [
+  { name: "recording", ...copy.recording },
+  { name: "events", ...copy.events },
+  { name: "errors", ...copy.errors },
+];
+---
+
+<!--
+  GoodRx, chapter 04 (v11 `.privacy-lab`): three SDK switches and what each one captures. Session recording starts on,
+  as groundcover ships it, and the verdict says it is not allowed; switching it off (by hand, or with "Configure it
+  like we did") leaves events and grouped errors with no user attached. Without script the switches still work: CSS
+  shows each capture from its switch.
+-->
+<div class="privacy-playground" data-privacy>
+  <ExampleFrame id="privacy-example" label={copy.label} shortLabel={copy.shortLabel}>
+    <div class="privacy-playground__grid">
+      <ul class="privacy-playground__settings">
+        {copy.settings.map((setting) => (
+          <li class={`privacy-playground__setting privacy-playground__setting--${setting.name}`}>
+            <Switch name={`privacy-${setting.name}`} label={setting.label} detail={setting.detail} checked />
+          </li>
+        ))}
+      </ul>
+      <div class="privacy-playground__preview" role="group" aria-label={copy.previewLabel}>
+        {previews.map((preview) => (
+          <div class={`privacy-playground__capture privacy-playground__capture--${preview.name}`}>
+            <b class="privacy-playground__capture-title">{preview.title}</b>
+            <small class="privacy-playground__capture-detail">{preview.detail}</small>
+            {preview.name === "recording" && <span class="privacy-playground__bar" aria-hidden="true" />}
+          </div>
+        ))}
+        <p class="privacy-playground__verdict privacy-playground__verdict--blocked">{copy.blocked}</p>
+        <p class="privacy-playground__verdict privacy-playground__verdict--allowed">{copy.allowed}</p>
+      </div>
+    </div>
+    <ExampleHint slot="foot">{copy.hint}</ExampleHint>
+    <Fragment slot="actions">
+      <Button size="sm" label={copy.configure}>
+        <Icon slot="start" name="play" size={14} />
+      </Button>
+    </Fragment>
+  </ExampleFrame>
+</div>
+
+<style>
+  .privacy-playground__grid {
+    display: grid;
+    gap: 16px;
+    margin-top: 20px;
+  }
+  .privacy-playground__settings {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .privacy-playground__setting {
+    display: flex;
+    padding: 10px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+  }
+  .privacy-playground__preview {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    padding: 16px;
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    background: var(--color-surface);
+  }
+  .privacy-playground__capture {
+    display: grid;
+    gap: 6px;
+    padding: 14px 16px;
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-subtle);
+  }
+  .privacy-playground__capture-title {
+    color: var(--color-text);
+    font-size: var(--font-size-small);
+    font-weight: 600;
+  }
+  .privacy-playground__capture--recording .privacy-playground__capture-title::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-right: 8px;
+    border-radius: 50%;
+    background: #d64545;
+    vertical-align: 1px;
+  }
+  .privacy-playground__capture-detail {
+    color: var(--color-text-muted);
+    font: 13px / 1.4 var(--font-mono);
+  }
+  .privacy-playground__bar {
+    height: 4px;
+    border-radius: 2px;
+    background: linear-gradient(#d64545, #d64545) left / 38% 100% no-repeat var(--color-border);
+    animation: privacy-playground-record 6s linear infinite;
+  }
+  @keyframes privacy-playground-record {
+    from {
+      background-size: 0 100%;
+    }
+    to {
+      background-size: 100% 100%;
+    }
+  }
+  .privacy-playground__verdict {
+    margin: 4px 0 0;
+    font-size: var(--font-size-small);
+    font-weight: 600;
+  }
+  /* Mixed with the text colour, so each stays readable in both themes. */
+  .privacy-playground__verdict--blocked {
+    color: color-mix(in srgb, #e03131 70%, var(--color-text));
+  }
+  .privacy-playground__verdict--allowed {
+    color: color-mix(in srgb, #2f9e44 70%, var(--color-text));
+  }
+  /* Each capture follows its switch; the verdict follows session recording. */
+  .privacy-playground:has([name="privacy-recording"]:not(:checked)) .privacy-playground__capture--recording,
+  .privacy-playground:has([name="privacy-events"]:not(:checked)) .privacy-playground__capture--events,
+  .privacy-playground:has([name="privacy-errors"]:not(:checked)) .privacy-playground__capture--errors,
+  .privacy-playground:has([name="privacy-recording"]:checked) .privacy-playground__verdict--allowed,
+  .privacy-playground:has([name="privacy-recording"]:not(:checked)) .privacy-playground__verdict--blocked {
+    display: none;
+  }
+  @media (min-width: 720px) {
+    .privacy-playground__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+      gap: 24px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .privacy-playground__bar {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  import { announce } from "../../case/ExampleFrame/frame";
+
+  for (const root of document.querySelectorAll<HTMLElement>("[data-privacy]")) {
+    const frame = root.querySelector(".example-frame");
+    const recording = root.querySelector<HTMLInputElement>('[name="privacy-recording"]');
+    const configure = root.querySelector<HTMLButtonElement>("button.button--primary");
+    const verdict = (on: boolean) =>
+      root.querySelector(`.privacy-playground__verdict--${on ? "blocked" : "allowed"}`)?.textContent ?? "";
+    if (!frame || !recording || !configure) continue;
+    // Session recording is the one that decides the verdict; say it whenever it changes.
+    recording.addEventListener("change", () => announce(frame, verdict(recording.checked)));
+    configure.addEventListener("click", () => {
+      if (!recording.checked) {
+        announce(frame, verdict(false));
+        return;
+      }
+      recording.checked = false;
+      recording.dispatchEvent(new Event("change"));
+      recording.focus();
+    });
+  }
+</script>

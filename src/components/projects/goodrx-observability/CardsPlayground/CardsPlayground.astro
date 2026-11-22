@@ -1,0 +1,212 @@
+---
+import ExampleFrame from "../../case/ExampleFrame/ExampleFrame.astro";
+import ExampleNote from "../../case/ExampleFrame/ExampleNote/ExampleNote.astro";
+import Switch from "../../../ui/Switch/Switch.astro";
+import Button from "../../../ui/Button/Button.astro";
+import Icon from "../../../ui/Icon/Icon.astro";
+import { getLang } from "../../../../i18n/ui";
+import { cards, cardsCopy, goodrxUrl } from "./cards.config";
+const copy = cardsCopy[getLang(Astro)];
+---
+
+<!--
+  GoodRx, chapter 05 (v11 `.grx-lab`): a recreation of the home page's "Learn more about your health" section, in
+  GoodRx's own palette in both themes. "Show the component" outlines every card and names its variant, so the three
+  layouts read as one component. Placeholder content; the site's text stays in English.
+-->
+<div class="cards-playground" data-cards data-shown={copy.shown}>
+  <ExampleFrame id="cards-example" label={copy.label} shortLabel={copy.shortLabel}>
+    <Switch slot="controls" name="cards-show" label={copy.show} />
+    <div class="cards-playground__site" lang="en">
+      <p class="cards-playground__heading">{copy.heading}</p>
+      <div class="cards-playground__grid">
+        {cards.map((card) => (
+          <article class={`cards-playground__card cards-playground__card--${card.variant}`}>
+            <span
+              class="cards-playground__art"
+              style={`--cards-art-a: ${card.art[0]}; --cards-art-b: ${card.art[1]}`}
+              aria-hidden="true"
+            />
+            <div class="cards-playground__body">
+              <span class="cards-playground__tag">{card.tag}</span>
+              <p class="cards-playground__title">{card.title}</p>
+              {card.byline && (
+                <p class="cards-playground__by">
+                  {card.byline}
+                  {card.date && <small class="cards-playground__date">{card.date}</small>}
+                </p>
+              )}
+            </div>
+            <span class="cards-playground__variant" aria-hidden="true">
+              {copy.variants[card.variant]}
+            </span>
+          </article>
+        ))}
+      </div>
+    </div>
+    <ExampleNote slot="foot">{copy.note}</ExampleNote>
+    <Fragment slot="actions">
+      <Button variant="ghost" size="sm" href={goodrxUrl} label={copy.live}>
+        <Icon slot="end" name="external" size={14} />
+      </Button>
+    </Fragment>
+  </ExampleFrame>
+</div>
+
+<style>
+  /* GoodRx's palette, the same in both themes. */
+  .cards-playground__site {
+    margin-top: 20px;
+    padding: clamp(18px, 3vw, 36px);
+    border: 1px solid #e4e1da;
+    border-radius: 16px;
+    background: #f6f4f0;
+    color: #1c1c1c;
+  }
+  .cards-playground__heading {
+    margin: 0 0 20px;
+    font-size: clamp(20px, 2.4vw, 26px);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .cards-playground__grid {
+    display: grid;
+    gap: 16px;
+  }
+  .cards-playground__card {
+    position: relative;
+    display: grid;
+    overflow: hidden;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.08);
+    outline: 2px dashed transparent;
+    outline-offset: 4px;
+    transition: outline-color var(--duration-fast) var(--ease-out);
+  }
+  .cards-playground__art {
+    display: block;
+    aspect-ratio: 16 / 9;
+    background:
+      radial-gradient(circle at 70% 35%, rgb(255 255 255 / 0.45) 0 18%, transparent 19%),
+      linear-gradient(135deg, var(--cards-art-a), var(--cards-art-b));
+  }
+  .cards-playground__body {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    padding: 16px;
+  }
+  .cards-playground__tag {
+    justify-self: start;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: #ffe11b;
+    color: #1c1c1c;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .cards-playground__title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+  .cards-playground__by {
+    display: grid;
+    gap: 2px;
+    margin: 4px 0 0;
+    color: #555;
+    font-size: 13px;
+  }
+  .cards-playground__date {
+    font-size: 13px;
+  }
+  /* The featured card: the photo above a dark teal panel, light text. */
+  .cards-playground__card--featured {
+    background: #0e4b4a;
+    color: #fff;
+  }
+  .cards-playground__card--featured .cards-playground__art {
+    aspect-ratio: 4 / 3;
+  }
+  .cards-playground__card--featured .cards-playground__title {
+    font-size: 21px;
+  }
+  .cards-playground__card:last-child {
+    background: #f0eeea;
+  }
+  .cards-playground__variant {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    background: #6e44f0;
+    color: #fff;
+    font: 500 12px / 1.3 var(--font-mono);
+    opacity: 0;
+    translate: 0 -4px;
+    transition:
+      opacity var(--duration-fast) var(--ease-out),
+      translate var(--duration-fast) var(--ease-out);
+  }
+  .cards-playground:has([name="cards-show"]:checked) .cards-playground__card {
+    outline-color: #6e44f0;
+  }
+  .cards-playground:has([name="cards-show"]:checked) .cards-playground__variant {
+    opacity: 1;
+    translate: none;
+  }
+  @media (min-width: 720px) {
+    .cards-playground__grid {
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: auto auto;
+    }
+    .cards-playground__card--featured {
+      grid-row: span 2;
+      align-content: stretch;
+      grid-template-rows: 1fr auto;
+    }
+    .cards-playground__card--featured .cards-playground__art {
+      aspect-ratio: auto;
+      min-height: 200px;
+    }
+    .cards-playground__card--featured .cards-playground__body {
+      padding: 20px;
+    }
+    .cards-playground__card--horizontal {
+      grid-column: span 2;
+      grid-template-columns: 2fr 3fr;
+    }
+    .cards-playground__card--horizontal .cards-playground__art {
+      aspect-ratio: auto;
+      height: 100%;
+    }
+    .cards-playground__card--horizontal .cards-playground__body {
+      align-content: center;
+      padding: 20px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cards-playground__card,
+    .cards-playground__variant {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { announce } from "../../case/ExampleFrame/frame";
+
+  for (const root of document.querySelectorAll<HTMLElement>("[data-cards]")) {
+    const frame = root.querySelector(".example-frame");
+    const show = root.querySelector<HTMLInputElement>('[name="cards-show"]');
+    if (!frame || !show) continue;
+    show.addEventListener("change", () => {
+      if (show.checked) announce(frame, root.dataset["shown"] ?? "");
+    });
+  }
+</script>
