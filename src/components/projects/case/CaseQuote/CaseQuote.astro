@@ -1,0 +1,23 @@
+---
+// A pull quote in a case (v11 `.pull`): the owner's words, larger, with a rule on the left. Its paragraphs are
+// CaseParagraphs; the quote sets their size.
+---
+
+<blockquote class="case-quote">
+  <slot />
+</blockquote>
+
+<style>
+  .case-quote {
+    --case-paragraph-size: var(--case-quote-size, clamp(20px, 2.2vw, 24px));
+    --case-paragraph-leading: var(--case-quote-leading, 1.45);
+    --case-paragraph-tracking: var(--case-quote-tracking, -0.012em);
+    --case-paragraph-color: var(--color-text);
+    --case-paragraph-measure: var(--measure-prose);
+    --case-paragraph-gap: 0;
+    max-width: var(--case-quote-measure, var(--measure-prose));
+    margin: var(--case-quote-margin, 0);
+    padding: 0 0 0 var(--case-quote-indent, 24px);
+    border-left: 2px solid var(--color-text);
+  }
+</style>

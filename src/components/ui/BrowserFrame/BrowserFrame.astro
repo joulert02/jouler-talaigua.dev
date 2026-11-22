@@ -1,0 +1,55 @@
+---
+interface Props {
+  /** The address shown in the bar, e.g. "petys.com". Decorative: the page around it names the site. */
+  address: string;
+}
+const { address } = Astro.props;
+---
+
+<!-- A desktop browser window (v11 `.pt-desk`): a bar with three dots and the address; the slot is the page. -->
+<div class="browser-frame">
+  <div class="browser-frame__bar" aria-hidden="true">
+    <i class="browser-frame__dot"></i>
+    <i class="browser-frame__dot"></i>
+    <i class="browser-frame__dot"></i>
+    <span class="browser-frame__address">{address}</span>
+  </div>
+  <div class="browser-frame__page">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .browser-frame {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: var(--shadow-rest);
+  }
+  .browser-frame__bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 36px;
+    padding: 0 14px;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface);
+  }
+  .browser-frame__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--color-border);
+  }
+  .browser-frame__address {
+    margin-left: 12px;
+    padding: 3px 14px;
+    border-radius: var(--radius-pill);
+    background: var(--color-bg-subtle);
+    color: var(--color-text-muted);
+    font: 400 12px / 1.4 var(--font-mono);
+  }
+</style>

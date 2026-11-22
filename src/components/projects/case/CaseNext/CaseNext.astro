@@ -1,0 +1,120 @@
+---
+import { getLang, useTranslations } from "../../../../i18n/ui";
+import type { CaseLink } from "./types";
+interface Props {
+  /** The case before this one on Work. */
+  previous: CaseLink;
+  /** The case after it. */
+  next: CaseLink;
+}
+const { previous, next } = Astro.props;
+const t = useTranslations(getLang(Astro));
+// The narrow nav's name: the shorter of the case's title and its company ("GoodRx", "CAPS+").
+const short = (link: CaseLink) => (link.title.length <= link.company.length ? link.title : link.company);
+---
+
+<!--
+  The end of a case (v11 `.case-next`): the previous and the next case on Work, side by side, then the footer. When
+  the nav is too narrow for both titles, each shows a short name instead. On phones a band between two hairlines, its own on top
+  and the footer's under it; from 720px only the footer's (WorkCase ends the page flush with the footer). `data-case-end` tells CaseNav where the
+  case ends.
+-->
+<nav class="case-next" aria-label={t("case.more")} data-case-end>
+  <div class="case-next__links">
+    <a class="case-next__link" href={previous.href}>
+      <span class="case-next__label">
+        {t("case.previous")}
+        <span class="case-next__company"> · {previous.company}</span>
+      </span>
+      <b class="case-next__title">
+        ← <span class="case-next__name">{previous.title}</span>
+        <span class="case-next__name case-next__name--short">{short(previous)}</span>
+      </b>
+    </a>
+    <a class="case-next__link case-next__link--next" href={next.href}>
+      <span class="case-next__label">
+        {t("case.next")}
+        <span class="case-next__company"> · {next.company}</span>
+      </span>
+      <b class="case-next__title">
+        <span class="case-next__name">{next.title}</span>
+        <span class="case-next__name case-next__name--short">{short(next)}</span> →
+      </b>
+    </a>
+  </div>
+</nav>
+
+<style>
+  .case-next {
+    container: case-next / inline-size;
+    margin-top: var(--space-9);
+    border-top: 1px solid var(--color-border);
+  }
+  /* Narrow: both side by side, a short name in place of the title; display: none keeps the hidden text unread. */
+  .case-next__links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-5);
+  }
+  .case-next__link {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-7) 0;
+    color: var(--color-text);
+    text-decoration: none;
+  }
+  .case-next__link--next {
+    text-align: right;
+  }
+  .case-next__company,
+  .case-next__name:not(.case-next__name--short) {
+    display: none;
+  }
+  .case-next__link:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
+  }
+  .case-next__label {
+    color: var(--color-text-muted);
+    font: 500 var(--font-size-label) / 1.3 var(--font-mono);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .case-next__title {
+    font-size: clamp(20px, 2.4vw, 28px);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+  @container case-next (min-width: 640px) {
+    .case-next__links {
+      gap: var(--space-6);
+    }
+    .case-next__company,
+    .case-next__name:not(.case-next__name--short) {
+      display: inline;
+    }
+    .case-next__name--short {
+      display: none;
+    }
+  }
+  /* From 720px no rule of its own: the footer's hairline closes it. */
+  @media (min-width: 720px) {
+    .case-next {
+      margin-top: var(--space-10);
+      border-top: 0;
+    }
+  }
+  @media (hover: hover) {
+    .case-next__link:hover .case-next__title {
+      color: var(--color-text-accent);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .case-next__title {
+      transition: none;
+    }
+  }
+</style>

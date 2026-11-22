@@ -1,0 +1,27 @@
+---
+import { Image } from "astro:assets";
+import BrowserFrame from "../BrowserFrame.astro";
+import home from "../../../../assets/projects/pragma/petys/home.webp";
+---
+
+<div class="browser-frame-example">
+  <BrowserFrame address="petys.com">
+    <Image
+      class="browser-frame-example__image"
+      src={home}
+      alt="The Petys home page in a desktop browser."
+      width={680}
+    />
+  </BrowserFrame>
+</div>
+
+<style>
+  .browser-frame-example {
+    max-width: 680px;
+  }
+  .browser-frame-example__image {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+</style>

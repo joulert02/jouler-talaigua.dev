@@ -1,0 +1,17 @@
+---
+// What to try in an ExampleFrame ("Press “Publish a change” to…"), in its `head` or `foot` slot (v11 `.lab-hint`).
+---
+
+<p class="example-hint">
+  <slot />
+</p>
+
+<style>
+  .example-hint {
+    flex-basis: 100%;
+    max-width: var(--measure-prose);
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-small);
+  }
+</style>

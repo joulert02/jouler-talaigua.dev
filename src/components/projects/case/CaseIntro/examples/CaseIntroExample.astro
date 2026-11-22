@@ -1,0 +1,28 @@
+---
+// In a case's MDX: the text and quote as Markdown, the media in the `media` slot.
+import CaseIntro from "../CaseIntro.astro";
+import CaseParagraph from "../../CaseParagraph/CaseParagraph.astro";
+import CaseQuote from "../../CaseQuote/CaseQuote.astro";
+import CaseVideo from "../../CaseVideo/CaseVideo.astro";
+---
+
+<CaseIntro title="What I learned" next="petys">
+  <CaseParagraph>
+    I joined PRAGMA as a QA engineer on two brand sites, Nosotras and TENA, and tested them through their
+    first release. Eight months later I moved to frontend development.
+  </CaseParagraph>
+  <CaseQuote>
+    <CaseParagraph>
+      I learned to steer my own path. PRAGMA sparked a curiosity that became the engine of my career.
+    </CaseParagraph>
+  </CaseQuote>
+  <CaseVideo
+    slot="media"
+    sources={[{ src: "/video/pragma-reel.mp4", type: "video/mp4" }]}
+    poster="/video/pragma-reel-poster.jpg"
+    caption="A video PRAGMA made for me"
+    duration={44}
+    width={540}
+    height={960}
+  />
+</CaseIntro>

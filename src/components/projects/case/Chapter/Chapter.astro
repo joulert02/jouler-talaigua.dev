@@ -1,0 +1,69 @@
+---
+interface Props {
+  /** The anchor id, also what CaseIntro's invitation points at for the first chapter ("petys"). */
+  id: string;
+  /** Its number in the case, as shown ("01"). */
+  number: string;
+  /** The chapter heading (H2). */
+  title: string;
+  /** One sentence under the heading that says what the chapter shows. */
+  lead: string;
+  /** Its name in the case index (CaseNav); the title up to its colon when left out ("Petys"). */
+  short?: string;
+}
+const { id, number, title, lead, short = title.split(":")[0] ?? title } = Astro.props;
+const headingId = `${id}-title`;
+---
+
+<!--
+  A case chapter (v11 `.chapter`): number, title and one lead sentence, then the interactive piece in the slot,
+  followed by a FullStory with the approved paragraphs.
+-->
+<section class="chapter" id={id} aria-labelledby={headingId} data-case-nav={`${number} ${short}`}>
+  <div class="chapter__head">
+    <span class="chapter__number">{number}</span>
+    <h2 class="chapter__title" id={headingId}>
+      {title}
+    </h2>
+    <p class="chapter__lead">{lead}</p>
+  </div>
+  <slot />
+</section>
+
+<style>
+  .chapter {
+    margin-top: clamp(70px, 11vw, 140px);
+  }
+  /* Right after the intro the gap is a little shorter (v11 intro-c). */
+  :global(.case-intro) + .chapter {
+    margin-top: clamp(70px, 10vw, 128px);
+  }
+  .chapter__head {
+    max-width: 920px;
+    margin-bottom: 28px;
+  }
+  .chapter__number {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--color-text-muted);
+    font: 500 var(--font-size-label) / 1.3 var(--font-mono);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .chapter__title {
+    margin: 0;
+    font-size: clamp(26px, 3vw, 36px);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+  .chapter__lead {
+    max-width: 74ch;
+    margin: 14px 0 0;
+    color: var(--color-text-secondary);
+    font-size: clamp(17px, 1.5vw, 19px);
+    line-height: 1.55;
+    text-wrap: balance;
+  }
+</style>
