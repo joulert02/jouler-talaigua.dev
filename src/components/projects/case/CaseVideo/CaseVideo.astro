@@ -69,7 +69,9 @@ const captionId = "case-video-caption";
     </button>
   </div>
   <figcaption class="case-video__caption">
-    <span id={captionId}>{caption}</span>
+    <span class="case-video__caption-text" id={captionId}>
+      {caption}
+    </span>
     {link && (
       <a class="case-video__link" href={link.href} target="_blank" rel="noopener noreferrer">
         {link.label}
@@ -154,6 +156,7 @@ const captionId = "case-video-caption";
     font: 500 13px / 1 var(--font-mono);
   }
   .case-video__caption {
+    position: relative;
     display: grid;
     justify-items: start;
     padding-top: 18px;
@@ -161,7 +164,9 @@ const captionId = "case-video-caption";
     font-size: var(--font-size-small);
     line-height: 1.5;
   }
+  /* On phones the link sits at the right, under the video's edge. */
   .case-video__link {
+    justify-self: end;
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -179,6 +184,28 @@ const captionId = "case-video-caption";
     overflow: hidden;
     clip-path: inset(50%);
     white-space: nowrap;
+  }
+  /* On phones only the link shows; the caption still names the video for screen readers. */
+  .case-video__caption-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  @media (min-width: 720px) {
+    .case-video__caption-text {
+      position: static;
+      width: auto;
+      height: auto;
+      overflow: visible;
+      clip-path: none;
+      white-space: normal;
+    }
+    .case-video__link {
+      justify-self: start;
+    }
   }
   @media (hover: hover) {
     .case-video__play:hover {
