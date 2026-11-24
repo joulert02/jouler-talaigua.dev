@@ -1,4 +1,5 @@
 // @ts-check
+import { copyFileSync, existsSync } from "node:fs";
 import { defineConfig, fontProviders } from "astro/config";
 import react from "@astrojs/react";
 import mdx from "@astrojs/mdx";
@@ -6,7 +7,23 @@ import sitemap from "@astrojs/sitemap";
 
 export default defineConfig({
   site: "https://jouler-talaigua.dev",
-  integrations: [react(), mdx(), sitemap({ i18n: { defaultLocale: "en", locales: { en: "en", es: "es" } } })],
+  integrations: [
+    react(),
+    mdx(),
+    sitemap({ i18n: { defaultLocale: "en", locales: { en: "en", es: "es" } } }),
+    {
+      name: "cloudflare-pages-404",
+      hooks: {
+        "astro:build:done": async ({ dir }) => {
+          const esIndex = new URL("es/404/index.html", dir);
+          const esHtml = new URL("es/404.html", dir);
+          if (existsSync(esIndex)) {
+            copyFileSync(esIndex, esHtml);
+          }
+        },
+      },
+    },
+  ],
   devToolbar: {
     enabled: false,
   },

@@ -1,0 +1,85 @@
+---
+import Button from "@/components/ui/Button/Button.astro";
+import { getLang, localePath, useTranslations, type Lang } from "@/i18n/ui";
+
+interface Props {
+  lang?: Lang;
+}
+const { lang = getLang(Astro) } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section class="not-found">
+  <div class="not-found__grid">
+    <div class="not-found__meta">
+      <span class="not-found__tag">{t("404.tag")}</span>
+    </div>
+    <div class="not-found__content">
+      <h1 class="not-found__title">{t("404.heading")}</h1>
+      <p class="not-found__message">{t("404.message")}</p>
+      <div class="not-found__action">
+        <Button href={localePath(lang, "/")} variant="primary" label={t("404.back")}>
+          {t("404.back")}
+        </Button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  :global(.wrap:has(.not-found)) {
+    max-width: 1240px;
+  }
+  .not-found {
+    width: min(1240px, 100%);
+    margin-inline: auto;
+    padding: clamp(64px, 12vw, 140px) 0;
+    min-height: calc(100vh - 200px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .not-found__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(24px, 4vw, 64px);
+    align-items: start;
+  }
+  .not-found__meta {
+    padding-top: 6px;
+  }
+  .not-found__tag {
+    font: 500 var(--font-size-label, 11.5px)/1.4 var(--font-mono);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .not-found__title {
+    margin: 0 0 20px;
+    font-size: clamp(38px, 5.6vw, 64px);
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+    font-weight: 600;
+    color: var(--color-text);
+    text-wrap: balance;
+  }
+  .not-found__message {
+    font-size: clamp(17px, 1.8vw, 21px);
+    line-height: 1.55;
+    color: var(--color-text-muted);
+    max-width: 48ch;
+    margin: 0 0 32px;
+    text-wrap: pretty;
+  }
+  .not-found__action {
+    display: flex;
+    align-items: center;
+  }
+
+  @media (max-width: 719px) {
+    .not-found__grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+  }
+</style>
