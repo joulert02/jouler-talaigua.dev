@@ -68,6 +68,8 @@
   --duration-slow: 500ms;
 
   --layout-container: 1240px;
+  /* The gap between the layout's columns: a case's halves, its closing nav and the footer share it, so their edges line up. */
+  --layout-gap: clamp(32px, 6vw, 96px);
 }
 
 @media (prefers-color-scheme: dark) {

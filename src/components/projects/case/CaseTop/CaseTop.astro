@@ -14,10 +14,10 @@ const languages = languageItems.map((item) => ({ ...item, href: localePath(item.
 ---
 
 <!--
-  The case top bar (v11): sticky below 1320px (it scrolls away on wider screens), the back pill to the row the reader came from and the language switch; no Dock. Once
-  the page scrolls, its hairline becomes a reading progress bar, and the case index (the default slot, CaseNav) shows
-  as a pill between the two on screens too narrow for the index's margin rail. On phones the bar slides away while the
-  reader scrolls down and comes back, with the index pill instead of the language switch, when they scroll up.
+  The case top bar (v11): sticky, the back pill to the row the reader came from and the language switch, the same pill
+  as on every other page (owner review, 2026-11-23); no Dock. Once the page scrolls, its hairline becomes a reading
+  progress bar. On phones the bar slides away while the reader scrolls down and comes back when they scroll up. Used by
+  coming-soon cases, and by built cases on phones only (WorkCase).
 -->
 <header class="case-top">
   <BackPill
@@ -26,14 +26,7 @@ const languages = languageItems.map((item) => ({ ...item, href: localePath(item.
     shortLabel={t("work.backShort")}
     caption={t("work.backCaption")}
   />
-  <div class="case-top__end">
-    <div class="case-top__index">
-      <slot />
-    </div>
-    <div class="case-top__lang">
-      <LanguageSwitch items={languages} />
-    </div>
-  </div>
+  <LanguageSwitch items={languages} />
 </header>
 
 <style>
@@ -104,92 +97,6 @@ const languages = languageItems.map((item) => ({ ...item, href: localePath(item.
   }
 
   /*
-   * The index pill and the language switch. Phones: both in the same place at the right edge, and the compact bar
-   * crossfades from the switch to the pill (a slight scale and lift), so nothing in the layout moves. From 720px both
-   * fit: the switch stays and the pill fades in centred in the space before it.
-   */
-  .case-top__end {
-    display: grid;
-    flex: 1;
-    align-items: center;
-    justify-items: end;
-  }
-  .case-top__index,
-  .case-top__lang {
-    grid-area: 1 / 1;
-    transition:
-      opacity var(--duration-medium) cubic-bezier(0.4, 0, 0.2, 1),
-      scale var(--duration-medium) cubic-bezier(0.4, 0, 0.2, 1),
-      translate var(--duration-medium) cubic-bezier(0.4, 0, 0.2, 1),
-      visibility 0s linear var(--duration-medium);
-  }
-  /* Out of view: faded, a touch smaller and lower. In view: no transform at all, so the index's list can anchor to the bar. */
-  .case-top__index,
-  .case-top[data-compact] .case-top__lang {
-    visibility: hidden;
-    opacity: 0;
-    scale: 0.94;
-    translate: 0 4px;
-  }
-  .case-top[data-compact] .case-top__index,
-  .case-top__lang {
-    visibility: visible;
-    opacity: 1;
-    scale: none;
-    translate: none;
-    transition-delay: 0s;
-  }
-  @media (min-width: 720px) {
-    .case-top__end {
-      display: flex;
-      justify-content: flex-end;
-    }
-    .case-top__index {
-      margin-inline: auto;
-    }
-    .case-top[data-compact] .case-top__lang {
-      visibility: visible;
-      opacity: 1;
-      scale: none;
-      translate: none;
-    }
-  }
-  /*
-   * Wide screens (trial): the index is the rail in the margin, fixed on its own, so the bar keeps no place for it and
-   * stops being sticky: it scrolls away with the page, without backdrop or hairline. Only the reading progress stays,
-   * fixed to the top edge of the screen.
-   */
-  @media (min-width: 1320px) {
-    .case-top__index,
-    .case-top[data-compact] .case-top__index {
-      display: contents;
-    }
-    .case-top__end {
-      flex: none;
-    }
-    .case-top__index {
-      visibility: visible;
-      opacity: 1;
-      scale: none;
-      translate: none;
-    }
-    .case-top {
-      position: relative;
-    }
-    .case-top::before {
-      content: none;
-    }
-    .case-top::after {
-      position: fixed;
-      z-index: 30;
-      top: 0;
-      right: 0;
-      bottom: auto;
-      left: 0;
-    }
-  }
-
-  /*
    * Phones: the bar slides away while scrolling down. The progress line slides the other way by the same easing, so it
    * travels up with the bar and docks at the top edge of the screen, and comes back down with it.
    */
@@ -202,9 +109,7 @@ const languages = languageItems.map((item) => ({ ...item, href: localePath(item.
   @media (prefers-reduced-motion: reduce) {
     .case-top,
     .case-top::before,
-    .case-top::after,
-    .case-top__index,
-    .case-top__lang {
+    .case-top::after {
       transition: none;
     }
   }
@@ -213,7 +118,7 @@ const languages = languageItems.map((item) => ({ ...item, href: localePath(item.
 <script>
   const top = document.querySelector<HTMLElement>(".case-top");
   if (top) {
-    // Compact once the header of the case has scrolled away. On phones the bar also hides while the reader scrolls
+    // On phones the bar hides while the reader scrolls
     // down and returns when they scroll up, each only after a run in one direction (48px down, 24px up) so small
     // scrolls never make it flicker.
     const phone = matchMedia("(max-width: 719px)");
@@ -226,15 +131,13 @@ const languages = languageItems.map((item) => ({ ...item, href: localePath(item.
       if ((y > last && last < turn) || (y < last && last > turn)) turn = last;
       last = y;
       top.toggleAttribute("data-stuck", y > 8);
-      // A keyboard user moving through the bar, or an open index, keeps it in place.
-      const busy = top.querySelector(':focus-visible, [aria-expanded="true"]') !== null;
+      // A keyboard user moving through the bar keeps it in place.
+      const busy = top.querySelector(":focus-visible") !== null;
       let hidden = top.hasAttribute("data-hidden");
       if (!phone.matches || y <= 96 || busy) hidden = false;
       else if (y - turn > 48) hidden = true;
       else if (turn - y > 24) hidden = false;
       top.toggleAttribute("data-hidden", hidden);
-      // Only a visible index takes the switch's place; without one (a coming-soon case) the switch stays.
-      top.toggleAttribute("data-compact", y > 160 && top.querySelector(".case-nav:not([hidden])") !== null);
       if (progress) {
         const end = document.documentElement.scrollHeight - innerHeight;
         top.style.setProperty("--case-top-progress", String(end > 0 ? Math.min(1, y / end) : 0));

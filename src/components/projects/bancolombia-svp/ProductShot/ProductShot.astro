@@ -1,0 +1,47 @@
+---
+import { Image } from "astro:assets";
+import BrowserFrame from "../../../ui/BrowserFrame/BrowserFrame.astro";
+import Button from "../../../ui/Button/Button.astro";
+import Icon from "../../../ui/Icon/Icon.astro";
+import capture from "../../../../assets/projects/bancolombia/svp-home-full.jpg";
+import { getLang } from "../../../../i18n/ui";
+import { productShotCopy, productUrl } from "./productShot.config";
+const copy = productShotCopy[getLang(Astro)];
+---
+
+<!--
+  Bancolombia · 04: the product as it is today, a screenshot in a browser window with a link to the live product.
+  Nothing to play with, so no example frame. The capture keeps Bancolombia's own palette in both themes.
+-->
+<figure class="product-shot">
+  <BrowserFrame address="bancolombia.com">
+    <Image
+      class="product-shot__image"
+      src={capture}
+      alt={copy.alt}
+      widths={[800, 1600, 2400]}
+      sizes="(min-width: 1240px) 1200px, 100vw"
+    />
+  </BrowserFrame>
+  <figcaption class="product-shot__actions">
+    <Button variant="ghost" size="sm" href={productUrl} label={copy.live}>
+      <Icon slot="end" name="external" size={14} />
+    </Button>
+  </figcaption>
+</figure>
+
+<style>
+  .product-shot {
+    margin: var(--space-6) 0 var(--space-8);
+  }
+  .product-shot__image {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .product-shot__actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: var(--space-3);
+  }
+</style>

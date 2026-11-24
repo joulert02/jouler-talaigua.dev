@@ -1,0 +1,404 @@
+---
+import { Image } from "astro:assets";
+import ExampleFrame from "../../case/ExampleFrame/ExampleFrame.astro";
+import ExampleNote from "../../case/ExampleFrame/ExampleNote/ExampleNote.astro";
+import Button from "../../../ui/Button/Button.astro";
+import login from "../../../../assets/projects/bancolombia/svp-login.png";
+import { getLang } from "../../../../i18n/ui";
+import { foundationCopy, type FoundationPiece } from "./foundation.config";
+const copy = foundationCopy[getLang(Astro)];
+const total = copy.steps.length;
+const pieces: readonly FoundationPiece[] = copy.pieces;
+---
+
+<!--
+  Bancolombia · 01 (v11 `.svp-build`): the five steps that laid the foundation. The list is real buttons with the
+  current one marked `aria-current="step"` and its explanation shown; the board on the right is decoration that fills
+  in step by step (hidden from screen readers, the list already says it). Back/Next walk the same steps.
+  Phones (owner review, 2026-11-24): a slide inside the frame, with no card inside it. One challenge at a time, its
+  title, text and its piece (the login and its note on the last) on one left edge, entering from the side it comes
+  from. Back/Next, spread across the width, or a swipe.
+-->
+<div class="foundation-playground" data-foundation-playground data-step-text={copy.step}>
+  <ExampleFrame id="foundation-playground" label={copy.label} shortLabel={copy.shortLabel}>
+    <div class="foundation-playground__nav" slot="controls">
+      <Button variant="ghost" size="sm" label={copy.back} />
+      <span class="foundation-playground__count" aria-hidden="true">
+        1 / {total}
+      </span>
+      <Button size="sm" label={copy.next} />
+    </div>
+    <div class="foundation-playground__grid">
+      <ol class="foundation-playground__steps">
+        {copy.steps.map((step, index) => (
+          <li class="foundation-playground__step">
+            <button
+              class="foundation-playground__step-button"
+              type="button"
+              aria-current={index === 0 ? "step" : undefined}
+            >
+              <span class="foundation-playground__step-number" aria-hidden="true">
+                {index + 1}
+              </span>
+              <b class="foundation-playground__step-name">{step.name}</b>
+              <span class="foundation-playground__step-text">{step.text}</span>
+            </button>
+          </li>
+        ))}
+      </ol>
+      <div class="foundation-playground__board" aria-hidden="true">
+        {pieces.map((piece, index) => (
+          <div
+            class="foundation-playground__piece"
+            data-step={index + 1}
+            data-on={index === 0 ? "" : undefined}
+            data-now={index === 0 ? "" : undefined}
+          >
+            <span class="foundation-playground__piece-label">{piece.label}</span>
+            <div
+              class:list={[
+                "foundation-playground__chips",
+                { "foundation-playground__chips--flow": piece.flow },
+              ]}
+            >
+              {piece.items.map((item) => (
+                <span class="foundation-playground__chip">{item}</span>
+              ))}
+            </div>
+          </div>
+        ))}
+        <div class="foundation-playground__piece" data-step={total}>
+          <span class="foundation-playground__piece-label">{copy.login}</span>
+          <Image
+            class="foundation-playground__login"
+            src={login}
+            alt=""
+            widths={[480, 960]}
+            sizes="(min-width: 720px) 480px, 100vw"
+          />
+        </div>
+      </div>
+    </div>
+    <ExampleNote slot="foot">{copy.note}</ExampleNote>
+  </ExampleFrame>
+</div>
+
+<style>
+  .foundation-playground__nav {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .foundation-playground__count {
+    min-width: 44px;
+    color: var(--color-text-secondary);
+    font: 500 var(--font-size-small) / 1 var(--font-mono);
+    text-align: center;
+  }
+  .foundation-playground__grid {
+    display: grid;
+    gap: clamp(16px, 3vw, 32px);
+    margin-top: var(--space-5);
+  }
+  .foundation-playground__steps {
+    display: grid;
+    align-content: start;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .foundation-playground__step-button {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 2px var(--space-3);
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 44px;
+    padding: var(--space-3) 14px;
+    border: 0;
+    border-radius: var(--radius-lg);
+    background: transparent;
+    color: var(--color-text-muted);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+  .foundation-playground__step-button:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 2px;
+  }
+  .foundation-playground__step-number {
+    display: grid;
+    grid-row: span 2;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-round);
+    font: 500 var(--font-size-small) / 1 var(--font-mono);
+  }
+  .foundation-playground__step-name {
+    color: var(--color-text-secondary);
+    font-size: 15px;
+    font-weight: 500;
+  }
+  .foundation-playground__step-text {
+    display: none;
+    font-size: var(--font-size-small);
+    line-height: 1.45;
+  }
+  .foundation-playground__step-button[aria-current="step"] {
+    background: var(--color-surface);
+    box-shadow: var(--shadow-rest);
+    color: var(--color-text-secondary);
+  }
+  .foundation-playground__step-button[aria-current="step"] .foundation-playground__step-name {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+  .foundation-playground__step-button[aria-current="step"] .foundation-playground__step-text {
+    display: block;
+  }
+  .foundation-playground__step-button:is([aria-current="step"], [data-done])
+    .foundation-playground__step-number {
+    border-color: var(--color-text);
+    background: var(--color-text);
+    color: var(--color-bg);
+  }
+  .foundation-playground__board {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+  }
+  .foundation-playground__piece {
+    padding: var(--space-3) 14px;
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-small);
+    opacity: 0.25;
+    filter: grayscale(1);
+    transition:
+      opacity 350ms var(--ease-out),
+      border-color 350ms var(--ease-out),
+      transform 350ms var(--ease-out);
+  }
+  .foundation-playground__piece[data-on] {
+    border-style: solid;
+    border-color: color-mix(in srgb, var(--color-text) 30%, var(--color-border));
+    opacity: 1;
+    filter: none;
+  }
+  .foundation-playground__piece[data-now] {
+    box-shadow: var(--shadow-rest);
+    transform: translateY(-2px);
+  }
+  .foundation-playground__piece-label {
+    display: block;
+    margin-bottom: var(--space-2);
+    color: var(--color-text-muted);
+    font: 500 var(--font-size-label) / 1.3 var(--font-mono);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .foundation-playground__chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+  .foundation-playground__chip {
+    padding: var(--space-1) 10px;
+    border-radius: var(--radius-pill);
+    background: var(--color-bg-subtle);
+  }
+  /* The pipeline reads left to right: an arrow between its chips. */
+  .foundation-playground__chips--flow .foundation-playground__chip + .foundation-playground__chip::before {
+    content: "→";
+    margin: 0 10px 0 -2px;
+    color: var(--color-text-muted);
+  }
+  .foundation-playground__chips--flow .foundation-playground__chip {
+    padding-left: 0;
+    background: transparent;
+  }
+  .foundation-playground__login {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+  }
+  /*
+   * Phones: a slide in the frame every playground uses, and nothing else boxed inside it (owner review, 2026-11-24:
+   * one container, not a card in a card). All the steps
+   * share one cell, so the text area keeps the tallest step's height and Back/Next never move; only the current one
+   * shows, then its piece.
+   */
+  @media (max-width: 719px) {
+    .foundation-playground__grid {
+      gap: var(--space-5);
+    }
+    .foundation-playground__steps {
+      grid-template-areas: "step";
+    }
+    .foundation-playground__step {
+      grid-area: step;
+    }
+    .foundation-playground__step:not(:has([aria-current="step"])) {
+      visibility: hidden;
+    }
+    .foundation-playground__step-button,
+    .foundation-playground__step-button[aria-current="step"] {
+      padding: 0;
+      background: none;
+      box-shadow: none;
+      cursor: default;
+    }
+    .foundation-playground__step-name {
+      margin-bottom: var(--space-1);
+      font-size: 17px;
+      line-height: 1.3;
+    }
+    .foundation-playground__step-text {
+      font-size: var(--font-size-body);
+      line-height: 1.55;
+    }
+    .foundation-playground__board {
+      padding: 0;
+      border: 0;
+      background: none;
+    }
+    .foundation-playground__piece:not([data-now]) {
+      display: none;
+    }
+    /* The piece is type, not a box: nothing in it is interactive (the login keeps its border, a screenshot's edge). */
+    .foundation-playground__piece,
+    .foundation-playground__piece[data-on],
+    .foundation-playground__piece[data-now] {
+      padding: 0;
+      border: 0;
+      box-shadow: none;
+      transform: none;
+    }
+    /* On the frame's grey the chips take the surface, as they do on the white board on wider screens. */
+    .foundation-playground__chip {
+      background: var(--color-surface);
+    }
+    .foundation-playground__nav {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+    /* The count already says which challenge this is, so the number badge goes and the text takes the full width. */
+    .foundation-playground__step-button {
+      grid-template-columns: 1fr;
+    }
+    .foundation-playground__step-number {
+      display: none;
+    }
+    /* The note is about the login: only on the challenge that shows it. */
+    .foundation-playground:not([data-last]) :global(.example-frame__foot) {
+      display: none;
+    }
+  }
+  @media (min-width: 720px) {
+    .foundation-playground__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .foundation-playground__piece {
+      transition: none;
+    }
+    .foundation-playground__piece[data-now] {
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  import { announce } from "../../case/ExampleFrame/frame";
+
+  for (const root of document.querySelectorAll<HTMLElement>("[data-foundation-playground]")) {
+    const frame = root.querySelector(".example-frame");
+    const steps = [...root.querySelectorAll<HTMLButtonElement>(".foundation-playground__step-button")];
+    const pieces = [...root.querySelectorAll<HTMLElement>(".foundation-playground__piece")];
+    const count = root.querySelector<HTMLElement>(".foundation-playground__count");
+    const [back, next] = root.querySelectorAll<HTMLButtonElement>(".foundation-playground__nav button");
+    if (!frame || !count || !back || !next) continue;
+    const total = steps.length;
+    const label = (at: number) =>
+      (root.dataset.stepText ?? "").replace("{n}", String(at)).replace("{total}", String(total)) +
+      (steps[at - 1]?.querySelector(".foundation-playground__step-name")?.textContent ?? "");
+    // Phones: the new challenge slides in from the side it comes from (Next from the right, Back from the left).
+    const phone = matchMedia("(max-width: 719px)");
+    const still = matchMedia("(prefers-reduced-motion: reduce)");
+    const slide = (direction: number) => {
+      if (!phone.matches || still.matches || direction === 0) return;
+      const current = steps[at - 1]?.closest("li");
+      const piece = pieces.find((item) => item.hasAttribute("data-now"));
+      const frames = [
+        { opacity: 0, transform: `translateX(${direction * 24}px)` },
+        { opacity: 1, transform: "none" },
+      ];
+      current?.animate(frames, { duration: 320, easing: "cubic-bezier(0.2, 0.7, 0.2, 1)" });
+      piece?.animate(frames, {
+        duration: 380,
+        delay: 40,
+        easing: "cubic-bezier(0.2, 0.7, 0.2, 1)",
+        fill: "backwards",
+      });
+    };
+    let at = 1;
+    const go = (step: number, speak: boolean) => {
+      const from = at;
+      at = Math.max(1, Math.min(total, step));
+      steps.forEach((button, index) => {
+        button.toggleAttribute("data-done", index + 1 < at);
+        if (index + 1 === at) button.setAttribute("aria-current", "step");
+        else button.removeAttribute("aria-current");
+      });
+      pieces.forEach((piece) => {
+        const own = Number(piece.dataset.step);
+        piece.toggleAttribute("data-on", own <= at);
+        piece.toggleAttribute("data-now", own === at);
+      });
+      count.textContent = `${at} / ${total}`;
+      root.toggleAttribute("data-last", at === total);
+      // Still focusable at the ends, so focus is never lost; aria-disabled says it does nothing.
+      back.setAttribute("aria-disabled", String(at === 1));
+      next.setAttribute("aria-disabled", String(at === total));
+      if (speak) announce(frame, label(at));
+      slide(Math.sign(at - from));
+    };
+    // A horizontal swipe on the slide does Back/Next on phones; a vertical one scrolls the page as usual.
+    let touch: { x: number; y: number } | null = null;
+    const grid = root.querySelector<HTMLElement>(".foundation-playground__grid");
+    grid?.addEventListener(
+      "touchstart",
+      (event) => {
+        const point = event.touches[0];
+        touch = point ? { x: point.clientX, y: point.clientY } : null;
+      },
+      { passive: true },
+    );
+    grid?.addEventListener("touchend", (event) => {
+      const point = event.changedTouches[0];
+      if (!touch || !point || !phone.matches) return;
+      const dx = point.clientX - touch.x;
+      const dy = point.clientY - touch.y;
+      touch = null;
+      if (Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+      go(at + (dx < 0 ? 1 : -1), true);
+    });
+    steps.forEach((button, index) => button.addEventListener("click", () => go(index + 1, true)));
+    back.addEventListener("click", () => at > 1 && go(at - 1, true));
+    next.addEventListener("click", () => at < total && go(at + 1, true));
+    go(1, false);
+  }
+</script>

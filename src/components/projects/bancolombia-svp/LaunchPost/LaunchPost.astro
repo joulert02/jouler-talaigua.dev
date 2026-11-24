@@ -1,0 +1,77 @@
+---
+import Button from "../../../ui/Button/Button.astro";
+import Icon from "../../../ui/Icon/Icon.astro";
+import { getLang } from "../../../../i18n/ui";
+import { launchPost, launchPostCopy } from "./launchPost.config";
+const copy = launchPostCopy[getLang(Astro)];
+---
+
+<!--
+  Bancolombia · 04, inside "The full story": my LinkedIn post about the launch, as LinkedIn's official embed, and the
+  link that opens it there (owner review, 2026-11-24: the post directly, no button to load it). The iframe is lazy and
+  sits in a closed disclosure, so LinkedIn's scripts and cookies arrive only when the reader opens the story. Its
+  height is fixed, so the page does not move when the post arrives; it fades in once loaded.
+-->
+<figure class="launch-post" data-launch-post>
+  <figcaption class="launch-post__meta">{copy.meta}</figcaption>
+  <iframe
+    class="launch-post__embed"
+    src={launchPost.embed}
+    title={copy.frameTitle}
+    loading="lazy"
+    referrerpolicy="strict-origin-when-cross-origin"
+  ></iframe>
+  <div class="launch-post__actions">
+    <Button variant="ghost" size="sm" href={launchPost.url} label={copy.open}>
+      <Icon slot="end" name="external" size={14} />
+    </Button>
+  </div>
+</figure>
+
+<style>
+  .launch-post {
+    display: grid;
+    gap: 16px;
+    margin: var(--space-8) 0;
+  }
+  /* The only line above the post: where and when it was said (the author is the site's owner). */
+  .launch-post__meta {
+    color: var(--color-text-muted);
+    font: 500 var(--font-size-label) / 1.4 var(--font-mono);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  /*
+   * White in both themes (LinkedIn's own palette), at its native 504px width. LinkedIn does not report its height, so
+   * it scrolls inside; on phones it leaves part of the screen free to keep scrolling the page.
+   */
+  .launch-post__embed {
+    display: block;
+    box-sizing: border-box;
+    width: min(100%, 504px);
+    height: min(680px, 75svh);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    background: #fff;
+    transition: opacity var(--duration-slow) var(--ease-out);
+  }
+  .launch-post__embed[data-loading] {
+    opacity: 0;
+  }
+  .launch-post__actions {
+    display: flex;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .launch-post__embed {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // The fade is set by script, so without it the post is simply there.
+  for (const embed of document.querySelectorAll<HTMLIFrameElement>(".launch-post__embed")) {
+    embed.setAttribute("data-loading", "");
+    embed.addEventListener("load", () => embed.removeAttribute("data-loading"), { once: true });
+  }
+</script>

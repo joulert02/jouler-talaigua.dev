@@ -1,17 +1,20 @@
 ---
-// A built case (HU-04 on): the case top bar, the header from the entry's frontmatter, its MDX body (facts, intro,
+// A built case (HU-04 on): no Dock. From 561px no bar either, only the language pill top right, and the way back is the
+// header label's "Work /"; on phones, CaseTop (the back pill and the switch, hidden while scrolling down and back when
+// scrolling up) takes both (owner review, 2026-11-24). Then the header from the entry's frontmatter, its MDX body (facts, intro,
 // chapters) and the previous and next case on Work. The MDX renders Markdown paragraphs as CaseParagraph and links as
 // CaseLink, so the copy stays plain Markdown. The language comes from the entry.
 import { render, type CollectionEntry } from "astro:content";
 import Base from "@/layouts/Base.astro";
-import CaseTop from "@/components/projects/case/CaseTop/CaseTop.astro";
 import CaseHeader from "@/components/projects/case/CaseHeader/CaseHeader.astro";
+import CaseTop from "@/components/projects/case/CaseTop/CaseTop.astro";
+import LanguageSwitch from "@/components/layout/LanguageSwitch/LanguageSwitch.astro";
+import { languageItems } from "@/config/profile";
 import CaseNext from "@/components/projects/case/CaseNext/CaseNext.astro";
 import CaseParagraph from "@/components/projects/case/CaseParagraph/CaseParagraph.astro";
 import CaseLink from "@/components/projects/case/CaseLink/CaseLink.astro";
-import CaseNav from "@/components/projects/case/CaseNav/CaseNav.astro";
 import { getProjects, slugOf } from "@/lib/content";
-import { localePath } from "@/i18n/ui";
+import { localePath, useTranslations } from "@/i18n/ui";
 interface Props {
   project: CollectionEntry<"projects">;
 }
@@ -31,6 +34,10 @@ const link = (entry: CollectionEntry<"projects">) => ({
 });
 const previous = link(projects.at(at - 1) ?? project);
 const next = link(projects[(at + 1) % projects.length] ?? project);
+
+// The way back, as the first step of the header's label (owner review, 2026-11-23).
+const languages = languageItems.map((item) => ({ ...item, href: localePath(item.lang, `/work/${slug}/`) }));
+const back = { href: localePath(lang, `/work/#row-${slug}`), label: useTranslations(lang)("dock.work") };
 ---
 
 <Base
@@ -41,19 +48,46 @@ const next = link(projects[(at + 1) % projects.length] ?? project);
   altPath={`/work/${slug}/`}
   dockHidden
 >
-  <CaseTop slot="top" slug={slug}>
-    <CaseNav />
-  </CaseTop>
+  <Fragment slot="top">
+    <div class="work-case__bar">
+      <CaseTop slug={slug} />
+    </div>
+    <div class="work-case__language">
+      <LanguageSwitch items={languages} />
+    </div>
+  </Fragment>
   <article class="work-case">
-    <CaseHeader company={data.company} title={data.title} slug={slug} />
+    <CaseHeader company={data.company} title={data.title} slug={slug} back={back} />
     <Content components={{ p: CaseParagraph, a: CaseLink }} />
     <CaseNext previous={previous} next={next} />
   </article>
 </Base>
 
 <style>
+  /*
+   * Phones: CaseTop. From 561px (where Base shows its language pill on other pages): the same pill top right, and the
+   * bar goes. `display: contents` keeps CaseTop's sticky position working against the page, not this wrapper.
+   */
+  .work-case__bar {
+    display: contents;
+  }
+  .work-case__language {
+    display: none;
+    position: absolute;
+    top: var(--space-4);
+    right: var(--page-gutter);
+    z-index: 20;
+  }
+  @media (min-width: 561px) {
+    .work-case__bar {
+      display: none;
+    }
+    .work-case__language {
+      display: block;
+    }
+  }
   /* Out of `.wrap`'s 44rem column: a case takes the layout container (v11 `.case`, 1240px). */
-  /* Jumps land a little under the top: on phones the bar hides while scrolling down; from 720px it stays sticky. */
+  /* Jumps land a little under the top edge: nothing stays fixed above the content. */
   /* The case ends flush with the footer: CaseNext's band closes on the footer's hairline. */
   :global(html:has(.work-case)) {
     --footer-gap: 0px;
@@ -61,9 +95,9 @@ const next = link(projects[(at + 1) % projects.length] ?? project);
     scroll-padding-top: 32px;
     scroll-padding-bottom: 24px;
   }
-  @media (min-width: 720px) {
+  @media (prefers-reduced-motion: no-preference) {
     :global(html:has(.work-case)) {
-      scroll-padding-top: 88px;
+      scroll-behavior: smooth;
     }
   }
   .work-case {

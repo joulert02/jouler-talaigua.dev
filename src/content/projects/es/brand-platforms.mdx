@@ -12,6 +12,7 @@ case: live
 
 import CaseFacts from "@/components/projects/case/CaseFacts/CaseFacts.astro";
 import Fact from "@/components/projects/case/CaseFacts/Fact/Fact.astro";
+import CaseIndex from "@/components/projects/case/CaseIndex/CaseIndex.astro";
 import CaseIntro from "@/components/projects/case/CaseIntro/CaseIntro.astro";
 import CaseQuote from "@/components/projects/case/CaseQuote/CaseQuote.astro";
 import CaseVideo from "@/components/projects/case/CaseVideo/CaseVideo.astro";
@@ -27,7 +28,15 @@ import NosotrasPlayground from "@/components/projects/brand-platforms/NosotrasPl
   <Fact label="Tecnología">Gatsby · React · GraphQL · Contentful · AWS S3 y CloudFront · Jenkins</Fact>
 </CaseFacts>
 
-<CaseIntro title="Lo que aprendí" next="petys">
+<CaseIndex
+  items={[
+    { id: "petys", label: "Petys" },
+    { id: "tena", label: "TENA" },
+    { id: "nosotras", label: "Nosotras" },
+  ]}
+/>
+
+<CaseIntro title="Lo que aprendí">
 
 Entré a PRAGMA como QA en dos sitios de marca, [Nosotras](https://www.nosotrasonline.com.co/) y [TENA](https://www.tena.com.co/), y los probé hasta su primer lanzamiento. Ocho meses después pasé a desarrollo frontend. Con los años, estas marcas se volvieron el lugar donde aprendí a construir, y luego a ser responsable de, plataformas completas.
 
