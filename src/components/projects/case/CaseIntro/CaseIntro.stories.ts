@@ -13,7 +13,7 @@ const meta = preview.meta({
     docs: {
       description: {
         component:
-          "The case intro (v11 intro-c, the primary intro): the heading, the owner's text and quote on the left and the media on the right (a CaseVideo or a photo in the `media` slot); one column on phones, text first. It brings the floating “See what we built” invitation, which smooth-scrolls to the chapter named in `next` and leaves once the reader scrolls.",
+          "The case intro (v11 intro-c, the primary intro): the heading, the owner's text and quote on the left and the media on the right (a CaseVideo or a photo in the `media` slot); one column on phones, text first.",
       },
     },
   },

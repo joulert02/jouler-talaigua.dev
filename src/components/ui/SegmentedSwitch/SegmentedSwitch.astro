@@ -64,6 +64,21 @@ const { name, legend, options, value = options[0]?.value } = Astro.props;
     color: var(--color-text-muted);
     font-size: var(--font-size-small);
     cursor: pointer;
+    transition:
+      color var(--duration-fast) var(--ease-out),
+      background-color var(--duration-fast) var(--ease-out);
+  }
+  /* Hover says the options are buttons: the text darkens and the option takes half the checked one's grey. */
+  @media (hover: hover) {
+    .segmented-switch__option:not(:has(.segmented-switch__input:checked)):hover {
+      color: var(--color-text);
+      background: color-mix(in srgb, var(--color-surface-hover) 50%, transparent);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .segmented-switch__option {
+      transition: none;
+    }
   }
   .segmented-switch__input {
     position: absolute;

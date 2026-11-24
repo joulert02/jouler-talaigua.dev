@@ -31,6 +31,7 @@ A spacing scale and the page container. The scale is derived from the values the
 - Use the scale for gaps, padding and margins between elements.
 - The prototype also uses 6, 10 and 14px often. They stay as local values (`--_name`) until the Home build decides whether they join the scale.
 - `--layout-container` is the maximum width shared by Home, Work and case pages. Prose inside it keeps `--measure-prose`.
+- `--layout-gap` (`clamp(32px, 6vw, 96px)`) is the gap between the layout's columns: a case's halves, its quarters (TeamMap), the previous/next nav and the footer share it, so their edges line up.
 
 ## Breakpoints
 

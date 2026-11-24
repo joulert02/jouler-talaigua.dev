@@ -6,23 +6,86 @@ interface Props {
   title: string;
   /** The case's slug: the title shares `case-title-<slug>` with its row on Work, so it morphs on the way in. */
   slug: string;
+  /** The way back, as the first step of the label: "Work / Company" (owner review, 2026-11-23). */
+  back: { href: string; label: string };
 }
-const { company, title, slug } = Astro.props;
+const { company, title, slug, back } = Astro.props;
 ---
 
-<!-- The case header (v11 `.case-head`): the company label and the title. -->
+<!--
+  The case header (v11 `.case-head`): the label, "Work / Company" with the way back as its first step, and the title.
+  On phones the label is the company only: CaseTop's back pill is the way back there (WorkCase).
+-->
 <header class="case-header">
-  <p class="case-header__company" translate="no">
-    {company}
+  <p class="case-header__company">
+    {back && (
+      <>
+        <a class="case-header__back" href={back.href} data-case-back>
+          {back.label}
+        </a>
+        <span class="case-header__sep" aria-hidden="true">
+          /
+        </span>
+      </>
+    )}
+    <span translate="no">{company}</span>
   </p>
   <h1 class="case-header__title" style={`view-transition-name: case-title-${slug}`}>
     {title}
   </h1>
 </header>
 
+<script>
+  // The way back goes Back when the reader just came from that page, keeping their scroll (as BackPill does).
+  for (const link of document.querySelectorAll<HTMLAnchorElement>("[data-case-back]")) {
+    link.addEventListener("click", (event) => {
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const nav = window.navigation;
+      const index = nav?.currentEntry?.index ?? -1;
+      const previous = index > 0 ? nav?.entries()[index - 1]?.url : null;
+      if (!previous || new URL(previous).pathname !== new URL(link.href).pathname) return;
+      event.preventDefault();
+      history.back();
+    });
+  }
+</script>
+
 <style>
+  .case-header__back {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-block: -14px;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    background: linear-gradient(currentColor, currentColor) left calc(50% + 0.8em) / 0 1px no-repeat;
+    view-transition-name: case-back;
+    transition:
+      color var(--duration-fast) var(--ease-out),
+      background-size var(--duration-medium) var(--ease-out);
+  }
+  .case-header__back:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+  @media (hover: hover) {
+    .case-header__back:hover {
+      color: var(--color-text);
+      background-size: 100% 1px;
+    }
+  }
+  .case-header__sep {
+    margin-inline: 0.75em;
+    color: var(--color-text-muted);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .case-header__back {
+      transition: none;
+    }
+  }
   .case-header {
-    padding-top: clamp(28px, 6vw, 64px);
+    padding-top: clamp(28px, 6vw, 40px);
   }
   .case-header__company {
     margin: 12px 0 0;
@@ -38,5 +101,15 @@ const { company, title, slug } = Astro.props;
     line-height: 1.04;
     letter-spacing: -0.035em;
     text-wrap: balance;
+  }
+  /* Phones: CaseTop's back pill is the way back, so the label starts at the company, close under the bar. */
+  @media (max-width: 560px) {
+    .case-header {
+      padding-top: 0;
+    }
+    .case-header__back,
+    .case-header__sep {
+      display: none;
+    }
   }
 </style>

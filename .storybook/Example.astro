@@ -25,6 +25,7 @@ import CaseQuoteExample from "../src/components/projects/case/CaseQuote/examples
 import CaseIntroExample from "../src/components/projects/case/CaseIntro/examples/CaseIntroExample.astro";
 import ChapterExample from "../src/components/projects/case/Chapter/examples/ChapterExample.astro";
 import ExampleFrameExample from "../src/components/projects/case/ExampleFrame/examples/ExampleFrameExample.astro";
+import CaseFigureExample from "../src/components/projects/case/CaseFigure/examples/CaseFigureExample.astro";
 interface Props {
   /** Example file under src/components/, e.g. "ui/Desk/examples/DeskExample.astro". */
   example: string;
@@ -52,6 +53,7 @@ const examples = {
   "projects/case/CaseIntro/examples/CaseIntroExample.astro": CaseIntroExample,
   "projects/case/Chapter/examples/ChapterExample.astro": ChapterExample,
   "projects/case/ExampleFrame/examples/ExampleFrameExample.astro": ExampleFrameExample,
+  "projects/case/CaseFigure/examples/CaseFigureExample.astro": CaseFigureExample,
 };
 const { example, locale } = Astro.props;
 if (locale) Astro.locals.lang = locale;

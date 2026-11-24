@@ -1,0 +1,92 @@
+---
+import { getLang, useTranslations } from "../../../../i18n/ui";
+interface Props {
+  /** The case's chapters in order: each chapter's `id` and a short name ("Petys", "The shell"). Numbered from 01. */
+  items: readonly { id: string; label: string }[];
+}
+const { items } = Astro.props;
+const t = useTranslations(getLang(Astro));
+---
+
+<!--
+  The case index (owner review, 2026-11-23): the chapters as a line of text links under the facts strip, number and
+  short name in mono, on one line: the layout's quarters, or one column per chapter past four. Static: it does not
+  follow the scroll. Plain anchors, so it works without JavaScript; the page scrolls to the chapter smoothly (WorkCase) and the chapter's number marks the landing.
+-->
+<nav class="case-index" aria-label={t("case.contents")} style={`--case-index-count: ${items.length}`}>
+  <ol class="case-index__list">
+    {items.map((item, index) => (
+      <li>
+        <a class="case-index__link" href={`#${item.id}`}>
+          <span class="case-index__number">{String(index + 1).padStart(2, "0")}</span>
+          <span class="case-index__label">{item.label}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .case-index__list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--layout-gap);
+    margin: 0;
+    padding: var(--space-2) 0 0;
+    list-style: none;
+  }
+  /*
+   * From 720px always one line (owner review, 2026-11-23): one column per chapter, at least four so a short case keeps
+   * the layout's quarters.
+   */
+  @media (min-width: 720px) {
+    .case-index__list {
+      grid-template-columns: repeat(max(4, var(--case-index-count)), minmax(0, 1fr));
+    }
+  }
+  .case-index__link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: 44px;
+    color: var(--color-text-secondary);
+    font: 500 var(--font-size-label) / 1.3 var(--font-mono);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+  .case-index__number {
+    color: var(--color-text-muted);
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+  /* Hover draws a 1px underline under the name, left to right; the number takes the accent. */
+  .case-index__label {
+    background: linear-gradient(currentColor, currentColor) left bottom / 0 1px no-repeat;
+    padding-bottom: 2px;
+    transition: background-size var(--duration-medium) var(--ease-out);
+  }
+  .case-index__link:focus-visible {
+    outline: 2px solid var(--color-text-accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+  @media (hover: hover) {
+    .case-index__link:hover {
+      color: var(--color-text);
+    }
+    .case-index__link:hover .case-index__label {
+      background-size: 100% 1px;
+    }
+    .case-index__link:hover .case-index__number {
+      color: var(--color-text-accent);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .case-index__link,
+    .case-index__number,
+    .case-index__label {
+      transition: none;
+    }
+  }
+</style>

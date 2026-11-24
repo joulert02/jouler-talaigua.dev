@@ -14,12 +14,11 @@ const short = (link: CaseLink) => (link.title.length <= link.company.length ? li
 ---
 
 <!--
-  The end of a case (v11 `.case-next`): the previous and the next case on Work, side by side, then the footer. When
-  the nav is too narrow for both titles, each shows a short name instead. On phones a band between two hairlines, its own on top
-  and the footer's under it; from 720px only the footer's (WorkCase ends the page flush with the footer). `data-case-end` tells CaseNav where the
-  case ends.
+  The end of a case: the previous and the next case on Work, one in each half of the layout, then the footer. A band
+  between two hairlines at every width, its own on top and the footer's under it, with the same space inside as the
+  footer (owner review, 2026-11-23). When the nav is too narrow for both titles, each shows a short name instead.
 -->
-<nav class="case-next" aria-label={t("case.more")} data-case-end>
+<nav class="case-next" aria-label={t("case.more")}>
   <div class="case-next__links">
     <a class="case-next__link" href={previous.href}>
       <span class="case-next__label">
@@ -47,19 +46,23 @@ const short = (link: CaseLink) => (link.title.length <= link.company.length ? li
 <style>
   .case-next {
     container: case-next / inline-size;
-    margin-top: var(--space-9);
+    margin-top: var(--space-10);
     border-top: 1px solid var(--color-border);
   }
-  /* Narrow: both side by side, a short name in place of the title; display: none keeps the hidden text unread. */
+  /*
+   * The layout's halves, with its gap: "Next" ends on the right edge and the footer's Contact column starts where the
+   * right half does. Narrow: a short name in place of the title; display: none keeps the hidden text unread.
+   */
   .case-next__links {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-5);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--layout-gap);
   }
   .case-next__link {
     display: grid;
+    align-content: start;
     gap: var(--space-2);
-    padding: var(--space-7) 0;
+    padding: var(--space-8) 0;
     color: var(--color-text);
     text-decoration: none;
   }
@@ -89,9 +92,6 @@ const short = (link: CaseLink) => (link.title.length <= link.company.length ? li
     transition: color var(--duration-fast) var(--ease-out);
   }
   @container case-next (min-width: 640px) {
-    .case-next__links {
-      gap: var(--space-6);
-    }
     .case-next__company,
     .case-next__name:not(.case-next__name--short) {
       display: inline;
@@ -100,11 +100,9 @@ const short = (link: CaseLink) => (link.title.length <= link.company.length ? li
       display: none;
     }
   }
-  /* From 720px no rule of its own: the footer's hairline closes it. */
   @media (min-width: 720px) {
-    .case-next {
-      margin-top: var(--space-10);
-      border-top: 0;
+    .case-next__link {
+      padding-block: var(--space-9);
     }
   }
   @media (hover: hover) {

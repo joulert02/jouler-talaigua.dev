@@ -1,6 +1,6 @@
 # Design principles
 
-- **Status:** Draft v0.4, consolidated on 2026-10-25. v7 is under owner review; approval of the sober-board concept does not mean approval of the final design or copy.
+- **Status:** Draft v0.5. The owner's minimal and typographic rules were added on 2026-11-23 (section below); the rest was consolidated on 2026-10-25. v7 is under owner review; approval of the sober-board concept does not mean approval of the final design or copy.
 - **Inputs:** [references.md](references.md), [rounds.md](rounds.md), [discovery brief](../discovery-brief.md), and the owner's October 23 feedback.
 - This revision reconciles Claude's v0.3 principles with the owner's direction incorporated in Codex v6/v7. Earlier decisions and feedback remain in [rounds](rounds.md) and the [decisions log](../decisions-log.md).
 
@@ -24,6 +24,18 @@ The sober-board concept (option B) was approved on 2026-10-22. The following ref
 - **Notes:** a separate, quieter entrance. The published Home list appears only once three real notes exist; example notes in prototypes are layout references.
 - **Navigation:** floating dock with Home, Work, Notes, contact and theme; no Roadmap entry. The roadmap object serves interested visitors. The footer remains the sitemap with Site, Social and Contact columns and a large wordmark.
 - Andre informs the hierarchy; Clara informs editorial scale and separation. Objects, accent and JOTA identity remain Jouler's own.
+
+## Minimal and typographic (owner, 2026-11-23)
+
+The owner's design rule, set while reviewing the Bancolombia case. It applies to every page and component, and it decides when another rule or a third-party skill disagrees.
+
+- **Every element earns its place.** If removing it loses nothing for the reader, remove it. No information that is not relevant, and nothing said twice (a label "on LinkedIn" next to a button "Open on LinkedIn").
+- **Typography carries the hierarchy.** Size, weight, tone and the mono labels structure the page; boxes, borders and colour do not stand in for them.
+- **Grids with meaning.** Every block starts and ends on the layout's columns, and an action aligns to the column of what it acts on. A block that takes half the width leaves the other half for a reason, never empty by accident.
+- **No decoration.** No shadows to lift content blocks, no gradients, no emoji in the interface, no card inside a card. The Home desk's physical objects and the device frames (browser, phone) keep their shadows: there they depict real things. A container appears only when it groups something the reader interacts with: an `ExampleFrame` holds a playground; a screenshot, a quote or a post stands on the page without one.
+- **Clean and professional.** Calm surfaces, one accent for interaction, generous and consistent space; the content is the visual.
+- **Flat to the eye, crafted in every detail.** Minimal does not mean static or plain: it looks simple and is not. Motion and interaction are welcome when they add meaning (they explain a change, show where the reader is, or tell the story, like a team growing from 1 to 20) and are clean, smooth and polished enough that the time put into them shows. Decoration that only moves (an endless bounce, a pulse for attention) is still out. Every animation respects `prefers-reduced-motion`.
+- **Options, not a single answer.** A new visual decision is shown as two or three real options, the recommended one first with what each gains and gives up; the owner chooses.
 
 ## Principles
 

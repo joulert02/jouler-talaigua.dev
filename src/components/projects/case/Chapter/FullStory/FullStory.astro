@@ -12,9 +12,9 @@ const t = useTranslations(getLang(Astro));
 </details>
 
 <style>
+  /* The hairline spans the chapter, like the pieces above it; the text inside keeps the reading measure. */
   .full-story {
-    max-width: var(--measure-prose);
-    margin-top: 28px;
+    margin-top: var(--space-7);
     border-top: 1px solid var(--color-border);
   }
   .full-story__summary {
@@ -51,6 +51,7 @@ const t = useTranslations(getLang(Astro));
     border-radius: 6px;
   }
   .full-story__body {
+    max-width: var(--measure-prose);
     --case-paragraph-color: var(--color-text-secondary);
     padding: 4px 0 8px;
   }
