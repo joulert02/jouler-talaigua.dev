@@ -1,0 +1,379 @@
+---
+import ExampleFrame from "../../case/ExampleFrame/ExampleFrame.astro";
+import ExampleHint from "../../case/ExampleFrame/ExampleHint/ExampleHint.astro";
+import SegmentedSwitch from "../../../ui/SegmentedSwitch/SegmentedSwitch.astro";
+import Button from "../../../ui/Button/Button.astro";
+import Icon from "../../../ui/Icon/Icon.astro";
+import { getLang } from "../../../../i18n/ui";
+import { shellCopy, shellKeys } from "./shell.config";
+const copy = shellCopy[getLang(Astro)];
+const script = {
+  states: copy.states,
+  microFrontend: copy.microFrontend,
+  typicalOne: copy.typicalOne,
+  typicalMany: copy.typicalMany,
+  proposalDone: copy.proposalDone,
+};
+const config = `{\n${shellKeys.map((key) => `  "${key}": "…"`).join(",\n")}\n}`;
+---
+
+<!--
+  Bancolombia · 02 (v11 `.shell-lab`): deploy a micro frontend with the registry inside the shell (it rebuilds and
+  redeploys every time) or with the registry in a configuration the browser reads (the shell is never touched).
+  Up to five deploys per setup; switching setup starts over. The result is shown and announced.
+-->
+<div class="shell-playground" data-shell-playground data-mode="typical" data-copy={JSON.stringify(script)}>
+  <ExampleFrame id="shell-playground" label={copy.label} shortLabel={copy.shortLabel}>
+    <SegmentedSwitch
+      slot="controls"
+      name="shell-playground-mode"
+      legend={copy.legend}
+      options={[
+        { value: "typical", label: copy.typical },
+        { value: "proposal", label: copy.proposal },
+      ]}
+    />
+    <div class="shell-playground__stage">
+      <div class="shell-playground__node shell-playground__users">
+        <b class="shell-playground__name">{copy.users}</b>
+        <span class="shell-playground__dots" aria-hidden="true">
+          {Array.from({ length: 12 }, () => (
+            <i class="shell-playground__dot" />
+          ))}
+        </span>
+      </div>
+      <span class="shell-playground__arrow" aria-hidden="true"></span>
+      <div class="shell-playground__row">
+        <div class="shell-playground__node shell-playground__shell">
+          <b class="shell-playground__name">{copy.shell}</b>
+          <span class="shell-playground__state">{copy.states.running}</span>
+          <ul class="shell-playground__registry" aria-label={copy.registry}>
+            {shellKeys.map((key) => (
+              <li class="shell-playground__key">{key}</li>
+            ))}
+          </ul>
+          <small class="shell-playground__lazy">{copy.lazy}</small>
+        </div>
+        <div class="shell-playground__config">
+          <small class="shell-playground__config-label">{copy.config}</small>
+          <code class="shell-playground__code">{config}</code>
+        </div>
+      </div>
+      <span class="shell-playground__arrow" aria-hidden="true"></span>
+      <ul class="shell-playground__apps" aria-label={copy.microFrontends}>
+        {copy.initial.map((name) => (
+          <li class="shell-playground__app">{name}</li>
+        ))}
+      </ul>
+    </div>
+    <dl class="shell-playground__stats">
+      <dt class="shell-playground__stat-label">{copy.redeploys}</dt>
+      <dd class="shell-playground__count">0</dd>
+    </dl>
+    <p class="shell-playground__result">{copy.start}</p>
+    <ExampleHint slot="foot">{copy.hint}</ExampleHint>
+    <Button slot="actions" size="sm" label={copy.deploy}>
+      <Icon slot="start" name="play" size={14} />
+    </Button>
+  </ExampleFrame>
+</div>
+
+<style>
+  .shell-playground__stage {
+    display: grid;
+    justify-items: center;
+    margin-top: var(--space-6);
+  }
+  .shell-playground__node {
+    position: relative;
+    box-sizing: border-box;
+    width: min(420px, 100%);
+    padding: 14px 18px;
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    background: var(--color-surface);
+    text-align: center;
+    transition:
+      border-color var(--duration-medium) var(--ease-out),
+      background-color var(--duration-medium) var(--ease-out);
+  }
+  .shell-playground__name {
+    font-size: var(--font-size-body);
+  }
+  .shell-playground__dots {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-top: var(--space-2);
+  }
+  .shell-playground__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-round);
+    background: var(--color-text-secondary);
+    transition: opacity var(--duration-medium);
+  }
+  .shell-playground[data-busy] .shell-playground__dot {
+    opacity: 0.25;
+  }
+  .shell-playground__arrow {
+    width: 2px;
+    height: 26px;
+    background: var(--color-border);
+  }
+  .shell-playground__row {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-4);
+    width: 100%;
+  }
+  .shell-playground__state {
+    display: block;
+    margin-top: var(--space-1);
+    color: var(--color-text-muted);
+    font: 500 var(--font-size-small) / 1.4 var(--font-mono);
+  }
+  .shell-playground[data-busy] .shell-playground__shell {
+    border-color: #d97706;
+    background: color-mix(in srgb, #d97706 10%, var(--color-surface));
+  }
+  .shell-playground[data-busy] .shell-playground__state {
+    color: var(--color-text);
+  }
+  .shell-playground__shell[data-calm] {
+    border-color: #12805c;
+  }
+  .shell-playground__registry {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    margin: var(--space-2) 0 0;
+    padding: 0;
+    list-style: none;
+    color: var(--color-text-secondary);
+    font: var(--font-size-small) / 1.4 var(--font-mono);
+  }
+  .shell-playground__key {
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg-subtle);
+  }
+  .shell-playground__lazy {
+    display: none;
+    margin-top: 6px;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-small);
+  }
+  .shell-playground__config {
+    display: none;
+    padding: var(--space-3) 14px;
+    border: 1px dashed var(--color-text-secondary);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-subtle);
+    font: var(--font-size-small) / 1.55 var(--font-mono);
+    text-align: left;
+  }
+  .shell-playground__config-label {
+    display: block;
+    margin-bottom: var(--space-1);
+    color: var(--color-text-muted);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-small);
+  }
+  .shell-playground__code {
+    display: block;
+    font: inherit;
+    white-space: pre;
+  }
+  .shell-playground__code :global(.shell-playground__added) {
+    border-radius: var(--radius-xs);
+    background: color-mix(in srgb, #12805c 16%, transparent);
+  }
+  .shell-playground[data-mode="proposal"] .shell-playground__config,
+  .shell-playground[data-mode="proposal"] .shell-playground__lazy {
+    display: block;
+  }
+  .shell-playground[data-mode="proposal"] .shell-playground__registry {
+    display: none;
+  }
+  .shell-playground__apps {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2);
+    max-width: 640px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .shell-playground__app {
+    padding: 10px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-surface);
+    font-size: var(--font-size-small);
+  }
+  .shell-playground__app[data-new] {
+    border-color: #12805c;
+    animation: shell-playground-pop var(--duration-slow) var(--ease-out);
+  }
+  @keyframes shell-playground-pop {
+    from {
+      opacity: 0;
+      transform: scale(0.85);
+    }
+  }
+  .shell-playground__stats {
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+    margin: var(--space-6) 0 0;
+  }
+  .shell-playground__stat-label {
+    color: var(--color-text-muted);
+    font: 500 var(--font-size-label) / 1.4 var(--font-mono);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .shell-playground__count {
+    margin: 0;
+    font-size: 28px;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+  }
+  .shell-playground__result {
+    max-width: 60ch;
+    min-height: 1.5em;
+    margin: var(--space-4) auto 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-small);
+    text-align: center;
+  }
+  .shell-playground__result :global(b) {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+  @media (min-width: 720px) {
+    .shell-playground__row {
+      grid-template-columns: minmax(0, 420px) auto;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .shell-playground__app[data-new] {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  import { announce, wait } from "../../case/ExampleFrame/frame";
+
+  interface Result {
+    strong: string;
+    rest: string;
+  }
+  interface Copy {
+    states: Record<"running" | "busy" | "redeployed" | "untouched", string>;
+    microFrontend: string;
+    typicalOne: Result;
+    typicalMany: Result;
+    proposalDone: Result;
+  }
+
+  const FIRST = 3;
+  const LAST = 7;
+
+  for (const root of document.querySelectorAll<HTMLElement>("[data-shell-playground]")) {
+    const frame = root.querySelector(".example-frame");
+    const deploy = root.querySelector<HTMLButtonElement>(".example-frame__actions button");
+    const shell = root.querySelector<HTMLElement>(".shell-playground__shell");
+    const state = root.querySelector<HTMLElement>(".shell-playground__state");
+    const registry = root.querySelector<HTMLElement>(".shell-playground__registry");
+    const code = root.querySelector<HTMLElement>(".shell-playground__code");
+    const apps = root.querySelector<HTMLElement>(".shell-playground__apps");
+    const count = root.querySelector<HTMLElement>(".shell-playground__count");
+    const result = root.querySelector<HTMLElement>(".shell-playground__result");
+    if (!frame || !deploy || !shell || !state || !registry || !code || !apps || !count || !result) continue;
+    // New items are cloned from server-rendered ones, so they keep the component's scoped styles.
+    const keyTemplate = registry.firstElementChild;
+    const appTemplate = apps.firstElementChild;
+    if (!keyTemplate || !appTemplate) continue;
+    const copy = JSON.parse(root.dataset.copy ?? "{}") as Copy;
+    const base = {
+      registry: registry.innerHTML,
+      code: code.innerHTML,
+      apps: apps.innerHTML,
+      result: result.innerHTML,
+    };
+    let redeploys = 0;
+    let next = FIRST;
+    let busy = false;
+
+    const show = (message: Result, n: number) => {
+      const strong = document.createElement("b");
+      strong.textContent = message.strong.replace("{n}", String(n));
+      result.replaceChildren(strong, ` ${message.rest}`);
+      announce(frame, result.textContent ?? "");
+    };
+    const reset = () => {
+      registry.innerHTML = base.registry;
+      code.innerHTML = base.code;
+      apps.innerHTML = base.apps;
+      result.innerHTML = base.result;
+      redeploys = 0;
+      next = FIRST;
+      count.textContent = "0";
+      state.textContent = copy.states.running;
+      shell.removeAttribute("data-calm");
+      deploy.removeAttribute("aria-disabled");
+    };
+
+    root.querySelectorAll<HTMLInputElement>('input[name="shell-playground-mode"]').forEach((radio) =>
+      radio.addEventListener("change", () => {
+        if (busy) return;
+        root.dataset.mode = radio.value;
+        reset();
+      }),
+    );
+
+    deploy.addEventListener("click", async () => {
+      if (busy || deploy.getAttribute("aria-disabled") === "true") return;
+      busy = true;
+      deploy.setAttribute("aria-disabled", "true");
+      const key = `mf-${next}`;
+      if (root.dataset.mode === "proposal") {
+        const added = document.createElement("span");
+        added.className = "shell-playground__added";
+        added.textContent = `"${key}": "…"`;
+        const text = code.textContent ?? "";
+        code.replaceChildren(text.replace(/\n}$/, ",\n  "), added, "\n}");
+        await wait(500);
+        state.textContent = copy.states.untouched;
+        shell.setAttribute("data-calm", "");
+        show(copy.proposalDone, next);
+      } else {
+        root.setAttribute("data-busy", "");
+        state.textContent = copy.states.busy;
+        await wait(1600);
+        root.removeAttribute("data-busy");
+        redeploys += 1;
+        count.textContent = String(redeploys);
+        const item = keyTemplate.cloneNode() as HTMLElement;
+        item.textContent = key;
+        registry.append(item);
+        state.textContent = copy.states.redeployed;
+        show(redeploys === 1 ? copy.typicalOne : copy.typicalMany, redeploys);
+      }
+      const app = appTemplate.cloneNode() as HTMLElement;
+      app.setAttribute("data-new", "");
+      app.textContent = copy.microFrontend.replace("{n}", String(next));
+      apps.append(app);
+      next += 1;
+      busy = false;
+      if (next <= LAST) deploy.removeAttribute("aria-disabled");
+    });
+  }
+</script>

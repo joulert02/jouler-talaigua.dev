@@ -58,8 +58,10 @@ const t = useTranslations(lang);
 </footer>
 <style>
   /*
-   * Calm and structured (owner review, HU-04): one hairline opens the footer, the columns sit together on the left as
-   * one block with one row height, then the wordmark and a quiet bottom line under its own hairline. Labels in mono
+   * Calm and structured (owner review, HU-04): one hairline opens the footer, the columns share one row height, then
+   * the wordmark and a quiet bottom line under its own hairline. From 720px the columns sit on the layout's quarters
+   * with its gap (owner review, 2026-11-23): Site and Social in the left half, Contact from the right half, where a
+   * case's "Next" sits above it; the wordmark fills the container's width. Labels in mono
    * like the rest of the site's captions; links one tone below the text. Values from the space scale only.
    * `--footer-gap` lets a page end flush with it (a case: CaseNext's band sits right on the footer's hairline).
    */
@@ -68,6 +70,7 @@ const t = useTranslations(lang);
     --_flag-width: 16px;
     --_flag-height: 11px;
     max-width: var(--layout-container);
+    container: footer / inline-size;
     margin: var(--footer-gap, var(--space-10)) auto 0;
     padding: var(--space-8) 0 calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
     border-top: 1px solid var(--color-border);
@@ -127,7 +130,8 @@ const t = useTranslations(lang);
   }
   .footer__wordmark {
     margin: var(--space-9) 0 var(--space-7);
-    font-size: clamp(2.5rem, 12vw, 9rem);
+    /* The name is 6.46 times as wide as its font size: 6.5 fills the container's width edge to edge, with no overflow. */
+    font-size: calc(100cqi / 6.5);
     font-weight: 600;
     line-height: 0.95;
     letter-spacing: -0.045em;
@@ -176,11 +180,11 @@ const t = useTranslations(lang);
       padding-top: var(--space-9);
     }
     .footer__columns {
-      grid-template-columns: repeat(3, max-content);
-      column-gap: var(--space-10);
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      column-gap: var(--layout-gap);
     }
     .footer__column:last-child {
-      grid-column: auto;
+      grid-column: 3 / -1;
     }
     .footer__wordmark {
       margin: var(--space-10) 0 var(--space-9);

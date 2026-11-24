@@ -1,21 +1,23 @@
 ---
-import CaseJump from "./CaseJump/CaseJump.astro";
 interface Props {
   /** The intro's heading ("What I learned"). */
   title: string;
-  /** Id of the first chapter: the floating "See what we built" invitation scrolls to it. */
-  next: string;
+  /**
+   * Where the media sits: `portrait` (a phone-shaped video or photo, 380px on the right) or `side` (a landscape image,
+   * half the width on the right; on phones it sits between the paragraphs and the quote). Not `media`: that name is
+   * the slot's, and Astro would not pass it as a prop.
+   */
+  layout?: "portrait" | "side";
 }
-const { title, next } = Astro.props;
+const { title, layout = "portrait" } = Astro.props;
 const id = "case-intro-title";
 ---
 
 <!--
   The case intro (v11 intro-c with the Pragma variant): the heading, the owner's text and quote on the left, the media
-  (a photo or a CaseVideo, in the `media` slot) on the right; one column on phones, text first. A floating invitation
-  leads to the first chapter.
+  (a photo or a CaseVideo, in the `media` slot) on the right; one column on phones, text first.
 -->
-<section class="case-intro" id="case-intro" aria-labelledby={id} data-case-nav={title}>
+<section class={`case-intro case-intro--${layout}`} id="case-intro" aria-labelledby={id}>
   <h2 class="case-intro__title" id={id}>
     {title}
   </h2>
@@ -28,7 +30,6 @@ const id = "case-intro-title";
     </div>
   )}
 </section>
-<CaseJump target={next} />
 
 <style>
   .case-intro {
@@ -64,7 +65,7 @@ const id = "case-intro-title";
     .case-intro {
       grid-template-columns: minmax(0, 1fr) minmax(260px, 380px);
       grid-template-rows: auto 1fr;
-      gap: 28px clamp(32px, 6vw, 96px);
+      gap: 28px var(--layout-gap);
       align-items: start;
     }
     .case-intro__title,
@@ -79,6 +80,38 @@ const id = "case-intro-title";
       grid-row: 1 / span 2;
       justify-self: end;
       width: 100%;
+    }
+    /* A landscape image beside the text: both halves share the row. */
+    .case-intro--side {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      align-items: center;
+    }
+  }
+  .case-intro--side .case-intro__media {
+    width: 100%;
+  }
+  /* The intro's grid spaces the figure; its own top margin is for chapters. */
+  .case-intro__media :global(.case-figure) {
+    margin-top: 0;
+  }
+  /*
+   * Side, on phones: paragraphs, then the image, then the quote. The text box lets its paragraphs and quote join the
+   * intro's grid, so the image can sit between them.
+   */
+  @media (max-width: 719px) {
+    .case-intro--side {
+      gap: 24px;
+    }
+    .case-intro--side .case-intro__text {
+      --case-paragraph-gap: 0;
+      --case-quote-margin: 0;
+      display: contents;
+    }
+    .case-intro--side .case-intro__media {
+      order: 1;
+    }
+    .case-intro--side :global(.case-quote) {
+      order: 2;
     }
   }
 </style>

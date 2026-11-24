@@ -1,0 +1,144 @@
+---
+title: Sucursal Virtual Personas
+company: Bancolombia · con PRAGMA
+summary: Sentar las bases en micro frontends de la banca en línea para personas de Bancolombia, y hacer crecer el equipo que construyó sobre ellas.
+lang: es
+tier: 1
+order: 2
+focus: [Arquitectura frontend, Micro frontends, Formación de equipos]
+cover: ../../../assets/projects/bancolombia/svp-devices.png
+case: live
+---
+
+import CaseFacts from "@/components/projects/case/CaseFacts/CaseFacts.astro";
+import Fact from "@/components/projects/case/CaseFacts/Fact/Fact.astro";
+import CaseIndex from "@/components/projects/case/CaseIndex/CaseIndex.astro";
+import CaseIntro from "@/components/projects/case/CaseIntro/CaseIntro.astro";
+import CaseQuote from "@/components/projects/case/CaseQuote/CaseQuote.astro";
+import CaseFigure from "@/components/projects/case/CaseFigure/CaseFigure.astro";
+import Chapter from "@/components/projects/case/Chapter/Chapter.astro";
+import FullStory from "@/components/projects/case/Chapter/FullStory/FullStory.astro";
+import ProductShot from "@/components/projects/bancolombia-svp/ProductShot/ProductShot.astro";
+import LaunchPost from "@/components/projects/bancolombia-svp/LaunchPost/LaunchPost.astro";
+import FoundationPlayground from "@/components/projects/bancolombia-svp/FoundationPlayground/FoundationPlayground.astro";
+import ShellPlayground from "@/components/projects/bancolombia-svp/ShellPlayground/ShellPlayground.astro";
+import TeamMap from "@/components/projects/bancolombia-svp/TeamMap/TeamMap.astro";
+import devices from "@/assets/projects/bancolombia/svp-devices.png";
+
+<CaseFacts>
+  <Fact label="Rol">Master Frontend Developer · PRAGMA</Fact>
+  <Fact label="Equipo">De 1 a 20 personas, en cinco squads</Fact>
+  <Fact label="Tecnología">
+    Angular · Module Federation · Clean Architecture · Bancolombia Design System · Azure DevOps · AWS S3 y
+    CloudFront
+  </Fact>
+</CaseFacts>
+
+<CaseIndex
+  items={[
+    { id: "challenges", label: "Desde cero" },
+    { id: "shell", label: "El shell" },
+    { id: "team", label: "El equipo" },
+    { id: "product", label: "El producto" },
+  ]}
+/>
+
+<CaseIntro
+  title="Bases sobre las que un equipo de 20 pudo construir"
+  layout="side"
+>
+
+Fui el primer ingeniero del proyecto. A través de PRAGMA llegué a la renovación de la Sucursal Virtual Personas de Bancolombia, el banco en línea que millones de personas usan cada día, antes de que existieran un equipo, un repositorio o un pipeline.
+
+<CaseQuote>
+
+Antes de Bancolombia trabajaba sobre todo con React, Gatsby y sitios de marketing estáticos. Este proyecto me hizo aprender Angular desde cero, Azure y Azure DevOps, y nuevas herramientas y formas de trabajar. Pero el mayor reto, y lo que más valoro, fue ayudar a construir el equipo: afinó mi liderazgo, mi ownership y mi forma de mentorear. Trabajé con personas excelentes que me ayudaron a crecer como persona y como profesional.
+
+</CaseQuote>
+
+<CaseFigure
+  slot="media"
+  src={devices}
+  alt="La Sucursal Virtual Personas en un portátil, una tableta y un teléfono, cada uno con el inicio y las transacciones más usadas."
+/>
+
+</CaseIntro>
+
+<Chapter
+  id="challenges"
+  number="01"
+  title="Empezar desde cero"
+  lead="Participé en la construcción de gran parte de la base frontend de Bancolombia, casi solo al principio, para que un equipo pudiera crecer sobre ella."
+>
+
+<FoundationPlayground />
+
+<FullStory>
+
+Los diseños de registro y login ya estaban listos. Mi trabajo era convertir la visión de micro frontends de Bancolombia en una arquitectura, y después en un equipo capaz de trabajar con ella.
+
+Las primeras semanas fueron para entender qué íbamos a construir y cómo construye Bancolombia. Trabajé con los equipos transversales del banco, aprendí su sistema de diseño y me reuní con un Google Developer Expert para entender los estándares que ya se usaban en otros proyectos: Clean Architecture, Angular, y por qué.
+
+Bancolombia quería micro frontends, pero tenía poco en marcha. Como ya los había construido antes, pude ser una pieza clave en la definición del proyecto y de sus arquetipos: hice pruebas de concepto y escribí los lineamientos que seguiría el equipo.
+
+Configuré cada repositorio de micro frontend y un conjunto de repositorios arquetipo, plantillas que daban a cada nuevo micro frontend la estructura correcta desde el primer día. El stack era Angular con Module Federation.
+
+Configuré el pipeline de entrega en Azure DevOps: builds, manejo de secretos y despliegue a AWS S3 detrás del CDN de CloudFront. Integré el Bancolombia Design System y construí la primera página de login como prueba de que todo funcionaba de punta a punta.
+
+</FullStory>
+
+</Chapter>
+
+<Chapter
+  id="shell"
+  number="02"
+  title="Una decisión: nunca redesplegar el shell"
+  lead="Normalmente el shell sabe dónde vive cada micro frontend, así que cada uno nuevo obliga a recompilarlo. Saqué ese registro a una configuración que lee el navegador."
+>
+
+<ShellPlayground />
+
+<FullStory>
+
+En una configuración típica de Module Federation, el shell sabe dónde vive cada micro frontend. Registrar uno nuevo, o actualizar uno, implica recompilar y redesplegar el shell. Para un banco que usan millones de personas al mismo tiempo, eso es lento, cuesta dinero en cada recompilación y convierte al shell en un punto único de falla para todos los equipos.
+
+Propuse dos cambios. Primero, cargar los micro frontends de forma asíncrona, para que el shell abra el login de inmediato en vez de cargarlo todo al inicio. Segundo, sacar el registro del shell: un archivo de configuración funciona como contrato con cada micro frontend, y la app lo consulta en el navegador para saber dónde vive cada uno.
+
+Con eso, los equipos podían desplegar un micro frontend por su cuenta y actualizar sus rutas cambiando la configuración, sin tocar ni redesplegar el shell.
+
+</FullStory>
+
+</Chapter>
+
+<Chapter
+  id="team"
+  number="03"
+  title="De un ingeniero a veinte"
+  lead="Cuando el equipo empezó a crecer, ayudé a elegirlo y a ponerlo de acuerdo."
+>
+
+<TeamMap />
+
+<FullStory>
+
+Entrevisté a los candidatos de PRAGMA y ayudé a equilibrar la mezcla de seniority, de juniors a masters, para un equipo planeado para llegar a 20 personas. Llegamos a 20, organizados en cinco squads, cada uno con su líder.
+
+Me reunía con los líderes de squad para acordar cómo íbamos a trabajar, cómo se adoptarían los nuevos estándares y qué necesitaba aprender cada persona. No todos conocían Clean Architecture, así que di charlas e hice sesiones hasta que todo el equipo estuvo en la misma página. Las decisiones de arquitectura y seguridad pasaban por ese grupo.
+
+</FullStory>
+
+</Chapter>
+
+<Chapter id="product" number="04" title="El producto hoy" lead="Así se ve hoy la Sucursal Virtual Personas.">
+
+<ProductShot />
+
+<FullStory>
+
+La Sucursal Virtual Personas se lanzó después con el equipo completo, muchos de los cuales siguieron tras mi etapa. Verla en vivo, construida sobre las bases que empezamos, fue uno de los momentos más gratificantes de mi carrera.
+
+<LaunchPost />
+
+</FullStory>
+
+</Chapter>

@@ -8,10 +8,8 @@ interface Props {
   title: string;
   /** One sentence under the heading that says what the chapter shows. */
   lead: string;
-  /** Its name in the case index (CaseNav); the title up to its colon when left out ("Petys"). */
-  short?: string;
 }
-const { id, number, title, lead, short = title.split(":")[0] ?? title } = Astro.props;
+const { id, number, title, lead } = Astro.props;
 const headingId = `${id}-title`;
 ---
 
@@ -19,7 +17,7 @@ const headingId = `${id}-title`;
   A case chapter (v11 `.chapter`): number, title and one lead sentence, then the interactive piece in the slot,
   followed by a FullStory with the approved paragraphs.
 -->
-<section class="chapter" id={id} aria-labelledby={headingId} data-case-nav={`${number} ${short}`}>
+<section class="chapter" id={id} aria-labelledby={headingId}>
   <div class="chapter__head">
     <span class="chapter__number">{number}</span>
     <h2 class="chapter__title" id={headingId}>
@@ -49,6 +47,21 @@ const headingId = `${id}-title`;
     font: 500 var(--font-size-label) / 1.3 var(--font-mono);
     letter-spacing: 0.05em;
     text-transform: uppercase;
+  }
+  /* Landing from the index or "See what we built": the number takes the accent and eases back, so the eye finds it. */
+  @media (prefers-reduced-motion: no-preference) {
+    .chapter:target .chapter__number {
+      animation: chapter-landed 1.6s var(--ease-out) 0.35s both;
+    }
+  }
+  @keyframes chapter-landed {
+    from,
+    30% {
+      color: var(--color-text-accent);
+    }
+    to {
+      color: var(--color-text-muted);
+    }
   }
   .chapter__title {
     margin: 0;
