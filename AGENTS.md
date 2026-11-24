@@ -4,6 +4,7 @@ Shared technical base, extendable by the owner. Read `README.md`, `docs/discover
 
 - The accepted stack is Astro with strict TypeScript, MDX and content collections. Check `package.json` for current versions and commands. Do not replace it with an old roadmap proposal.
 - English at the root and Spanish under `/es/`. Respect both versions and the separation between views, routes, content and translations.
+- Every visual or experience change goes through the `jota-design` skill (`.claude/skills/jota-design/`): options first, the owner chooses, then build. The owner's rules are in `docs/design/principles.md` ("Minimal and typographic").
 - Site chrome in vanilla; React only when the interaction justifies it, per the ADR. Check the configuration and the more specific instructions of the directory you are about to change.
 - The current product is a foundation/spike with pending content. Do not present a planned sitemap, a draft or the historical spike results as current publication or validation.
 - Do not invent facts, metrics, permissions or personal data. Keep `TODO(verify)` until the content is confirmed. The strict placeholder script check blocks publications that contain those markers; also review placeholders without a marker.
