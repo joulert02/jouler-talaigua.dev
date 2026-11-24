@@ -108,14 +108,10 @@ main[tabindex="-1"]:focus {
   }
 }
 /*
- * Same-site navigations morph what keeps its view-transition-name and crossfade the rest. `profile-card` is the
- * IdentityCard on the Home and the AboutMe card on "More about me": both keep their own scale, pinned to the top.
+ * Same-site navigations morph what keeps its view-transition-name and crossfade the rest (the opt-in is inline in
+ * Base.astro's head). `profile-card` is the IdentityCard on the Home and the AboutMe card on "More about me": both keep
+ * their own scale, pinned to the top.
  */
-@media (prefers-reduced-motion: no-preference) {
-  @view-transition {
-    navigation: auto;
-  }
-}
 ::view-transition-group(profile-card) {
   animation-duration: var(--duration-medium);
 }

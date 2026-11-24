@@ -42,8 +42,9 @@ view transitions:
 - Cross-document view transitions: Chrome 126, Edge 126, Safari 18.2; Firefox listed as not supported
   ([Chrome docs](https://developer.chrome.com/docs/web-platform/view-transitions/cross-document), checked
   2026-11-01; the page is undated). Confirm current Firefox status on MDN before implementing.
-- The default is live since HU-01 (2026-11-12): `@view-transition { navigation: auto; }` in `src/styles/global.css`,
-  under `prefers-reduced-motion: no-preference`. The language switch already crossfades between routes, and the
+- The default is live since HU-01 (2026-11-12): `@view-transition { navigation: auto; }`, under
+  `prefers-reduced-motion: no-preference`. Since 2026-11-24 it is inline in the head of `src/layouts/Base.astro`: in
+  `src/styles/global.css`, Chromium cancelled the transition when the stylesheet had to be revalidated. The language switch already crossfades between routes, and the
   identity card morphs into "More about me" (`view-transition-name: profile-card`).
 - Pending: a transition designed for the language switch itself, and the decision on `<ClientRouter />` if the Dock
   must persist. It is taken after the board (HU-02) is complete.

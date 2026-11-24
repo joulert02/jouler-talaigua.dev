@@ -73,6 +73,17 @@ const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
       if (theme) document.documentElement.dataset.theme = theme;
     </script>
     <!--
+      The page transitions' opt-in. Inline because Chromium can settle it before an external stylesheet is ready: with
+      the rule there, a stylesheet that has to be revalidated cancels the transition ("ViewTransition opt-in disabled").
+    -->
+    <style is:inline>
+      @media (prefers-reduced-motion: no-preference) {
+        @view-transition {
+          navigation: auto;
+        }
+      }
+    </style>
+    <!--
       Home ↔ pages (HU-02, v11): every page sits "below" the Home. Going from the Home to a page (the board's hand-off,
       the Dock, any link, Forward) slides the page in from below, as if the Home scrolled down to it; coming back to the
       Home slides it in from above. Between two other pages, or from the Home to itself, the default crossfade stays.
