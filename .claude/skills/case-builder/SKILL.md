@@ -56,6 +56,10 @@ When unsure of a phrase, offer two versions in the question instead of picking o
 
 ## 3. Layout
 
+Every visual decision (a new block, a layout choice, anything the owner may dislike) goes through the
+`jota-design` flow: options first, the owner chooses, then build. Follow the owner's "Minimal and typographic"
+rules in `docs/design/principles.md`.
+
 The MDX: `CaseFacts` → `CaseIntro` (text, `CaseQuote`, media) → one `Chapter` per part, each with its
 playground first, then `FullStory`. The page itself (top bar, index, header, previous/next) comes from
 `WorkCase`; do not rebuild it.
@@ -65,8 +69,10 @@ Playgrounds:
 - Live in `src/components/projects/<case-slug>/<Name>Playground/`, with copy per language in
   `<name>.config.ts`, a story titled `Components/Projects/<Case>/<Name>Playground`, and an example
   registered in `.storybook/Example.astro`. Shared case parts stay in `src/components/projects/case/`.
-- Use `ExampleFrame` with `label` and a `shortLabel` that fits one line on phones; hints and notes go
-  in the foot (`ExampleHint`, `ExampleNote`), never between the controls and the piece.
+- Use `ExampleFrame` only for something the reader operates, with `label` and a `shortLabel` that fits one
+  line on phones; hints and notes go in the foot (`ExampleHint`, `ExampleNote`), never between the controls and
+  the piece. A static piece (a screenshot, a quote, a post) stands on the page without a frame, on the
+  chapter's columns, with its link under it (Bancolombia's `ProductShot`).
 - Phones (below 720px): the phone version only, controls full width, no diagrams or rails beside the
   piece. If a step-by-step explanation matters, tell it inside the piece (Petys: three checks inside
   the phone, then the site changes).
@@ -74,7 +80,8 @@ Playgrounds:
 - Every playground has a scripted path (the primary button, rightmost) and announces its result in the
   frame's live region. Reduced motion still shows each step.
 - Third-party screens keep their own palette in both themes. Live sites are linked ("See it live ↗"),
-  never embedded.
+  never embedded. A third-party embed (a LinkedIn post) loads only on the reader's click.
+- Private captures: crop the OS and browser chrome, cover account numbers with a solid block (not a blur).
 - Assets in `src/assets/projects/<client>/`. A replaced image gets a new file name, so no cache serves
   the old one.
 
