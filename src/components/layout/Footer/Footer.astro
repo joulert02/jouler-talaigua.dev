@@ -5,36 +5,42 @@ interface Props {
   data?: FooterData;
 }
 const { data = footer } = Astro.props;
+const { contact } = data;
 const lang = getLang(Astro);
 const t = useTranslations(lang);
 ---
 
 <footer class="footer" id="contact" tabindex="-1">
-  <div class="footer__columns">
+  <div class="footer__top">
+    <section class="footer__contact" aria-labelledby="footer-contact">
+      <h2 class="footer__heading" id="footer-contact">
+        {t(contact.heading)}
+      </h2>
+      <a class="footer__email" href={`mailto:${contact.email}`} translate="no">
+        {contact.email}
+      </a>
+      <div class="footer__actions">
+        <slot name="copy-email" />
+        <a class="footer__action" href={localized(contact.cv.href, lang)} download={contact.cv.download}>
+          {t(contact.cv.label)}
+        </a>
+      </div>
+    </section>
     {data.columns.map((column) => (
       <div class="footer__column">
         <h2 class="footer__heading">{t(column.heading)}</h2>
         <ul class="footer__list">
-          {column.items.map((item) => (
-            <li class:list={["footer__item", { "footer__item--email": item.kind === "email" }]}>
-              {item.kind === "link" ? (
-                <a
-                  class="footer__link"
-                  href={localized(item.link.href, lang)}
-                  download={item.link.download}
-                  target={item.link.target}
-                  rel={item.link.target === "_blank" ? "noopener noreferrer" : undefined}
-                >
-                  {t(item.link.label)}
-                </a>
-              ) : item.kind === "email" ? (
-                <>
-                  {item.address}
-                  <slot name="copy-email" />
-                </>
-              ) : (
-                item.text[lang]
-              )}
+          {column.links.map((link) => (
+            <li class="footer__item">
+              <a
+                class="footer__link"
+                href={localized(link.href, lang)}
+                download={link.download}
+                target={link.target}
+                rel={link.target === "_blank" ? "noopener noreferrer" : undefined}
+              >
+                {t(link.label)}
+              </a>
             </li>
           ))}
         </ul>
@@ -42,7 +48,11 @@ const t = useTranslations(lang);
     ))}
   </div>
   <p class="footer__wordmark" aria-hidden="true" translate="no">
-    {data.wordmark}
+    {data.wordmark.split(" ").map((word) => (
+      <>
+        <span class="footer__word">{word}</span>{" "}
+      </>
+    ))}
   </p>
   <div class="footer__bottom">
     <span class="footer__origin" lang={data.originLang}>
@@ -58,11 +68,11 @@ const t = useTranslations(lang);
 </footer>
 <style>
   /*
-   * Calm and structured (owner review, HU-04): one hairline opens the footer, the columns share one row height, then
-   * the wordmark and a quiet bottom line under its own hairline. From 720px the columns sit on the layout's quarters
-   * with its gap (owner review, 2026-11-23): Site and Social in the left half, Contact from the right half, where a
-   * case's "Next" sits above it; the wordmark fills the container's width. Labels in mono
-   * like the rest of the site's captions; links one tone below the text. Values from the space scale only.
+   * Contact first (proposal A, 2026-11-25): the email, its actions under it, then the sitemap. On phones the three share
+   * two columns, labels and values, so there are only two left edges. From 720px they take the layout's columns with its
+   * gap: contact the left half, Site and Social one quarter each, and their rows line up. The wordmark's ink fills the
+   * container's width, flush with the text above. Labels in mono like the rest of the site's captions; values from the
+   * space scale only.
    * `--footer-gap` lets a page end flush with it (a case: CaseNext's band sits right on the footer's hairline).
    */
   .footer {
@@ -79,62 +89,107 @@ const t = useTranslations(lang);
     font: var(--font-size-body) / var(--line-height-compact) var(--font-sans);
     overflow-wrap: anywhere;
   }
-  /* Mobile first: two columns with the last one full width; three side by side from 720px. */
-  .footer__columns {
+  .footer__top {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-7) var(--space-6);
+    row-gap: var(--space-2);
   }
-  .footer__column:last-child {
-    grid-column: 1 / -1;
+  /* Phones: labels in a column of their own, for the three groups. */
+  .footer__contact,
+  .footer__column {
+    display: grid;
+    grid-template-columns: 5.5rem minmax(0, 1fr);
+    align-items: baseline;
+    align-content: start;
+  }
+  .footer__contact > :not(.footer__heading) {
+    grid-column: 2;
+    justify-self: start;
   }
   .footer__heading {
-    margin: 0 0 var(--space-2);
+    margin: 0;
     color: var(--color-text-muted);
     font: 500 var(--font-size-label) / 1.3 var(--font-mono);
     letter-spacing: 0.05em;
     text-transform: uppercase;
   }
+  .footer__email {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--_row);
+    color: var(--color-text);
+    font-size: var(--font-size-lead);
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+  .footer__actions {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: var(--space-4);
+    font-size: var(--font-size-small);
+  }
+  .footer__action {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--_row);
+    color: var(--color-text-secondary);
+    text-decoration: underline 1px var(--color-border);
+    text-underline-offset: 5px;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
   .footer__list {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: var(--space-5);
     list-style: none;
     margin: 0;
     padding: 0;
-  }
-  /* One row height for every item, link or not, so the rows line up across the columns. */
-  .footer__item {
-    display: flex;
-    align-items: center;
-    min-height: var(--_row);
-    color: var(--color-text-muted);
   }
   .footer__link {
     display: inline-flex;
     align-items: center;
     min-height: var(--_row);
     color: var(--color-text-secondary);
+    font-size: var(--font-size-small);
     text-decoration: none;
     transition: color var(--duration-fast) var(--ease-out);
   }
-  .footer__link:hover {
-    color: var(--color-text);
+  /* Only where the pointer hovers: a tap would leave the color on. */
+  @media (hover: hover) {
+    .footer__link:hover {
+      color: var(--color-text);
+    }
+    .footer__email:hover,
+    .footer__action:hover {
+      color: var(--color-text-accent);
+    }
   }
+  .footer__email:focus-visible,
+  .footer__action:focus-visible,
   .footer__link:focus-visible {
     outline: 2px solid var(--color-text-accent);
-    outline-offset: 2px;
+    outline-offset: 4px;
     border-radius: var(--radius-sm);
   }
-  .footer__item--email {
-    flex-wrap: wrap;
-    gap: var(--space-2) var(--space-3);
-    color: var(--color-text-secondary);
-  }
   .footer__wordmark {
-    margin: var(--space-9) 0 var(--space-7);
-    /* The name is 6.46 times as wide as its font size: 6.5 fills the container's width edge to edge, with no overflow. */
-    font-size: calc(100cqi / 6.5);
+    /* One word per line on phones, where a single line is too small to lead the footer. The surname's ink is 3.514 times
+       as wide as its font size: it fills the container's width edge to edge. */
+    margin: var(--space-8) 0 var(--space-7);
+    font-size: calc(100cqi / 3.52);
+    white-space: nowrap;
     font-weight: 600;
     line-height: 0.95;
     letter-spacing: -0.045em;
+  }
+  /* Each word starts with its letter's own side bearing: pulled back, both are flush with the text above. */
+  .footer__word {
+    display: block;
+    margin-left: -0.034em;
+  }
+  .footer__word + .footer__word {
+    margin-left: -0.01em;
   }
   .footer__bottom,
   .footer__origin {
@@ -175,22 +230,50 @@ const t = useTranslations(lang);
       --_row: 32px;
     }
   }
+  /* One line: the name's ink is 6.41 times as wide as its font size and starts 0.034em in. */
+  @media (min-width: 561px) {
+    .footer__wordmark {
+      margin-left: -0.034em;
+      font-size: calc(100cqi / 6.42);
+    }
+    .footer__word,
+    .footer__word + .footer__word {
+      display: inline;
+      margin-left: 0;
+    }
+  }
   @media (min-width: 720px) {
     .footer {
       padding-top: var(--space-9);
     }
-    .footer__columns {
+    .footer__top {
       grid-template-columns: repeat(4, minmax(0, 1fr));
       column-gap: var(--layout-gap);
     }
-    .footer__column:last-child {
-      grid-column: 3 / -1;
+    .footer__contact {
+      grid-column: span 2;
+    }
+    .footer__contact,
+    .footer__column {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: var(--space-2);
+    }
+    .footer__contact > :not(.footer__heading) {
+      grid-column: 1;
+    }
+    .footer__actions {
+      margin-top: calc(-1 * var(--space-2));
+    }
+    .footer__list {
+      display: block;
     }
     .footer__wordmark {
-      margin: var(--space-10) 0 var(--space-9);
+      margin-block: var(--space-10) var(--space-9);
     }
   }
   @media (prefers-reduced-motion: reduce) {
+    .footer__email,
+    .footer__action,
     .footer__link {
       transition: none;
     }

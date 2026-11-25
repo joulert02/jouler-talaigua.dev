@@ -3,7 +3,7 @@ import Icon from "../../ui/Icon/Icon.astro";
 import { getLang, useTranslations } from "../../../i18n/ui";
 import { contactEmail } from "../../../config/profile";
 interface Props {
-  /** `icon`: envelope with a tooltip (the Dock). `text`: a small "Copy" button next to the address (v11 footer). */
+  /** `icon`: envelope with a tooltip (the Dock). `text`: a text action under the address (the footer). */
   variant?: "icon" | "text";
 }
 const { variant = "icon" } = Astro.props;
@@ -14,11 +14,18 @@ const t = useTranslations(lang);
 <copy-email
   data-email={contactEmail}
   data-copied={t("dock.copied")}
-  data-failed={`${t("dock.failed")}: ${contactEmail}`}
+  data-failed={variant === "text" ? t("dock.copyFailed") : `${t("dock.failed")}: ${contactEmail}`}
 >
   {variant === "text" ? (
-    <button class="copy-email__text" type="button" aria-label={t("dock.copyLabel")}>
-      {t("dock.copyText")}
+    <button class="copy-email__text" type="button" aria-label={t("dock.copyTooltip")}>
+      <span class="copy-email__label">{t("dock.copyTooltip")}</span>
+      {/* Shown in the label's place after a press; the status below says it. */}
+      <span class="copy-email__label copy-email__label--copied" aria-hidden="true">
+        {t("dock.copied")}
+      </span>
+      <span class="copy-email__label copy-email__label--failed" aria-hidden="true">
+        {t("dock.copyFailed")}
+      </span>
     </button>
   ) : (
     <button
@@ -30,7 +37,11 @@ const t = useTranslations(lang);
       <Icon name="email" />
     </button>
   )}
-  <span class="copy-email__feedback" role="status" aria-live="polite"></span>
+  <span
+    class:list={["copy-email__feedback", { "copy-email__feedback--quiet": variant === "text" }]}
+    role="status"
+    aria-live="polite"
+  ></span>
 </copy-email>
 <script>
   /** How long the result shows, in ms: a failure carries the address to copy by hand. */
@@ -87,23 +98,41 @@ const t = useTranslations(lang);
     position: relative;
     display: inline-flex;
   }
-  /* v11 footer `.copy` (docs/design/v11/styles.css). */
+  /* Looks like the footer's other action, a link. */
   .copy-email__text {
-    --_duration: 180ms;
-    padding: 5px 8px;
-    border: 1px solid var(--color-border);
+    display: inline-grid;
+    align-items: center;
+    justify-items: start;
+    min-height: var(--_row, 44px);
+    padding: 0;
+    border: 0;
     border-radius: var(--radius-sm);
     background: transparent;
-    color: var(--color-text-muted);
-    font: 500 var(--font-size-small)/1 var(--font-mono);
+    color: var(--color-text-secondary);
+    font: inherit;
     cursor: pointer;
-    transition:
-      color var(--_duration) var(--ease-out),
-      border-color var(--_duration) var(--ease-out);
+    transition: color var(--duration-fast) var(--ease-out);
   }
-  .copy-email__text:hover {
-    border-color: var(--color-text-muted);
-    color: var(--color-text);
+  /* The three labels share one place, so the button keeps its width when the label changes. */
+  .copy-email__label {
+    grid-area: 1 / 1;
+    text-decoration: underline 1px var(--color-border);
+    text-underline-offset: 5px;
+  }
+  .copy-email__label--copied,
+  .copy-email__label--failed,
+  [data-result] .copy-email__label {
+    visibility: hidden;
+    text-decoration: none;
+  }
+  [data-result="copied"] .copy-email__label--copied,
+  [data-result="failed"] .copy-email__label--failed {
+    visibility: visible;
+  }
+  @media (hover: hover) {
+    .copy-email__text:hover {
+      color: var(--color-text-accent);
+    }
   }
   .copy-email__text:focus-visible {
     outline: var(--_focus-width) solid var(--color-text-accent);
@@ -130,6 +159,17 @@ const t = useTranslations(lang);
   /* The result takes the tooltip's place. */
   copy-email[data-result] .dock-control::after {
     visibility: hidden;
+  }
+  /* Where the button itself shows the result, the status is only read out. */
+  .copy-email__feedback--quiet,
+  .copy-email__feedback--quiet:not(:empty) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
   @media (prefers-reduced-motion: reduce) {
     .copy-email__text {
