@@ -51,6 +51,18 @@ const { title = "", text = "" } = Astro.props;
     translate: none;
     transition-delay: 0s;
   }
+  /* An open note is always in front: its object rises over the rest (over any order dragging gave them), and the
+     world over the center element, which stays pressable. The world belongs to Desk, hence :global. */
+  :global(.desk__world > .desk-object:has(.object-reveal[data-open])) {
+    z-index: 1000 !important;
+  }
+  :global(.desk__world:has(.object-reveal[data-open])) {
+    z-index: 1 !important;
+    pointer-events: none;
+  }
+  :global(.desk__world:has(.object-reveal[data-open]) > *) {
+    pointer-events: auto;
+  }
   .object-reveal__title {
     display: block;
     color: var(--color-text);

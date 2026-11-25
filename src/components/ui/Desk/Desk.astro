@@ -186,6 +186,10 @@ const style = [
         },
         { signal },
       );
+      // Opening the desk focuses it from a script, which Safari outlines even after a touch: the outline is for keys.
+      const keys = (on: boolean) => () => this.toggleAttribute("data-keys", on);
+      addEventListener("keydown", keys(true), { capture: true, signal });
+      addEventListener("pointerdown", keys(false), { capture: true, signal });
       // The first touch on the desk shows the visitor got it: the hint goes.
       this.querySelector(".desk__viewport")?.addEventListener("pointerdown", () => this.hideHint(), {
         signal,
@@ -567,6 +571,8 @@ const style = [
        the copy menu). The center element stays selectable. */
     -webkit-user-select: none; /* Safari needs the prefix; the build does not add it. */
     user-select: none;
+    /* Nor does a long press on a photo open iOS's image menu. */
+    -webkit-touch-callout: none;
     /* Behind the card, inside the layer's stacking context (will-change creates it). */
     z-index: -1;
   }
@@ -606,6 +612,9 @@ const style = [
       z-index: 50;
       height: 100dvh;
       background: var(--color-bg-subtle);
+    }
+    .desk[data-open]:not([data-keys]) .desk__viewport {
+      outline: none;
     }
     :global(html:has(.desk[data-open])) {
       overflow: hidden;
