@@ -44,7 +44,7 @@ The rules from the prototype that each HU must respect. When the HU closes, its 
 - **Identity card:** JOTA mark, name (H1), role, one sentence, Get in touch (primary) and Download CV (ghost), LinkedIn · GitHub · More about me, career path (company, role, years).
 - **Buttons:** primary (`--color-accent`, `--color-on-accent`) for the single most important action in its area; ghost (border, text color) for secondary actions and every link that leaves the site. Labels 15px/500 (14px for `sm`). Targets ≥ 44px tall; pills and the back control 48px.
 - **Dock** (floating, bottom center, `--color-surface` at 92% with blur): Home, Work, Notes · separator · Copy email, Theme. No Roadmap entry (the rocket object reaches it); a variant with Roadmap is kept, and the owner chooses when the layout is implemented in HU-01. Dock radius 18px (local value). Not shown on case pages.
-- **Footer:** Site, Social and Contact columns, copy-email button, CV link, large wordmark, "Hecho en Madrid, con raíces colombianas" with the flag detail.
+- **Footer (owner, 2026-11-25):** contact first (email, copy action, CV link), then Site and Social, large wordmark (two lines on phones), "Hecho en Valencia, con raíces colombianas" with the flag detail.
 - **Language switch:** EN · ES, 44px target. English at `/`, Spanish under `/es/`. Its place on Home is designed first in `v12/` inside HU-01, starting from the case-page switch.
 - **Skip link** to projects as the first focusable element.
 - **No Notes section on Home** (v11).

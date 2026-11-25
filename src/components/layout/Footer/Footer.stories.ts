@@ -13,7 +13,7 @@ const meta = preview.meta({
     docs: {
       description: {
         component:
-          "Site footer: link columns, wordmark and origin line, all from `footer` in `src/config/profile.ts`. The email row has a `copy-email` slot (CopyEmail).",
+          "Site footer: contact first (the email, with Copy and the CV), then the link lists, the wordmark and the origin line, all from `footer` in `src/config/profile.ts`. The actions under the email have a `copy-email` slot (CopyEmail).",
       },
     },
   },

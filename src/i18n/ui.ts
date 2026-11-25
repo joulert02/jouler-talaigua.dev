@@ -46,7 +46,7 @@ export const ui = {
     "dock.roadmap": "Roadmap", // Unused for now, like Notes: out of the Dock and the footer.
     "dock.copyLabel": "Copy my email address",
     "dock.copyTooltip": "Copy email",
-    "dock.copyText": "Copy",
+    "dock.copyFailed": "Couldn’t copy",
     "dock.copied": "Email copied",
     "dock.failed": "Copy failed, here it is",
     "dock.themeLabel": "Toggle theme",
@@ -130,7 +130,7 @@ export const ui = {
     "dock.roadmap": "Roadmap", // Unused for now, like Notes: out of the Dock and the footer.
     "dock.copyLabel": "Copiar mi correo",
     "dock.copyTooltip": "Copiar correo",
-    "dock.copyText": "Copiar",
+    "dock.copyFailed": "No se pudo copiar",
     "dock.copied": "Correo copiado",
     "dock.failed": "No se pudo copiar, aquí está",
     "dock.themeLabel": "Cambiar tema",

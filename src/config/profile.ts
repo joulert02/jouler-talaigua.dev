@@ -33,15 +33,17 @@ export interface IdentityData {
   links: readonly ProfileLink[];
   career: readonly CareerItem[];
 }
-export type FooterEntry =
-  | { kind: "link"; link: ProfileLink }
-  | { kind: "email"; address: string }
-  | { kind: "text"; text: LocalizedText };
+export interface FooterContact {
+  heading: UiKey;
+  email: string;
+  cv: ProfileLink;
+}
 export interface FooterColumn {
   heading: UiKey;
-  items: readonly FooterEntry[];
+  links: readonly ProfileLink[];
 }
 export interface FooterData {
+  contact: FooterContact;
   columns: readonly FooterColumn[];
   wordmark: string;
   origin: LocalizedText;
@@ -110,35 +112,29 @@ export const identity: IdentityData = {
 export const footerColumns: readonly FooterColumn[] = [
   {
     heading: "layout.site",
-    items: [
-      { kind: "link", link: { label: "layout.home", href: { en: "/", es: "/es/" } } },
-      { kind: "link", link: { label: "layout.work", href: { en: "/work/", es: "/es/work/" } } },
+    links: [
+      { label: "layout.home", href: { en: "/", es: "/es/" } },
+      { label: "layout.work", href: { en: "/work/", es: "/es/work/" } },
       // Notes and Roadmap stay out until they have content, as in the Dock (navigation.ts).
-      // { kind: "link", link: { label: "layout.notes", href: { en: "/notes/", es: "/es/notes/" } } },
-      // { kind: "link", link: { label: "layout.roadmap", href: "#roadmap" } },
+      // { label: "layout.notes", href: { en: "/notes/", es: "/es/notes/" } },
+      // { label: "layout.roadmap", href: "#roadmap" },
     ],
   },
   {
     heading: "layout.social",
-    items: [
-      {
-        kind: "link",
-        link: { label: "layout.instagram", href: "https://www.instagram.com/joulert02/", target: "_blank" },
-      },
-      { kind: "link", link: identityLinks[1] },
-      { kind: "link", link: identityLinks[0] },
-    ],
-  },
-  {
-    heading: "layout.contactHeading",
-    items: [
-      { kind: "email", address: contactEmail },
-      { kind: "link", link: { ...cvLink, label: "layout.cvPdf" } },
-      { kind: "text", text: { en: "Valencia · Spain", es: "Valencia · España" } },
+    links: [
+      { label: "layout.instagram", href: "https://www.instagram.com/joulert02/", target: "_blank" },
+      identityLinks[1],
+      identityLinks[0],
     ],
   },
 ];
 export const footer: FooterData = {
+  contact: {
+    heading: "layout.contactHeading",
+    email: contactEmail,
+    cv: { ...cvLink, label: "layout.cvPdf" },
+  },
   columns: footerColumns,
   wordmark: brand.name,
   // Intentionally Spanish in both locales.
