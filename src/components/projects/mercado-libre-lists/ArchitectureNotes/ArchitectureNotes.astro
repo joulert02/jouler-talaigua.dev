@@ -1,0 +1,16 @@
+---
+// The closing text of the architecture chapter, read straight through (owner review, 2026-11-25).
+---
+
+<div class="architecture-notes">
+  <slot />
+</div>
+
+<style>
+  .architecture-notes {
+    --case-paragraph-color: var(--color-text);
+    --case-paragraph-leading: 1.65;
+    --case-paragraph-size: clamp(17px, 1.5vw, 19px);
+    margin-top: clamp(28px, 3.5vw, 44px);
+  }
+</style>

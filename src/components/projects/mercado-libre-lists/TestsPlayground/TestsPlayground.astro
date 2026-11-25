@@ -1,0 +1,578 @@
+---
+import Button from "@/components/ui/Button/Button.astro";
+import SegmentedSwitch from "@/components/ui/SegmentedSwitch/SegmentedSwitch.astro";
+import { getLang } from "@/i18n/ui";
+import { testsCopy } from "./tests.config";
+
+const copy = testsCopy[getLang(Astro)];
+const kinds = ["unit", "e2e"] as const;
+---
+
+<!--
+  Mercado Libre · 02 (owner review, 2026-11-25): two stories, unit and end-to-end, each with an example written with
+  Given / When / Then. Only the unit run moves unit coverage. Both are on the page from 720px; phones show one at a time
+  with a switch (plain radios and CSS, so it works without scripts).
+-->
+<div class="tests-playground" data-tests>
+  <div class="tests-playground__switch">
+    <SegmentedSwitch
+      name="meli-tests"
+      legend={copy.legend}
+      options={kinds.map((kind) => ({ value: kind, label: copy.tabs[kind] }))}
+    />
+  </div>
+
+  {kinds.map((kind) => {
+    const example = copy[kind];
+    return (
+      <div
+        class={`tests-playground__panel tests-playground__panel--${kind}`}
+        data-kind={kind}
+        data-copy={JSON.stringify({
+          joined: copy.joined,
+          after: copy.after,
+          running: copy.running,
+          step: copy.step,
+          again: copy.again,
+          passed: example.passed,
+          done: kind === "unit" ? copy.coverageDone : "",
+        })}
+      >
+        <div class="tests-playground__coverage">
+          <span class="tests-playground__label">{kind === "unit" ? copy.coverageTitle : copy.e2eTitle}</span>
+          <p class="tests-playground__cov-num">
+            <span class="tests-playground__cov-val">{kind === "unit" ? "~60%" : copy.e2eNumber}</span>
+            <small class="tests-playground__cov-sub">{kind === "unit" ? copy.joined : copy.e2eJoined}</small>
+          </p>
+          {kind === "unit" ? (
+            <>
+              <div
+                class="tests-playground__cov-bar"
+                role="img"
+                aria-label={`${copy.coverageTitle}: 60% ${copy.joined}, ${copy.bar80}`}
+              >
+                <span class="tests-playground__cov-plan" />
+                <span class="tests-playground__cov-fill" />
+                <span class="tests-playground__cov-80">
+                  <span>{copy.bar80}</span>
+                </span>
+              </div>
+              <div class="tests-playground__cov-scale" aria-hidden="true">
+                <span>0%</span>
+                <span>50%</span>
+                <span>100%</span>
+              </div>
+              <ul class="tests-playground__cov-key" aria-hidden="true">
+                <li data-t="done">{copy.covered}</li>
+                <li data-t="plan">{copy.planned}</li>
+                <li data-t="left">{copy.remaining}</li>
+              </ul>
+              <p class="tests-playground__rule tests-playground__rule--last">{copy.coverageRule}</p>
+            </>
+          ) : (
+            <>
+              <p class="tests-playground__rule">{copy.e2eRule}</p>
+              <span class="tests-playground__label tests-playground__label--poc">{copy.pocTitle}</span>
+              <ul class="tests-playground__choice">
+                {copy.poc.map((tool) => (
+                  <li class={tool.picked && "tests-playground__choice--pick"}>
+                    <b>{tool.name}</b>
+                    <small>{tool.status}</small>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </div>
+
+        <figure class="tests-playground__gherkin" aria-labelledby={`meli-${kind}-label`}>
+          <div class="tests-playground__run-bar">
+            <button
+              class="tests-playground__toggle"
+              type="button"
+              aria-expanded="false"
+              aria-controls={`meli-${kind}-example`}
+            >
+              {example.show}
+            </button>
+            <p class="tests-playground__out">
+              <span class="tests-playground__room tests-playground__wide" aria-hidden="true">
+                {example.hint}
+              </span>
+              <span class="tests-playground__wide" data-output="wide">
+                {example.hint}
+              </span>
+              <span class="tests-playground__narrow" data-output="narrow">
+                {example.idle}
+              </span>
+            </p>
+            <Button size="sm" label={copy.run}>
+              <span class="tests-playground__run-what" slot="end">
+                {example.what}
+              </span>
+            </Button>
+          </div>
+          <div class="tests-playground__scenario" id={`meli-${kind}-example`}>
+            <figcaption class="tests-playground__label tests-playground__caption" id={`meli-${kind}-label`}>
+              {example.label}
+            </figcaption>
+            <ol class="tests-playground__gherkin-list">
+              {example.head.map((line, index) => (
+                <li
+                  class:list={[
+                    "tests-playground__gherkin-item",
+                    { "tests-playground__gherkin-item--head": index === 0 },
+                  ]}
+                >
+                  <span>
+                    <span class="tests-playground__kw" lang="en">
+                      {line.keyword}
+                    </span>{" "}
+                    {line.text}
+                  </span>
+                </li>
+              ))}
+              {example.steps.map((line) => (
+                <li class="tests-playground__gherkin-item tests-playground__gherkin-item--step" data-step>
+                  <span>
+                    <span class="tests-playground__kw" lang="en">
+                      {line.keyword}
+                    </span>{" "}
+                    {line.text}
+                  </span>
+                  <span class="tests-playground__st" aria-hidden="true">
+                    ·
+                  </span>
+                </li>
+              ))}
+            </ol>
+            <p class="tests-playground__plain">{example.hint}</p>
+          </div>
+        </figure>
+      </div>
+    );
+  })}
+
+  <p class="tests-playground__live" aria-live="polite" data-example-live></p>
+</div>
+
+<style>
+  .tests-playground {
+    --tests-green: #12805c;
+  }
+  .tests-playground__caption {
+    display: block;
+    padding: 0 16px 10px;
+  }
+  .tests-playground__label {
+    font: 500 var(--font-size-label)/1.3 var(--font-mono);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .tests-playground__live {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .tests-playground__panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    gap: clamp(16px, 3vw, 32px);
+    margin-top: 24px;
+    align-items: stretch;
+  }
+  .tests-playground__panel + .tests-playground__panel {
+    margin-top: clamp(16px, 3vw, 32px);
+  }
+  .tests-playground__coverage {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    box-shadow: var(--shadow-rest);
+    padding: 22px 24px;
+    display: grid;
+    align-content: start;
+    gap: 14px;
+  }
+  .tests-playground__coverage > .tests-playground__label {
+    display: block;
+  }
+  .tests-playground__cov-num {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin: 0;
+    font-size: clamp(44px, 5vw, 60px);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .tests-playground__cov-num small {
+    font-size: var(--font-size-small);
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--color-text-muted);
+  }
+  .tests-playground__cov-bar {
+    position: relative;
+    height: 14px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-text-secondary) 9%, var(--color-surface));
+    box-shadow: inset 0 0 0 1px var(--color-border);
+    margin: 34px 0 6px;
+  }
+  .tests-playground__cov-plan {
+    position: absolute;
+    inset: 0 auto 0 60%;
+    width: 20%;
+    background: color-mix(in srgb, var(--tests-green) 34%, var(--color-surface));
+  }
+  .tests-playground__cov-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 60%;
+    border-radius: 999px;
+    background: var(--tests-green);
+    transition: width 1.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .tests-playground__cov-key {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    margin: 10px 0 0;
+    padding: 0;
+    list-style: none;
+    font: 14px/1.4 var(--font-mono);
+    color: var(--color-text-muted);
+  }
+  .tests-playground__cov-key li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tests-playground__cov-key li::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    box-shadow: inset 0 0 0 1px var(--color-border);
+    background: color-mix(in srgb, var(--color-text-secondary) 9%, var(--color-surface));
+  }
+  .tests-playground__cov-key [data-t="done"]::before {
+    background: var(--tests-green);
+    box-shadow: none;
+  }
+  .tests-playground__cov-key [data-t="plan"]::before {
+    background: color-mix(in srgb, var(--tests-green) 34%, var(--color-surface));
+    box-shadow: none;
+  }
+  .tests-playground__cov-80 {
+    position: absolute;
+    left: 80%;
+    top: -28px;
+    bottom: -6px;
+    border-left: 2px solid var(--color-text);
+  }
+  .tests-playground__cov-80 span {
+    position: absolute;
+    right: 8px;
+    top: 0;
+    white-space: nowrap;
+    font: 500 14px/1.2 var(--font-mono);
+    color: var(--color-text);
+  }
+  .tests-playground__cov-scale {
+    display: flex;
+    justify-content: space-between;
+    font: 14px/1 var(--font-mono);
+    color: var(--color-text-muted);
+  }
+  .tests-playground__rule {
+    margin: 0;
+    font-size: var(--font-size-small);
+    line-height: 1.55;
+    color: var(--color-text-secondary);
+  }
+  .tests-playground__choice {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .tests-playground__choice li {
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 14px;
+    display: grid;
+    align-content: start;
+    gap: 2px;
+  }
+  .tests-playground__choice li small {
+    color: var(--color-text-muted);
+    font-size: 14px;
+  }
+  .tests-playground__choice li.tests-playground__choice--pick {
+    border-color: var(--color-text);
+    box-shadow: inset 0 0 0 1px var(--color-text);
+  }
+  .tests-playground__choice li.tests-playground__choice--pick b::after {
+    content: " \2713";
+  }
+
+  .tests-playground__gherkin {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 16px 0 0;
+    border-radius: 12px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    font: 14.5px/1.6 var(--font-mono);
+    color: var(--color-text);
+    overflow: hidden;
+  }
+  .tests-playground__gherkin-list {
+    flex: 1;
+    list-style: none;
+    margin: 0;
+    padding: 0 0 12px;
+  }
+  .tests-playground__gherkin-item {
+    display: grid;
+    grid-template-columns: 1fr 22px;
+    gap: 8px;
+    padding: 3px 16px;
+    transition: background-color 0.2s var(--ease-out);
+  }
+  .tests-playground__gherkin-item--step {
+    padding-left: 32px;
+  }
+  .tests-playground__gherkin-item--head {
+    margin-bottom: 10px;
+  }
+  .tests-playground__gherkin .tests-playground__kw {
+    color: var(--color-text-accent);
+    font-weight: 500;
+  }
+  .tests-playground__gherkin-item .tests-playground__st {
+    text-align: right;
+    color: var(--color-text-muted);
+  }
+  .tests-playground__gherkin-item[data-state="run"] {
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  }
+  .tests-playground__gherkin-item[data-state="pass"] .tests-playground__st {
+    color: var(--tests-green);
+  }
+
+  .tests-playground__scenario {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+  }
+  .tests-playground__run-bar {
+    display: flex;
+    order: 1;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--color-border);
+    font-family: var(--font-sans);
+  }
+  .tests-playground__out {
+    display: grid;
+    flex: 1 1 0;
+    min-width: 0;
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 14px;
+  }
+  .tests-playground__run-bar :global(.button) {
+    flex-shrink: 0;
+    gap: 0.3em;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+  .tests-playground__run-bar :global(.button[aria-disabled="true"]) {
+    opacity: 0.55;
+    cursor: default;
+  }
+  .tests-playground__label--poc {
+    margin-top: 14px;
+  }
+  /* The hint always keeps its room, so a shorter result does not move what is below. */
+  .tests-playground__out > * {
+    grid-area: 1 / 1;
+    align-self: center;
+  }
+  .tests-playground__room {
+    visibility: hidden;
+  }
+  .tests-playground__toggle,
+  .tests-playground__narrow,
+  .tests-playground__plain,
+  .tests-playground__switch {
+    display: none;
+  }
+  @media (max-width: 900px) {
+    .tests-playground__choice {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  /* Where "when I joined (estimate)" takes two lines, its room stays when the run shortens it. */
+  @media (max-width: 380px) or ((min-width: 720px) and (max-width: 900px)) {
+    .tests-playground__panel--unit .tests-playground__cov-num {
+      min-height: 60px;
+    }
+  }
+  /*
+   * Phones (owner review, 2026-11-25): one piece, so the bar and the button that moves it are on screen together.
+   * The run row goes right under the bar and the example opens below it, on a grey band from edge to edge. The switch
+   * shows one kind of test at a time.
+   */
+  @media (max-width: 719px) {
+    .tests-playground__switch {
+      display: block;
+      margin-top: 24px;
+    }
+    .tests-playground__switch > :global(.segmented-switch) {
+      width: 100%;
+    }
+    .tests-playground__panel,
+    .tests-playground__panel + .tests-playground__panel {
+      margin-top: 16px;
+    }
+    .tests-playground:has([value="unit"]:checked) .tests-playground__panel--e2e,
+    .tests-playground:has([value="e2e"]:checked) .tests-playground__panel--unit {
+      display: none;
+    }
+    .tests-playground__panel {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 22px 24px;
+      border: 1px solid var(--color-border);
+      border-radius: 16px;
+      background: var(--color-surface);
+      box-shadow: var(--shadow-rest);
+    }
+    .tests-playground__coverage,
+    .tests-playground__gherkin {
+      display: contents;
+    }
+    .tests-playground__run-bar {
+      padding: 16px 0 0;
+      gap: 8px 12px;
+    }
+    .tests-playground__out {
+      order: 1;
+      flex: 1 1 100%;
+    }
+    .tests-playground__toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 44px;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: var(--color-text);
+      font: 500 var(--font-size-small) / 1.3 var(--font-sans);
+      cursor: pointer;
+    }
+    .tests-playground__toggle::before {
+      content: "+";
+      display: grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      border: 1px solid var(--color-border);
+      border-radius: 50%;
+      color: var(--color-text-secondary);
+      font: 500 15px / 1 var(--font-mono);
+    }
+    .tests-playground__toggle[aria-expanded="true"]::before {
+      content: "\2212";
+    }
+    .tests-playground__toggle:focus-visible {
+      outline: 2px solid var(--color-text-accent);
+      outline-offset: 4px;
+      border-radius: 6px;
+    }
+    .tests-playground__scenario {
+      order: 2;
+      flex: none;
+      margin: 0 -24px;
+      padding: 18px 8px;
+      border-block: 1px solid var(--color-border);
+      background: var(--color-bg-subtle);
+      font: 14.5px/1.6 var(--font-mono);
+    }
+    /* Nothing follows the end-to-end example, so its band is the end of the card. */
+    .tests-playground__panel--e2e .tests-playground__scenario {
+      margin-bottom: -22px;
+      border-bottom: 0;
+      border-radius: 0 0 15px 15px;
+    }
+    .tests-playground__rule--last {
+      order: 3;
+    }
+    .tests-playground__plain {
+      display: block;
+      margin: 0;
+      padding: 0 16px;
+      color: var(--color-text-secondary);
+      font: 14px/1.5 var(--font-sans);
+    }
+    .tests-playground__narrow {
+      display: inline;
+    }
+    .tests-playground__wide,
+    .tests-playground__run-what {
+      display: none;
+    }
+    .tests-playground__choice {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  /* Without scripts there is no toggle: the scenario stays open. */
+  @media (max-width: 719px) and (scripting: enabled) {
+    .tests-playground__run-bar:has([aria-expanded="false"]) + .tests-playground__scenario {
+      display: none;
+    }
+  }
+  @media (max-width: 719px) and (scripting: none) {
+    .tests-playground__toggle {
+      display: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tests-playground__cov-fill,
+    .tests-playground__gherkin-item {
+      transition: none;
+    }
+  }
+  :global([data-theme="dark"]) .tests-playground {
+    --tests-green: #4fd1a1;
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme="light"])) .tests-playground {
+      --tests-green: #4fd1a1;
+    }
+  }
+</style>
+
+<script>
+  import { mountTests } from "./tests";
+
+  document.querySelectorAll<HTMLElement>("[data-tests]").forEach(mountTests);
+</script>

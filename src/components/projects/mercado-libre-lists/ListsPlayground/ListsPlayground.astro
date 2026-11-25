@@ -1,0 +1,1197 @@
+---
+import ExampleFrame from "@/components/projects/case/ExampleFrame/ExampleFrame.astro";
+import ExampleNote from "@/components/projects/case/ExampleFrame/ExampleNote/ExampleNote.astro";
+import Icon from "@/components/ui/Icon/Icon.astro";
+import SegmentedSwitch from "@/components/ui/SegmentedSwitch/SegmentedSwitch.astro";
+import Button from "@/components/ui/Button/Button.astro";
+import { getLang, useTranslations } from "@/i18n/ui";
+import { listsCopy, listsUrl } from "./lists.config";
+
+import { imageMap } from "../assets";
+import "../phone.css";
+
+const lang = getLang(Astro);
+const t = useTranslations(lang);
+const copy = listsCopy[lang];
+---
+
+<div
+  class="lists-playground"
+  data-meli-lab
+  data-images={JSON.stringify(imageMap)}
+  data-lang={lang}
+  data-playing={copy.playing}
+>
+  <ExampleFrame id="meli-lists-recreation" label={copy.label} shortLabel={copy.shortLabel}>
+    <div class="lists-playground__controls" slot="controls">
+      <SegmentedSwitch
+        name="ml-mode"
+        value="after"
+        legend={copy.versionLegend}
+        options={[
+          { value: "before", label: copy.before },
+          { value: "after", label: copy.after },
+        ]}
+      />
+      <div class="lists-playground__device-switch">
+        <SegmentedSwitch
+          name="ml-device"
+          legend={t("case.device")}
+          options={[
+            { value: "desktop", label: t("case.desktop") },
+            { value: "mobile", label: t("case.mobile") },
+          ]}
+        />
+      </div>
+      <span class="lists-playground__reset" data-action="ml-reset">
+        <Button label={copy.reset} variant="ghost" size="sm">
+          {copy.reset}
+        </Button>
+      </span>
+    </div>
+
+    <div class="meli" data-mode="after" data-device="desktop">
+      <div class="meli-phone-frame">
+        <div class="meli-win meli-phone" role="region" aria-label={copy.label}>
+          <noscript>
+            <p style="padding: 24px">{copy.noscript}</p>
+          </noscript>
+        </div>
+      </div>
+      <p class="m-toast" aria-hidden="true"></p>
+    </div>
+
+    <ExampleNote slot="foot">{copy.liveNote}</ExampleNote>
+
+    <Fragment slot="actions">
+      <Button variant="ghost" size="sm" href={listsUrl} label={copy.live}>
+        <Icon slot="end" name="external" size={14} />
+      </Button>
+      <Button size="sm" label={copy.play} />
+    </Fragment>
+  </ExampleFrame>
+</div>
+
+<style>
+  .lists-playground :global(.m-coll) {
+    display: none;
+  }
+  .lists-playground__controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+  }
+  /* Phones: the switch takes the width, as in the other cases. No Reset there: Play starts from a clean state. */
+  @media (max-width: 719px) {
+    .lists-playground__controls > :global(.segmented-switch) {
+      flex: 1 1 100%;
+      width: 100%;
+    }
+    .lists-playground__reset {
+      display: none;
+    }
+  }
+  @media (max-width: 719px) {
+    .lists-playground__device-switch {
+      display: none;
+    }
+  }
+  .lists-playground :global(.meli) {
+    --m-blue: #3483fa;
+    --m-blue-ink: #2968c8;
+    --m-green: #00a650;
+    --m-bg: #ededed;
+    --m-ink: rgb(0 0 0 / 0.9);
+    --m-2: rgb(0 0 0 / 0.55);
+    --m-line: rgb(0 0 0 / 0.1);
+    position: relative;
+    margin-top: 24px;
+    display: grid;
+    justify-items: center;
+    color-scheme: light;
+  }
+  .lists-playground :global(.meli-phone-frame) {
+    width: 100%;
+  }
+  .lists-playground :global(.meli-win) {
+    position: relative;
+    width: 100%;
+    height: 660px;
+    border-radius: 14px;
+    overflow: clip;
+    background: var(--m-bg);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 4px 16px -8px rgb(0 0 0 / 0.1);
+    display: flex;
+    flex-direction: column;
+    color: var(--m-ink);
+    font:
+      14px/1.35 "Proxima Nova",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      Helvetica,
+      Arial,
+      sans-serif;
+    letter-spacing: 0;
+  }
+  .lists-playground :global(.meli-win button) {
+    font: inherit;
+    color: inherit;
+  }
+  .lists-playground :global(.meli-win :focus-visible) {
+    outline: 2px solid var(--m-blue);
+    outline-offset: 2px;
+  }
+  .lists-playground :global(.m-top) {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 20px;
+    background: #ffe600;
+    box-shadow: 0 1px 0 rgb(0 0 0 / 0.1);
+  }
+  .lists-playground :global(.m-search) {
+    flex: 1;
+    max-width: 580px;
+    height: 38px;
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    background: #fff;
+    border-radius: 2px;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.2);
+    color: rgb(0 0 0 / 0.4);
+    font-size: 14px;
+  }
+  .lists-playground :global(.m-search svg) {
+    width: 18px;
+    height: 18px;
+    color: rgb(0 0 0 / 0.45);
+  }
+  .lists-playground :global(.m-scroll) {
+    flex: 1;
+    overflow: auto;
+    overscroll-behavior: auto;
+  }
+  .lists-playground :global(.m-page) {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 18px 28px 40px;
+  }
+  .lists-playground :global(.m-crumb) {
+    margin: 0;
+    font-size: 13px;
+    color: var(--m-blue-ink);
+  }
+  .lists-playground :global(.m-crumb span) {
+    color: var(--m-2);
+    margin: 0 8px;
+  }
+  .lists-playground :global(.m-headrow) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 14px 0 18px;
+    min-height: 40px;
+  }
+  .lists-playground :global(.m-h1) {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .lists-playground :global(.m-btn) {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 6px;
+    background: var(--m-blue);
+    color: #fff !important;
+    font-weight: 600 !important;
+    cursor: pointer;
+  }
+  .lists-playground :global(.m-btn:hover) {
+    background: var(--m-blue-ink);
+  }
+  .lists-playground :global(.m-btn svg) {
+    width: 14px;
+    height: 14px;
+  }
+  .lists-playground :global(.m-link) {
+    min-height: 36px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--m-blue-ink) !important;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .lists-playground :global(.m-link:hover) {
+    color: #1f4e96 !important;
+  }
+  .lists-playground :global(.m-tabs) {
+    display: flex;
+    gap: 28px;
+    border-bottom: 1px solid var(--m-line);
+    margin-bottom: 20px;
+  }
+  .lists-playground :global(.m-tabs button) {
+    min-height: 44px;
+    padding: 0 2px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: none;
+    font-size: 16px !important;
+    cursor: pointer;
+  }
+  .lists-playground :global(.m-tabs button[aria-selected="true"]) {
+    color: var(--m-blue-ink) !important;
+    border-color: var(--m-blue);
+  }
+  .lists-playground :global(.m-rows) {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
+  }
+  .lists-playground :global(.m-row) {
+    position: relative;
+    display: grid;
+    grid-template-columns: 112px minmax(0, 1fr);
+    gap: 18px;
+    padding: 16px;
+    border-bottom: 1px solid var(--m-line);
+  }
+  .lists-playground :global(.m-row:last-child) {
+    border-bottom: 0;
+  }
+  .lists-playground :global(.m-row.legacy) {
+    grid-template-columns: 20px 112px minmax(0, 1fr);
+    align-items: start;
+  }
+  .lists-playground :global(.m-row.legacy > input) {
+    margin-top: 46px;
+  }
+  .lists-playground :global(.m-row img) {
+    width: 112px;
+    height: 112px;
+    object-fit: contain;
+    background: #fff;
+  }
+  .lists-playground :global(.m-info) {
+    display: grid;
+    justify-items: start;
+    gap: 3px;
+    min-width: 0;
+  }
+  .lists-playground :global(.m-title) {
+    margin: 0 0 4px;
+    font-size: 16px;
+    line-height: 1.3;
+  }
+  .lists-playground :global(.m-by) {
+    font-size: 12px;
+    color: var(--m-2);
+  }
+  .lists-playground :global(.m-old) {
+    font-size: 12px;
+    color: var(--m-2);
+  }
+  .lists-playground :global(.m-price) {
+    font-size: 22px;
+    line-height: 1.15;
+    font-weight: 400;
+  }
+  .lists-playground :global(.m-off) {
+    display: inline-block;
+    vertical-align: 4px;
+    margin-left: 4px;
+    padding: 1px 4px;
+    border-radius: 2px;
+    background: var(--m-green);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .lists-playground :global(.m-q),
+  .lists-playground :global(.m-ship) {
+    font-size: 13px;
+    color: var(--m-green);
+  }
+  .lists-playground :global(.m-ship) {
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .lists-playground :global(.m-full) {
+    display: inline-flex;
+    align-items: center;
+    gap: 1px;
+    font-style: italic;
+    font-weight: 800;
+  }
+  .lists-playground :global(.m-full svg) {
+    width: 9px;
+    height: 12px;
+  }
+  .lists-playground :global(.m-paused) {
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .lists-playground :global(.m-paused::before) {
+    content: "!";
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: #f73;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .lists-playground :global(.m-acts) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 20px;
+    margin-top: 4px;
+  }
+  .lists-playground :global(.m-empty) {
+    padding: 32px 16px;
+    text-align: center;
+    color: var(--m-2);
+  }
+  .lists-playground :global(.m-selall) {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--m-line);
+    font-size: 13px;
+    color: var(--m-2);
+  }
+  .lists-playground :global(.m-selall .m-link[disabled]) {
+    color: var(--m-2) !important;
+    cursor: default;
+  }
+  .lists-playground :global(.meli-win input[type="checkbox"]) {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--m-blue);
+    cursor: pointer;
+  }
+  .lists-playground :global(.m-grid) {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .lists-playground :global(.m-card) {
+    position: relative;
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
+    transition: box-shadow 0.2s;
+  }
+  .lists-playground :global(.m-card:hover) {
+    box-shadow: 0 6px 16px rgb(0 0 0 / 0.14);
+  }
+  .lists-playground :global(.m-card.fresh) {
+    animation: m-fresh 1.6s ease;
+  }
+  @keyframes m-fresh {
+    from {
+      box-shadow: 0 0 0 3px var(--m-blue);
+    }
+  }
+  .lists-playground :global(.m-cover) {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    border-bottom: 1px solid var(--m-line);
+    background: #fff;
+    border-radius: 6px 6px 0 0;
+    cursor: pointer;
+    aspect-ratio: 322 / 226;
+    overflow: hidden;
+  }
+  .lists-playground :global(.m-cover img) {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .lists-playground :global(.m-cover .m-ph) {
+    display: grid;
+    place-items: center;
+    height: 100%;
+    color: rgb(0 0 0 / 0.25);
+  }
+  .lists-playground :global(.m-cinfo) {
+    position: relative;
+    padding: 12px 40px 14px 16px;
+  }
+  .lists-playground :global(.m-cname) {
+    display: block;
+    margin: 0 0 4px;
+    padding: 0;
+    border: 0;
+    background: none;
+    font-size: 18px !important;
+    text-align: left;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+  }
+  .lists-playground :global(.m-csub) {
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--m-2);
+    line-height: 1.7;
+  }
+  .lists-playground :global(.m-kebab) {
+    position: absolute;
+    top: 6px;
+    right: 4px;
+    width: 36px;
+    height: 40px;
+    border: 0;
+    border-radius: 6px;
+    background: none;
+    color: var(--m-blue-ink) !important;
+    font-size: 20px !important;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .lists-playground :global(.m-kebab:hover) {
+    background: rgb(52 131 250 / 0.1);
+  }
+  .lists-playground :global(.m-menu) {
+    position: absolute;
+    z-index: 4;
+    right: 8px;
+    top: 44px;
+    min-width: 180px;
+    padding: 6px 0;
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 6px 18px rgb(0 0 0 / 0.22);
+  }
+  .lists-playground :global(.m-menu button) {
+    display: block;
+    width: 100%;
+    min-height: 44px;
+    padding: 0 16px;
+    border: 0;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 15px !important;
+  }
+  .lists-playground :global(.m-menu button:hover) {
+    background: rgb(0 0 0 / 0.04);
+  }
+  .lists-playground :global(.m-rename) {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin: 0 0 4px;
+  }
+  .lists-playground :global(.m-input) {
+    width: 100%;
+    min-width: 0;
+    height: 38px;
+    padding: 0 10px;
+    border: 1px solid var(--m-blue);
+    border-radius: 6px;
+    background: #fff;
+    color: var(--m-ink);
+    font: inherit;
+    font-size: 15px;
+    box-shadow: 0 0 0 2px rgb(52 131 250 / 0.2);
+    outline: none;
+  }
+  .lists-playground :global(.m-back) {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 36px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--m-blue-ink) !important;
+    font-size: 14px !important;
+    cursor: pointer;
+  }
+  .lists-playground :global(.m-dmeta) {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: var(--m-2);
+    font-size: 14px;
+  }
+  .lists-playground :global(.m-dmeta .m-sep) {
+    width: 1px;
+    height: 20px;
+    background: var(--m-line);
+  }
+  .lists-playground :global(.m-dmeta .m-kebab) {
+    position: static;
+  }
+  .lists-playground :global(.m-dmeta .m-menu) {
+    top: 44px;
+    right: 0;
+  }
+  .lists-playground :global(.m-dmeta .m-link svg) {
+    width: 14px;
+    height: 14px;
+    vertical-align: -2px;
+    margin-right: 4px;
+  }
+  .lists-playground :global(.m-scrim) {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgb(0 0 0 / 0.5);
+    animation: m-in 0.18s ease;
+  }
+  @keyframes m-in {
+    from {
+      opacity: 0;
+    }
+  }
+  .lists-playground :global(.m-modal) {
+    width: min(440px, 100%);
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 8px 32px rgb(0 0 0 / 0.3);
+    animation: m-up 0.22s ease;
+  }
+  @keyframes m-up {
+    from {
+      transform: translateY(12px);
+    }
+  }
+  .lists-playground :global(.m-mhead) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 12px 8px 24px;
+  }
+  .lists-playground :global(.m-mtitle) {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+  }
+  .lists-playground :global(.m-x) {
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    font-size: 24px !important;
+    color: var(--m-2) !important;
+    cursor: pointer;
+  }
+  .lists-playground :global(.m-mbody) {
+    flex: 1;
+    overflow: auto;
+    padding: 4px 0 8px;
+  }
+  .lists-playground :global(.m-newrow) {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    min-height: 60px;
+    padding: 6px 24px;
+    border: 0;
+    background: none;
+    color: var(--m-blue-ink) !important;
+    font-size: 15px !important;
+    cursor: pointer;
+    text-align: left;
+  }
+  .lists-playground :global(.m-plus) {
+    width: 44px;
+    height: 44px;
+    flex: none;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--m-blue);
+    border-radius: 4px;
+    color: var(--m-blue);
+    font-size: 24px;
+    font-weight: 300;
+  }
+  .lists-playground :global(.m-newform) {
+    display: flex;
+    gap: 8px;
+    padding: 10px 24px;
+  }
+  .lists-playground :global(.m-opts) {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .lists-playground :global(.m-opt) {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) 20px;
+    align-items: center;
+    gap: 16px;
+    min-height: 60px;
+    padding: 6px 24px;
+    cursor: pointer;
+    font-size: 15px;
+  }
+  .lists-playground :global(.m-opt:hover) {
+    background: rgb(0 0 0 / 0.03);
+  }
+  .lists-playground :global(.m-opt small) {
+    display: block;
+    font-size: 12.5px;
+    color: var(--m-2);
+  }
+  .lists-playground :global(.m-thumb) {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    border: 1px solid var(--m-line);
+    border-radius: 4px;
+    background: #fff;
+    color: var(--m-blue);
+  }
+  .lists-playground :global(.m-thumb img) {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .lists-playground :global(.m-thumb svg) {
+    width: 20px;
+    height: 20px;
+  }
+  .lists-playground :global(.m-mfoot) {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 16px 24px 20px;
+    border-top: 1px solid var(--m-line);
+  }
+  @keyframes m-sheet {
+    from {
+      transform: translateY(100%);
+    }
+  }
+  .lists-playground :global(.m-toast) {
+    position: absolute;
+    left: 50%;
+    bottom: 24px;
+    z-index: 20;
+    margin: 0;
+    padding: 12px 16px;
+    border-radius: 6px;
+    background: rgb(0 0 0 / 0.85);
+    color: #fff;
+    font:
+      14px/1.3 -apple-system,
+      BlinkMacSystemFont,
+      sans-serif;
+    white-space: nowrap;
+    transform: translate(-50%, 10px);
+    opacity: 0;
+    transition:
+      opacity 0.2s,
+      transform 0.2s;
+    pointer-events: none;
+  }
+  .lists-playground :global(.m-toast.on) {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  .lists-playground :global(.meli-note) {
+    margin: 12px 0 0;
+    font-size: 13px;
+    color: var(--color-text-muted);
+    justify-self: start;
+  }
+  .lists-playground :global(.n-fab) {
+    position: absolute;
+    z-index: 5;
+    right: 18px;
+    bottom: 108px;
+    height: 52px;
+    min-width: 52px;
+    padding: 0 22px 0 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 0;
+    border-radius: 26px;
+    background: var(--m-blue);
+    color: #fff;
+    font: 500 18px/1 inherit;
+    box-shadow: 0 6px 16px rgb(0 0 0 / 0.25);
+    cursor: pointer;
+    transition:
+      padding 0.2s,
+      gap 0.2s;
+  }
+  .lists-playground :global(.n-fab svg) {
+    width: 18px;
+    height: 18px;
+    flex: none;
+  }
+  .lists-playground :global(.n-fab span) {
+    white-space: nowrap;
+    max-width: 120px;
+    overflow: hidden;
+    transition:
+      max-width 0.2s,
+      opacity 0.2s;
+  }
+  .lists-playground :global(.n-fab.collapsed) {
+    padding: 0;
+    gap: 0;
+    width: 52px;
+  }
+  .lists-playground :global(.n-fab.collapsed span) {
+    max-width: 0;
+    opacity: 0;
+  }
+  .lists-playground :global(.n-fab:focus-visible) {
+    outline: 3px solid #fff;
+    outline-offset: -5px;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-scroll) {
+    background: #ededed;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-page) {
+    max-width: none;
+    padding: 0 0 110px;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-tabs) {
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    border-bottom: 1px solid var(--m-line);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-tabs button) {
+    flex: 1;
+    height: 54px;
+    font-size: 18px !important;
+    font-weight: 500;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-tabs button[aria-selected="true"]) {
+    border-bottom-width: 3px;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-rows) {
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-row) {
+    grid-template-columns: 150px minmax(0, 1fr);
+    gap: 16px;
+    padding: 18px 16px;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-row img) {
+    width: 150px;
+    height: 150px;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-title) {
+    font-size: 18px;
+    margin: 0 0 6px;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-old) {
+    font-size: 15px;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-price) {
+    font-size: 28px;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-off) {
+    font-size: 14px;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-q),
+  .lists-playground :global(.meli[data-device="mobile"] .m-ship),
+  .lists-playground :global(.meli[data-device="mobile"] .m-paused) {
+    font-size: 16px;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-acts) {
+    margin-top: 8px;
+    gap: 0 22px;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-link) {
+    font-size: 18px;
+    min-height: 40px;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-row.legacy) {
+    grid-template-columns: 22px 130px minmax(0, 1fr);
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-row.legacy img) {
+    width: 130px;
+    height: 130px;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-selall) {
+    font-size: 15px;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-grid) {
+    display: block;
+    background: #fff;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-card) {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 20px;
+    align-items: center;
+    padding: 16px 12px 16px 18px;
+    border-bottom: 1px solid var(--m-line);
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-cover) {
+    width: 96px;
+    height: 96px;
+    aspect-ratio: auto;
+    border: 1px solid var(--m-line);
+    border-radius: 8px;
+    background: #fff;
+    position: relative;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-cover:has(.m-coll)) {
+    background: #f5f5f5;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-cover:has(.m-coll) > img) {
+    display: none;
+  }
+  .lists-playground :global(.m-coll) {
+    display: none;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-coll) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    padding: 4px;
+    height: 100%;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-coll img) {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    object-fit: contain;
+    background: #fff;
+    border: 1px solid var(--m-line);
+    border-radius: 4px;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-coll b) {
+    display: grid;
+    place-items: center;
+    background: #ececec;
+    border: 1px solid var(--m-line);
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--m-2);
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-cinfo) {
+    padding: 0 44px 0 0;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-cname) {
+    font-size: 22px !important;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-csub) {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-csub:first-of-type) {
+    display: none;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-kebab) {
+    top: -6px;
+    right: -4px;
+    font-size: 26px !important;
+    color: #222 !important;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-menu) {
+    right: 0;
+    top: 34px;
+  }
+  .lists-playground :global(.m-dhead) {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: #fff;
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.08);
+  }
+  .lists-playground :global(.m-dhead .m-h1) {
+    font-size: 26px;
+    font-weight: 500;
+  }
+  .lists-playground :global(.m-pen) {
+    all: unset;
+    box-sizing: border-box;
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    color: var(--m-blue);
+    cursor: pointer;
+    border-radius: 50%;
+  }
+  .lists-playground :global(.m-pen svg) {
+    width: 22px;
+    height: 22px;
+  }
+  .lists-playground :global(.m-pen:focus-visible) {
+    outline: 2px solid var(--m-blue);
+    outline-offset: -2px;
+  }
+  .lists-playground :global(.m-dhead .m-menu) {
+    right: 12px;
+    top: 60px;
+    min-width: 240px;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-menu button) {
+    font-size: 19px !important;
+    min-height: 56px;
+    padding: 0 22px;
+  }
+  .lists-playground :global(.m-emptyn) {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    padding: 36px 28px;
+    text-align: center;
+  }
+  .lists-playground :global(.m-heartc) {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: #dedede;
+    color: #222;
+    margin-bottom: 14px;
+  }
+  .lists-playground :global(.m-heartc svg) {
+    width: 54px;
+    height: 54px;
+  }
+  .lists-playground :global(.m-et) {
+    margin: 0;
+    font-size: 19px;
+    font-weight: 600;
+  }
+  .lists-playground :global(.m-es) {
+    margin: 0 0 8px;
+    font-size: 17px;
+    color: var(--m-2);
+    line-height: 1.4;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-emptyn .m-link) {
+    font-size: 18px;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-scrim) {
+    align-items: flex-end;
+    padding: 0;
+    z-index: 14;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-modal) {
+    width: 100%;
+    max-height: 92%;
+    border-radius: 16px 16px 0 0;
+    animation-name: m-sheet;
+    padding-bottom: 36px;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-modal::before) {
+    content: "";
+    display: block;
+    width: 52px;
+    height: 5px;
+    margin: 10px auto 0;
+    border-radius: 4px;
+    background: rgb(0 0 0 / 0.18);
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-mhead) {
+    padding: 12px 14px 8px 24px;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-mtitle) {
+    font-size: 24px;
+    font-weight: 500;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-x) {
+    font-size: 30px !important;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-newrow) {
+    font-size: 19px !important;
+    min-height: 76px;
+    padding: 6px 24px;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-plus) {
+    width: 56px;
+    height: 56px;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-opt) {
+    grid-template-columns: 56px minmax(0, 1fr) 26px;
+    min-height: 76px;
+    font-size: 20px;
+    font-weight: 500;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-thumb) {
+    width: 56px;
+    height: 56px;
+    border-radius: 6px;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-opt small) {
+    font-size: 16px;
+    font-weight: 400;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-opt input) {
+    width: 26px;
+    height: 26px;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-mfoot) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    border-top: 0;
+    padding: 12px 24px 4px;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-mfoot .m-btn) {
+    justify-content: center;
+    min-height: 56px;
+    font-size: 20px;
+    border-radius: 8px;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-mfoot .m-link) {
+    align-self: center;
+    font-size: 18px;
+  }
+  @keyframes m-sheet {
+    from {
+      transform: translateY(100%);
+    }
+  }
+  .lists-playground :global(.m-sheetform) {
+    display: grid;
+    gap: 8px;
+    padding: 4px 24px 8px;
+  }
+  .lists-playground :global(.m-hint) {
+    margin: 0 0 8px;
+    font-size: 18px;
+    color: var(--m-2);
+    line-height: 1.4;
+  }
+  .lists-playground :global(.m-sheetform .m-input) {
+    height: 60px;
+    padding: 0 16px;
+    font-size: 19px;
+    border-radius: 10px;
+    border-width: 2px;
+    box-shadow: none;
+  }
+  .lists-playground :global(.m-count) {
+    justify-self: end;
+    margin-right: 6px;
+    font-size: 15px;
+    color: var(--m-2);
+  }
+  .lists-playground :global(.m-sheetform .m-btn) {
+    justify-content: center;
+    min-height: 56px;
+    font-size: 20px;
+    border-radius: 8px;
+    margin-top: 8px;
+  }
+  .lists-playground :global(.m-sheetform .m-btn[disabled]) {
+    background: #e6e6e6;
+    color: #9a9a9a !important;
+    cursor: default;
+  }
+  .lists-playground :global(.meli[data-device="mobile"] .m-toast) {
+    position: absolute;
+    left: 50%;
+    bottom: 96px;
+    z-index: 20;
+    width: 274px;
+    padding: 14px 16px;
+    border-radius: 8px;
+    background: #4aa55b;
+    color: #fff;
+    font-size: 15px;
+    white-space: normal;
+    text-align: left;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lists-playground :global(.n-fab),
+    .lists-playground :global(.n-fab span),
+    .lists-playground :global(.phone .loader i),
+    .lists-playground :global(.phone .n-loading i) {
+      transition: none;
+      animation: none;
+    }
+  }
+
+  .lists-playground :global(.m-sr) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .lists-playground :global(.m-ph svg) {
+    width: 48px;
+    height: 48px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lists-playground :global(*) {
+      animation: none !important;
+      transition: none !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
+<script>
+  import "./lists.ts";
+</script>

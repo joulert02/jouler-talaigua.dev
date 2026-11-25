@@ -1,0 +1,133 @@
+---
+title: Listas de favoritos y regalos
+company: Mercado Libre
+summary: Rehacer cómo la gente guarda productos y planea regalos, junto con la estrategia de pruebas y la navegación en la app que lo sostienen.
+lang: es
+tier: 1
+order: 1
+focus: [Ingeniería de producto, Estrategia de pruebas, Web views en apps nativas]
+cover: ../../../assets/projects/mercadolibre/lists.png
+case: live
+---
+
+import CaseFacts from "@/components/projects/case/CaseFacts/CaseFacts.astro";
+import Fact from "@/components/projects/case/CaseFacts/Fact/Fact.astro";
+import CaseIndex from "@/components/projects/case/CaseIndex/CaseIndex.astro";
+import CaseIntro from "@/components/projects/case/CaseIntro/CaseIntro.astro";
+import CaseQuote from "@/components/projects/case/CaseQuote/CaseQuote.astro";
+import TeamPhoto from "@/components/projects/mercado-libre-lists/TeamPhoto/TeamPhoto.astro";
+import Chapter from "@/components/projects/case/Chapter/Chapter.astro";
+import FullStory from "@/components/projects/case/Chapter/FullStory/FullStory.astro";
+import ListsPlayground from "@/components/projects/mercado-libre-lists/ListsPlayground/ListsPlayground.astro";
+import TestsPlayground from "@/components/projects/mercado-libre-lists/TestsPlayground/TestsPlayground.astro";
+import NavigationPlayground from "@/components/projects/mercado-libre-lists/NavigationPlayground/NavigationPlayground.astro";
+import ArchitecturePlayground from "@/components/projects/mercado-libre-lists/ArchitecturePlayground/ArchitecturePlayground.astro";
+import ArchitectureNotes from "@/components/projects/mercado-libre-lists/ArchitectureNotes/ArchitectureNotes.astro";
+
+<CaseFacts>
+  <Fact label="Rol">Senior Software Engineer · Full-stack</Fact>
+  <Fact label="Periodo">Oct 2023 – may 2025</Fact>
+  <Fact label="Tecnología">React · Node.js (BFF, SSR) · WebDriverIO + BDD · Datadog, New Relic</Fact>
+</CaseFacts>
+
+<CaseIndex
+  items={[
+    { id: "lists", label: "Listas" },
+    { id: "tests", label: "Pruebas" },
+    { id: "navigation", label: "Navegación" },
+    { id: "architecture", label: "Arquitectura" },
+  ]}
+/>
+
+<CaseIntro title="Lo que aprendí" layout="photo">
+
+Mi proyecto principal fue reemplazar los favoritos antiguos por una nueva experiencia de listas: listas personales para lo que quieres comprar después y listas de regalo que la gente puede nombrar como quiera, desde una boda hasta un cumpleaños. En el camino asumí dos problemas con los que el equipo convivía desde hacía tiempo: pruebas en las que nadie confiaba y una navegación que hacía perderse a la gente dentro de la app.
+
+<CaseQuote>
+
+Trabajar en un producto que usan millones de personas te abre la mente: la trazabilidad y la observabilidad dejan de ser opcionales. Mantener web, web móvil y una app nativa desde el mismo código te obliga a entender cómo funciona todo de verdad.
+
+</CaseQuote>
+
+<TeamPhoto
+  slot="media"
+  alt="El equipo de Mercado Libre en un evento de la empresa, frente al fondo del evento."
+/>
+
+</CaseIntro>
+
+<Chapter
+  id="lists"
+  number="01"
+  title="De un corazón a listas que la gente organiza"
+  lead="Los favoritos eran un corazón y una sola lista plana. Ahora la gente guarda productos en listas a las que les pone nombre: para sí misma o como regalo para alguien más."
+>
+
+<ListsPlayground />
+
+<FullStory>
+
+Los favoritos eran un solo corazón: todo lo que te gustaba, en un mismo lugar, con una interfaz que había envejecido mal. La nueva experiencia permite crear dos tipos de listas. Las listas de favoritos son para uno mismo. Las listas de regalos son para alguien más: la gente elige una de las ocasiones predeterminadas o le pone el nombre que quiera.
+
+Fui uno de los dos ingenieros senior del squad que construyó las listas en el equipo de Home & Search. El diseño estaba listo y el equipo ya había empezado. Llegué para construir la experiencia y aportar una mirada senior a la arquitectura frontend: cómo se estructuraban las pantallas, qué componentes necesitábamos y cómo se comportarían en escritorio, en la web móvil y dentro de la app nativa, que renderizan las mismas pantallas.
+
+</FullStory>
+
+</Chapter>
+
+<Chapter
+  id="tests"
+  number="02"
+  title="Pruebas que protegen el negocio"
+  lead="La cobertura unitaria pasó de cerca del 60% a más del 80%, y se detuvo ahí a propósito. Mientras tanto, propuse pruebas end-to-end para los flujos que más importan."
+>
+
+<TestsPlayground />
+
+<FullStory>
+
+Cuando llegué, la cobertura de pruebas unitarias rondaba el 60% y seguía bajando. Cambié la forma en que el equipo abordaba las pruebas, escribí guías y trabajé en pareja con mis compañeros hasta que escribirlas se volvió rutina. Llegamos a más del 80% y nos detuvimos ahí a propósito. Perseguir el 100% convierte cada cambio en una pelea con un número, y la gente empieza a escribir pruebas que no protegen nada.
+
+No teníamos ninguna prueba end-to-end. Mientras crecía la cobertura unitaria, propuse cubrir lo que más le importaba al negocio: los flujos críticos y sus reglas. Construí una prueba de concepto con Playwright y otra con WebDriverIO, ambas con escenarios en lenguaje natural con Gherkin (BDD) y sesiones de usuario simuladas. Las dos funcionaron. Elegimos WebDriverIO porque era el estándar de la empresa, y las funciones más nuevas de Playwright no justificaban romperlo.
+
+Definí el stack y las guías, revisé la propuesta con otro ingeniero senior y capacité al equipo para escribir y mantener las pruebas.
+
+</FullStory>
+
+</Chapter>
+
+<Chapter
+  id="navigation"
+  number="03"
+  title="Una navegación que recuerda dónde estabas"
+  lead="Dentro de la app, volver atrás te mandaba al inicio de la lista y el scroll infinito dejaba de cargar. Rehice la navegación como una pila, como funcionan las apps nativas."
+>
+
+<NavigationPlayground />
+
+<FullStory>
+
+La app de Mercado Libre muestra muchas de las mismas pantallas web dentro de vistas nativas, conectadas por un puente interno que no estaba bien documentado. La navegación era inconsistente. Las listas no se actualizaban cuando cambiaban sus datos. El scroll infinito dejaba de cargar después del primer bloque de ítems, o se rompía al abrir un producto y volver. Al presionar atrás te mandaba al inicio de la página, y la gente se perdía.
+
+Leí la implementación del puente hasta entender cómo manejaba las pantallas, y reestructuré la navegación según cómo funcionan de verdad las apps nativas: una pila. Las pantallas anteriores conservan su estado y su posición de scroll, y sus scripts retoman donde iban cuando vuelves. Las pantallas intermedias se sacan de la pila, así que atrás te lleva adonde el flujo dice que debe.
+
+</FullStory>
+
+</Chapter>
+
+<Chapter
+  id="architecture"
+  number="04"
+  title="Cada pantalla recibe solo lo que necesita"
+  lead="Mercado Libre me llevó de sitios de marketing y banca a productos con millones de usuarios, un stack maduro y equipos en Argentina, Uruguay, Brasil y Colombia."
+>
+
+<ArchitecturePlayground />
+
+<ArchitectureNotes>
+
+En Mercado Libre aprendí cuándo un Backend for Frontend se gana su lugar. Las APIs de producto son dueñas del negocio; el BFF lo traduce exactamente a lo que necesita cada pantalla; el renderizado en servidor pide solo los datos que importan, así cada dispositivo renderiza rápido. Y aprendí el ciclo de vida de una pantalla dentro de una app, que no se parece en nada al de una página web.
+
+</ArchitectureNotes>
+
+</Chapter>

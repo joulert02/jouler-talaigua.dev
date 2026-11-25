@@ -12,7 +12,7 @@ const meta = preview.meta({
     docs: {
       description: {
         component:
-          "The case index (owner review, 2026-11-23): the chapters as a line of text links under the facts strip, number and short name in mono, on the layout's quarters (two per row on phones). Static and plain anchors. The MDX lists each chapter's `id` and short name in order.",
+          "The case index (owner review, 2026-11-23): the chapters as a line of text links under the facts strip, number and short name in mono, on the layout's quarters; hidden on phones (owner review, 2026-11-25). Static and plain anchors. The MDX lists each chapter's `id` and short name in order.",
       },
     },
   },
