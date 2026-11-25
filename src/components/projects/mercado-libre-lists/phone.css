@@ -1,0 +1,218 @@
+:is(.lists-playground[data-meli-lab], .navigation-playground[data-navigation]) .meli-phone[data-native] {
+  --m-blue: #3483fa;
+  --m-green: #00a650;
+  --m-ink: rgb(0 0 0 / 0.9);
+  --m-2: rgb(0 0 0 / 0.55);
+  --m-line: rgb(0 0 0 / 0.1);
+  box-sizing: border-box;
+  position: relative;
+  width: 420px;
+  height: 892px;
+  border: 9px solid #0e0f11;
+  border-radius: 62px;
+  background: #fff;
+  color: var(--m-ink);
+  color-scheme: light;
+  overflow: clip;
+  /* Scale the frame without CSS zoom rounding the inner scroll boundary. */
+  transform: scale(var(--phone-scale));
+  transform-origin: top left;
+  font:
+    15px/1.35 -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Text",
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+  letter-spacing: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+:is(.lists-playground[data-meli-lab], .navigation-playground[data-navigation])
+  .meli-phone-frame:has(> .meli-phone[data-native]) {
+  --phone-scale: 0.7;
+  width: calc(420px * var(--phone-scale));
+  height: calc(892px * var(--phone-scale));
+  overflow: clip;
+  border-radius: calc(62px * var(--phone-scale));
+  box-shadow:
+    0 0 0 calc(2px * var(--phone-scale)) #46484d,
+    0 calc(18px * var(--phone-scale)) calc(40px * var(--phone-scale)) rgb(0 0 0 / 0.18);
+}
+@media (max-width: 460px) {
+  :is(.lists-playground[data-meli-lab], .navigation-playground[data-navigation])
+    .meli-phone-frame:has(> .meli-phone[data-native]) {
+    --phone-scale: 0.64;
+  }
+}
+:is(.lists-playground[data-meli-lab], .navigation-playground[data-navigation])
+  .meli-phone[data-native]
+  .n-top {
+  flex: none;
+  background: #fbe54b;
+}
+:is(.lists-playground[data-meli-lab], .navigation-playground[data-navigation])
+  .meli-phone[data-native]
+  .n-status {
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 34px 0 42px;
+  font:
+    600 18px/1 -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Text",
+    sans-serif;
+  color: #000;
+}
+:is(.lists-playground[data-meli-lab], .navigation-playground[data-navigation])
+  .meli-phone[data-native]
+  .n-sys {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+:is(.lists-playground[data-meli-lab], .navigation-playground[data-navigation])
+  .meli-phone[data-native]
+  .n-sys
+  svg {
+  height: 13px;
+  width: auto;
+}
+:is(.lists-playground[data-meli-lab], .navigation-playground[data-navigation])
+  .meli-phone[data-native]
+  .n-sys
+  svg:last-child {
+  height: 14px;
+}
+:is(.lists-playground[data-meli-lab], .navigation-playground[data-navigation])
+  .meli-phone[data-native]
+  .n-head {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+}
+:is(.lists-playground[data-meli-lab], .navigation-playground[data-navigation])
+  .meli-phone[data-native]
+  .n-arrow,
+:is(.lists-playground[data-meli-lab], .navigation-playground[data-navigation])
+  .meli-phone[data-native]
+  .in-back {
+  all: unset;
+  box-sizing: border-box;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  flex: none;
+  color: #000;
+  cursor: default;
+}
+:is(.lists-playground[data-meli-lab], .navigation-playground[data-navigation])
+  .meli-phone[data-native]
+  button.n-arrow,
+:is(.lists-playground[data-meli-lab], .navigation-playground[data-navigation])
+  .meli-phone[data-native]
+  .in-back {
+  cursor: pointer;
+  border-radius: 50%;
+}
+:is(.lists-playground[data-meli-lab], .navigation-playground[data-navigation])
+  .meli-phone[data-native]
+  button.n-arrow:focus-visible,
+:is(.lists-playground[data-meli-lab], .navigation-playground[data-navigation])
+  .meli-phone[data-native]
+  .in-back:focus-visible {
+  outline: 2px solid var(--m-blue);
+  outline-offset: -3px;
+}
+:is(.lists-playground[data-meli-lab], .navigation-playground[data-navigation])
+  .meli-phone[data-native]
+  .n-arrow
+  svg,
+:is(.lists-playground[data-meli-lab], .navigation-playground[data-navigation])
+  .meli-phone[data-native]
+  .in-back
+  svg {
+  width: 26px;
+  height: 26px;
+}
+:is(.lists-playground[data-meli-lab], .navigation-playground[data-navigation])
+  .meli-phone[data-native]
+  .n-island {
+  position: absolute;
+  z-index: 12;
+  top: 11px;
+  left: 50%;
+  width: 122px;
+  height: 35px;
+  margin-left: -61px;
+  border-radius: 20px;
+  background: #000;
+}
+:is(.lists-playground[data-meli-lab], .navigation-playground[data-navigation])
+  .meli-phone[data-native]
+  .n-home {
+  position: absolute;
+  z-index: 12;
+  bottom: 9px;
+  left: 50%;
+  width: 144px;
+  height: 5px;
+  margin-left: -72px;
+  border-radius: 3px;
+  background: #000;
+}
+:is(.lists-playground[data-meli-lab], .navigation-playground[data-navigation])
+  .meli-phone[data-native]
+  .n-bar {
+  flex: none;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  padding: 10px 0 30px;
+  border-top: 1px solid var(--m-line);
+  background: #fff;
+  color: rgb(0 0 0 / 0.82);
+}
+:is(.lists-playground[data-meli-lab], .navigation-playground[data-navigation])
+  .meli-phone[data-native]
+  .n-bar
+  span {
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+}
+:is(.lists-playground[data-meli-lab], .navigation-playground[data-navigation])
+  .meli-phone[data-native]
+  .n-bar
+  svg {
+  width: 28px;
+  height: 28px;
+}
+:is(.lists-playground[data-meli-lab], .navigation-playground[data-navigation])
+  .meli-phone[data-native]
+  .n-bar
+  small {
+  font-size: 12.5px;
+  font-weight: 500;
+}
+:is(.lists-playground[data-meli-lab], .navigation-playground[data-navigation])
+  .meli-phone[data-native]
+  .n-bar
+  .on {
+  color: var(--m-blue);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(.lists-playground[data-meli-lab], .navigation-playground[data-navigation]) .meli-phone[data-native] * {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}

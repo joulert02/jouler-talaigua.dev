@@ -1,0 +1,143 @@
+---
+title: Lists & Gift Registry
+company: Mercado Libre
+summary: Rebuilding how shoppers save products and plan gifts, plus the test strategy and app navigation behind it.
+lang: en
+tier: 1
+order: 1
+focus: [Product engineering, Test strategy, Web views in native apps]
+cover: ../../../assets/projects/mercadolibre/lists.png
+case: live
+---
+
+import CaseParagraph from "@/components/projects/case/CaseParagraph/CaseParagraph.astro";
+import CaseFacts from "@/components/projects/case/CaseFacts/CaseFacts.astro";
+import Fact from "@/components/projects/case/CaseFacts/Fact/Fact.astro";
+import CaseIndex from "@/components/projects/case/CaseIndex/CaseIndex.astro";
+import CaseIntro from "@/components/projects/case/CaseIntro/CaseIntro.astro";
+import CaseQuote from "@/components/projects/case/CaseQuote/CaseQuote.astro";
+import TeamPhoto from "@/components/projects/mercado-libre-lists/TeamPhoto/TeamPhoto.astro";
+import Chapter from "@/components/projects/case/Chapter/Chapter.astro";
+import FullStory from "@/components/projects/case/Chapter/FullStory/FullStory.astro";
+import ListsPlayground from "@/components/projects/mercado-libre-lists/ListsPlayground/ListsPlayground.astro";
+import TestsPlayground from "@/components/projects/mercado-libre-lists/TestsPlayground/TestsPlayground.astro";
+import NavigationPlayground from "@/components/projects/mercado-libre-lists/NavigationPlayground/NavigationPlayground.astro";
+import ArchitecturePlayground from "@/components/projects/mercado-libre-lists/ArchitecturePlayground/ArchitecturePlayground.astro";
+import ArchitectureNotes from "@/components/projects/mercado-libre-lists/ArchitectureNotes/ArchitectureNotes.astro";
+
+<CaseFacts>
+  <Fact label="Role">Senior Software Engineer · Full-stack</Fact>
+  <Fact label="Period">Oct 2023 – May 2025</Fact>
+  <Fact label="Stack">React · Node.js (BFF, SSR) · WebDriverIO + BDD · Datadog, New Relic</Fact>
+</CaseFacts>
+
+<CaseIndex
+  items={[
+    { id: "lists", label: "Lists" },
+    { id: "tests", label: "Tests" },
+    { id: "navigation", label: "Navigation" },
+    { id: "architecture", label: "Architecture" },
+  ]}
+/>
+
+<CaseIntro title="What I learned" layout="photo">
+
+My main project was replacing the old favorites with a new lists experience: personal lists for things you want to buy later, and gift lists people can name however they like, from a wedding to a birthday. Along the way I took on two problems the team had lived with for a while: tests nobody trusted and navigation that lost people inside the app.
+
+<CaseQuote>
+
+Working on a product used by millions opens your mind: traceability and observability stop being optional. Maintaining web, mobile web and a native app from the same codebase forces you to understand how everything really works.
+
+</CaseQuote>
+
+<TeamPhoto slot="media" alt="The Mercado Libre team at a company event, in front of the event backdrop." />
+
+</CaseIntro>
+
+<Chapter
+  id="lists"
+  number="01"
+  title="From a heart to lists people organize"
+  lead="Favorites used to be one heart and one flat list. Now people save products to lists they name: for themselves, or as a gift for someone else."
+>
+
+<ListsPlayground />
+
+<FullStory>
+
+Favorites used to be a single heart: everything you liked, in one place, with an interface that had aged badly. The new experience lets people create two kinds of lists. Favorites lists are for themselves. Gift lists are for someone else: people pick one of the default occasions or give it any name they want.
+
+I was one of two senior engineers in the squad that built lists on the Home & Search team. The design was ready and the team had already started. I joined to build the experience and bring a senior perspective to the frontend architecture: how screens were structured, which components we needed and how they would behave on desktop, mobile web and inside the native app, which all render the same screens.
+
+</FullStory>
+
+</Chapter>
+
+<Chapter
+  id="tests"
+  number="02"
+  title="Tests that protect the business"
+  lead="Unit coverage went from about 60% to over 80%, and stopped there on purpose. Meanwhile, I proposed end-to-end tests for the flows that matter most."
+>
+
+<TestsPlayground />
+
+<FullStory>
+
+When I arrived, unit test coverage was around 60% and slipping. I changed how the team approached tests, wrote guidelines and paired with teammates until writing them became routine. We reached more than 80% and stopped there on purpose. Chasing 100% makes every change a fight with a number, and people start writing tests that protect nothing.
+
+<CaseParagraph>
+  {
+    "We had no end-to-end tests at all. While unit coverage grew, I proposed covering what mattered most to the business: the critical flows and their rules. I built a proof of concept with Playwright and with WebDriverIO, both writing scenarios in plain language with Gherkin (BDD) and mocking user sessions. Both worked. We chose WebDriverIO because it was the company's standard, and Playwright's newer features weren't worth breaking that."
+  }
+</CaseParagraph>
+
+I defined the stack and the guidelines, reviewed the proposal with another senior engineer, and trained the team to write and maintain the tests.
+
+</FullStory>
+
+</Chapter>
+
+<Chapter
+  id="navigation"
+  number="03"
+  title="Navigation that remembers where you were"
+  lead="Inside the app, going back sent people to the top of the list, and infinite scroll stopped loading. I rebuilt navigation as a stack, the way native apps work."
+>
+
+<NavigationPlayground />
+
+<FullStory>
+
+<CaseParagraph>
+  {
+    "Mercado Libre's app shows many of the same web screens inside native views, connected through an in-house bridge that wasn't well documented. Navigation was inconsistent. Lists didn't refresh when their data changed. Infinite scroll stopped loading after the first batch of items, or broke after you opened a product and came back. Pressing back sent you to the top of the page, and people got lost."
+  }
+</CaseParagraph>
+
+<CaseParagraph>
+  {
+    "I read the bridge's implementation until I understood how it managed screens, then restructured the navigation around how native apps actually work: a stack. Previous screens keep their state and scroll position, and their scripts pick up where they left off when you return. Intermediate screens are removed from the stack, so back takes you where the flow says it should."
+  }
+</CaseParagraph>
+
+</FullStory>
+
+</Chapter>
+
+<Chapter
+  id="architecture"
+  number="04"
+  title="Each screen gets only what it needs"
+  lead="Mercado Libre took me from marketing and banking sites to products with millions of users, a mature stack and teams across Argentina, Uruguay, Brazil and Colombia."
+>
+
+<ArchitecturePlayground />
+
+<ArchitectureNotes>
+
+At Mercado Libre I learned when a Backend for Frontend earns its place. Product APIs own the business; the BFF translates it into exactly what each screen needs; server rendering asks only for the data that matters, so every device renders fast. And I learned the lifecycle of a screen inside an app, which behaves nothing like a page on the web.
+
+</ArchitectureNotes>
+
+</Chapter>

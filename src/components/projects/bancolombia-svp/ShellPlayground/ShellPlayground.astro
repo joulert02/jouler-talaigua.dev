@@ -3,7 +3,6 @@ import ExampleFrame from "../../case/ExampleFrame/ExampleFrame.astro";
 import ExampleHint from "../../case/ExampleFrame/ExampleHint/ExampleHint.astro";
 import SegmentedSwitch from "../../../ui/SegmentedSwitch/SegmentedSwitch.astro";
 import Button from "../../../ui/Button/Button.astro";
-import Icon from "../../../ui/Icon/Icon.astro";
 import { getLang } from "../../../../i18n/ui";
 import { shellCopy, shellKeys } from "./shell.config";
 const copy = shellCopy[getLang(Astro)];
@@ -72,9 +71,7 @@ const config = `{\n${shellKeys.map((key) => `  "${key}": "…"`).join(",\n")}\n}
     </dl>
     <p class="shell-playground__result">{copy.start}</p>
     <ExampleHint slot="foot">{copy.hint}</ExampleHint>
-    <Button slot="actions" size="sm" label={copy.deploy}>
-      <Icon slot="start" name="play" size={14} />
-    </Button>
+    <Button slot="actions" size="sm" label={copy.deploy} />
   </ExampleFrame>
 </div>
 

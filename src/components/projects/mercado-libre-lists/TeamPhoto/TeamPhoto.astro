@@ -1,0 +1,42 @@
+---
+import { Image } from "astro:assets";
+import team from "@/assets/projects/mercadolibre/meli-team.png";
+
+interface Props {
+  /** What the photo shows, for people who cannot see it. */
+  alt: string;
+}
+const { alt } = Astro.props;
+---
+
+<!-- The intro's team photo (v11 `.intro-c-photo`): a square crop inside a white frame. -->
+<figure class="meli-team">
+  <Image
+    class="meli-team__image"
+    src={team}
+    alt={alt}
+    widths={[400, 800]}
+    sizes="(min-width: 720px) 380px, 100vw"
+    loading="eager"
+  />
+</figure>
+
+<style>
+  .meli-team {
+    margin: 0;
+    padding: 8px;
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-rest);
+  }
+  .meli-team__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    border-radius: 9px;
+    object-fit: cover;
+    object-position: 50% 100%;
+  }
+</style>

@@ -4,10 +4,11 @@ interface Props {
   title: string;
   /**
    * Where the media sits: `portrait` (a phone-shaped video or photo, 380px on the right) or `side` (a landscape image,
-   * half the width on the right; on phones it sits between the paragraphs and the quote). Not `media`: that name is
-   * the slot's, and Astro would not pass it as a prop.
+   * half the width on the right; on phones it sits between the paragraphs and the quote) or `photo` (a square photo,
+   * beside one paragraph and centred with the text under the heading; on tablets the quote goes below both). Not
+   * `media`: that name is the slot's, and Astro would not pass it as a prop.
    */
-  layout?: "portrait" | "side";
+  layout?: "portrait" | "side" | "photo";
 }
 const { title, layout = "portrait" } = Astro.props;
 const id = "case-intro-title";
@@ -89,6 +90,39 @@ const id = "case-intro-title";
   }
   .case-intro--side .case-intro__media {
     width: 100%;
+  }
+  /* A square photo: the heading has its own row, and the photo is centred with the text (v11 Mercado Libre). */
+  @media (min-width: 720px) {
+    .case-intro--photo {
+      grid-template-rows: auto auto;
+      align-items: center;
+    }
+    .case-intro--photo .case-intro__title {
+      grid-column: 1 / -1;
+    }
+    .case-intro--photo .case-intro__text {
+      margin-top: 0;
+    }
+    .case-intro--photo .case-intro__media {
+      grid-row: 2;
+    }
+  }
+  /* Photo, on tablets: the paragraph beside the photo and the quote below, across both columns. */
+  @media (min-width: 720px) and (max-width: 1040px) {
+    .case-intro--photo {
+      grid-template-columns: minmax(0, 1fr) min(44%, 380px);
+    }
+    .case-intro--photo .case-intro__text {
+      --case-paragraph-gap: 0;
+      --case-quote-margin: 0;
+      --case-quote-measure: none;
+      display: contents;
+    }
+    .case-intro--photo :global(.case-quote) {
+      --case-paragraph-measure: none;
+      grid-column: 1 / -1;
+      grid-row: 3;
+    }
   }
   /* The intro's grid spaces the figure; its own top margin is for chapters. */
   .case-intro__media :global(.case-figure) {
