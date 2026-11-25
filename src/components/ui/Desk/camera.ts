@@ -174,20 +174,6 @@ export class DeskCamera {
     this.targetX = this.targetY = null;
   }
 
-  /** Glides until `element` sits in the middle of the view, above the `bottom` px a floating bar covers. */
-  reveal(element: Element, bottom = 0) {
-    const box = element.getBoundingClientRect();
-    const view = this.viewport.getBoundingClientRect();
-    const middle = view.top + (view.height - bottom) / 2;
-    this.touched = true;
-    this.glide(
-      this.x + view.left + view.width / 2 - (box.left + box.width / 2),
-      this.y + middle - (box.top + box.height / 2),
-      true,
-      110,
-    );
-  }
-
   /** Clamps an offset so the world never leaves more than OVERSCROLL of empty desk at an edge. */
   private bounds(x: number, y: number): [number, number] {
     const view = this.viewport.getBoundingClientRect();

@@ -2,26 +2,27 @@
 interface Props {
   /** Handwritten line on the envelope, e.g. "for you". */
   to: string;
-  /** Accessible name of the toggle, e.g. "Open the letter". */
+  /** Accessible name of the link, e.g. "Open the letter: more about me". */
   label: string;
+  /** The page the letter opens, e.g. "/more-about-me/". */
+  href: string;
 }
-const { to, label } = Astro.props;
+const { to, label, href } = Astro.props;
 ---
 
 <!--
-  The letter object: a sealed envelope. A toggle button, so it is reached with Tab and opened with Enter or
-  Space like the other objects: pressing it turns the flap back from its top edge and a letter glides up and
-  peeks out, and pressing again puts the letter back and closes the flap over it. Hovering it gives the same
-  peek without pressing.
+  The letter object: a sealed envelope, and a link. Pressing it turns the flap back from its top edge, a letter glides
+  up and peeks out, and then its page opens. A press that opens another tab, and reduced motion, skip the wait.
+  Hovering it gives the same peek without pressing. Coming back to the page finds it sealed again.
   Layers, back to front: envelope back < letter < front pocket < flap (closed). An open flap drops behind the letter.
 -->
-<button type="button" class="envelope" aria-pressed="false" aria-label={label}>
+<a class="envelope" href={href} aria-label={label}>
   <span class="envelope__letter" aria-hidden="true"></span>
   <span class="envelope__pocket" aria-hidden="true"></span>
   <span class="envelope__flap" aria-hidden="true"></span>
   <span class="envelope__seal" aria-hidden="true"></span>
   <span class="envelope__to">{to}</span>
-</button>
+</a>
 
 <script>
   // One listener for every envelope on the page. On the desk, <desk-object> swallows the click after a drag.
@@ -29,8 +30,21 @@ const { to, label } = Astro.props;
   if (!scope.envelopeReady) {
     scope.envelopeReady = true;
     document.addEventListener("click", (event) => {
-      const envelope = (event.target as Element).closest<HTMLButtonElement>(".envelope");
-      envelope?.setAttribute("aria-pressed", String(envelope.getAttribute("aria-pressed") !== "true"));
+      const envelope = (event.target as Element).closest<HTMLAnchorElement>("a.envelope");
+      if (!envelope || event.defaultPrevented || event.button !== 0) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      // Already on its way.
+      if (envelope.hasAttribute("data-open")) return;
+      envelope.toggleAttribute("data-open", true);
+      // The letter comes out first. Nothing to wait for with reduced motion, or if hovering had opened it already.
+      const opening = envelope.getAnimations({ subtree: true }).map((animation) => animation.finished);
+      void Promise.allSettled(opening).then(() => location.assign(envelope.href));
+    });
+    // Back from the page, the browser may restore this one as it was left.
+    addEventListener("pageshow", (event) => {
+      if (!event.persisted) return;
+      for (const envelope of document.querySelectorAll(".envelope")) envelope.removeAttribute("data-open");
     });
   }
 </script>
@@ -41,11 +55,8 @@ const { to, label } = Astro.props;
     --envelope-inside: color-mix(in srgb, var(--color-bg-subtle) 60%, var(--color-border));
     --envelope-flap: color-mix(in srgb, var(--color-bg-subtle) 70%, var(--color-surface));
     --envelope-ink: color-mix(in srgb, var(--color-text-muted) 60%, transparent);
-    /* A button that looks like paper: none of the button's own face. */
-    appearance: none;
-    padding: 0;
-    font: inherit;
     color: inherit;
+    text-decoration: none;
     cursor: pointer;
     box-sizing: border-box;
     position: relative;
@@ -144,9 +155,9 @@ const { to, label } = Astro.props;
     color: var(--color-text-secondary);
   }
 
-  /* Open while it is pressed, and for as long as the pointer rests on it. */
+  /* Open once it is pressed, and for as long as the pointer rests on it. */
   .envelope:hover .envelope__flap,
-  .envelope[aria-pressed="true"] .envelope__flap {
+  .envelope[data-open] .envelope__flap {
     z-index: 0;
     transform: perspective(700px) rotateX(180deg);
     transition:
@@ -155,13 +166,13 @@ const { to, label } = Astro.props;
   }
   /* Opening: the seal pops off, the flap turns over, and the letter glides up as the flap passes upright. */
   .envelope:hover .envelope__seal,
-  .envelope[aria-pressed="true"] .envelope__seal {
+  .envelope[data-open] .envelope__seal {
     opacity: 0;
     scale: 0.4;
     transition-delay: 0s;
   }
   .envelope:hover .envelope__letter,
-  .envelope[aria-pressed="true"] .envelope__letter {
+  .envelope[data-open] .envelope__letter {
     transform: translateY(-64px);
     transition-delay: calc(var(--duration-fast) * 0.6 + var(--_turn) * 0.55);
   }
@@ -174,15 +185,15 @@ const { to, label } = Astro.props;
     .envelope .envelope__seal {
       transition: none;
     }
-    .envelope[aria-pressed="false"]:hover .envelope__flap {
+    .envelope:not([data-open]):hover .envelope__flap {
       z-index: 3;
       transform: none;
     }
-    .envelope[aria-pressed="false"]:hover .envelope__seal {
+    .envelope:not([data-open]):hover .envelope__seal {
       opacity: 1;
       scale: 1;
     }
-    .envelope[aria-pressed="false"]:hover .envelope__letter {
+    .envelope:not([data-open]):hover .envelope__letter {
       transform: none;
     }
   }

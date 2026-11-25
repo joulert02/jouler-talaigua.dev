@@ -59,15 +59,15 @@ export const desk = {
       },
     } satisfies Note,
   },
-  // The rocket and the envelope open the roadmap and the letter in v11 (HU-10); until those exist the rocket only
-  // rests and the envelope only opens to show a blank letter.
+  // The rocket opens the roadmap in v11 (HU-10); until that exists it only rests. The envelope's letter is the "More
+  // about me" page.
   rocket: {
     title: { en: "Roadmap", es: "Roadmap" },
     text: { en: "Senior → Staff Engineer\nstep by step", es: "Senior → Staff Engineer\npaso a paso" },
   },
   envelope: {
     to: { en: "for you", es: "para ti" },
-    label: { en: "Open the letter", es: "Abrir la carta" },
+    label: { en: "Open the letter: more about me", es: "Abrir la carta: más sobre mí" },
   },
   vinyl: {
     title: "Unicornio",

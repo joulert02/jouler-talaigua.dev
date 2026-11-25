@@ -14,7 +14,7 @@ interface Props {
    * (640, 600). DeskObjects take their own `compact` positions.
    */
   compact?: { world: { width: number; height: number }; center: { x: number; y: number } };
-  /** A short line shown at the top when the desk opens on a phone, e.g. "Drag to explore · tap to flip". */
+  /** What to do here, in the bar of the desk opened on a phone, next to the close button, e.g. "Drag to explore". */
   hint?: string;
 }
 const {
@@ -45,13 +45,13 @@ const style = [
   offset once the visitor moves.
   From 901px the desk is part of the page. Below, the world is hidden and the `center` element flows as a normal page,
   until a `[data-desk-open="{id}"]` element opens the desk full screen (v11 mobile): a modal layer at `#{id}` where one
-  finger walks the desk, also from an object, a tap still flips or plays it, and a bar at the thumb steps from object
-  to object (‹ ›) and closes it. Back, Escape and the close button leave it; focus returns to the opener.
+  finger walks the desk, also from an object, a tap still flips or plays it, and a bar at the thumb says so and
+  closes it. Back, Escape and the close button leave it; focus returns to the opener.
   At the bottom edge the desktop desk fires a bubbling `desk-edge` event, detail { armed, progress } (camera.ts,
   EdgeState): armed once the camera reaches the edge, progress filling from 0 to 1 while a background drag is held
   there or the wheel keeps scrolling down past it, back to 0 when the drag is released or the scroll pauses. What a full hand-off does is up to the page (the Home opens Work).
   The objects come in one by one: those in view when the page opens, or each time the phone's desk opens, then each
-  of the others the first time the visitor walks or steps up to it. The inline script hides them before the first
+  of the others the first time the visitor walks up to it. The inline script hides them before the first
   paint (DeskObject owns the styles), so without scripts they are simply there; the camera script marks each one
   `data-revealed` as it comes into view. Their images wait too: an object is marked `data-near` a little before it
   can be seen, and only then do its lazy images load, so the page opens with what the first screen needs and fetches
@@ -59,15 +59,7 @@ const style = [
   An object that carries a `view-transition-name` while the phone's desk opens is not part of that entrance: it is
   there from the first frame, so the page can make something of its own travel to it (the Home's entry prints).
 -->
-<desk-board
-  class="desk"
-  id={id}
-  data-label={t("desk.label")}
-  data-dialog-label={t("desk.dialog")}
-  data-count={t("desk.count")}
-  data-position={t("desk.position")}
-  {style}
->
+<desk-board class="desk" id={id} data-label={t("desk.label")} data-dialog-label={t("desk.dialog")} {style}>
   <script is:inline>
     document.currentScript.parentElement.dataset.reveal = "";
   </script>
@@ -82,34 +74,29 @@ const style = [
       </div>
     </div>
   </div>
-  {hint && <p class="desk__hint">{hint}</p>}
   <div class="desk__bar">
-    <button class="desk__button" type="button" data-desk-step="-1" aria-label={t("desk.previous")}>
-      <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
-        <path
-          d="M12.5 4.5 7 10l5.5 5.5"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        ></path>
-      </svg>
-    </button>
-    <span class="desk__count" aria-hidden="true"></span>
-    <button class="desk__button" type="button" data-desk-step="1" aria-label={t("desk.next")}>
-      <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
-        <path
-          d="M7.5 4.5 13 10l-5.5 5.5"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        ></path>
-      </svg>
-    </button>
-    <span class="desk__separator" aria-hidden="true"></span>
+    {hint && (
+      <>
+        <p class="desk__hint">
+          <svg
+            class="desk__hint-icon"
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"></path>
+          </svg>
+          {hint}
+        </p>
+        <span class="desk__separator" aria-hidden="true"></span>
+      </>
+    )}
     <button class="desk__button desk__close" type="button" aria-label={t("desk.close")}>
       <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
         <path
@@ -121,8 +108,6 @@ const style = [
         ></path>
       </svg>
     </button>
-    <!-- Polite: each step announces where it landed ("3 of 10: Photo…"). -->
-    <span class="desk__live" aria-live="polite"></span>
   </div>
 </desk-board>
 
@@ -140,8 +125,6 @@ const style = [
   const NEAR_MARGIN = "200px";
   // Experiment flag: `?wheel=page` lets the vertical wheel scroll the page instead of panning the desk.
   const wheelMode: WheelMode = new URLSearchParams(location.search).get("wheel") === "page" ? "page" : "desk";
-  /** How long the phone hint stays before it fades on its own, in ms. */
-  const HINT_MS = 4000;
 
   class DeskBoard extends HTMLElement {
     private camera: DeskCamera | undefined;
@@ -155,10 +138,6 @@ const style = [
     private opener: HTMLElement | null = null;
     /** Everything outside the desk made inert while it is open. */
     private inerted: HTMLElement[] = [];
-    /** The objects in the order ‹ › visits them, and the one the camera last stepped to (-1: none yet). */
-    private tour: HTMLElement[] = [];
-    private at = -1;
-    private hintTimer = 0;
 
     private get isOpen() {
       return this.hasAttribute("data-open");
@@ -174,9 +153,6 @@ const style = [
       desktop.addEventListener("change", () => this.onBreakpoint(), { signal });
       document.addEventListener("click", (event) => this.onOpenerClick(event), { signal });
       this.querySelector(".desk__close")?.addEventListener("click", () => this.leave(), { signal });
-      for (const button of this.querySelectorAll<HTMLElement>("[data-desk-step]")) {
-        button.addEventListener("click", () => this.step(Number(button.dataset["deskStep"])), { signal });
-      }
       this.addEventListener(
         "keydown",
         (event) => {
@@ -190,10 +166,6 @@ const style = [
       const keys = (on: boolean) => () => this.toggleAttribute("data-keys", on);
       addEventListener("keydown", keys(true), { capture: true, signal });
       addEventListener("pointerdown", keys(false), { capture: true, signal });
-      // The first touch on the desk shows the visitor got it: the hint goes.
-      this.querySelector(".desk__viewport")?.addEventListener("pointerdown", () => this.hideHint(), {
-        signal,
-      });
       // The phone's back gesture closes the open desk; Forward opens it again.
       addEventListener("popstate", () => this.syncWithUrl(), { signal });
       this.mount();
@@ -240,13 +212,9 @@ const style = [
           object.toggleAttribute("data-near", travels || object.hasAttribute("data-near"));
         }
         this.mount();
-        this.collectTour();
-        this.at = -1;
-        this.updateCount();
       });
       void opening.updated.then(() => {
         this.querySelector<HTMLElement>(".desk__viewport")?.focus({ preventScroll: true });
-        this.showHint();
       });
       // The objects come in once the desk is fully there, not under the transition's crossfade.
       void opening.finished.then(() => this.releaseEntrances());
@@ -278,7 +246,6 @@ const style = [
       this.removeAttribute("role");
       this.removeAttribute("aria-modal");
       this.removeAttribute("aria-label");
-      this.hideHint();
       this.inertOutside(false);
       this.mount();
     }
@@ -324,87 +291,6 @@ const style = [
           this.inerted.push(sibling);
         }
       }
-    }
-
-    /** The objects in reading order on the open desk: rows from the top, each from the left. */
-    private collectTour() {
-      const world = this.querySelector(".desk__world");
-      const items = [...(world?.children ?? [])].filter(
-        (item): item is HTMLElement => item instanceof HTMLElement,
-      );
-      const row = (item: HTMLElement) => Math.round(item.offsetTop / 200);
-      this.tour = items.sort((a, b) => row(a) - row(b) || a.offsetLeft - b.offsetLeft);
-    }
-
-    private step(direction: number) {
-      const total = this.tour.length;
-      if (!total) return;
-      this.at = this.at < 0 ? (direction > 0 ? 0 : total - 1) : (this.at + direction + total) % total;
-      const item = this.tour[this.at];
-      if (!item) return;
-      this.camera?.reveal(item, this.barRoom());
-      // The object it lands on lifts for a moment.
-      if (!reducedMotion.matches) {
-        item.animate(
-          [
-            {},
-            {
-              offset: 0.4,
-              transform: "translateY(-10px) scale(1.05)",
-              filter: "drop-shadow(0 18px 24px rgb(0 0 0 / 0.18))",
-            },
-            {},
-          ],
-          { duration: 900, easing: "cubic-bezier(0.2, 0.8, 0.2, 1)" },
-        );
-      }
-      this.updateCount(item);
-      this.hideHint();
-    }
-
-    /** What the bar covers at the bottom, so a step centers the object in the desk that stays visible (a step also
-     *  hides the hint at the top). */
-    private barRoom() {
-      const viewport = this.querySelector(".desk__viewport")?.getBoundingClientRect();
-      const bar = this.querySelector(".desk__bar")?.getBoundingClientRect();
-      return viewport && bar ? Math.max(0, viewport.bottom - bar.top) : 0;
-    }
-
-    private updateCount(item?: HTMLElement) {
-      const total = String(this.tour.length);
-      const count = this.querySelector(".desk__count");
-      const live = this.querySelector(".desk__live");
-      if (!item) {
-        if (count) count.textContent = (this.dataset["count"] ?? "").replace("{n}", total);
-        if (live) live.textContent = "";
-        return;
-      }
-      const index = String(this.at + 1);
-      if (count) count.textContent = `${index} / ${total}`;
-      const name =
-        item.querySelector("[aria-label]")?.getAttribute("aria-label") ??
-        // A photo without a flip card is named by its description.
-        item.querySelector("img")?.alt ??
-        // Rendered text, one line per block, so a title and its text are not read as one word.
-        item.innerText
-          .trim()
-          .replace(/\s*\n\s*/g, ", ")
-          .slice(0, 80);
-      const position = (this.dataset["position"] ?? "").replace("{i}", index).replace("{n}", total);
-      if (live) live.textContent = `${position}: ${name}`;
-    }
-
-    private showHint() {
-      const hint = this.querySelector(".desk__hint");
-      if (!hint) return;
-      hint.toggleAttribute("data-visible", true);
-      clearTimeout(this.hintTimer);
-      this.hintTimer = window.setTimeout(() => this.hideHint(), HINT_MS);
-    }
-
-    private hideHint() {
-      clearTimeout(this.hintTimer);
-      this.querySelector(".desk__hint")?.removeAttribute("data-visible");
     }
 
     private mount() {
@@ -571,13 +457,13 @@ const style = [
        the copy menu). The center element stays selectable. */
     -webkit-user-select: none; /* Safari needs the prefix; the build does not add it. */
     user-select: none;
-    /* Nor does a long press on a photo open iOS's image menu. */
+    /* Nor does it open iOS's image menu, or a press flash gray. */
     -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
     /* Behind the card, inside the layer's stacking context (will-change creates it). */
     z-index: -1;
   }
-  /* The phone controls exist only on the open desk. */
-  .desk__hint,
+  /* The phone bar exists only on the open desk. */
   .desk__bar {
     display: none;
   }
@@ -612,6 +498,12 @@ const style = [
       z-index: 50;
       height: 100dvh;
       background: var(--color-bg-subtle);
+      /* A finger only does what the desk offers: no text selection or magnifier (also on the center element and through
+         an open note), no image or link menu, no gray flash on what is pressed. */
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+      -webkit-tap-highlight-color: transparent;
     }
     .desk[data-open]:not([data-keys]) .desk__viewport {
       outline: none;
@@ -630,42 +522,11 @@ const style = [
       width: var(--desk-compact-width);
       height: var(--desk-compact-height);
     }
-    /* While the desk opens or closes, the hint and the bar are layers of their own in the transition, above
+    /* While the desk opens or closes, the bar is a layer of its own in the transition, above
        anything the page sends travelling across the desk (the Home's prints). */
-    :global(:root[data-desk-transition]) .desk__hint {
-      view-transition-name: desk-hint;
-    }
     :global(:root[data-desk-transition]) .desk__bar {
       view-transition-name: desk-bar;
     }
-    .desk[data-open] .desk__hint {
-      display: block;
-      position: absolute;
-      top: max(var(--space-4), env(safe-area-inset-top));
-      left: 50%;
-      z-index: 2;
-      margin: 0;
-      padding: 10px 16px;
-      translate: -50% -8px;
-      opacity: 0;
-      font: 500 var(--font-size-small) / 1 var(--font-sans);
-      color: var(--color-text);
-      white-space: nowrap;
-      background: color-mix(in srgb, var(--color-surface) 94%, transparent);
-      backdrop-filter: blur(10px);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-pill);
-      box-shadow: var(--shadow-rest);
-      pointer-events: none;
-      transition:
-        opacity var(--duration-medium) var(--ease-out),
-        translate var(--duration-medium) var(--ease-out);
-    }
-    .desk[data-open] .desk__hint[data-visible] {
-      opacity: 1;
-      translate: -50% 0;
-    }
-
     /* The bar sits where the thumb rests, as the Dock does on the page. */
     .desk[data-open] .desk__bar {
       display: flex;
@@ -682,6 +543,11 @@ const style = [
       border: 1px solid var(--color-border);
       border-radius: 18px;
       box-shadow: var(--shadow-rest);
+      /* Only its button takes the touch: a drag that starts on the words walks the desk underneath. */
+      pointer-events: none;
+    }
+    .desk[data-open] .desk__close {
+      pointer-events: auto;
     }
   }
 
@@ -715,13 +581,34 @@ const style = [
   .desk__close:active {
     background: var(--color-text-secondary);
   }
-  .desk__count {
-    min-width: 88px;
-    text-align: center;
-    font: 500 var(--font-size-small) / 1 var(--font-mono);
-    font-variant-numeric: tabular-nums;
-    color: var(--color-text-muted);
+  /* The desktop hint pill's icon and words (board/BoardHint). */
+  .desk__hint {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+    padding-inline: var(--space-3) var(--space-2);
+    font: 500 var(--font-size-small) / 1 var(--font-sans);
+    color: var(--color-text);
     white-space: nowrap;
+  }
+  .desk__hint-icon {
+    flex: none;
+    animation: desk-hint-bounce 2.2s var(--ease-out) infinite;
+  }
+  @keyframes desk-hint-bounce {
+    0%,
+    60%,
+    80%,
+    100% {
+      translate: 0 0;
+    }
+    70% {
+      translate: 0 -5px;
+    }
+    88% {
+      translate: 0 -2px;
+    }
   }
   .desk__separator {
     width: 1px;
@@ -729,19 +616,12 @@ const style = [
     margin-inline: var(--space-1);
     background: var(--color-border);
   }
-  .desk__live {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-
   @media (prefers-reduced-motion: reduce) {
-    .desk__hint,
     .desk__button {
       transition: none !important;
+    }
+    .desk__hint-icon {
+      animation: none !important;
     }
   }
 </style>

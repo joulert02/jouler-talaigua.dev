@@ -13,7 +13,7 @@ const meta = preview.meta({
       story: { inline: false, height: "420px" },
       description: {
         component:
-          "The letter object: a sealed envelope with a handwritten line (`to`, in Caveat). It is a toggle button (`aria-pressed`, named by `label`): Tab reaches it, and a click, Enter or Space turns the flap back and lets a letter peek out; pressing again closes it. Hovering gives the same peek without pressing. With reduced motion nothing animates: hovering leaves it sealed and pressing opens it at once.",
+          "The letter object: a sealed envelope with a handwritten line (`to`, in Caveat). It is a link to `href`, named by `label`: a click or Enter turns the flap back, lets a letter peek out and then opens the page. Hovering gives the same peek without pressing. With reduced motion nothing animates: hovering leaves it sealed and pressing opens the page at once.",
       },
     },
   },
@@ -21,11 +21,11 @@ const meta = preview.meta({
 export default meta;
 
 export const Playground = meta.story({
-  args: { to: "for you", label: "Open the letter" },
+  args: { to: "for you", label: "Open the letter: more about me", href: "#letter" },
   parameters: {
     docs: {
       description: {
-        story: "Press the envelope, or focus it with Tab and press Enter, to open and close it.",
+        story: "Press the envelope, or focus it with Tab and press Enter, to open it.",
       },
     },
   },

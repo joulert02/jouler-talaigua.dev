@@ -30,7 +30,27 @@ export function setReveal(host: Element, open: boolean, content?: RevealContent)
     if (title) title.textContent = content.title;
     if (text) text.textContent = content.text;
   }
+  // It opens above when it does not fit below and does above; it stays on its side while it is open.
+  if (open && !reveal.hasAttribute("data-open"))
+    reveal.toggleAttribute("data-above", opensAbove(host, reveal));
   reveal.toggleAttribute("data-open", open);
+}
+
+/** The space an object's note leaves to it, in px (ObjectReveal). */
+const GAP = 10;
+/** What floats over the bottom of the desk: the phone's bar, the desktop's hint and the Dock. */
+const FLOATING = ".desk__bar, .board-hint, .dock";
+
+function opensAbove(host: Element, reveal: Element) {
+  const view = host.closest(".desk__viewport")?.getBoundingClientRect();
+  if (!view) return false;
+  const object = host.getBoundingClientRect();
+  const height = reveal.getBoundingClientRect().height + GAP;
+  const bars = [...document.querySelectorAll(FLOATING)]
+    .map((bar) => bar.getBoundingClientRect())
+    .filter((bar) => bar.height > 0);
+  const floor = Math.min(view.bottom, ...bars.map((bar) => bar.top));
+  return object.bottom + height > floor && object.top - height >= view.top;
 }
 
 /** Reads a JSON list a component printed in a data attribute. */

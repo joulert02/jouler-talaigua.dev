@@ -9,7 +9,7 @@ const { title = "", text = "" } = Astro.props;
 ---
 
 <!--
-  The note a board object shows under itself once the visitor uses it. Closed until the object's script opens it
+  The note a board object shows under itself, or above when only there it fits, once the visitor uses it. Closed until the object's script opens it
   (reveal.ts sets data-open); a live region, so the discovery is announced. The default slot adds a small line
   under the text (a credit).
 -->
@@ -44,6 +44,10 @@ const { title = "", text = "" } = Astro.props;
       opacity var(--duration-medium) var(--ease-out),
       translate var(--duration-medium) var(--ease-out),
       visibility 0s var(--duration-medium);
+  }
+  .object-reveal[data-above] {
+    top: auto;
+    bottom: calc(100% + 10px);
   }
   .object-reveal[data-open] {
     opacity: 1;
