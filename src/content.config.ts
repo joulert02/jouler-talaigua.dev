@@ -15,7 +15,7 @@ const projects = defineCollection({
       lang,
       /** Content tier (docs/content/projects/README.md): 1 full case, 2 showcase, 3 status page. */
       tier: z.union([z.literal(1), z.literal(2), z.literal(3)]),
-      /** Position inside its tier on the Work page. */
+      /** Position on the Work page, oldest work first; unique across tiers. */
       order: z.number().int(),
       focus: z.array(z.string()).default([]),
       /** Shown on the Work page's preview and thumbnails; without one, the preview shows a status tile. */
