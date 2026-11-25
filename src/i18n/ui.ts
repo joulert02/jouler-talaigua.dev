@@ -86,6 +86,11 @@ export const ui = {
     "case.mobile": "Mobile",
     "case.play": "Play",
     "case.playVideo": "Play “{caption}”, {duration}",
+    "404.title": "Page not found · Jouler Talaigua",
+    "404.tag": "404 · Not found",
+    "404.heading": "Page not found",
+    "404.message": "The link may be broken, or the page may have moved to another address.",
+    "404.back": "Back to home",
   },
   es: {
     "layout.skip": "Saltar al contenido",
@@ -170,6 +175,11 @@ export const ui = {
     "case.mobile": "Móvil",
     "case.play": "Reproducir",
     "case.playVideo": "Reproducir «{caption}», {duration}",
+    "404.title": "Página no encontrada · Jouler Talaigua",
+    "404.tag": "404 · No encontrada",
+    "404.heading": "Página no encontrada",
+    "404.message": "El enlace puede estar roto o la página se ha movido a otra dirección.",
+    "404.back": "Volver al inicio",
   },
 } as const satisfies Record<Lang, Record<string, string>>;
 

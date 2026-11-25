@@ -16,6 +16,7 @@ import { localePath, useTranslations, type Lang } from "@/i18n/ui";
 import { THEME_COOKIE } from "@/lib/theme.js";
 
 interface Props {
+  robots?: "noindex";
   title: string;
   description: string;
   lang: Lang;
@@ -24,7 +25,7 @@ interface Props {
   /** The page starts with the Dock away (a reading view such as "More about me"). */
   dockHidden?: boolean;
 }
-const { title, description, lang, ogSlug = "home", altPath = "/", dockHidden = false } = Astro.props;
+const { robots, title, description, lang, ogSlug = "home", altPath = "/", dockHidden = false } = Astro.props;
 Astro.locals.lang = lang;
 const current = navigation.find((item) =>
   item.href === "/" ? altPath === "/" : altPath.startsWith(item.href),
@@ -56,11 +57,16 @@ const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
-    {languages.map((item) => (
-      <link rel="alternate" hreflang={item.lang} href={new URL(item.href, Astro.site)} />
-    ))}
-    <link rel="alternate" hreflang="x-default" href={new URL(localePath("en", altPath), Astro.site)} />
+    {robots && <meta name="robots" content={robots} />}
+    {!robots && (
+      <>
+        <link rel="canonical" href={canonical} />
+        {languages.map((item) => (
+          <link rel="alternate" hreflang={item.lang} href={new URL(item.href, Astro.site)} />
+        ))}
+        <link rel="alternate" hreflang="x-default" href={new URL(localePath("en", altPath), Astro.site)} />
+      </>
+    )}
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />
