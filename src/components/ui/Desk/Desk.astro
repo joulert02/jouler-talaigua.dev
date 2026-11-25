@@ -563,6 +563,10 @@ const style = [
     top: calc(-1 * var(--desk-origin-y));
     width: var(--desk-world-width);
     height: var(--desk-world-height);
+    /* Objects are pressed, held and dragged: a long press must not select their text (on a phone it would also open
+       the copy menu). The center element stays selectable. */
+    -webkit-user-select: none; /* Safari needs the prefix; the build does not add it. */
+    user-select: none;
     /* Behind the card, inside the layer's stacking context (will-change creates it). */
     z-index: -1;
   }
