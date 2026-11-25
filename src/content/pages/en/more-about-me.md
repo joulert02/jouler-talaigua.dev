@@ -4,7 +4,7 @@ description: Coffee, aerial silks, pole, football, psychology and the life I liv
 lang: en
 ---
 
-I'm Jouler: Colombian, living in Madrid, and happiest when I'm learning something new.
+I'm Jouler: Colombian, living in Valencia, and happiest when I'm learning something new.
 Code is a big part of my life, but not all of it. This is the rest.
 
 I grew up in one of the most coffee-loving countries in the world, so it was only a matter of time before I fell in love with my roots. These days I brew specialty coffee and love discovering new kinds of coffee. My favourite method is the V60, with the occasional exotic twist.

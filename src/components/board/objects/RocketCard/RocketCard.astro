@@ -41,7 +41,8 @@ const { title, text } = Astro.props;
     display: grid;
     justify-items: start;
     gap: 6px;
-    width: 184px;
+    /* Wider than the other cards (184px): "Senior → Staff Engineer" fits on one line. */
+    width: 196px;
     padding: 14px 16px 16px;
     background: var(--color-surface);
     border: 1px solid var(--color-border);

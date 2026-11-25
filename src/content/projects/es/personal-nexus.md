@@ -4,7 +4,7 @@ company: EKOU
 summary: Explorando un producto de finanzas personales basado en transacciones, con una capa de captura asistida por IA.
 lang: es
 tier: 3
-order: 2
+order: 6
 kind: personal
 case: coming
 ---

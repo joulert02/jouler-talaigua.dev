@@ -63,7 +63,7 @@ export const desk = {
   // rests and the envelope only opens to show a blank letter.
   rocket: {
     title: { en: "Roadmap", es: "Roadmap" },
-    text: { en: "Senior → Staff\nstep by step", es: "Senior → Staff\npaso a paso" },
+    text: { en: "Senior → Staff Engineer\nstep by step", es: "Senior → Staff Engineer\npaso a paso" },
   },
   envelope: {
     to: { en: "for you", es: "para ti" },

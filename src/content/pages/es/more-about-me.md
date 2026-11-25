@@ -4,7 +4,7 @@ description: Café, telas, pole, fútbol, psicología y lo que vivo fuera del c�
 lang: es
 ---
 
-Soy Jouler: colombiano, vivo en Madrid y soy más feliz cuando estoy aprendiendo algo nuevo.
+Soy Jouler: colombiano, vivo en Valencia y soy más feliz cuando estoy aprendiendo algo nuevo.
 El código ocupa gran parte de mi vida, pero no toda. Esto es lo demás.
 
 Crecí en uno de los países más cafeteros del mundo, así que era cuestión de tiempo que me enamorara de mis raíces. Hoy preparo café de especialidad y me apasiona descubrir nuevos tipos de café. Mi método favorito es la V60, con alguna variante exótica.

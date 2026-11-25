@@ -12,8 +12,8 @@ interface NavigationEntry {
 export const navigation = [
   { id: "home", labelKey: "dock.home", href: "/", icon: "home" },
   { id: "work", labelKey: "dock.work", href: "/work/", icon: "work" },
-  { id: "notes", labelKey: "dock.notes", href: "/notes/", icon: "notes" },
-  // Roadmap stays out of the menu for now; its page (/roadmap/) still exists.
+  // Notes and Roadmap stay out until they have content; their pages were removed with them (HU-09, HU-10).
+  // { id: "notes", labelKey: "dock.notes", href: "/notes/", icon: "notes" },
   // { id: "roadmap", labelKey: "dock.roadmap", href: "/roadmap/", icon: "roadmap" },
 ] as const satisfies readonly NavigationEntry[];
 export interface NavigationItem extends NavigationEntry {

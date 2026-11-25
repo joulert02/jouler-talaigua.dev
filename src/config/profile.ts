@@ -113,8 +113,8 @@ export const footerColumns: readonly FooterColumn[] = [
     items: [
       { kind: "link", link: { label: "layout.home", href: { en: "/", es: "/es/" } } },
       { kind: "link", link: { label: "layout.work", href: { en: "/work/", es: "/es/work/" } } },
-      { kind: "link", link: { label: "layout.notes", href: { en: "/notes/", es: "/es/notes/" } } },
-      // Roadmap stays out for now, as in the Dock (navigation.ts).
+      // Notes and Roadmap stay out until they have content, as in the Dock (navigation.ts).
+      // { kind: "link", link: { label: "layout.notes", href: { en: "/notes/", es: "/es/notes/" } } },
       // { kind: "link", link: { label: "layout.roadmap", href: "#roadmap" } },
     ],
   },
@@ -134,7 +134,7 @@ export const footerColumns: readonly FooterColumn[] = [
     items: [
       { kind: "email", address: contactEmail },
       { kind: "link", link: { ...cvLink, label: "layout.cvPdf" } },
-      { kind: "text", text: { en: "Madrid · Spain", es: "Madrid · España" } },
+      { kind: "text", text: { en: "Valencia · Spain", es: "Valencia · España" } },
     ],
   },
 ];
@@ -142,7 +142,10 @@ export const footer: FooterData = {
   columns: footerColumns,
   wordmark: brand.name,
   // Intentionally Spanish in both locales.
-  origin: { en: "Hecho en Madrid, con raíces colombianas", es: "Hecho en Madrid, con raíces colombianas" },
+  origin: {
+    en: "Hecho en Valencia, con raíces colombianas",
+    es: "Hecho en Valencia, con raíces colombianas",
+  },
   originLang: "es",
   copyright: "© 2026",
 };
