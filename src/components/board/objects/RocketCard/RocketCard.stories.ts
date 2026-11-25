@@ -17,7 +17,7 @@ const meta = preview.meta({
 export default meta;
 
 export const Playground = meta.story({
-  args: { title: "Roadmap", text: "Senior → Staff\nstep by step" },
+  args: { title: "Roadmap", text: "Senior → Staff Engineer\nstep by step" },
   parameters: {
     docs: { description: { story: "Edit the title and the line under it." } },
   },
