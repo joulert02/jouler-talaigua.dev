@@ -26,8 +26,8 @@ const short = (link: CaseLink) => (link.title.length <= link.company.length ? li
         <span class="case-next__company"> · {previous.company}</span>
       </span>
       <b class="case-next__title">
-        ← <span class="case-next__name">{previous.title}</span>
-        <span class="case-next__name case-next__name--short">{short(previous)}</span>
+        <span class="case-next__name">←&nbsp;{previous.title}</span>
+        <span class="case-next__name case-next__name--short">←&nbsp;{short(previous)}</span>
       </b>
     </a>
     <a class="case-next__link case-next__link--next" href={next.href}>
@@ -36,8 +36,8 @@ const short = (link: CaseLink) => (link.title.length <= link.company.length ? li
         <span class="case-next__company"> · {next.company}</span>
       </span>
       <b class="case-next__title">
-        <span class="case-next__name">{next.title}</span>
-        <span class="case-next__name case-next__name--short">{short(next)}</span> →
+        <span class="case-next__name">{next.title}&nbsp;→</span>
+        <span class="case-next__name case-next__name--short">{short(next)}&nbsp;→</span>
       </b>
     </a>
   </div>
