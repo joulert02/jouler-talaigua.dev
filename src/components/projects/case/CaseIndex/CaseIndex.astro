@@ -27,22 +27,23 @@ const t = useTranslations(getLang(Astro));
 </nav>
 
 <style>
+  /* Not on phones (owner review, 2026-11-25): stacked in rows it weighed more than it helped. */
+  @media (max-width: 719px) {
+    .case-index {
+      display: none;
+    }
+  }
+  /*
+   * Always one line (owner review, 2026-11-23): one column per chapter, at least four so a short case keeps the
+   * layout's quarters.
+   */
   .case-index__list {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(max(4, var(--case-index-count)), minmax(0, 1fr));
     column-gap: var(--layout-gap);
     margin: 0;
     padding: var(--space-2) 0 0;
     list-style: none;
-  }
-  /*
-   * From 720px always one line (owner review, 2026-11-23): one column per chapter, at least four so a short case keeps
-   * the layout's quarters.
-   */
-  @media (min-width: 720px) {
-    .case-index__list {
-      grid-template-columns: repeat(max(4, var(--case-index-count)), minmax(0, 1fr));
-    }
   }
   .case-index__link {
     display: flex;
