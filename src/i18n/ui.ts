@@ -48,7 +48,7 @@ export const ui = {
     "dock.home": "Home",
     "dock.work": "Work",
     "dock.notes": "Notes",
-    "dock.roadmap": "Roadmap", // Unused for now: Roadmap is out of the Dock and the footer.
+    "dock.roadmap": "Roadmap", // Unused for now, like Notes: out of the Dock and the footer.
     "dock.copyLabel": "Copy my email address",
     "dock.copyTooltip": "Copy email",
     "dock.copyText": "Copy",
@@ -137,7 +137,7 @@ export const ui = {
     "dock.home": "Inicio",
     "dock.work": "Proyectos",
     "dock.notes": "Notas",
-    "dock.roadmap": "Roadmap", // Unused for now: Roadmap is out of the Dock and the footer.
+    "dock.roadmap": "Roadmap", // Unused for now, like Notes: out of the Dock and the footer.
     "dock.copyLabel": "Copiar mi correo",
     "dock.copyTooltip": "Copiar correo",
     "dock.copyText": "Copiar",
