@@ -1,16 +1,25 @@
 // @ts-check
-import { copyFileSync, existsSync } from "node:fs";
+import { copyFileSync, existsSync, globSync, readFileSync } from "node:fs";
+import { basename, extname } from "node:path";
 import { defineConfig, fontProviders } from "astro/config";
 import react from "@astrojs/react";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
+
+// Cases not built yet ("case: coming"): they answer at their route, but stay out of the sitemap (HU-11).
+const comingCases = globSync("src/content/projects/*/*.{md,mdx}")
+  .filter((file) => /^case: coming$/m.test(readFileSync(file, "utf8")))
+  .map((file) => `/work/${basename(file, extname(file))}/`);
 
 export default defineConfig({
   site: "https://jouler-talaigua.dev",
   integrations: [
     react(),
     mdx(),
-    sitemap({ i18n: { defaultLocale: "en", locales: { en: "en", es: "es" } } }),
+    sitemap({
+      i18n: { defaultLocale: "en", locales: { en: "en", es: "es" } },
+      filter: (page) => !comingCases.some((path) => page.endsWith(path)),
+    }),
     {
       name: "cloudflare-pages-404",
       hooks: {
