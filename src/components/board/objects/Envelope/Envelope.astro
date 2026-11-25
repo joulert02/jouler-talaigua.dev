@@ -13,7 +13,7 @@ const { to, label, href } = Astro.props;
 <!--
   The letter object: a sealed envelope, and a link. Pressing it turns the flap back from its top edge, a letter glides
   up and peeks out, and then its page opens. A press that opens another tab, and reduced motion, skip the wait.
-  Hovering it gives the same peek without pressing. Coming back to the page finds it sealed again.
+  Where there is a pointer that hovers, hovering gives the same peek; a finger that drags across it does not. Coming back to the page finds it sealed again.
   Layers, back to front: envelope back < letter < front pocket < flap (closed). An open flap drops behind the letter.
 -->
 <a class="envelope" href={href} aria-label={label}>
@@ -155,7 +155,7 @@ const { to, label, href } = Astro.props;
     color: var(--color-text-secondary);
   }
 
-  /* Open once it is pressed, and for as long as the pointer rests on it. */
+  /* Open once it is pressed, and for as long as a pointer that hovers rests on it. */
   .envelope:hover .envelope__flap,
   .envelope[data-open] .envelope__flap {
     z-index: 0;
@@ -177,14 +177,16 @@ const { to, label, href } = Astro.props;
     transition-delay: calc(var(--duration-fast) * 0.6 + var(--_turn) * 0.55);
   }
 
-  /* Reduced motion: nothing moves. A pass of the pointer leaves the envelope sealed; pressing it still opens
-     it, at once. */
+  /* Reduced motion: nothing moves, and pressing opens it at once. */
   @media (prefers-reduced-motion: reduce) {
     .envelope .envelope__letter,
     .envelope .envelope__flap,
     .envelope .envelope__seal {
       transition: none;
     }
+  }
+  /* Only pressing opens it with reduced motion, and on a touch screen, where a drag across it counts as hovering. */
+  @media (prefers-reduced-motion: reduce), (hover: none), (pointer: coarse) {
     .envelope:not([data-open]):hover .envelope__flap {
       z-index: 3;
       transform: none;

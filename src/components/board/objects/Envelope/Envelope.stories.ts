@@ -13,7 +13,7 @@ const meta = preview.meta({
       story: { inline: false, height: "420px" },
       description: {
         component:
-          "The letter object: a sealed envelope with a handwritten line (`to`, in Caveat). It is a link to `href`, named by `label`: a click or Enter turns the flap back, lets a letter peek out and then opens the page. Hovering gives the same peek without pressing. With reduced motion nothing animates: hovering leaves it sealed and pressing opens the page at once.",
+          "The letter object: a sealed envelope with a handwritten line (`to`, in Caveat). It is a link to `href`, named by `label`: a click or Enter turns the flap back, lets a letter peek out and then opens the page. Where the pointer hovers, hovering gives the same peek; on a touch screen only a tap opens it. With reduced motion nothing animates: hovering leaves it sealed and pressing opens the page at once.",
       },
     },
   },

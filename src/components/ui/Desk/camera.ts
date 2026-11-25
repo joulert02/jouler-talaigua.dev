@@ -161,6 +161,13 @@ export class DeskCamera {
     this.move(0, 0);
   }
 
+  /** Straight to an offset the visitor had walked to. */
+  restore(x: number, y: number) {
+    this.stop();
+    this.touched = true;
+    this.move(x, y);
+  }
+
   /** After a resize: CSS keeps the resting view centered; a moved camera only re-checks its bounds. */
   refit() {
     if (this.touched) this.move(this.x, this.y);

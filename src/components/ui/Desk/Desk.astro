@@ -166,6 +166,15 @@ const style = [
       const keys = (on: boolean) => () => this.toggleAttribute("data-keys", on);
       addEventListener("keydown", keys(true), { capture: true, signal });
       addEventListener("pointerdown", keys(false), { capture: true, signal });
+      // Leaving through a link (the letter): the entry remembers where the visitor was, for when they come back.
+      this.addEventListener(
+        "click",
+        (event) => {
+          if (!this.isOpen || !this.camera || !(event.target as Element).closest("a[href]")) return;
+          history.replaceState({ ...history.state, deskAt: [this.camera.x, this.camera.y] }, "");
+        },
+        { signal },
+      );
       // The phone's back gesture closes the open desk; Forward opens it again.
       addEventListener("popstate", () => this.syncWithUrl(), { signal });
       this.mount();
@@ -212,6 +221,8 @@ const style = [
           object.toggleAttribute("data-near", travels || object.hasAttribute("data-near"));
         }
         this.mount();
+        const at = push ? undefined : (history.state as { deskAt?: [number, number] } | null)?.deskAt;
+        if (at) this.camera?.restore(...at);
       });
       void opening.updated.then(() => {
         this.querySelector<HTMLElement>(".desk__viewport")?.focus({ preventScroll: true });
@@ -267,7 +278,9 @@ const style = [
       const root = document.documentElement;
       root.dataset["deskTransition"] = kind;
       const transition = document.startViewTransition(update);
-      // A skipped transition rejects `finished`: what waits for it goes on all the same.
+      // A skipped transition (coming back from a page plays its own) rejects `ready` and `finished`: the desk opens all the
+      // same, and what waits for it goes on.
+      void transition.ready.catch(() => undefined);
       const finished = transition.finished.catch(() => undefined);
       void finished.then(() => delete root.dataset["deskTransition"]);
       return { updated: transition.updateCallbackDone, finished };
