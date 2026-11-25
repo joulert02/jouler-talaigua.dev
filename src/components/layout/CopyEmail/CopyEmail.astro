@@ -11,7 +11,11 @@ const lang = getLang(Astro);
 const t = useTranslations(lang);
 ---
 
-<copy-email data-email={contactEmail} data-copied={t("dock.copied")} data-failed={t("dock.failed")}>
+<copy-email
+  data-email={contactEmail}
+  data-copied={t("dock.copied")}
+  data-failed={`${t("dock.failed")}: ${contactEmail}`}
+>
   {variant === "text" ? (
     <button class="copy-email__text" type="button" aria-label={t("dock.copyLabel")}>
       {t("dock.copyText")}
@@ -29,23 +33,46 @@ const t = useTranslations(lang);
   <span class="copy-email__feedback" role="status" aria-live="polite"></span>
 </copy-email>
 <script>
+  /** How long the result shows, in ms: a failure carries the address to copy by hand. */
+  const SHOWN = { copied: 2000, failed: 6000 };
+
+  /** The Clipboard API needs a secure page; without it, or if it refuses, the older copy command. */
+  async function copy(text: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      const field = document.createElement("textarea");
+      const focused = document.activeElement;
+      field.value = text;
+      field.readOnly = true;
+      field.style.cssText = "position: fixed; top: 0; opacity: 0; font-size: 16px";
+      document.body.append(field);
+      field.select();
+      field.setSelectionRange(0, text.length);
+      // Deprecated, and the only way to copy where the API is missing.
+      const done = document.execCommand("copy");
+      field.remove();
+      if (focused instanceof HTMLElement) focused.focus({ preventScroll: true });
+      return done;
+    }
+  }
+
   class CopyEmail extends HTMLElement {
     connectedCallback() {
       const button = this.querySelector("button");
       const feedback = this.querySelector<HTMLElement>(".copy-email__feedback");
       let clear: ReturnType<typeof setTimeout> | undefined;
       button?.addEventListener("click", async () => {
-        try {
-          await navigator.clipboard.writeText(this.dataset.email ?? "");
-          if (feedback) {
-            feedback.textContent = this.dataset.copied ?? "";
-            // A new copy restarts the 2s, so an older timer never clears the newer message.
-            clearTimeout(clear);
-            clear = setTimeout(() => (feedback.textContent = ""), 2000);
-          }
-        } catch {
-          if (feedback) feedback.textContent = `${this.dataset.failed ?? ""}: ${this.dataset.email ?? ""}`;
-        }
+        const result = (await copy(this.dataset["email"] ?? "")) ? "copied" : "failed";
+        this.dataset["result"] = result;
+        if (feedback) feedback.textContent = this.dataset[result] ?? "";
+        // A new press restarts the time, so an older timer never clears the newer message.
+        clearTimeout(clear);
+        clear = setTimeout(() => {
+          delete this.dataset["result"];
+          if (feedback) feedback.textContent = "";
+        }, SHOWN[result]);
       });
     }
   }
@@ -84,6 +111,8 @@ const t = useTranslations(lang);
   }
   .copy-email__feedback:not(:empty) {
     --_feedback-max: calc(100vw - 32px);
+    /* The Dock, not the window, holds it (its transform): without its own width it would wrap to half the Dock. */
+    width: max-content;
     max-width: var(--_feedback-max);
     overflow-wrap: anywhere;
     position: fixed;
@@ -93,9 +122,14 @@ const t = useTranslations(lang);
     white-space: normal;
     background: var(--color-text);
     color: var(--color-bg);
-    font: 500 var(--font-size-small)/1 var(--font-sans);
+    font: 500 var(--font-size-small) / var(--line-height-compact) var(--font-sans);
+    text-align: center;
     padding: var(--_feedback-padding);
-    border-radius: var(--radius-pill);
+    border-radius: 20px;
+  }
+  /* The result takes the tooltip's place. */
+  copy-email[data-result] .dock-control::after {
+    visibility: hidden;
   }
   @media (prefers-reduced-motion: reduce) {
     .copy-email__text {
