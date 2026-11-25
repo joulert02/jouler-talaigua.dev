@@ -33,7 +33,7 @@ import Vinyl from "../objects/Vinyl/Vinyl.astro";
 import { covers } from "../objects/Book/covers";
 import Placed from "./Placed.astro";
 import { desk, localized } from "../../../config/desk";
-import { getLang } from "../../../i18n/ui";
+import { getLang, localePath } from "../../../i18n/ui";
 import moto from "../../../assets/photos/desk-moto.jpg";
 import smile from "../../../assets/photos/portrait-smile.jpg";
 import pole from "../../../assets/photos/desk-pole.jpg";
@@ -47,7 +47,8 @@ import teaching2 from "../../../assets/talks/teaching-02.jpg";
 import teaching3 from "../../../assets/talks/teaching-03.jpg";
 import teaching4 from "../../../assets/talks/teaching-04.jpg";
 
-const copy = localized(desk, getLang(Astro));
+const lang = getLang(Astro);
+const copy = localized(desk, lang);
 const { ticket, coffee, boxing } = copy;
 /** Fills the {slots} of a text. */
 const fill = (text: string, values: Record<string, string | number>) =>
@@ -176,7 +177,7 @@ const stickers = [
 
 <!-- Under the card: the letter. -->
 <Placed id="envelope">
-  <Envelope to={copy.envelope.to} label={copy.envelope.label} />
+  <Envelope to={copy.envelope.to} label={copy.envelope.label} href={localePath(lang, "/more-about-me/")} />
 </Placed>
 
 <!-- One step away: a record below, the lamp above, the bug jar to the left. -->

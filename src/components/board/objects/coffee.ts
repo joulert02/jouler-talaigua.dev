@@ -1,5 +1,7 @@
 // The coffee objects talk on the window, like the lamp and its lights: the bag of beans loads the grinder, and the
 // grinder hands ground coffee to the dripper. None of them knows the others, and each one works alone.
+import { closeReveals } from "./reveal";
+
 export const COFFEE_EVENT = "desk:coffee";
 export interface CoffeeDetail {
   /** "beans": beans were poured into the grinder. "ground": the grinder finished and the coffee is ready to brew. */
@@ -26,6 +28,8 @@ export function onHold(button: HTMLElement, start: () => boolean, stop: () => vo
   const begin = () => {
     if (held || !start()) return;
     held = true;
+    // A long press may end without a click, so the hold itself closes the note of any other object.
+    closeReveals((object) => object.contains(button));
   };
   const finish = () => {
     if (!held) return;

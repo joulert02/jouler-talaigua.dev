@@ -9,7 +9,7 @@ const { title = "", text = "" } = Astro.props;
 ---
 
 <!--
-  The note a board object shows under itself once the visitor uses it. Closed until the object's script opens it
+  The note a board object shows under itself, or above when only there it fits, once the visitor uses it. Closed until the object's script opens it
   (reveal.ts sets data-open); a live region, so the discovery is announced. The default slot adds a small line
   under the text (a credit).
 -->
@@ -45,11 +45,27 @@ const { title = "", text = "" } = Astro.props;
       translate var(--duration-medium) var(--ease-out),
       visibility 0s var(--duration-medium);
   }
+  .object-reveal[data-above] {
+    top: auto;
+    bottom: calc(100% + 10px);
+  }
   .object-reveal[data-open] {
     opacity: 1;
     visibility: visible;
     translate: none;
     transition-delay: 0s;
+  }
+  /* An open note is always in front: its object rises over the rest (over any order dragging gave them), and the
+     world over the center element, which stays pressable. The world belongs to Desk, hence :global. */
+  :global(.desk__world > .desk-object:has(.object-reveal[data-open])) {
+    z-index: 1000 !important;
+  }
+  :global(.desk__world:has(.object-reveal[data-open])) {
+    z-index: 1 !important;
+    pointer-events: none;
+  }
+  :global(.desk__world:has(.object-reveal[data-open]) > *) {
+    pointer-events: auto;
   }
   .object-reveal__title {
     display: block;

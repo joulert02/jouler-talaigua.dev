@@ -76,7 +76,7 @@ export const layout = {
       nowNotes: { x: 811, y: 215 },
       bonsai: { x: 975, y: 133 },
       moto: { x: 1282, y: 847 },
-      coffeeBeans: { x: 249, y: 645 },
+      coffeeBeans: { x: 62, y: 700 },
       coffeeGrinder: { x: 60, y: 457 },
       pourOver: { x: 164, y: 433 },
       narutoSticker: { x: 1191, y: 1266 },

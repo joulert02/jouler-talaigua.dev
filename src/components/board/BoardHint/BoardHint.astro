@@ -9,7 +9,7 @@ const t = useTranslations(getLang(Astro));
 ---
 
 <!--
-  The board's hint pill (v11), above the Dock from 901px: "Drag to explore", with a short bounce. It follows the
+  The board's hint pill (v11), above the Dock from 901px: "Drag to explore". It follows the
   desk's `desk-edge` events (ui/Desk): when the camera reaches the bottom edge it arms ("Keep going down for Work ↓"),
   a held drag or scrolling on down fills it, and once full the page goes to `href`, sliding up as if it scrolled down
   to Work (global.css). Releasing the drag or pausing the scroll empties it.
@@ -139,7 +139,6 @@ const t = useTranslations(getLang(Astro));
     border: 1px solid var(--color-border);
     border-radius: var(--radius-pill);
     box-shadow: var(--shadow-lift);
-    animation: board-hint-bounce 2.2s var(--ease-out) infinite;
   }
   /* The fill: grows from the left as the drag is held at the edge. */
   .board-hint__pill::before {
@@ -158,38 +157,12 @@ const t = useTranslations(getLang(Astro));
   .board-hint__arrow {
     display: none;
   }
-  .board-hint[data-armed] .board-hint__pill {
-    animation: none;
-  }
   .board-hint[data-armed] .board-hint__arrow {
     display: inline;
   }
 
-  @keyframes board-hint-bounce {
-    0%,
-    60%,
-    100% {
-      translate: 0 0;
-    }
-    70% {
-      translate: 0 -9px;
-    }
-    80% {
-      translate: 0 0;
-    }
-    88% {
-      translate: 0 -4px;
-    }
-    94% {
-      translate: 0 0;
-    }
-  }
-
-  /* Reduced motion: no bounce, and the fill follows the hold without easing (the hold is also shorter, camera.ts). */
+  /* Reduced motion: the fill follows the hold without easing (the hold is also shorter, camera.ts). */
   @media (prefers-reduced-motion: reduce) {
-    .board-hint__pill {
-      animation: none;
-    }
     .board-hint__pill::before {
       transition: none;
     }

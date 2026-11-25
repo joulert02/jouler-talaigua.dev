@@ -161,6 +161,13 @@ export class DeskCamera {
     this.move(0, 0);
   }
 
+  /** Straight to an offset the visitor had walked to. */
+  restore(x: number, y: number) {
+    this.stop();
+    this.touched = true;
+    this.move(x, y);
+  }
+
   /** After a resize: CSS keeps the resting view centered; a moved camera only re-checks its bounds. */
   refit() {
     if (this.touched) this.move(this.x, this.y);
@@ -172,20 +179,6 @@ export class DeskCamera {
     this.frame = 0;
     this.flinging = false;
     this.targetX = this.targetY = null;
-  }
-
-  /** Glides until `element` sits in the middle of the view, above the `bottom` px a floating bar covers. */
-  reveal(element: Element, bottom = 0) {
-    const box = element.getBoundingClientRect();
-    const view = this.viewport.getBoundingClientRect();
-    const middle = view.top + (view.height - bottom) / 2;
-    this.touched = true;
-    this.glide(
-      this.x + view.left + view.width / 2 - (box.left + box.width / 2),
-      this.y + middle - (box.top + box.height / 2),
-      true,
-      110,
-    );
   }
 
   /** Clamps an offset so the world never leaves more than OVERSCROLL of empty desk at an edge. */

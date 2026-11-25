@@ -52,7 +52,7 @@ The rules from the prototype that each HU must respect. When the HU closes, its 
 ### HU-02 · Home board
 
 - **Desk (≥ 901px):** ten objects (moto, teaching, envelope/letter, rocket/roadmap, ticket, portrait, vinyl, Naruto, LoL, pole). Background drag pans; object drag moves it; Enter flips; M plus arrows moves by keyboard; Tab brings each object into view; `0`/Home recenters. One dot grid that moves with the camera. No zoom, Recenter or See all. Objects never settle on the card (protected zone).
-- **Hint pill:** "Drag to explore" above the dock, short bounce. At the bottom edge it arms ("Keep dragging for Work ↓"); only a held drag fills it (2.6s) and opens Work; releasing cancels; wheel and trackpad never open Work.
+- **Hint pill:** "Drag to explore" above the dock, still (owner, 2026-11-25: no endless bounce). At the bottom edge it arms ("Keep dragging for Work ↓"); only a held drag fills it (2.6s) and opens Work; releasing cancels; wheel and trackpad never open Work.
 - **Mobile (≤ 900px):** the full identity card first; More about me opens the desk in a dialog with a compact card (JOTA, name, role), floating Close, objects around it; the page still scrolls normally.
 
 ### HU-03 · Work
