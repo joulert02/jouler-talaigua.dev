@@ -408,6 +408,19 @@ const style = [
 </script>
 
 <style>
+  /* The camera writes these on the viewport on every move, for the dot grid. Registered as not inherited, a move only
+     restyles the viewport; inherited (the default for custom properties), it restyled every element on the desk,
+     thousands on the phone (HU-13). */
+  @property --desk-camera-x {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 0px;
+  }
+  @property --desk-camera-y {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 0px;
+  }
   /*
    * The desk at work: always from 901px, and below only while open full screen. Below 901px and closed, the media query
    * at the end turns it back into a plain wrapper where the center element flows as a normal page.
