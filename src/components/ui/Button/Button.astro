@@ -11,8 +11,10 @@ interface Props {
   href?: string;
   /** Button type when there is no `href`. */
   type?: "button" | "submit" | "reset";
+  /** With `href`, downloads the file instead of navigating to it (same-origin files only, like the CV). */
+  download?: boolean | undefined;
 }
-const { label, variant = "primary", size = "md", href, type = "button" } = Astro.props;
+const { label, variant = "primary", size = "md", href, type = "button", download } = Astro.props;
 const t = useTranslations(getLang(Astro));
 const destination = href && /^https?:\/\//i.test(href) ? "external" : "local";
 const Tag = href === undefined ? "button" : "a";
@@ -24,6 +26,7 @@ const Tag = href === undefined ? "button" : "a";
   type={href === undefined ? type : undefined}
   target={destination === "external" ? "_blank" : undefined}
   rel={destination === "external" ? "noopener noreferrer" : undefined}
+  download={href !== undefined && download ? true : undefined}
 >
   <slot name="start" />
   {label}

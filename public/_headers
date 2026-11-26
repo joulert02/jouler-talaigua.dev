@@ -6,3 +6,7 @@ https://jouler-talaigua-dev.pages.dev/*
 # Storybook is published for reference (README), not as a page of the site: keep it out of search indexes (HU-11).
 /storybook/*
   X-Robots-Tag: noindex
+
+# The CV links download the PDF instead of replacing the site; this also covers browsers that ignore the download attribute.
+/cv/*
+  Content-Disposition: attachment
