@@ -12,7 +12,7 @@ const meta = preview.meta({
     docs: {
       description: {
         component:
-          "Downloads the CV PDF for the page's language without leaving the site. It looks like the ghost `Button`, but it is specific to the CV, so the shared `Button` stays free of a download option. The link comes from `cvLink` in `src/config/profile.ts`.",
+          "Downloads the CV PDF for the page's language without leaving the site. It reuses the ghost `Button` styles (`ui/Button/Button.css`), so it inherits any change to the Button; it is its own component because only the CV downloads a file. The link comes from `cvLink` in `src/config/profile.ts`.",
       },
     },
   },
