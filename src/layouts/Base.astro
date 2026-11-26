@@ -44,7 +44,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 const homePaths = languageItems.map((item) => localePath(item.lang, "/"));
 const about = identityLinks.find((link) => link.label === "layout.about")?.href;
 const morphPaths = about && typeof about === "object" ? Object.values(about) : [];
-const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, Astro.site);
+// A Cloudflare Pages preview (any branch but main) points its share image at its own deployment, so a pull request's
+// images can be checked in LinkedIn's Post Inspector before they reach production. Canonical URLs stay on the site.
+const { CF_PAGES_BRANCH, CF_PAGES_URL } = process.env;
+const ogOrigin = CF_PAGES_URL && CF_PAGES_BRANCH !== "main" ? CF_PAGES_URL : Astro.site;
+const ogImage = new URL(`/og/${lang}/${ogSlug}.png`, ogOrigin);
 const ogLocale: Record<Lang, string> = { en: "en_US", es: "es_ES" };
 ---
 
