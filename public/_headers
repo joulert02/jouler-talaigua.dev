@@ -2,3 +2,7 @@
 # Preview deployments already get X-Robots-Tag: noindex from Cloudflare Pages.
 https://jouler-talaigua-dev.pages.dev/*
   X-Robots-Tag: noindex
+
+# Storybook is published for reference (README), not as a page of the site: keep it out of search indexes (HU-11).
+/storybook/*
+  X-Robots-Tag: noindex
