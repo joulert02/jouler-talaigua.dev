@@ -3,7 +3,8 @@ import { join } from "node:path";
 import satori from "satori";
 import { Resvg } from "@resvg/resvg-js";
 
-/** What a shared link shows (HU-11): one card per page type, light and typographic (option A, owner 2026-11-26). */
+/** What a shared link shows (HU-11): one card per page type, dark and typographic (option C, owner 2026-11-26:
+ * the main share goes to LinkedIn, whose feed is light). */
 export type OgCard = {
   /** The small mono label above the title: the company of a case, the section of a page. */
   kicker: string;
@@ -18,9 +19,9 @@ const WIDTH = 1200;
 const HEIGHT = 630;
 const HOST = "jouler-talaigua.dev";
 
-// Light tokens from docs/design/principles.md (v11). A share image is fetched once by each platform's crawler, with
-// no theme, so it cannot follow the visitor's theme.
-const color = { bg: "#F6F7F9", ink: "#141517", muted: "#5F656E", accent: "#6E44F0" };
+// Dark tokens from src/styles/tokens.css. A share image is fetched once by each platform's crawler, with no theme, so
+// it cannot follow the visitor's theme.
+const color = { bg: "#131417", ink: "#EEF0F3", muted: "#9AA0A9", accent: "#A58BFF" };
 
 // Resolved from the project root: bundled chunks move, cwd does not (static build only).
 const font = (pkg: string, file: string) =>
