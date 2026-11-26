@@ -2,6 +2,7 @@
 import Button from "../../ui/Button/Button.astro";
 import JotaMark from "../../ui/JotaMark/JotaMark.astro";
 import CareerPath from "../CareerPath/CareerPath.astro";
+import CvDownloadButton from "../CvDownloadButton/CvDownloadButton.astro";
 import { identity, localized, type IdentityData } from "../../../config/profile";
 import { getLang, useTranslations } from "../../../i18n/ui";
 interface Props {
@@ -23,7 +24,7 @@ const t = useTranslations(lang);
   <p class="identity-card__sentence">{data.sentence[lang]}</p>
   <div class="identity-card__actions">
     <Button label={t(data.contact.label)} href={localized(data.contact.href, lang)} />
-    <Button label={t(data.cv.label)} href={localized(data.cv.href, lang)} variant="ghost" />
+    <CvDownloadButton data={data.cv} />
   </div>
   <div class="identity-card__links">
     {data.links.map((link) => (

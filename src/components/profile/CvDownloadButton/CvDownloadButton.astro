@@ -1,0 +1,20 @@
+---
+import "../../ui/Button/Button.css";
+import { cvLink, localized, type ProfileLink } from "../../../config/profile";
+import { getLang, useTranslations } from "../../../i18n/ui";
+interface Props {
+  /** The CV link: one PDF per language. */
+  data?: ProfileLink;
+}
+const { data = cvLink } = Astro.props;
+const lang = getLang(Astro);
+const t = useTranslations(lang);
+---
+
+<!--
+  Downloads the PDF for the page's language instead of navigating to it, so the visitor stays on the site.
+  It reuses the ghost Button styles (ui/Button/Button.css), so changes to the Button reach it too.
+-->
+<a class="button button--ghost button--md" href={localized(data.href, lang)} download>
+  {t(data.label)}
+</a>
