@@ -55,8 +55,8 @@ export const ui = {
     "nav.home": "Home",
     "nav.writing": "Writing",
     "nav.about": "About",
-    "home.title": "Jouler Talaigua | Senior Software Engineer",
-    "work.title": "Work | Jouler Talaigua",
+    "home.title": "Jouler Talaigua · Senior Software Engineer",
+    "work.title": "Work · Jouler Talaigua",
     "work.description":
       "Selected projects by Jouler Talaigua: product engineering, frontend architecture and observability.",
     "work.heading": "Selected projects",
@@ -139,8 +139,8 @@ export const ui = {
     "nav.home": "Inicio",
     "nav.writing": "Artículos",
     "nav.about": "Sobre mí",
-    "home.title": "Jouler Talaigua",
-    "work.title": "Proyectos | Jouler Talaigua",
+    "home.title": "Jouler Talaigua · Ingeniero de software sénior",
+    "work.title": "Proyectos · Jouler Talaigua",
     "work.description":
       "Proyectos seleccionados de Jouler Talaigua: ingeniería de producto, arquitectura frontend y observabilidad.",
     "work.heading": "Proyectos seleccionados",

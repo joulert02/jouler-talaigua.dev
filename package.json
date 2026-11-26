@@ -13,7 +13,7 @@
     "storybook": "storybook dev",
     "board:layout": "storybook dev --initial-path='/story/components-board-boardlayout--layout-editor&full=1'",
     "build-storybook": "storybook build --output-dir dist/storybook",
-    "build": "node scripts/check-placeholders.mjs && astro build && npm run build-storybook",
+    "build": "node scripts/check-placeholders.mjs && astro build && node scripts/check-seo.mjs && npm run build-storybook",
     "preview": "astro preview",
     "check": "astro check",
     "lint": "eslint .",
