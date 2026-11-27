@@ -1,3 +1,5 @@
 allowBuilds:
   esbuild: true
   workerd: false
+  # Pulled in by @guidepup/record (screen recording of VoiceOver runs), which this project does not use.
+  ffmpeg-static: false
