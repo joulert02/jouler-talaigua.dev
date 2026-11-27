@@ -408,19 +408,6 @@ const style = [
 </script>
 
 <style>
-  /* The camera writes these on the viewport on every move, for the dot grid. Registered as not inherited, a move only
-     restyles the viewport; inherited (the default for custom properties), it restyled every element on the desk,
-     thousands on the phone (HU-13). */
-  @property --desk-camera-x {
-    syntax: "<length>";
-    inherits: false;
-    initial-value: 0px;
-  }
-  @property --desk-camera-y {
-    syntax: "<length>";
-    inherits: false;
-    initial-value: 0px;
-  }
   /*
    * The desk at work: always from 901px, and below only while open full screen. Below 901px and closed, the media query
    * at the end turns it back into a plain wrapper where the center element flows as a normal page.
@@ -439,14 +426,6 @@ const style = [
     touch-action: none;
     cursor: grab;
     background-color: var(--color-bg-subtle);
-    /* One dot grid that moves with the camera (v11); at rest the offsets are 0. */
-    background-image: radial-gradient(
-      circle at 1px 1px,
-      color-mix(in srgb, var(--color-text-muted) 20%, transparent) 1px,
-      transparent 0
-    );
-    background-size: 22px 22px;
-    background-position: var(--desk-camera-x, 0px) var(--desk-camera-y, 0px);
     outline-offset: -4px;
   }
   .desk__viewport[data-panning] {
@@ -488,6 +467,23 @@ const style = [
     -webkit-tap-highlight-color: transparent;
     /* Behind the card, inside the layer's stacking context (will-change creates it). */
     z-index: -1;
+  }
+  /* The dot grid (v11) is the desk's floor, so it rides the camera's translate with the objects: moving it costs no
+     restyle or repaint (HU-13). It reaches a viewport past the world on every side, which covers any gap the camera
+     can show (the overscroll, a screen wider than the world); the offset puts a dot on the world's corner. */
+  .desk__world::before {
+    content: "";
+    position: absolute;
+    inset: -100vmax;
+    z-index: -1;
+    pointer-events: none;
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      color-mix(in srgb, var(--color-text-muted) 20%, transparent) 1px,
+      transparent 0
+    );
+    background-size: 22px 22px;
+    background-position: 100vmax 100vmax;
   }
   /* The phone bar exists only on the open desk. */
   .desk__bar {

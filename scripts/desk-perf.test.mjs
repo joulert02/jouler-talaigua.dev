@@ -1,15 +1,22 @@
-// Guards the phone desk's frame rate (HU-13). The camera writes --desk-camera-x/y on the viewport on every move. As
-// inherited custom properties (the default), each write restyled every element on the desk, and JOTA Pet's
-// pointermove read then forced that restyle in the middle of the move: about 30 ms per move on a phone's CPU.
+// Guards the phone desk's frame rate (HU-13). A camera move must only change the layer's translate, which the
+// compositor applies without touching styles. The dot grid used to live on the viewport and follow the camera through
+// --desk-camera-x/y: each write restyled the desk (every element on it while those were inherited) and repainted the
+// grid, and JOTA Pet's pointermove read then forced that restyle in the middle of the move.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
-const desk = readFileSync(new URL("../src/components/ui/Desk/Desk.astro", import.meta.url), "utf8");
+const read = (path) => readFileSync(new URL(path, import.meta.url), "utf8");
+const camera = read("../src/components/ui/Desk/camera.ts");
+const desk = read("../src/components/ui/Desk/Desk.astro");
 
-for (const name of ["--desk-camera-x", "--desk-camera-y"]) {
-  test(`${name} is registered as not inherited`, () => {
-    const rule = desk.match(new RegExp(`@property ${name} \\{([^}]*)\\}`))?.[1] ?? "";
-    assert.match(rule, /inherits:\s*false/);
-  });
-}
+test("a camera move writes no custom property", () => {
+  assert.doesNotMatch(camera, /setProperty\(/);
+});
+
+test("the dot grid rides the world, not the viewport", () => {
+  const viewport = desk.match(/\n {2}\.desk__viewport \{([^}]*)\}/)?.[1] ?? "";
+  assert.doesNotMatch(viewport, /background-image/);
+  const grid = desk.match(/\.desk__world::before \{([^}]*)\}/)?.[1] ?? "";
+  assert.match(grid, /background-image: radial-gradient/);
+});
