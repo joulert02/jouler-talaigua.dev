@@ -95,8 +95,8 @@ export class DeskCamera {
   private readonly panFromItems: boolean;
 
   /**
-   * @param viewport the visible window of the desk; receives the input and the dot-grid offset.
-   * @param layer the element the camera translates (card and world move together).
+   * @param viewport the visible window of the desk; receives the input.
+   * @param layer the element the camera translates (card, world and its dot grid move together).
    * @param world the full desk area, used for the bounds.
    */
   constructor(
@@ -150,8 +150,6 @@ export class DeskCamera {
     this.stop();
     this.abort.abort();
     this.layer.style.removeProperty("translate");
-    this.viewport.style.removeProperty("--desk-camera-x");
-    this.viewport.style.removeProperty("--desk-camera-y");
   }
 
   /** Back to the resting view that CSS lays out. */
@@ -199,9 +197,6 @@ export class DeskCamera {
     [this.x, this.y] = this.bounds(x, y);
     this.resetScroll();
     this.layer.style.translate = `${this.x}px ${this.y}px`;
-    // The dot grid lives on the viewport and follows the camera through these.
-    this.viewport.style.setProperty("--desk-camera-x", `${this.x}px`);
-    this.viewport.style.setProperty("--desk-camera-y", `${this.y}px`);
     this.syncEdge();
   }
 
