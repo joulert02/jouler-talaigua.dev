@@ -59,7 +59,7 @@ export const languageItems: readonly LanguageItem[] = [
   { lang: "en", label: "layout.en", href: "/" },
   { lang: "es", label: "layout.es", href: "/es/" },
 ];
-export const contactEmail = "joulert02@gmail.com";
+export const contactEmail = "hello@jouler-talaigua.dev";
 export const brand: BrandData = { mark: "J", label: "JOTA", name: "Jouler Talaigua", href: "/" };
 // Career rows approved by the owner for version A (2026-11-11).
 export const careerItems = [
