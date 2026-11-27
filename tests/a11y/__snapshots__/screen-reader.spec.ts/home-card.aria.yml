@@ -1,0 +1,22 @@
+- article:
+  - link "JOTA, Jouler Talaigua, Home":
+    - /url: /
+    - text: ""
+  - heading "Jouler Talaigua" [level=1]
+  - paragraph: Senior Software Engineer
+  - paragraph: I enjoy building products focused on the user experience and connecting with people along the way.
+  - link "Get in touch":
+    - /url: "#contact"
+  - link "Download CV":
+    - /url: /cv/Jouler_Talaigua_CV.pdf
+  - link "LinkedIn":
+    - /url: https://www.linkedin.com/in/jouler-talaigua
+  - link "GitHub":
+    - /url: https://github.com/joulert02
+  - link "More about me":
+    - /url: /more-about-me/
+  - list "Career":
+    - listitem: Cast & Crew Senior Software Engineer Present
+    - listitem: /EPAM Systems Senior Software Engineer \d+ – \d+/
+    - listitem: /Mercado Libre Senior Software Engineer \d+ – \d+/
+    - listitem: /PRAGMA QA Tester → Tech Lead \d+ – \d+/

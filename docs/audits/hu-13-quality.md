@@ -56,12 +56,15 @@ Tab only stops on links and buttons. Text such as the card's description is read
 
 **Zoom.** At 200% (1280 px window, 640 CSS px) and at 320 px no page scrolls sideways. The Mercado Libre phone mock keeps its off-canvas screen clipped inside the frame.
 
-**Still for a person** (tools cannot do it):
+**Real VoiceOver (macOS, Chrome), 2026-11-27.** `npm run audit:voiceover` drives VoiceOver over AppleScript and writes what it says. The run covered production, then the preview of these fixes, on Home, Work, More about me, a case and the Spanish Home. With the fixes:
 
-- [ ] VoiceOver on macOS Safari, Home: the card, the Dock, three objects on the desk (flip one card), and the envelope.
-- [ ] VoiceOver on a case: the chapter nav, one playground step by step, and the video Play button.
-- [ ] VoiceOver on iPhone: open the desk, swipe through objects, and close it.
-- [ ] Switch the language with VoiceOver on; the new page is announced in its language.
+- Skip to content says "Jouler Talaigua main", "Selected projects main", "More about me main", "Sucursal Virtual Personas main".
+- The desk says "Personal desk", then its instructions.
+- VO + → reads the card (heading, role, description), the work list ("list 6 items", each company, link and focus) and a case header.
+
+**Guard in CI.** `npm run test:a11y` (`tests/a11y/`, Playwright) reads Chrome's accessibility tree on the build: what Skip to content announces on six pages, the Tab order and names on Home and Work, the card, the desk's name and description, the work list and the language switch. A change that breaks any of them fails the pull request. After an intended copy change, update the snapshots with `npm run test:a11y -- --update-snapshots` and review the diff.
+
+**Still for a person:** VoiceOver on iPhone. Open the desk, swipe through a few objects, and close it. No tool drives VoiceOver on iOS.
 
 ## Copy
 

@@ -1,0 +1,18 @@
+link "JOTA, Jouler Talaigua, Home"
+link "Get in touch"
+link "Download CV"
+link "LinkedIn"
+link "GitHub"
+link "More about me"
+link "Home"
+link "Work"
+button "Copy my email address": Copy email
+button "Toggle theme": Theme
+region "Personal desk"
+'button "Teaching: flip through the photos"': Teaching · 4 of 4 Teaching · 3 of 4 Teaching · 2 of 4 Teaching · 1 of 4
+'button "Favorite anime: Naruto"'
+button "Talk to JOTA Pet"
+'button "That''s me: Jouler smiling at the camera"'
+'button "Card: League of Legends"'
+'button "Pole sport: flip it to see a photo"'
+button "The co-author of this site": Co-author
