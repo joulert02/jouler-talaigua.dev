@@ -25,4 +25,3 @@ output/
 # Playwright
 /test-results/
 /playwright-report/
-/voiceover-transcript.txt

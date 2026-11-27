@@ -23,7 +23,6 @@
     "test": "node --test \"scripts/*.test.mjs\"",
     "placeholders": "node scripts/check-placeholders.mjs",
     "test:a11y": "playwright test",
-    "audit:voiceover": "node scripts/voiceover-audit.mjs",
     "test:voiceover": "playwright test --config playwright.voiceover.config.ts",
     "voiceover:setup": "guidepup setup --macos-ignore-tcc-db && guidepup install"
   },

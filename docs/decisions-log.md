@@ -6,7 +6,7 @@ One line per decision, newest first. Details live in the linked document.
   - **Results:** SEO and performance pass on every page (Lighthouse 100). Two accessibility issues were fixed: the visible text missing from accessible names, and contrast below 4.5:1 in the recreated brand UIs (each color darkened only as far as needed).
   - **Accepted:**
     - Best Practices stays at 81 because Cloudflare's Email Obfuscation stays on, to keep the email away from harvesters.
-    - The dimmed steps in the Bancolombia diagram are accepted, pending the owner's confirmation.
+    - The dimmed steps in the Bancolombia diagram are accepted by the owner. The playground guides step by step, and dims what is not meant to be read yet.
   - **Still open:** a VoiceOver pass and reading the copy side by side, both by the owner.
   - **Details:** [the audit](audits/hu-13-quality.md).
 

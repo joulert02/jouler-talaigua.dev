@@ -23,16 +23,16 @@ The only failing audit is "Uses deprecated APIs", and it comes from scripts Clou
 
 **Automated.** Lighthouse accessibility 97–100. axe findings and what happened to each:
 
-| Finding                                              | Where                                                                | Outcome                                                                                                                                 |
-| ---------------------------------------------------- | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| Visible text not in the accessible name (WCAG 2.5.3) | Language switch ("ES" named "Leer en español")                       | Fixed: "ES, leer en español"                                                                                                            |
-|                                                      | JOTA mark, envelope, flip cards, talks stack                         | Fixed: each name starts with the words on its face                                                                                      |
-|                                                      | Mercado Libre navigation rows ("Open Item 01 · …")                   | Fixed: named by their content                                                                                                           |
-|                                                      | TENA zoom buttons, video Play button                                 | Fixed: "A− smaller text", "Play 0:44: …"                                                                                                |
-| Contrast below 4.5:1 in recreated brand UIs          | Mercado Libre blue `#3483fa` and green `#00a650`, search placeholder | Fixed: `#2d72d9`, `#008641`, 55% black                                                                                                  |
-|                                                      | TENA blue `#3a78d4`, help button white on green                      | Fixed: `#3874ce`; dark ink on the green                                                                                                 |
-|                                                      | Nosotras play buttons and sign-in pinks                              | Fixed: dark ink on teal; purple `#9559c9`, pinks `#d4307c`, `#d1327e`, `#d3327c`                                                        |
-|                                                      | Bancolombia steps not yet reached (25% opacity)                      | Accepted, pending owner confirmation: they are the parts of the diagram still to be built and reach full contrast when their step plays |
+| Finding                                              | Where                                                                | Outcome                                                                                                                                                               |
+| ---------------------------------------------------- | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Visible text not in the accessible name (WCAG 2.5.3) | Language switch ("ES" named "Leer en español")                       | Fixed: "ES, leer en español"                                                                                                                                          |
+|                                                      | JOTA mark, envelope, flip cards, talks stack                         | Fixed: each name starts with the words on its face                                                                                                                    |
+|                                                      | Mercado Libre navigation rows ("Open Item 01 · …")                   | Fixed: named by their content                                                                                                                                         |
+|                                                      | TENA zoom buttons, video Play button                                 | Fixed: "A− smaller text", "Play 0:44: …"                                                                                                                              |
+| Contrast below 4.5:1 in recreated brand UIs          | Mercado Libre blue `#3483fa` and green `#00a650`, search placeholder | Fixed: `#2d72d9`, `#008641`, 55% black                                                                                                                                |
+|                                                      | TENA blue `#3a78d4`, help button white on green                      | Fixed: `#3874ce`; dark ink on the green                                                                                                                               |
+|                                                      | Nosotras play buttons and sign-in pinks                              | Fixed: dark ink on teal; purple `#9559c9`, pinks `#d4307c`, `#d1327e`, `#d3327c`                                                                                      |
+|                                                      | Bancolombia steps not yet reached (25% opacity)                      | Accepted by the owner (2026-11-27): the playground guides step by step and dims what is not meant to be read yet; each part reaches full contrast when its step plays |
 
 Every brand color was darkened only as far as 4.5:1 needs, and keeps its hue.
 
@@ -56,7 +56,7 @@ Tab only stops on links and buttons. Text such as the card's description is read
 
 **Zoom.** At 200% (1280 px window, 640 CSS px) and at 320 px no page scrolls sideways. The Mercado Libre phone mock keeps its off-canvas screen clipped inside the frame.
 
-**Real VoiceOver (macOS, Chrome), 2026-11-27.** `npm run audit:voiceover` drives VoiceOver over AppleScript and writes what it says. The run covered production, then the preview of these fixes, on Home, Work, More about me, a case and the Spanish Home. With the fixes:
+**Real VoiceOver (macOS, Chrome), 2026-11-27.** VoiceOver was driven over AppleScript and its words written down, first on production, then on the preview of these fixes, on Home, Work, More about me, a case and the Spanish Home. With the fixes:
 
 - Skip to content says "Jouler Talaigua main", "Selected projects main", "More about me main", "Sucursal Virtual Personas main".
 - The desk says "Personal desk", then its instructions.
@@ -70,8 +70,6 @@ Tab only stops on links and buttons. Text such as the card's description is read
    - **Control of the computer** (Accessibility). It sends real keys (`osascript is not allowed to send keystrokes`).
      Neither is in Guidepup's docs. Give them to Terminal only, not to an app that runs agents, and turn them off afterwards.
 3. Run `npm run test:voiceover` from Terminal, and accept the automation dialogs. Point it at a preview with `VOICEOVER_URL=https://<preview> npm run test:voiceover`. Don't touch the Mac while it runs (about a minute).
-
-`npm run audit:voiceover` drives VoiceOver over AppleScript without Guidepup's preferences. It needs neither permission, and gives a transcript without assertions.
 
 **Guard in CI.** `npm run test:a11y` (`tests/a11y/`, Playwright) reads Chrome's accessibility tree on the build: what Skip to content announces on six pages, the Tab order and names on Home and Work, the card, the desk's name and description, the work list and the language switch. A change that breaks any of them fails the pull request. After an intended copy change, update the snapshots with `npm run test:a11y -- --update-snapshots` and review the diff.
 
