@@ -28,8 +28,9 @@ export const ui = {
     "layout.readIn": "read in English",
     "layout.mainContent": "Main content",
     "dock.main": "Main",
-    "desk.label":
-      "Personal desk. Drag, scroll or use the arrow keys to explore; 0 or Home recenters. Tab moves to each item and brings it into view; Escape goes back to the menu.",
+    "desk.label": "Personal desk",
+    "desk.help":
+      "Drag, scroll or use the arrow keys to explore; 0 or Home recenters. Tab moves to each item and brings it into view; Escape goes back to the menu.",
     "desk.dialog": "My desk",
     "desk.close": "Close the desk",
     "vinyl.player": "Spotify player",
@@ -112,8 +113,9 @@ export const ui = {
     "layout.readIn": "leer en español",
     "layout.mainContent": "Contenido principal",
     "dock.main": "Principal",
-    "desk.label":
-      "Escritorio personal. Arrastra, desplázate o usa las flechas para explorar; 0 o Inicio vuelve al centro. Tab pasa a cada elemento y lo trae a la vista; Escape vuelve al menú.",
+    "desk.label": "Escritorio personal",
+    "desk.help":
+      "Arrastra, desplázate o usa las flechas para explorar; 0 o Inicio vuelve al centro. Tab pasa a cada elemento y lo trae a la vista; Escape vuelve al menú.",
     "desk.dialog": "Mi escritorio",
     "desk.close": "Cerrar el escritorio",
     "vinyl.player": "Reproductor de Spotify",

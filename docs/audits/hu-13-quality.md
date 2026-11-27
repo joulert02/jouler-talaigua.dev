@@ -45,6 +45,13 @@ Every brand color was darkened only as far as 4.5:1 needs, and keeps its hue.
 
 The names start with the words a person sees, which is what WCAG 2.5.3 asks.
 
+**Owner's VoiceOver pass (Dia, macOS).** Two findings, both fixed:
+
+- Skip to content landed on an unnamed `<main>`, so VoiceOver said only "main" or "region" and its cursor jumped to the first item without announcing it. `<main>` is now named after the page's heading: "main, Selected projects", "main, More about me" and, on the Home, "main, Jouler Talaigua", which is the card.
+- The desk's name carried its instructions and was read in full on every entry. It is now "Personal desk", with the instructions as its description.
+
+Tab only stops on links and buttons. Text such as the card's description is read with VO + → or the rotor (VO + U), which is how screen reader users read a page.
+
 **Keyboard.** Every control is reachable with Tab, focus is always visible, focused elements scroll into view (smoothly, by design), and no trap was found.
 
 **Zoom.** At 200% (1280 px window, 640 CSS px) and at 320 px no page scrolls sideways. The Mercado Libre phone mock keeps its off-canvas screen clipped inside the frame.
