@@ -31,7 +31,7 @@ export const desk = {
     } satisfies Note,
   },
   portrait: {
-    label: { en: "Photo: Jouler smiling at the camera", es: "Foto: Jouler sonriendo a la cámara" },
+    label: { en: "That's me: Jouler smiling at the camera", es: "Ese soy yo: Jouler sonriendo a la cámara" },
     alt: { en: "Jouler smiling at the camera", es: "Jouler sonriendo a la cámara" },
     caption: { en: "That's me", es: "Ese soy yo" },
     note: {
@@ -67,7 +67,7 @@ export const desk = {
   },
   envelope: {
     to: { en: "for you", es: "para ti" },
-    label: { en: "Open the letter: more about me", es: "Abrir la carta: más sobre mí" },
+    label: { en: "For you: open the letter, more about me", es: "Para ti: abre la carta, más sobre mí" },
   },
   vinyl: {
     title: "Unicornio",
@@ -80,7 +80,7 @@ export const desk = {
     spotify: "spotify:album:4Ff07AMyi4ZUOORYUZpN9c",
   },
   naruto: {
-    label: { en: "Card: favorite anime, Naruto", es: "Tarjeta: anime favorito, Naruto" },
+    label: { en: "Favorite anime: Naruto", es: "Anime favorito: Naruto" },
     title: { en: "Favorite anime", es: "Anime favorito" },
     text: {
       en: "Naruto. Shippuden is my favorite era.",
@@ -105,8 +105,8 @@ export const desk = {
   },
   pole: {
     label: {
-      en: "Card: pole sport. Flip to see a photo",
-      es: "Tarjeta: pole sport. Dale la vuelta para ver una foto",
+      en: "Pole sport: flip it to see a photo",
+      es: "Pole sport: dale la vuelta para ver una foto",
     },
     title: { en: "Pole sport", es: "Pole sport" },
     text: {
@@ -119,7 +119,7 @@ export const desk = {
     },
   },
   talks: {
-    label: { en: "Flip through photos of me teaching", es: "Pasa las fotos de mis clases" },
+    label: { en: "Teaching: flip through the photos", es: "Clases: pasa las fotos" },
     // {n} and {total} are replaced with the print's place in the stack.
     caption: { en: "Teaching · {n} of {total}", es: "Clases · {n} de {total}" },
   },

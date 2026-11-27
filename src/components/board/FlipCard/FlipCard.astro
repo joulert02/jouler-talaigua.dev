@@ -2,7 +2,8 @@
 interface Props {
   /** Unique id on the page; names the back for `aria-describedby`. */
   id: string;
-  /** Accessible name: what the card is, e.g. "Photo: giving a talk at a university". */
+  /** Accessible name, starting with the words on the face so voice control can say them (WCAG 2.5.3), e.g.
+   *  "Favorite anime: Naruto". */
   label: string;
 }
 const { id, label } = Astro.props;

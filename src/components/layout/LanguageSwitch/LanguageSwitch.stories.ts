@@ -13,7 +13,7 @@ const meta = preview.meta({
     docs: {
       description: {
         component:
-          'Switches the page between languages, with the v11 segmented pill. The current language is plain text marked `aria-current`; each other one is a link to this page in that language, labelled in that language ("Leer en español") with `lang` and `hreflang`, so screen readers pronounce it correctly.',
+          'Switches the page between languages, with the v11 segmented pill. The current language is plain text marked `aria-current`; each other one is a link to this page in that language, named by its visible code and then in that language ("ES, leer en español", so voice control can say what it sees) with `lang` and `hreflang`, so screen readers pronounce it correctly.',
       },
     },
   },

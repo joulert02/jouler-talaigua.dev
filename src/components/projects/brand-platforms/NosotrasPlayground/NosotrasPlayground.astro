@@ -378,7 +378,9 @@ const artClass = (art: Art) => [
     --_b2: #ff4dc1;
     --_say: #b45ee6;
     --_say-b: #8a1fd8;
+    /* Play buttons keep 4.5:1 with their label (HU-13): dark ink on the light teal, a touch darker fill elsewhere. */
     --_play: #07cccc;
+    --_play-ink: #063a3a;
     --_g1: #a77cd7;
     --_g2: #b48ae0;
     --_g3: #bc96e6;
@@ -406,7 +408,8 @@ const artClass = (art: Art) => [
     --_b2: #8a3fd1;
     --_say: #fff;
     --_say-b: #ff1fa6;
-    --_play: #b36bf2;
+    --_play: #9559c9;
+    --_play-ink: #fff;
     --_g1: #ffc766;
     --_g2: #ffd96f;
     --_g3: #ffe877;
@@ -430,7 +433,8 @@ const artClass = (art: Art) => [
     --_b2: #8a3fd1;
     --_say: #fff;
     --_say-b: #fff080;
-    --_play: #ff3a96;
+    --_play: #d4307c;
+    --_play-ink: #fff;
     --_g1: #ff4d95;
     --_g2: #ff6aa8;
     --_g3: #ff7ab6;
@@ -596,10 +600,11 @@ const artClass = (art: Art) => [
     align-items: center;
     height: 100%;
     padding: 0 calc(11 * var(--u));
-    background: #ff3d9a;
+    /* The brand's pinks (#ff3d9a, #f2398e), darkened to 4.5:1 with the white text (HU-13). */
+    background: #d1327e;
   }
   .nosotras-playground__auth-part + .nosotras-playground__auth-part {
-    background: #f2398e;
+    background: #d3327c;
   }
   .nosotras-playground__nav {
     position: absolute;
@@ -796,7 +801,7 @@ const artClass = (art: Art) => [
     border: 0;
     border-radius: 999px;
     background: var(--_play);
-    color: #fff;
+    color: var(--_play-ink, #fff);
     font:
       500 calc(20 * var(--u)) / 1 var(--font-nosotras),
       "Gotham Rounded",

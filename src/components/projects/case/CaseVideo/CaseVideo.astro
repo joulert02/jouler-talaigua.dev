@@ -23,10 +23,8 @@ const { sources, poster, tracks = [], caption, duration, width, height, link } =
 const lang = getLang(Astro);
 const t = useTranslations(lang);
 const clock = `${Math.floor(duration / 60)}:${String(Math.round(duration % 60)).padStart(2, "0")}`;
-const spoken = new Intl.NumberFormat(lang, { style: "unit", unit: "second", unitDisplay: "long" }).format(
-  duration,
-);
-const playLabel = t("case.playVideo").replace("{caption}", caption).replace("{duration}", spoken);
+// The name starts with what the button shows (Play 0:44), so voice control can say it (WCAG 2.5.3, HU-13).
+const playLabel = t("case.playVideo").replace("{caption}", caption).replace("{clock}", clock);
 const captionId = "case-video-caption";
 ---
 

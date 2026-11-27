@@ -413,7 +413,8 @@ const banners = await Promise.all(
   /* TENA's own palette and type, fixed in both themes like the product. --_zoom is the A− / A+ text scale. */
   .tena-playground__window {
     --_navy: #173a72;
-    --_blue: #3a78d4;
+    /* The brand blue (#3a78d4), a step darker so text in it keeps 4.5:1 (HU-13). */
+    --_blue: #3874ce;
     --_green: #7ac143;
     --_ink: #33415c;
     --_muted: #6b7280;
@@ -681,7 +682,8 @@ const banners = await Promise.all(
     border: 0;
     border-radius: 999px;
     background: var(--_green);
-    color: #fff;
+    /* Dark ink keeps 4.5:1 on the brand green (HU-13). */
+    color: #1f2a14;
     font-size: 1em;
     font-weight: 700;
     cursor: pointer;
