@@ -62,13 +62,16 @@ Tab only stops on links and buttons. Text such as the card's description is read
 - The desk says "Personal desk", then its instructions.
 - VO + → reads the card (heading, role, description), the work list ("list 6 items", each company, link and focus) and a case header.
 
-**Running the real VoiceOver with Guidepup** (`npm run test:voiceover`, `tests/voiceover/`, macOS only, by hand):
+**Running the real VoiceOver with Guidepup** (`npm run test:voiceover`, `tests/voiceover/`, macOS only, by hand). The first run passed on 2026-11-27: after Skip to content, VoiceOver reads each page's content and never the language switch.
 
-1. Once per Mac, run `npm run voiceover:setup`. It ticks "Allow VoiceOver to be controlled with AppleScript" in VoiceOver Utility (you confirm it there) and downloads Guidepup's VoiceOver preferences. Do not use `sudo`. The note "Unable to configure automation permissions" is expected: macOS protects that database, and the dialogs it would grant come up on the first run instead.
-2. On this Mac (macOS 27), Guidepup also loads its preferences into VoiceOver's folder, which macOS only lets a terminal reach with Full Disk Access. Give it to Terminal.app only, and turn it off afterwards. Guidepup's docs do not mention it; it came from the error `EPERM … group.com.apple.VoiceOver`.
-3. Run `npm run test:voiceover` from that terminal, and accept the automation dialogs. Point it at a preview with `VOICEOVER_URL=https://<preview> npm run test:voiceover`. It prints what VoiceOver said on each page. Don't touch the Mac while it runs.
+1. Once per Mac, run `npm run voiceover:setup`. It turns on "Allow VoiceOver to be controlled with AppleScript" (VoiceOver Utility opens; tick it) and downloads Guidepup's VoiceOver preferences. Do not use `sudo`. The note "Unable to configure automation permissions" is expected.
+2. Give Terminal.app two permissions in System Settings › **Device Control and Data Access** (called Privacy & Security before macOS 27). Then quit and reopen Terminal:
+   - **Full Disk Access.** Guidepup loads its preferences into VoiceOver's folder, which macOS protects (`EPERM … group.com.apple.VoiceOver`).
+   - **Control of the computer** (Accessibility). It sends real keys (`osascript is not allowed to send keystrokes`).
+     Neither is in Guidepup's docs. Give them to Terminal only, not to an app that runs agents, and turn them off afterwards.
+3. Run `npm run test:voiceover` from Terminal, and accept the automation dialogs. Point it at a preview with `VOICEOVER_URL=https://<preview> npm run test:voiceover`. Don't touch the Mac while it runs (about a minute).
 
-`npm run audit:voiceover` gives the same transcript without Full Disk Access: it drives VoiceOver over AppleScript directly, without Guidepup's preferences.
+`npm run audit:voiceover` drives VoiceOver over AppleScript without Guidepup's preferences. It needs neither permission, and gives a transcript without assertions.
 
 **Guard in CI.** `npm run test:a11y` (`tests/a11y/`, Playwright) reads Chrome's accessibility tree on the build: what Skip to content announces on six pages, the Tab order and names on Home and Work, the card, the desk's name and description, the work list and the language switch. A change that breaks any of them fails the pull request. After an intended copy change, update the snapshots with `npm run test:a11y -- --update-snapshots` and review the diff.
 
