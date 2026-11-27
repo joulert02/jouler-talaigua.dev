@@ -165,6 +165,17 @@ const ogLocale: Record<Lang, string> = { en: "en_US", es: "es_ES" };
       <main id="main" tabindex="-1">
         <slot />
       </main>
+      <script is:inline>
+        // Skip to content lands on <main>: named after the page's heading, a screen reader announces where it landed
+        // ("main, Selected projects") instead of a bare "main" (HU-13).
+        (() => {
+          const main = document.getElementById("main");
+          const heading = main && main.querySelector("h1");
+          if (!heading) return;
+          heading.id ||= "page-heading";
+          main.setAttribute("aria-labelledby", heading.id);
+        })();
+      </script>
     </div>
     <!-- The Dock before the footer: it is fixed on screen, so only the Tab order follows, and after the footer the
          page ends. -->

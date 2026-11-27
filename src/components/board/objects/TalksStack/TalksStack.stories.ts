@@ -27,7 +27,7 @@ export default meta;
 
 export const Playground = meta.story({
   args: {
-    label: "Flip through photos of my talks",
+    label: "Talks: flip through the photos",
     // Sample captions: the place and year of each talk are not confirmed yet.
     photos: [talk1, talk2, talk3, talk4, talk5].map((image, index) => ({
       image,

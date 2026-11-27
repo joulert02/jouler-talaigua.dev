@@ -1,0 +1,18 @@
+link "Brand platforms"
+link "Sucursal Virtual Personas"
+link "Lists & Gift Registry"
+link "Datadog to groundcover"
+link "CAPS+"
+link "Personal Nexus"
+link "Home"
+link "Work"
+button "Copy my email address": Copy email
+button "Toggle theme": Theme
+link "joulert02@gmail.com"
+button "Copy email"
+link "Download CV (PDF)"
+link "Home"
+link "Work"
+link "Instagram"
+link "GitHub"
+link "LinkedIn"

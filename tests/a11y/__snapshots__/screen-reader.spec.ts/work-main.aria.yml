@@ -1,0 +1,40 @@
+- main "Selected projects":
+  - heading "Selected projects" [level=1]
+  - list:
+    - listitem:
+      - text: Grupo Familia brands · via PRAGMA
+      - strong:
+        - link "Brand platforms":
+          - /url: /work/brand-platforms/
+      - text: Frontend architecture · Gatsby + Contentful · Gamification
+    - listitem:
+      - text: Bancolombia · via PRAGMA
+      - strong:
+        - link "Sucursal Virtual Personas":
+          - /url: /work/bancolombia-svp/
+      - text: Frontend architecture · Micro frontends · Team building
+    - listitem:
+      - text: Mercado Libre
+      - strong:
+        - link "Lists & Gift Registry":
+          - /url: /work/mercado-libre-lists/
+      - text: Product engineering · Test strategy · Web views in native apps
+    - listitem:
+      - text: GoodRx · via EPAM
+      - strong:
+        - link "Datadog to groundcover":
+          - /url: /work/goodrx-observability/
+        - text: Coming soon
+      - text: Observability · Real User Monitoring · CI/CD
+    - listitem:
+      - text: Cast & Crew · via Remoti
+      - strong:
+        - link "CAPS+":
+          - /url: /work/caps-plus/
+        - text: Under construction
+    - listitem:
+      - text: EKOU
+      - strong:
+        - link "Personal Nexus":
+          - /url: /work/personal-nexus/
+        - text: Personal Coming soon

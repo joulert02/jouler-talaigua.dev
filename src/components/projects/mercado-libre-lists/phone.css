@@ -1,6 +1,6 @@
 :is(.lists-playground[data-meli-lab], .navigation-playground[data-navigation]) .meli-phone[data-native] {
-  --m-blue: #3483fa;
-  --m-green: #00a650;
+  --m-blue: #2d72d9; /* the brand #3483fa, darkened to 4.5:1 with white (HU-13) */
+  --m-green: #008641; /* the brand #00a650, darkened to 4.5:1 on white (HU-13) */
   --m-ink: rgb(0 0 0 / 0.9);
   --m-2: rgb(0 0 0 / 0.55);
   --m-line: rgb(0 0 0 / 0.1);

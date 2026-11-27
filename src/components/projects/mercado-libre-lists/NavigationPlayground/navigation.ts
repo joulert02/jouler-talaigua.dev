@@ -90,7 +90,6 @@ for (const demo of document.querySelectorAll<HTMLElement>("[data-navigation]")) 
       b.type = "button";
       b.dataset.i = String(i);
       b.tabIndex = -1;
-      b.setAttribute("aria-label", `${T.open} ${this.name(i)}`);
       b.innerHTML = `<img src="${images[p.img]}" alt=""><span class="n-info"><span class="n-t">${esc(p.t[lang])}</span><span class="n-p">$ ${p.price}</span>${p.paused ? "" : `<span class="n-s">${T.free}</span>`}</span><span class="n-i" aria-hidden="true">${String(i).padStart(2, "0")}</span>`;
       li.append(b);
       return li;

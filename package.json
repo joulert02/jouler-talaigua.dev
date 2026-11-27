@@ -21,7 +21,10 @@
     "format:check": "prettier --check .",
     "ci": "npm run format:check && npm run lint && npm run test && npm run check && npm run build",
     "test": "node --test \"scripts/*.test.mjs\"",
-    "placeholders": "node scripts/check-placeholders.mjs"
+    "placeholders": "node scripts/check-placeholders.mjs",
+    "test:a11y": "playwright test",
+    "test:voiceover": "playwright test --config playwright.voiceover.config.ts",
+    "voiceover:setup": "guidepup setup --macos-ignore-tcc-db && guidepup install"
   },
   "lint-staged": {
     "*": "prettier --ignore-unknown --write"
@@ -43,6 +46,10 @@
     "@fontsource/caveat": "^5.3.0",
     "@fontsource/geist-mono": "^5.3.0",
     "@fontsource/onest": "^5.3.1",
+    "@guidepup/guidepup": "^0.40.0",
+    "@guidepup/playwright": "^0.21.0",
+    "@guidepup/setup": "^0.29.3",
+    "@playwright/test": "^1.65.1",
     "@storybook-astro/framework": "^1.14.0",
     "@storybook-astro/renderer": "1.14.0",
     "@storybook/addon-docs": "^10.6.5",

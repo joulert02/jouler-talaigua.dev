@@ -22,7 +22,7 @@ const t = useTranslations(lang);
         href={item.href}
         lang={item.lang}
         hreflang={item.lang}
-        aria-label={useTranslations(item.lang)("layout.readIn")}
+        aria-label={`${t(item.label)}, ${useTranslations(item.lang)("layout.readIn")}`}
       >
         {t(item.label)}
       </a>

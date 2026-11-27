@@ -9,7 +9,11 @@ const lang = getLang(Astro);
 const t = useTranslations(lang);
 ---
 
-<a class="jota-mark" href={localePath(lang, data.href)} aria-label={`${data.name}, ${t("nav.home")}`}>
+<a
+  class="jota-mark"
+  href={localePath(lang, data.href)}
+  aria-label={`${data.label}, ${data.name}, ${t("nav.home")}`}
+>
   <i class="jota-mark__glyph" aria-hidden="true">
     {data.mark}
   </i>

@@ -21,3 +21,7 @@ output/
 .claude/skills/impeccable/scripts/bin/
 .agents/skills/impeccable/scripts/bin/
 .impeccable/config.local.json
+
+# Playwright
+/test-results/
+/playwright-report/

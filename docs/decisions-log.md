@@ -2,6 +2,14 @@
 
 One line per decision, newest first. Details live in the linked document.
 
+- **2026-11-27 · HU-13 quality audits ([#16](https://github.com/joulert02/jouler-talaigua.dev/issues/16)):**
+  - **Results:** SEO and performance pass on every page (Lighthouse 100). Two accessibility issues were fixed: the visible text missing from accessible names, and contrast below 4.5:1 in the recreated brand UIs (each color darkened only as far as needed).
+  - **Accepted:**
+    - Best Practices stays at 81 because Cloudflare's Email Obfuscation stays on, to keep the email away from harvesters.
+    - The dimmed steps in the Bancolombia diagram are accepted by the owner. The playground guides step by step, and dims what is not meant to be read yet.
+  - **Still open:** a VoiceOver pass and reading the copy side by side, both by the owner.
+  - **Details:** [the audit](audits/hu-13-quality.md).
+
 - **2026-11-12 · HU-01 closed (scope changes in [#3](https://github.com/joulert02/jouler-talaigua.dev/issues/3)):**
   - **Body text and Home:** body text is 16px, the browser default, against the 17px in the HU acceptance. The identity card lands in HU-01, centered from 561px and at the top on phones, with copy version A in both languages.
   - **"More about me":** it is its own page, and the card morphs into it with cross-document view transitions, which [ADR 002](adr/002-language-switch-transitions.md) also adopts for the language switch.

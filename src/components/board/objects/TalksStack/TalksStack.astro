@@ -7,7 +7,7 @@ interface Photo {
   caption: string;
 }
 interface Props {
-  /** Accessible name of the button, e.g. "Flip through photos of my talks". */
+  /** Accessible name of the button, starting with the caption it shows, e.g. "Teaching: flip through the photos". */
   label: string;
   /** The prints, from the top of the stack down. */
   photos: readonly Photo[];

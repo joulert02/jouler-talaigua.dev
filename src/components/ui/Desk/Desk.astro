@@ -35,6 +35,7 @@ const style = [
   `--desk-compact-x: ${compact.center.x}px`,
   `--desk-compact-y: ${compact.center.y}px`,
 ].join("; ");
+const helpId = `${id ?? "desk"}-help`;
 ---
 
 <!--
@@ -59,10 +60,21 @@ const style = [
   An object that carries a `view-transition-name` while the phone's desk opens is not part of that entrance: it is
   there from the first frame, so the page can make something of its own travel to it (the Home's entry prints).
 -->
-<desk-board class="desk" id={id} data-label={t("desk.label")} data-dialog-label={t("desk.dialog")} {style}>
+<desk-board
+  class="desk"
+  id={id}
+  data-label={t("desk.label")}
+  data-dialog-label={t("desk.dialog")}
+  data-help={helpId}
+  {style}
+>
   <script is:inline>
     document.currentScript.parentElement.dataset.reveal = "";
   </script>
+  <!-- How to move the desk: its description, so a screen reader says the short name first and the help after a pause. -->
+  <span id={helpId} hidden>
+    {t("desk.help")}
+  </span>
   <div class="desk__viewport">
     <div class="desk__stage">
       <div class="desk__layer">
@@ -318,6 +330,7 @@ const style = [
       viewport.tabIndex = 0;
       viewport.setAttribute("role", "region");
       viewport.setAttribute("aria-label", this.dataset["label"] ?? "");
+      viewport.setAttribute("aria-describedby", this.dataset["help"] ?? "");
       this.camera = new DeskCamera(viewport, layer, world, {
         wheelMode,
         // On a phone a finger cannot aim at the background between objects, and objects do not move: every drag pans.
@@ -401,6 +414,7 @@ const style = [
       viewport?.removeAttribute("tabindex");
       viewport?.removeAttribute("role");
       viewport?.removeAttribute("aria-label");
+      viewport?.removeAttribute("aria-describedby");
     }
   }
 
